@@ -4,7 +4,7 @@ This reciple demonstrates how to run Spice.ai OSS in a container. The recipe use
 
 ## Prerequisites
 
-- Update the `.env` file with your OpenAI API key. If the API key is not available, you can proceed and ignore the `Unable to load LLM` warning. Note that the Using Language Model section cannot be tested in this case.
+- Update the `.env` file with your OpenAI API key. If the API key is not available, proceed w/o setting the key and ignore the `Unable to load LLM` warning. Note that the Using Language Model section cannot be tested in this case.
 - Docker is installed: [Install Docker Image](https://docs.docker.com/engine/install/)
 - Spice CLI is installed: [Getting Started](https://docs.spiceai.org/getting-started)
 
@@ -91,7 +91,7 @@ opentelemetry 127.0.0.1:50052 Ready
 
 ### SQL Search
 
-Run `spice sql` and execute the following query to select the top 10 films with the highest average rental score.
+Run `spice sql` and execute the following query to select the top 5 films with the highest average rental score.
 
 ```sql
 SELECT 
