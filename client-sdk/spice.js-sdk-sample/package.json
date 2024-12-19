@@ -1,0 +1,14 @@
+{
+  "name": "spice.js-sdk-sample",
+  "version": "1.0.0",
+  "description": "## Start spice runtime",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.mjs"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@spiceai/spice": "^2.0.0"
+  }
+}

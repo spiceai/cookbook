@@ -1,0 +1,25 @@
+plugins {
+    id 'application'
+}
+
+group = 'ai.spice.example'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'ai.spice:spiceai:0.1.0'
+}
+
+application {
+    mainClass = 'ai.spice.example.App'
+}
+
+// The Spice SDK uses Apache Arrow Flight library which requires `--add-opens=java.base/java.nio=ALL-UNNAMED` parameter to operate.
+// Read https://arrow.apache.org/docs/java/install.html#java-compatibility for more details.
+
+tasks.withType(JavaExec) {
+    jvmArgs '--add-opens=java.base/java.nio=ALL-UNNAMED'
+}

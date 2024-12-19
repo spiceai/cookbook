@@ -83,6 +83,14 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 - [Advanced Data Refresh](./acceleration/data-refresh/README.md)
 - [Data Quality with Constraints](./acceleration/constraints/README.md)
 
+## Client SDKs - Recipes for querying data from Spice with language-specific SDKs
+
+- [Rust SDK](client-sdk/spice-rs-sdk-sample/README.md)
+- [Python SDK](client-sdk/spicepy-sdk-sample/README.md)
+- [Go SDK](client-sdk/gospice-sdk-sample/README.md)
+- [JavaScript SDK](client-sdk/spice.js-sdk-sample/README.md)
+- [Java SDK](client-sdk/spice-java-sdk-sample/README.md)
+
 ### Security
 
 - [Encryption in transit using TLS](./tls/README.md)
