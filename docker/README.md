@@ -1,6 +1,10 @@
 # Running in Docker Recipe
 
-This recipe demonstrates how to run Spice.ai OSS in a container. The recipe uses [MySQL Sakila Sample Database](https://dev.mysql.com/doc/sakila/en/sakila-structure-tables.html) run as a container with Spice using Docker Compose configuration and Open AI model to perform vector search and natural language queries to the dataset.
+This recipe demonstrates how to run Spice.ai OSS in a container using the official [spiceai/spiceai](https://hub.docker.com/r/spiceai/spiceai) Docker image. It shows how to:
+
+- Extend the [spiceai/spiceai](https://hub.docker.com/r/spiceai/spiceai) Docker image with a desired configuration (`spicepod.yml`, secrets, etc).
+- Use Docker Compose to run Spice locally with a sample dataset containerized - [MySQL Sakila Sample Database](https://dev.mysql.com/doc/sakila/en/sakila-structure-tables.html).
+- Interact with containerized Spice runtime using Spice CLI tools
 
 ## Prerequisites
 
