@@ -27,7 +27,8 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 
 ### Consuming and visualizing data with clients
 
-- [Sales BI (Apache Superset)](./sales-bi/README.md)
+- [Sales BI (Apache Superset)](./sales-bi/README.md) - Visualize data in Spice with Apache Superset.
+- [Grafana Datasource](./grafana-datasource/README.md) - Add Spice as a Grafana datasource.
 
 ### Connecting to Data Sources with Data Connectors
 
