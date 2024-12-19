@@ -37,11 +37,11 @@ Follow these steps to get started with Clickhouse as a Data Connector.
     (101, 'Granules are the smallest chunks of data read',      now() + 5,   3.14159 );
   ```
 
-## Quickstart
+## Steps
 
 **Step 1.** Edit the `spicepod.yaml` file in this directory and replace the params in the `clickhouse_quickstart` dataset with the connection parameters for your Clickhouse instance, where `[local_table_name]` is your desired name for the federated table and `[remote_table_path]` is the name of the table in your Clickhouse instance.
 
-Follow the [quickstart guide](https://docs.spiceai.org/getting-started) to get started with the Spice.ai runtime.
+Follow the [getting started guide](https://docs.spiceai.org/getting-started) to get started with the Spice.ai runtime.
 
 See the [datasets reference](https://docs.spiceai.org/reference/spicepod/datasets) for more dataset configuration options.
 

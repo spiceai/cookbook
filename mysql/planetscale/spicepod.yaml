@@ -1,6 +1,6 @@
 version: v1beta1
 kind: Spicepod
-name: planetscale_quickstart
+name: planetscale_recipe
 
 datasets:
   - from: mysql:[remote_table_path]

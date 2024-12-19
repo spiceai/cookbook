@@ -27,7 +27,7 @@ To securely store the RDS password, see [Secret Stores](https://docs.spiceai.org
 
 **Step 5.** Run the Spice runtime with `spice run` from this directory.
 
-Follow the [quickstart guide](https://docs.spiceai.org/getting-started) to get started with the Spice runtime.
+Follow the [getting started guide](https://docs.spiceai.org/getting-started) to get started with the Spice runtime.
 
 **Step 6.** Run `spice sql` in a new terminal to start an interactive SQL query session against the Spice runtime.
 

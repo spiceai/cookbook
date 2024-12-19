@@ -32,7 +32,7 @@ The parent dataset must have `refresh_mode` set to `full` in order for the `loca
 
 :::
 
-## Running this quickstart
+## Running this recipe
 
 In a new terminal, start `spice` with `spice run`.
 

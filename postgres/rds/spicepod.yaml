@@ -1,6 +1,6 @@
 version: v1beta1
 kind: Spicepod
-name: rds_postgresql_quickstart
+name: rds_postgresql_recipe
 datasets:
   - from: postgres:[remote_table_path]
     name: [local_table_name]

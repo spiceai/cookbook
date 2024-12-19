@@ -157,4 +157,4 @@ Note, the output is now:
 
 ## Summary
 
-This quickstart demonstrated how to dynamically refresh specific data at runtime by updating the `refresh_sql` in `spicepod.yaml` and programmatically via API calls. This provides control over what data is queried and fetched from remote data sources and when it happens.
+This recipe demonstrated how to dynamically refresh specific data at runtime by updating the `refresh_sql` in `spicepod.yaml` and programmatically via API calls. This provides control over what data is queried and fetched from remote data sources and when it happens.

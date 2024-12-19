@@ -1,12 +1,12 @@
 # Indexes on Accelerated Data Recipe
 
-Indexes can be created on accelerated datasets (for supported engines) to improve query performance. This quickstart will demonstrate how to create an index and compare the performance on the same accelerated dataset without an index.
+Indexes can be created on accelerated datasets (for supported engines) to improve query performance. This recipe will demonstrate how to create an index and compare the performance on the same accelerated dataset without an index.
 
-Clone the Spice quickstarts repository and navigate to the `indexes` directory:
+Clone the Spice cookbook repository and navigate to the `indexes` directory:
 
 ```bash
-git clone https://github.com/spiceai/quickstarts.git
-cd quickstarts/acceleration/indexes
+git clone https://github.com/spiceai/cookbook.git
+cd cookbook/acceleration/indexes
 ```
 
 **Step 1.** Download the large test dataset locally

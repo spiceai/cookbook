@@ -158,7 +158,7 @@ Ensure that the `pg_pass` connctor parameter is only set when `pg_user` used in 
 spice run
 ```
 
-Follow the [quickstart guide](https://docs.spiceai.org/getting-started) to get started with the Spice.ai runtime.
+Follow the [getting started guide](https://docs.spiceai.org/getting-started) to get started with the Spice.ai runtime.
 
 See the [datasets reference](https://docs.spiceai.org/reference/spicepod/datasets) for more dataset configuration options.
 
