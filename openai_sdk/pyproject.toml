@@ -1,0 +1,10 @@
+[project]
+name = "spiceai-openai-sdk-recipe"
+version = "0.1.0"
+description = "Recipe for using the OpenAI SDK with Spice"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "openai>=1.52.0",
+    "python-dotenv>=1.0.1",
+]
