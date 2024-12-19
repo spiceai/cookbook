@@ -1,0 +1,30 @@
+[ req ]
+default_bits       = 2048
+default_md         = sha256
+default_keyfile    = spiced.key
+prompt             = no
+encrypt_key        = no
+
+distinguished_name = req_distinguished_name
+req_extensions     = req_ext
+
+[ req_distinguished_name ]
+C  = US
+ST = Washington
+L  = Seattle
+O  = Widgets, Inc.
+OU = IT
+CN = spiced.localhost
+
+[ req_ext ]
+subjectAltName = @alt_names
+extendedKeyUsage = serverAuth
+
+[ alt_names ]
+DNS.1 = localhost
+DNS.2 = spiced-tls
+IP.1 = 127.0.0.1
+
+[ v3_ca ]
+subjectAltName = @alt_names
+extendedKeyUsage = serverAuth

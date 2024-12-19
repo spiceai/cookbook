@@ -1,0 +1,48 @@
+version: v1beta1
+kind: Spicepod
+name: spicepod-graphql-spicehq-decisions
+
+datasets:
+  - from: github:github.com/spiceai/spiceai/files/trunk
+    name: spiceai.files
+    params:
+      github_token: ${secrets:GITHUB_TOKEN}
+      include: '**/*.md'
+    acceleration:
+      enabled: true
+
+  - from: github:github.com/spiceai/spiceai/issues
+    name: spiceai.issues
+    params:
+      github_token: ${secrets:GITHUB_TOKEN}
+    acceleration:
+      enabled: true
+      refresh_sql: |
+        SELECT * FROM spiceai.issues ORDER by updated_at desc LIMIT 300
+
+  - from: github:github.com/spiceai/spiceai/pulls
+    name: spiceai.pulls
+    params:
+      github_token: ${secrets:GITHUB_TOKEN}
+    acceleration:
+      enabled: true
+      refresh_sql: |
+        SELECT * FROM spiceai.pulls ORDER by merged_at desc LIMIT 300
+
+  - from: github:github.com/spiceai/spiceai/commits
+    name: spiceai.commits
+    params:
+      github_token: ${secrets:GITHUB_TOKEN}
+    acceleration:
+      enabled: true
+      refresh_sql: |
+        SELECT * FROM spiceai.commits ORDER by committed_date desc LIMIT 300
+
+  - from: github:github.com/spiceai/spiceai/stargazers
+    name: spiceai.stargazers
+    params:
+      github_token: ${secrets:GITHUB_TOKEN}
+    acceleration:
+      enabled: true
+      refresh_sql: |
+        SELECT * FROM spiceai.stargazers ORDER by starred_at desc LIMIT 300

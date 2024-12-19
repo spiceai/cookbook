@@ -1,0 +1,10 @@
+version: v1beta1
+kind: Spicepod
+name: sharepoint-qs
+datasets:
+  - from: sharepoint:me/root
+    name: important_documents
+    params:
+      sharepoint_client_id: ${secrets:SPICE_SHAREPOINT_CLIENT_ID}
+      sharepoint_tenant_id: ${env:TENANT_ID}
+      sharepoint_bearer_token: ${secrets:SPICE_SHAREPOINT_BEARER_TOKEN}

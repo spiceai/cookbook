@@ -1,0 +1,17 @@
+version: v1beta1
+kind: Spicepod
+name: mysql-demo
+datasets:
+  - from: mysql:spice_demo.sample_data
+    name: sample_data
+    params:
+      mysql_host: localhost
+      mysql_tcp_port: 3306
+      mysql_db: spice_demo
+      mysql_sslmode: disabled
+      mysql_user: root
+      mysql_pass: ${env:MYSQL_PASS}
+    acceleration:
+      enabled: true
+      refresh_mode: full
+      refresh_check_interval: 10s

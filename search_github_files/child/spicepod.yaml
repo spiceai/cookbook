@@ -1,0 +1,20 @@
+version: v1beta1
+kind: Spicepod
+name: child
+
+datasets:
+- from: flightsql:spiceai.files
+  name: spiceai.files
+  params:
+    flightsql_endpoint: http://127.0.0.1:50051
+  embeddings:
+    - column: content
+      use: child_embed
+      column_pk:
+        - path
+
+embeddings:
+  - name: child_embed
+    from: openai:local_embedding_model
+    params:
+      endpoint: http://127.0.0.1:8090/v1

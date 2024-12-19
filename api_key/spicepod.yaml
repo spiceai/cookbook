@@ -1,0 +1,14 @@
+version: v1beta1
+kind: Spicepod
+name: api_key
+
+secrets:
+  - from: env
+    name: env
+
+runtime:
+  auth:
+    api-key:
+      enabled: true
+      keys:
+        - ${ env:API_KEY }

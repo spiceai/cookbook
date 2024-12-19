@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: "postgres:alpine"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    volumes:
+      - ./postgres:/docker-entrypoint-initdb.d
+    ports:
+      - "15432:5432"
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5

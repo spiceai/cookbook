@@ -1,0 +1,32 @@
+version: v1beta1
+kind: Spicepod
+name: sharepoint-qs
+
+models:
+  - from: openai
+    name: remote_service
+    params:
+      openai_api_key: ${ secrets:SPICE_OPENAI_API_KEY }
+
+embeddings:
+  - name: local_embedding_model
+    from: huggingface:huggingface.co/sentence-transformers/all-MiniLM-L6-v2
+
+datasets:
+  - from: github:github.com/spiceai/spiceai/files/trunk
+    name: spiceai.files
+    params:
+      github_token: ${secrets:GITHUB_TOKEN}
+      include: "docs/**/*.md"
+    acceleration:
+      enabled: true
+    columns:
+      - name: content
+        # embeddings:
+        #   - from: local_embedding_model
+        #     row_id: path
+        #     chunking:
+        #       enabled: false
+        #       target_chunk_size: 256
+        #       overlap_size: 64
+        #       file_format: md

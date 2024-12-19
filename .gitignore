@@ -1,0 +1,4 @@
+.DS_Store
+acceleration/indexes/large_eth_traces.parquet
+acceleration/indexes/spicepod.yaml
+.env.local

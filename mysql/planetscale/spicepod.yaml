@@ -1,0 +1,17 @@
+version: v1beta1
+kind: Spicepod
+name: planetscale_quickstart
+
+datasets:
+  - from: mysql:[remote_table_path]
+    name: [local_table_name]
+    description: test planetscale table
+    acceleration:
+      enabled: true
+      refresh_check_interval: 10s
+      refresh_mode: full
+    params:
+      mysql_host: [mysql_host]
+      mysql_db: [db-name]
+      mysql_user: [username]
+      mysql_pass: ${env:MYSQL_PASS}

@@ -1,0 +1,12 @@
+version: v1beta1
+kind: Spicepod
+name: postgres-connector-demo
+datasets:
+  - from: postgres:sample_data
+    name: sample_data
+    params:
+      pg_host: [Host]
+      pg_db: [Database name]
+      pg_port: [Port]
+      pg_user: [User]
+      pg_pass: ${env:PG_PASS}

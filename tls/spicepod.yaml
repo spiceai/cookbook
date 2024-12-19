@@ -1,0 +1,14 @@
+version: v1beta1
+kind: Spicepod
+name: tls-sample
+
+datasets:
+- from: postgres:customer_addresses
+  name: customer_addresses
+  params:
+    pg_host: localhost
+    pg_port: 15432
+    pg_user: postgres
+    pg_pass: postgres
+    pg_db: postgres
+    pg_sslrootcert: ./ca.pem

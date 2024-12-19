@@ -1,0 +1,12 @@
+image:
+  repository: nvcr.io/nim/meta/llama3-8b-instruct
+  tag: 1.3
+model:
+  ngcAPISecret: ngc-api
+resources:
+  limits:
+    nvidia.com/gpu: 1
+persistence:
+  enabled: false
+imagePullSecrets:
+  - name: ngc-secret

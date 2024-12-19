@@ -1,0 +1,25 @@
+version: v1beta1
+kind: Spicepod
+name: spicepod-mssql
+
+datasets:
+  - from: mssql:Sales.Customer
+    name: Sales.Customer
+    params: 
+      mssql_connection_string: ${ secrets:SPICE_MSSQL_CONNECTION_STRING1 }
+    acceleration:
+      enabled: true
+
+  - from: mssql:Sales.Customer
+    name: Sales.Customer2022
+    params: 
+      mssql_connection_string: ${ secrets:SPICE_MSSQL_CONNECTION_STRING2 }
+    acceleration:
+      enabled: true
+
+  - from: mssql:Sales.SalesOrderHeader
+    name: Sales.SalesOrderHeader
+    params: 
+      mssql_connection_string: ${ secrets:SPICE_MSSQL_CONNECTION_STRING2 }
+    acceleration:
+      enabled: true

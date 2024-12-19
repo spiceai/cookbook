@@ -1,0 +1,17 @@
+version: v1beta1
+kind: Spicepod
+name: rds_postgresql_quickstart
+datasets:
+  - from: postgres:[remote_table_path]
+    name: [local_table_name]
+    params:
+      pg_host: [Host]
+      pg_db: [Database name]
+      pg_port: [Port]
+      pg_user: [User]
+      pg_pass: ${env:PG_PASS}
+      pg_sslmode: require
+    acceleration:
+      enabled: true
+      refresh_mode: full
+      refresh_check_interval: 10s

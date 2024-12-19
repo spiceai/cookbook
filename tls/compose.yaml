@@ -1,0 +1,31 @@
+services:
+  postgres:
+    image: "postgres:alpine"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    expose:
+      - "5432"
+    ports:
+      - 15432:5432
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d
+      - ./pg_config.conf:/etc/postgresql/postgresql.conf
+      - ./postgres.crt:/var/lib/postgresql/postgres.crt
+      - ./postgres.key:/var/lib/postgresql/postgres.key
+      - ./ca.pem:/var/lib/postgresql/ca.pem
+    command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]  
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '2'
+          memory: 2G
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres -h localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

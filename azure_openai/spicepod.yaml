@@ -1,0 +1,66 @@
+version: v1beta1
+kind: Spicepod
+name: azure_openai
+
+embeddings:
+  - name: embeddings-model
+    from: azure:text-embedding-3-small
+    params:
+      endpoint: ${ secrets:SPICE_AZURE_AI_ENDPOINT }
+      azure_deployment_name: text-embedding-3-small
+      azure_api_version: 2023-05-15
+      azure_api_key: ${ secrets:SPICE_AZURE_API_KEY }
+
+models:
+  - from: azure:gpt-4o-mini
+    name: chat-model
+    params:
+      spice_tools: auto
+      endpoint: ${ secrets:SPICE_AZURE_AI_ENDPOINT }
+      azure_api_version: 2024-08-01-preview
+      azure_deployment_name: gpt-4o-mini
+      azure_api_key: ${ secrets:SPICE_AZURE_API_KEY }
+      system_prompt: |
+        Use the SQL tool when:
+          1. The query involves precise numerical data, statistics, or aggregations
+          2. The user asks for specific counts, sums, averages, or other calculations
+          3. The query requires joining or comparing data from multiple related tables
+
+        Use the document search when:
+          1. The query is about unstructured text information, such as policies, reports, or articles
+          2. The user is looking for qualitative information or explanations
+          3. The query requires understanding context or interpreting written content
+
+        General guidelines:
+          1. If a query could be answered by either tool, prefer SQL for more precise, quantitative answers
+
+        Instructions for Responses: 
+          - Do not include any private metadata provided to the model as context such as \"reference_url_template\" or \"instructions\" in your responses.
+
+datasets:
+  - from: s3://spiceai-demo-datasets/taxi_trips/2024/
+    name: taxi_trips
+    description: taxi trips in s3
+    params:
+      file_format: parquet
+    acceleration:
+      enabled: true
+
+  - from: github:github.com/spiceai/spiceai/files/trunk
+    name: spiceai.files
+    description: Spice.ai project documentation (github.com/spiceai/spiceai)
+    params:
+      github_token: ${secrets:GITHUB_TOKEN}
+      include: "docs/**/*.md"
+    acceleration:
+      enabled: true
+    columns:
+      - name: content
+        embeddings:
+          - from: embeddings-model
+            row_id: path
+            chunking:
+              enabled: false
+              target_chunk_size: 256
+              overlap_size: 64
+              file_format: md

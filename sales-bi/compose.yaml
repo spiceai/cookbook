@@ -1,0 +1,26 @@
+services:
+  spiceai:
+    build:
+      dockerfile: Dockerfile
+    container_name: spiceai-sales-bi-demo
+    volumes:
+      - ./spicepod.yaml:/root/spicepod.yaml
+    expose:
+      - "50051"
+  superset:
+    depends_on:
+      - spiceai
+    build:
+      dockerfile: superset/Dockerfile
+    container_name: superset-sales-bi-demo
+    environment:
+      - SUPERSET_SECRET_KEY=NFmeXP86te1aweCLZHXF89739mCuo5KkMd4hM+q3S6hD3ckLMmtL26Tr
+    ports:
+      - "8088:8088"
+    volumes:
+      - ./superset/dashboard:/dashboard
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8088/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

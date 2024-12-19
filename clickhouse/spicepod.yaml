@@ -1,0 +1,17 @@
+version: v1beta1
+kind: Spicepod
+name: clickhouse_recipe
+datasets:
+  - from: clickhouse:clickhouse_table_name
+    name: my_table_name
+    params:
+      clickhouse_host: localhost
+      clickhouse_db: default
+      clickhouse_tcp_port: 9000
+      clickhouse_user: default
+      clickhouse_pass: ${env:CLICKHOUSE_PASS}
+      clickhouse_secure: false # Defaults to true.  Set to false if not connecting over SSL
+    acceleration:
+      enabled: true
+      refresh_mode: full
+      refresh_check_interval: 10s

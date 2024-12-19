@@ -1,0 +1,24 @@
+version: v1beta1
+kind: Spicepod
+name: nsql-spicepod
+
+datasets:
+- from: s3://spiceai-demo-datasets/taxi_trips/2024/
+  name: taxi_trips
+  description: taxi trips in s3
+  params:
+    file_format: parquet
+  acceleration:
+    enabled: true
+
+
+models:
+  - name: oai
+    from: openai:gpt-4o
+    params:
+      openai_api_key: ${ secrets:SPICE_OPENAI_API_KEY }
+
+  # - name: local
+  #   from: huggingface:huggingface.co/microsoft/Phi-3.5-mini-instruct
+  #   params:
+  #     model_type: phi3

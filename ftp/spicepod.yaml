@@ -1,0 +1,15 @@
+version: v1beta1
+kind: Spicepod
+name: ftp_recipe
+datasets:
+  - from: ftp://localhost/customers.csv
+    name: customers
+    params:
+      file_format: csv
+      ftp_user: user
+      ftp_pass: ${env:FTP_PASS}
+      ftp_port: 20021
+    acceleration:
+      enabled: true
+      refresh_mode: full
+      refresh_check_interval: 10s

@@ -1,0 +1,28 @@
+services:
+  mssql1:
+    image: "slyons/adventureworks:latest-2019"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Password123@
+    restart: unless-stopped
+    ports:
+      - "11433:1433"
+    healthcheck:
+      test: [ "CMD", "./ready.sh"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  mssql2:
+    image: "slyons/adventureworks:latest-2022"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Password123@
+    restart: unless-stopped
+    ports:
+      - "11533:1433"
+    healthcheck:
+      test: [ "CMD", "./ready.sh"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  

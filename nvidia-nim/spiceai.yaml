@@ -1,0 +1,14 @@
+image:
+  repository: spiceai/spiceai
+  tag: 1.0.0-rc.1-models # `-models` is required for the LLMs
+
+# This could be any Spicepod components you like!
+spicepod:
+  name: aapp
+  version: v1beta1
+  kind: Spicepod
+  models:
+    - from: openai:meta/llama3-8b-instruct # This is from NIM `values.yaml`.
+      name: nim
+      params:
+        endpoint: http://my-nim-nim-llm.default.svc.cluster.local:8000/v1

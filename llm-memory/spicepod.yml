@@ -1,0 +1,15 @@
+version: v1beta1
+kind: Spicepod
+name: localpod
+
+datasets:
+  - from: memory:store
+    name: llm_memory
+    mode: read_write
+
+models:
+  - name: chat_model
+    from: openai:gpt-4o
+    params:
+      spice_tools: memory
+      openai_api_key: ${secrets:SPICE_OPENAI_API_KEY}

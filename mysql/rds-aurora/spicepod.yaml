@@ -1,0 +1,17 @@
+version: v1beta1
+kind: Spicepod
+name: rds_aurora_mysql_recipe
+datasets:
+  - from: mysql:[remote_table_path]
+    name: [local_table_name]
+    params:
+      mysql_host: [db-host]
+      mysql_tcp_port: [db-port]
+      mysql_db: [db-name]
+      mysql_user: [username]
+      mysql_pass: ${env:MYSQL_PASS}
+      mysql_sslmode: preferred # "required" is default
+    acceleration:
+      enabled: true
+      refresh_mode: full
+      refresh_check_interval: 10s

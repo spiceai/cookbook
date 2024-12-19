@@ -1,0 +1,17 @@
+version: v1beta1
+kind: Spicepod
+name: pg_quickstart
+datasets:
+  - from: spice.ai/eth.recent_blocks
+    name: eth_recent_blocks
+    acceleration:
+      enabled: true
+      refresh_mode: full
+      refresh_check_interval: 10s
+      engine: postgres
+      params:
+        pg_host: [Host]
+        pg_db: [Database name]
+        pg_port: [Port]
+        pg_user: [User]
+        pg_pass: ${env:PG_PASS}

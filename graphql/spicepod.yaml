@@ -1,0 +1,33 @@
+version: v1beta1
+kind: Spicepod
+name: graphql_recipe
+datasets:
+  - from: graphql:https://api.github.com/graphql
+    name: stargazers
+    params:
+      graphql_auth_token: ${env:GH_TOKEN}
+      json_pointer: /data/repository/stargazers/edges
+      graphql_query: |
+        {
+          repository(name: "spiceai", owner: "spiceai") {
+            id
+            name
+            stargazers(first: 100) {
+              edges {
+                starredAt
+                node {
+                  id
+                  name
+                  login
+                }
+              }
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
+            }
+          }
+        }
+    acceleration:
+      enabled: true
+      refresh_mode: full

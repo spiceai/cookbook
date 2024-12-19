@@ -1,0 +1,8 @@
+version: v1beta1
+kind: Spicepod
+name: duckdb-recipe
+datasets:
+  - from: duckdb:customer
+    name: tpch_customer
+    params:
+      duckdb_open: ./tpch.db
