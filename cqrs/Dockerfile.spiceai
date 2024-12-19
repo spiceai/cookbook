@@ -1,0 +1,16 @@
+FROM debian as build
+
+RUN apt-get update && apt-get install -yqq curl jq
+
+ADD "https://api.github.com/repos/spiceai/spiceai/commits?per_page=1" latest_commit
+RUN curl https://install.spiceai.org/install-spiced.sh | /bin/bash
+
+FROM debian
+
+RUN apt-get update && apt-get install -yqq libssl-dev unixodbc-dev ca-certificates
+
+COPY --from=build /usr/local/bin/spiced /usr/local/bin
+
+WORKDIR /root
+
+ENTRYPOINT ["spiced", "--flight", "0.0.0.0:50051"]

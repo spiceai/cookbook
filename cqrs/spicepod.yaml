@@ -1,0 +1,32 @@
+version: v1beta1
+kind: Spicepod
+name: sample
+
+datasets:
+  - from: postgres:public.products
+    name: products
+    params:
+      pg_host: postgres
+      pg_db: postgres
+      pg_user: postgres
+      pg_pass: postgres
+      pg_sslmode: disable
+    acceleration:
+      enabled: true
+      refresh_check_interval: 10s
+  - from: postgres:public.orders
+    name: orders
+    params:
+      pg_host: postgres
+      pg_db: postgres
+      pg_user: postgres
+      pg_pass: postgres
+      pg_sslmode: disable
+    acceleration:
+      enabled: true
+      refresh_check_interval: 10s
+
+views:
+  - name: rankings
+    sql: with a as (SELECT products.id, sum(count) as count FROM orders INNER JOIN products ON orders.product_id = products.id GROUP BY products.id) select name, count from products left join a on products.id = a.id order by count desc limit 5
+

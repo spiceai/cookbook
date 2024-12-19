@@ -1,0 +1,77 @@
+services:
+  setup:
+    build: .
+    depends_on:
+      - postgres
+    environment:
+      - POSTGRES_CONN=host=postgres port=5432 dbname=postgres user=postgres password=postgres sslmode=disable
+    entrypoint:
+      - go
+      - run
+      - main.go
+      - setup
+  web:
+    build: .
+    ports:
+      - "9999:8080"
+    depends_on:
+      - spiced
+      - spiced-materialized
+    environment:
+      - POSTGRES_CONN=host=postgres port=5432 dbname=postgres user=postgres password=postgres sslmode=disable
+  spiced:
+    build:
+      dockerfile: Dockerfile.spiceai
+    depends_on:
+      setup:
+        condition: service_completed_successfully
+    volumes:
+      - ./spicepod.yaml:/root/spicepod.yaml
+    expose:
+      - "50051"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '2'
+          memory: 2G
+  spiced-materialized:
+    build:
+      dockerfile: Dockerfile.spiceai
+    depends_on:
+      - spiced
+    volumes:
+      - ./spicepod-materialized.yaml:/root/spicepod.yaml
+    expose:
+      - "50051"
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        sleep 10 && spiced --flight 0.0.0.0:50051
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '2'
+          memory: 2G
+  postgres:
+    image: "postgres:alpine"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    expose:
+      - "5432"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '2'
+          memory: 2G

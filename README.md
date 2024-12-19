@@ -8,6 +8,10 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 
 - [Federated SQL Query](./federation/README.md) - Query data from S3, PostgreSQL, and Dremio in a single query.
 
+### Sample Applications
+
+- [Command Query Responsibility Segregation (CQRS)](./cqrs/README.md) - Sample application implementing the CQRS pattern with Spice.
+
 ### Models & AI - Connect data to hosted or local AI models
 
 - [Azure OpenAI Models](./azure_openai/README.md)

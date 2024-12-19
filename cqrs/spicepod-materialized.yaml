@@ -1,0 +1,12 @@
+version: v1beta1
+kind: Spicepod
+name: materialized
+
+datasets:
+  - from: flightsql:rankings
+    name: rankings
+    params:
+      flightsql_endpoint: http://spiced:50051
+    acceleration:
+      enabled: true
+      refresh_check_interval: 10s
