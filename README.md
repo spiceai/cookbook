@@ -76,11 +76,12 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 - [Results Caching](./caching/README.md)
 - [Indexes on Accelerated Data](./acceleration/indexes/README.md)
 
-### Acceleration Data Refresh/Retention
+### Acceleration Data Configuration
 
 - [Data Retention Policy](./retention/README.md)
 - [Refresh Data Window](./refresh-data-window/README.md)
 - [Advanced Data Refresh](./acceleration/data-refresh/README.md)
+- [Data Quality with Constraints](./acceleration/constraints/README.md)
 
 ### Security
 

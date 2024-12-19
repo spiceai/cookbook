@@ -1,0 +1,50 @@
+services:
+  postgres:
+    image: "postgres:alpine"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    expose:
+      - "5432"
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '2'
+          memory: 2G
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres -h localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  spiceai-constraint-demo:
+    build:
+      dockerfile: Dockerfile.spiceai
+    depends_on:
+      - postgres
+    container_name: spiceai-constraint-demo
+    volumes:
+      - ./spicepod.yaml:/root/spicepod.yaml
+    expose:
+      - "50051"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '2'
+          memory: 2G
+  worker:
+    build: .
+    depends_on:
+      - postgres
+      - spiceai-constraint-demo
+    container_name: spiceai-constraint-demo-worker
+    environment:
+      - POSTGRES_CONN=host=postgres port=5432 dbname=postgres user=postgres password=postgres sslmode=disable

@@ -1,0 +1,22 @@
+version: v1beta1
+kind: Spicepod
+name: constraints
+
+datasets:
+  - from: postgres:users
+    name: users
+    time_column: updated_at
+    params:
+      pg_host: postgres
+      pg_db: postgres
+      pg_user: postgres
+      pg_pass: postgres
+      pg_sslmode: disable
+    acceleration:
+      enabled: true
+      engine: duckdb
+      refresh_mode: append
+      refresh_check_interval: 5s
+      primary_key: email
+      on_conflict:
+        email: upsert
