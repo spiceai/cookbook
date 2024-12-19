@@ -1,0 +1,9 @@
+version: v1beta1
+kind: Spicepod
+name: localpod
+
+models:
+  - name: llama3
+    from: huggingface:huggingface.co/meta-llama/Llama-3.2-3B-Instruct
+    params:
+      hf_token: ${ secrets:SPICE_HUGGINGFACE_API_KEY }
