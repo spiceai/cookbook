@@ -70,7 +70,7 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 ### Deployment and Installation
 
 - [Deploying to Kubernetes](./kubernetes/README.md)
-- [Running as a Docker Container](./docker/README.md)
+- [Running in Docker](./docker/README.md)
 
 ### Performance
 
