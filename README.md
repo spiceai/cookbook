@@ -44,6 +44,8 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
   - [PlanetScale](./mysql/planetscale/README.md)
 - [Clickhouse Data Connector](./clickhouse/README.md)
 - [Databricks Delta Lake Data Connector](./databricks/delta_lake/README.md)
+- [Debezium Change Data Capture (CDC) Data Connector from Postgres](./cdc-debezium/README.md) - Stream changes from a Postgres database to Spice.
+  - [Debezium CDC SASL/SCRAM Authentication from MySQL](./cdc-debezium/sasl-scram/README.md) - Stream changes from a MySQL database to Spice using SASL/SCRAM authentication.
 - [Dremio Data Connector](./dremio/README.md)
 - [DuckDB Data Connector](./duckdb/connector/README.md) - Use a DuckDB database with sample TPCH data.
 - [File Data Connector](./file/README.md) - Query data from local files.

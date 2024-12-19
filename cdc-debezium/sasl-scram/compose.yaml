@@ -1,0 +1,258 @@
+services:
+  zookeeper:
+    image: bitnami/zookeeper:latest
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    ports:
+      - "2181:2181"
+    volumes:
+      - zookeeper_data:/bitnami/zookeeper
+    healthcheck:
+      test: ["CMD", "/opt/bitnami/zookeeper/bin/zkServer.sh", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  tls-init:
+    image: bitnami/kafka:latest
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        # Create certs directory
+        mkdir -p /bitnami/kafka/config/certs
+        
+        # Create a configuration file for the CA certificate
+        cat > /tmp/ca.cnf << EOF
+        distinguished_name = req_distinguished_name
+        [req_distinguished_name]
+        commonName = Kafka CA
+        [req]
+        distinguished_name = req_distinguished_name
+        x509_extensions = v3_ca
+        [v3_ca]
+        basicConstraints = critical,CA:TRUE
+        keyUsage = critical,keyCertSign,cRLSign
+        EOF
+        
+        # Create a configuration file for the server certificate
+        cat > /tmp/server.cnf << EOF
+        distinguished_name = req_distinguished_name
+        [req_distinguished_name]
+        commonName = kafka
+        [req]
+        distinguished_name = req_distinguished_name
+        x509_extensions = v3_server
+        [v3_server]
+        basicConstraints = critical,CA:FALSE
+        keyUsage = critical,digitalSignature,keyEncipherment
+        extendedKeyUsage = serverAuth
+        subjectAltName = DNS:kafka,DNS:localhost
+        EOF
+        
+        # Generate CA keystore and certificate
+        keytool -keystore /bitnami/kafka/config/certs/kafka_ca.keystore.jks \
+          -alias ca \
+          -validity 365 \
+          -storepass keystore_password \
+          -keypass keystore_password \
+          -keyalg RSA \
+          -genkeypair \
+          -dname "CN=Kafka CA" \
+          -ext bc=ca:true \
+          -ext ku=keyCertSign,cRLSign
+        
+        # Export CA certificate
+        keytool -keystore /bitnami/kafka/config/certs/kafka_ca.keystore.jks \
+          -alias ca \
+          -storepass keystore_password \
+          -exportcert -rfc \
+          -file /bitnami/kafka/config/certs/kafka_ca_cert.pem
+        
+        # Generate server keystore and certificate signing request
+        keytool -keystore /bitnami/kafka/config/certs/kafka.keystore.jks \
+          -alias kafka \
+          -validity 365 \
+          -storepass keystore_password \
+          -keypass keystore_password \
+          -keyalg RSA \
+          -genkeypair \
+          -dname "CN=kafka" \
+          -ext san=dns:kafka,dns:localhost
+        
+        # Generate CSR for server certificate
+        keytool -keystore /bitnami/kafka/config/certs/kafka.keystore.jks \
+          -alias kafka \
+          -storepass keystore_password \
+          -certreq \
+          -file /bitnami/kafka/config/certs/kafka.csr
+        
+        # Sign the server certificate with CA
+        keytool -keystore /bitnami/kafka/config/certs/kafka_ca.keystore.jks \
+          -alias ca \
+          -storepass keystore_password \
+          -gencert \
+          -rfc \
+          -infile /bitnami/kafka/config/certs/kafka.csr \
+          -outfile /bitnami/kafka/config/certs/kafka_cert.pem \
+          -ext san=dns:kafka,dns:localhost \
+          -ext ku:c=digitalSignature,keyEncipherment \
+          -ext eku=serverAuth
+        
+        # Import CA cert into server keystore
+        keytool -keystore /bitnami/kafka/config/certs/kafka.keystore.jks \
+          -alias CARoot \
+          -storepass keystore_password \
+          -import \
+          -file /bitnami/kafka/config/certs/kafka_ca_cert.pem \
+          -noprompt
+        
+        # Import signed certificate into server keystore
+        keytool -keystore /bitnami/kafka/config/certs/kafka.keystore.jks \
+          -alias kafka \
+          -storepass keystore_password \
+          -import \
+          -file /bitnami/kafka/config/certs/kafka_cert.pem
+        
+        # Create truststore with CA cert
+        keytool -keystore /bitnami/kafka/config/certs/kafka.truststore.jks \
+          -alias CARoot \
+          -import \
+          -file /bitnami/kafka/config/certs/kafka_ca_cert.pem \
+          -storepass truststore_password \
+          -noprompt
+    volumes:
+      - ./certs:/bitnami/kafka/config/certs
+
+  kafka:
+    image: bitnami/kafka:latest
+    environment:
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:29092,INTERNAL_SASL_SSL://:9092,EXTERNAL_SASL_SSL://:19092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:29092,INTERNAL_SASL_SSL://kafka:9092,EXTERNAL_SASL_SSL://localhost:19092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,INTERNAL_SASL_SSL:SASL_SSL,EXTERNAL_SASL_SSL:SASL_SSL
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      
+      # SSL configuration
+      - KAFKA_CFG_SSL_KEYSTORE_LOCATION=/bitnami/kafka/config/certs/kafka.keystore.jks
+      - KAFKA_CFG_SSL_KEYSTORE_PASSWORD=keystore_password
+      - KAFKA_CFG_SSL_TRUSTSTORE_LOCATION=/bitnami/kafka/config/certs/kafka.truststore.jks
+      - KAFKA_CFG_SSL_TRUSTSTORE_PASSWORD=truststore_password
+      - KAFKA_CFG_SSL_CLIENT_AUTH=none
+      
+      # SASL configuration
+      - KAFKA_CFG_SASL_ENABLED_MECHANISMS=SCRAM-SHA-512
+      - KAFKA_CFG_SASL_MECHANISM_INTER_BROKER_PROTOCOL=SCRAM-SHA-512
+      - KAFKA_CLIENT_USERS=kafka
+      - KAFKA_CLIENT_PASSWORDS=kafka_password
+      
+      # Security configuration
+      - KAFKA_CFG_ALLOW_EVERYONE_IF_NO_ACL_FOUND=true
+      - KAFKA_CFG_SUPER_USERS=User:kafka
+      
+      # JAAS configuration
+      - KAFKA_CFG_SASL_JAAS_CONFIG=org.apache.kafka.common.security.scram.ScramLoginModule required username="kafka" password="kafka_password";
+    ports:
+      - "19092:19092"
+      - "9092:9092"
+      - "29092:29092"
+    volumes:
+      - kafka_data:/bitnami/kafka
+      - ./certs:/bitnami/kafka/config/certs
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+      tls-init:
+        condition: service_completed_successfully
+
+  debezium:
+    image: debezium/connect:2.7
+    container_name: debezium
+    environment:
+      # Kafka connection settings
+      BOOTSTRAP_SERVERS: kafka:9092
+      GROUP_ID: 1
+      CONFIG_STORAGE_TOPIC: connect_configs
+      OFFSET_STORAGE_TOPIC: connect_offsets
+      
+      # Security settings
+      CONNECT_SECURITY_PROTOCOL: SASL_SSL
+      CONNECT_SASL_MECHANISM: SCRAM-SHA-512
+      CONNECT_SASL_JAAS_CONFIG: org.apache.kafka.common.security.scram.ScramLoginModule required username="kafka" password="kafka_password";
+      
+      # SSL settings
+      CONNECT_SSL_TRUSTSTORE_LOCATION: /kafka/certs/kafka.truststore.jks
+      CONNECT_SSL_TRUSTSTORE_PASSWORD: truststore_password
+      
+      # Producer security settings
+      CONNECT_PRODUCER_SECURITY_PROTOCOL: SASL_SSL
+      CONNECT_PRODUCER_SASL_MECHANISM: SCRAM-SHA-512
+      CONNECT_PRODUCER_SASL_JAAS_CONFIG: org.apache.kafka.common.security.scram.ScramLoginModule required username="kafka" password="kafka_password";
+      CONNECT_PRODUCER_SSL_TRUSTSTORE_LOCATION: /kafka/certs/kafka.truststore.jks
+      CONNECT_PRODUCER_SSL_TRUSTSTORE_PASSWORD: truststore_password
+      
+      # Consumer security settings
+      CONNECT_CONSUMER_SECURITY_PROTOCOL: SASL_SSL
+      CONNECT_CONSUMER_SASL_MECHANISM: SCRAM-SHA-512
+      CONNECT_CONSUMER_SASL_JAAS_CONFIG: org.apache.kafka.common.security.scram.ScramLoginModule required username="kafka" password="kafka_password";
+      CONNECT_CONSUMER_SSL_TRUSTSTORE_LOCATION: /kafka/certs/kafka.truststore.jks
+      CONNECT_CONSUMER_SSL_TRUSTSTORE_PASSWORD: truststore_password
+    depends_on: 
+      kafka:
+        condition: service_started
+    ports:
+      - 8083:8083
+    volumes:
+      - ./certs:/kafka/certs
+  mysql:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=debezium
+      - MYSQL_USER=mysqluser
+      - MYSQL_PASSWORD=mysqlpw
+      - MYSQL_DATABASE=inventory
+    ports:
+      - "3306:3306"
+    volumes:
+      - ../init:/docker-entrypoint-initdb.d  # For initialization scripts
+      - mysql_data:/var/lib/mysql
+    command: [
+      '--character-set-server=utf8mb4',
+      '--collation-server=utf8mb4_unicode_ci',
+      '--default-authentication-plugin=mysql_native_password',
+      '--log-bin=mysql-bin',
+      '--binlog-format=ROW',
+      '--server-id=1',
+      '--binlog-rows-query-log-events=ON'
+    ]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '2'
+          memory: 2G
+  kafka-console:
+    container_name: kafka-console
+    image: docker.redpanda.com/redpandadata/console:v2.6.0
+    entrypoint: /bin/sh
+    command: -c 'echo "$$CONSOLE_CONFIG_FILE" > /tmp/config.yml; /app/console'
+    environment:
+      CONFIG_FILEPATH: /tmp/config.yml
+      CONSOLE_CONFIG_FILE: |
+        kafka:
+          brokers: ["kafka:29092"]
+    ports:
+      - 8080:8080
+    depends_on:
+      - kafka
+
+volumes:
+  zookeeper_data:
+  kafka_data:
+  mysql_data:
