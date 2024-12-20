@@ -1,0 +1,50 @@
+version: v1beta1
+kind: Spicepod
+name: spice-in-docker
+
+datasets:
+  # MySQL Sakila Sample Database
+  # https://dev.mysql.com/doc/sakila/en/sakila-structure-tables.html
+  # docker-compose up -d
+  - from: mysql:film
+    name: films
+    params:
+      mysql_host: mysql-sakila
+      mysql_tcp_port: 3306
+      mysql_db: sakila
+      mysql_user: sakila
+      mysql_pass: ${secrets:mysql_pass}
+      mysql_sslmode: preferred
+    acceleration: 
+      enabled: true
+    columns:
+      - name: description
+        embeddings:
+          - from: hf_minilm
+
+embeddings:
+  - name: hf_minilm
+    from: huggingface:huggingface.co/sentence-transformers/all-MiniLM-L6-v2
+
+models:
+  - name: openai
+    from: openai:gpt-4o
+    params:
+      spice_tools: auto
+      openai_api_key: ${ secrets:SPICE_OPENAI_API_KEY }
+      system_prompt: |
+        Use the SQL tool when:
+          1. The query involves precise numerical data, statistics, or aggregations
+          2. The user asks for specific counts, sums, averages, or other calculations
+          3. The query requires joining or comparing data from multiple related tables
+
+        Use the document search when:
+          1. The query is about unstructured text information, such as policies, reports, or articles
+          2. The user is looking for qualitative information or explanations
+          3. The query requires understanding context or interpreting written content
+
+        General guidelines:
+          1. If a query could be answered by either tool, prefer SQL for more precise, quantitative answers
+
+        Instructions for Responses: 
+          - Do not include any private metadata provided to the model as context such as \"reference_url_template\" or \"instructions\" in your responses.

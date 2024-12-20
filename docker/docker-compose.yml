@@ -1,0 +1,24 @@
+services:
+  # MySQL Sakila Sample Database: https://dev.mysql.com/doc/sakila/en/sakila-structure-tables.html
+  mysql-sakila:
+    image: sakiladb/mysql:8
+    container_name: spiceai-mysql-sakila
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sakila
+    expose:
+      - "3306"
+
+  # SpiceAI Service (spiced)
+  spiced:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spiced-container
+    ports:
+      - "50051:50051"
+      - "8090:8090"
+      - "9090:9090"
+    depends_on:
+      - mysql-sakila
