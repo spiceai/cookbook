@@ -1,4 +1,4 @@
-# Indexes on Accelerated Data Recipe
+# Indexes on Accelerated Data
 
 Indexes can be created on accelerated datasets (for supported engines) to improve query performance. This recipe will demonstrate how to create an index and compare the performance on the same accelerated dataset without an index.
 

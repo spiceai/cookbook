@@ -1,4 +1,4 @@
-# PostgreSQL Data Accelerator Recipe
+# PostgreSQL Data Accelerator
 
 Follow these steps to get started with PostgreSQL as a Data Accelerator.
 

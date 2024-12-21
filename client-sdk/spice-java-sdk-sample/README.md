@@ -1,4 +1,4 @@
-# Spice with Java SDK Recipe
+# Spice with Java SDK
 
 Use [Spice.ai Java SDK](https://github.com/spiceai/spice-java) to query [Spice.ai](https://github.com/spiceai/spiceai) from Java.
 

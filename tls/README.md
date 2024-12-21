@@ -1,4 +1,4 @@
-# Encryption in transit using TLS Recipe
+# Encryption in transit using TLS
 
 This recipe demonstrates configuring Spice for encryption in transit using TLS and includes a sample client application that connects to the runtime securely. The Spice runtime is configured to use TLS for remote connections and to require TLS for its own HTTP and gRPC endpoints.
 

@@ -1,4 +1,4 @@
-# GraphQL Data Connector Recipe
+# GraphQL Data Connector
 
 Follow these steps to get started with GraphQL as a Data Connector.
 

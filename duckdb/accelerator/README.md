@@ -1,4 +1,4 @@
-# DuckDB Data Accelerator Recipe
+# DuckDB Data Accelerator
 
 This recipe will walkthrough how to accelerate a local copy of the taxi trips dataset stored in S3 using DuckDB as the data accelerator engine.
 

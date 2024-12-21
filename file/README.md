@@ -1,4 +1,4 @@
-# File Data Connector Recipe
+# File Data Connector
 
 Follow these steps to get started with using local files as a Data Connector.
 

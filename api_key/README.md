@@ -1,4 +1,4 @@
-# Spice.ai API Key Authentication Recipe
+# Spice.ai API Key Authentication
 
 Spice supports securing its HTTP, Flight/FlightSQL, and OpenTelemetry endpoints using API keys.
 

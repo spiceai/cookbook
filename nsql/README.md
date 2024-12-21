@@ -1,4 +1,4 @@
-# Text to SQL (NSQL) Recipe
+# Text to SQL (NSQL)
 
 Spice can provide an end to end system for users to ask natural language questions of their datasets.
 

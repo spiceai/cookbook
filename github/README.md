@@ -1,4 +1,4 @@
-# GitHub Data Connector Recipe
+# GitHub Data Connector
 
 This recipe will use the [spiceai/spiceai](https://github.com/spiceai/spiceai) repo for a demo.
 

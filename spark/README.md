@@ -1,4 +1,4 @@
-# Apache Spark Data Connector Recipe
+# Apache Spark Data Connector
 
 Spice can read data from a Spark instance. This guide will create an app, configure Spark to run locally, load and query a dataset. It assumes:
 

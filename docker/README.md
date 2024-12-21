@@ -1,4 +1,4 @@
-# Running in Docker Recipe
+# Running in Docker
 
 This recipe demonstrates how to run Spice.ai OSS in a container using the official [spiceai/spiceai](https://hub.docker.com/r/spiceai/spiceai) Docker image. It shows how to:
 

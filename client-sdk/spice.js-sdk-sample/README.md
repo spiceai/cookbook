@@ -1,4 +1,4 @@
-# Spice with spice.js SDK Recipe
+# Spice with spice.js SDK
 
 This recipe demonstrates how to use the Spice JavaScript SDK to connect to a Spice runtime and query data.
 

@@ -1,4 +1,4 @@
-# Nvidia NIM Recipe
+# Nvidia NIM
 
 This recipe deploys Nvidia [NIM](https://docs.nvidia.com/nim/) infrastructure, on Kubernetes, with GPUs. Specifically, we will:
 

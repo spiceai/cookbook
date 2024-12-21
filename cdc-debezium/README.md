@@ -1,4 +1,4 @@
-# Recipe for Streaming changes in real-time with Debezium CDC
+# Streaming changes in real-time with Debezium CDC
 
 Change Data Capture (CDC) is a technique to capture changed rows from a database's transaction log and deliver to consumers with low latency. Leveraging this technique allows Spice to keep locally accelerated datasets up-to-date in real-time with the source data, and is highly efficient by only transferring the changed rows instead of re-fetching the entire dataset on refresh.
 

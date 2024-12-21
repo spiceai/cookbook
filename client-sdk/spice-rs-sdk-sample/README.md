@@ -1,4 +1,4 @@
-# Spice with Rust SDK Recipe
+# Spice with Rust SDK
 
 This recipe demonstrates how to use the Spice Rust SDK to connect to a Spice runtime and query data.
 

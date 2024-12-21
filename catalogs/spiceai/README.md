@@ -1,4 +1,4 @@
-# Spice.ai Cloud Platform Catalog Connector Recipe
+# Spice.ai Cloud Platform Catalog Connector
 
 The Spice.ai Cloud Platform Catalog Connector makes querying datasets in the Spice.ai Cloud Platform simple.
 

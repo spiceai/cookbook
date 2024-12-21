@@ -1,4 +1,4 @@
-# Refresh Data Window Recipe
+# Refresh Data Window
 
 `refresh_data_window` is a duration parameter that filters data refresh source queries for time-series to recent data (duration into past from now).
 

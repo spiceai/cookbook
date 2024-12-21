@@ -1,5 +1,5 @@
 
-# Dremio Data Connector Recipe
+# Dremio Data Connector
 
 The Dremio recipe uses a publicly accessible demo instance of Dremio loaded with sample datasets. Thus, setting up your own Dremio instance is not required to complete the recipe, but the same steps can be used to connect to any Dremio instance.
 

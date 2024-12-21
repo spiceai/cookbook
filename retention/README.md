@@ -1,4 +1,4 @@
-# Accelerated Dataset Retention Policy Recipe
+# Accelerated Dataset Retention Policy
 
 This recipe demonstrates how to configure a retention policy for an accelerated dataset to evict data that is older than a specified duration.
 

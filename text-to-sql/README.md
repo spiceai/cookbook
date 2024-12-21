@@ -1,4 +1,4 @@
-# Text-to-SQL Recipe
+# Text-to-SQL
 
 This recipe will walk you through using Spice as a text to SQL interface.
 

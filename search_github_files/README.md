@@ -1,4 +1,4 @@
-# Searching GitHub Files Recipe
+# Searching GitHub Files
 
 This recipe demonstrates how to create embeddings for GitHub files and perform vector-based searches.
 

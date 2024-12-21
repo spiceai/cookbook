@@ -1,4 +1,4 @@
-# Supabase (PostgreSQL Data Connector) Recipe
+# Supabase (PostgreSQL Data Connector)
 
 Follow these steps to get started with Supabase using the PostgreSQL Data Connector.
 

@@ -1,4 +1,4 @@
-# Spice on Databricks (mode: delta_lake) Recipe
+# Spice on Databricks (mode: delta_lake)
 
 Spice can read data straight from a Databricks instance. This recipe will create an app, configure Databricks, load and query a dataset directly from Delta Lake Tables. It assumes:
 
