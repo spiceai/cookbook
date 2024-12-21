@@ -1,4 +1,4 @@
-# AWS RDS for PostgreSQL Recipe
+# AWS RDS for PostgreSQL
 
 Follow these steps to get started with federated SQL query against AWS RDS for PostgreSQL.
 

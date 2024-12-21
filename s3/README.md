@@ -1,4 +1,4 @@
-# S3 Data Connector Recipe
+# S3 Data Connector
 
 This recipe demonstrates how to configure a Spice dataset to connect to an S3 bucket and query data from it.
 

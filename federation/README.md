@@ -1,4 +1,4 @@
-# Federated SQL Query Recipe
+# Federated SQL Query
 
 Fetch combined data from S3 Parquet, PostgreSQL, and Dremio in a single query.
 

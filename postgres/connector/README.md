@@ -1,4 +1,4 @@
-# Postgres Data Connector Recipe
+# Postgres Data Connector
 
 This recipe will use a demo instance of Postgres with a dataset generated using SQL stored procedure. Follow the recipe to create Postgres instance and get started with Postgres as a Data Connector.
 

@@ -1,4 +1,4 @@
-# Clickhouse Data Connector Recipe
+# Clickhouse Data Connector
 
 Follow these steps to get started with Clickhouse as a Data Connector.
 

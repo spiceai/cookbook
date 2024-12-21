@@ -1,4 +1,4 @@
-# Spice with spicepy SDK Recipe
+# Spice with spicepy SDK
 
 This recipe demonstrates how to use the Spice Python SDK to connect to a Spice runtime and query data.
 

@@ -1,4 +1,4 @@
-# Advanced Data Refresh Recipe
+# Advanced Data Refresh
 
 Data refresh for accelerated datasets can be configured and tuned for specific scenarios.
 

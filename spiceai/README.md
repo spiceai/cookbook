@@ -1,4 +1,4 @@
-# Spice.ai Cloud Platform Data Connector Recipe
+# Spice.ai Cloud Platform Data Connector
 
 The Spice.ai Cloud Platform has many datasets that can be used within Spice.  A valid login for the Spice.ai Cloud Platform is required to access the datasets.  Before beginning this recipe, [link your GitHub account to Spice.ai](https://spice.ai/login) to get access to the platform.
 

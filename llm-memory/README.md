@@ -1,4 +1,4 @@
-# LLM Memory Recipe
+# LLM Memory
 
 Spice can provide persistent memory capabilities for language models, allowing them to remember important details from conversations across sessions.
 

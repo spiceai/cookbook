@@ -1,4 +1,4 @@
-# Planetscale (MySQL Data Connector) Recipe
+# Planetscale (MySQL Data Connector)
 
 Follow these steps to get started with federated SQL query against [Planetscale](https://planetscale.com/) using the MySQL Data Connector.
 

@@ -1,4 +1,4 @@
-# Recipe for Accelerated table data quality with constraint enforcement
+# Accelerated table data quality with constraint enforcement
 
 This recipe demonstrates how to use Spice to enforce constraints on locally accelerated data. This can be especially useful when you have a `refresh_mode: append` accelerated dataset and the data can be updated in the datasource.
 

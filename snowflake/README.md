@@ -1,4 +1,4 @@
-# Snowflake Data Connector Recipe
+# Snowflake Data Connector
 
 >[Snowflake](https://www.snowflake.com/) is a leading cloud-based data warehousing service that enables users to store, compute, and analyze vast amounts of data in real-time.
 

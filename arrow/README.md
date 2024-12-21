@@ -1,4 +1,4 @@
-# In-Memory Arrow Data Accelerator Recipe
+# In-Memory Arrow Data Accelerator
 
 Create a connector instance using sample data and accelerate it using In-Memory Arrow Data Accelerator.
 

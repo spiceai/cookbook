@@ -1,4 +1,4 @@
-# Running Llama3 Locally Recipe
+# Running Llama3 Locally
 
 Use the Llama family of models locally from HuggingFace using Spice.
 

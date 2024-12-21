@@ -1,4 +1,4 @@
-# FTP/SFTP Data Connector Recipe
+# FTP/SFTP Data Connector
 
 Follow these steps to get started with FTP/SFTP as a Data Connector.
 

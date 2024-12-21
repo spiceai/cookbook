@@ -1,4 +1,4 @@
-# Local Materialization and Acceleration CQRS Recipe
+# Local Materialization and Acceleration CQRS
 
 Use Spice.ai to simplify the process of building a high-performance [Command Query Responsibility Segregation (CQRS)](https://microservices.io/patterns/data/cqrs.html) application with local materialization and acceleration.
 

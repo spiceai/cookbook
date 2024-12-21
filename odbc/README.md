@@ -1,4 +1,4 @@
-# ODBC Data Connector Recipe
+# ODBC Data Connector
 
 Follow these steps to get started with ODBC as a Data Connector.
 

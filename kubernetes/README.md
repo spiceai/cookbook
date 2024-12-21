@@ -1,4 +1,4 @@
-# Running Spice.ai in Kubernetes Recipe
+# Running Spice.ai in Kubernetes
 
 **Step 1.** (Optional) Start a local [`kind`](https://kind.sigs.k8s.io/) cluster:
 

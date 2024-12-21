@@ -1,4 +1,4 @@
-# Spice with the OpenAI SDK Recipe
+# Spice with the OpenAI SDK
 
 One of Spice's best features is to act in place of the OpenAI API. Even better, you don't even have to be running OpenAI behind Spice! You can run OpenAI, Anthropic or HuggingFace models over your data and use existing tools that are compatible with the OpenAI API.
 

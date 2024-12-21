@@ -1,4 +1,4 @@
-# Recipe for adding Spice as a Grafana Datasource
+# Adding Spice as a Grafana Datasource
 
 This recipe will show how to configure a Grafana dashboard to use Spice as the data source using [FlightSQL](https://grafana.com/grafana/plugins/influxdata-flightsql-datasource/) and [Infinity](https://grafana.com/docs/plugins/yesoreyeram-infinity-datasource/latest/) plugins.
 

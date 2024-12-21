@@ -1,4 +1,4 @@
-# SharePoint Data Connector Recipe
+# SharePoint Data Connector
 
 Use the SharePoint Data Connector to query documents stored in SharePoint from Spice.
 

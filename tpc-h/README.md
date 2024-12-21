@@ -1,4 +1,4 @@
-# Recipe for TPC-H Benchmark Sample Data
+# TPC-H Benchmark Sample Data
 
 > TPC-H is a decision support benchmark. It consists of a suite of business-oriented ad hoc queries and concurrent data modifications. The queries and the data populating the database have been chosen to have broad industry-wide relevance. This benchmark illustrates decision support systems that examine large volumes of data, execute queries with a high degree of complexity, and give answers to critical business questions.
 >

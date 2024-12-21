@@ -1,4 +1,4 @@
-# Local dataset replication (Localpod) recipe
+# Local dataset replication (Localpod)
 
 The [Localpod](https://docs.spiceai.org/components/data-connectors/localpod) Data Connector allows you to link datasets in a parent/child relationship within the current Spicepod. This helps you set up multiple levels of data acceleration for a single dataset and ensures the data is downloaded only once from the remote source.
 

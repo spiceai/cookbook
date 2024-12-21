@@ -1,4 +1,4 @@
-# Azure OpenAI Models Recipe
+# Azure OpenAI Models
 
 This recipe demonstrates how to use Azure OpenAI models for vector-based search and chat functionalities with structured (taxi trips) and unstructured (GitHub files) data.
 

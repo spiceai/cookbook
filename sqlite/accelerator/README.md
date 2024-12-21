@@ -1,4 +1,4 @@
-# SQLite Data Accelerator Recipe
+# SQLite Data Accelerator
 
 Follow this recipe to configure dataset acceleration using SQLite.
 

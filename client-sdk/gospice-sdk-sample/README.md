@@ -1,4 +1,4 @@
-# gospice SDK recipe
+# Spice with gospice SDK
 
 This recipe demonstrates how to use the gospice SDK to connect to a Spice runtime and query data.
 

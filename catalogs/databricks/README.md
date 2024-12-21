@@ -1,4 +1,4 @@
-# Databricks Unity Catalog Connector Recipe
+# Databricks Unity Catalog Connector
 
 The Databricks Unity Catalog Connector makes querying Databricks Unity Catalog tables in Spice simple.
 

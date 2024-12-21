@@ -1,4 +1,4 @@
-# Sales BI (Apache Superset) Recipe
+# Sales BI (Apache Superset)
 
 Use [Apache Superset](https://superset.apache.org/) to query and visualize datasets loaded in Spice.
 

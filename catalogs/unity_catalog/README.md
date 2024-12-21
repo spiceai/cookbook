@@ -1,4 +1,4 @@
-# Unity Catalog Connector Recipe
+# Unity Catalog Connector
 
 The Unity Catalog Connector makes querying tables in a Unity Catalog with Spice simple.
 
