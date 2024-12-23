@@ -1,6 +1,6 @@
 # JSON strings
 
-This recipe demonstrates how to work with JSON strings with Spice. A JSON string represents a JSON object serialized into a string format.  For example:
+This recipe demonstrates how to work with JSON strings with Spice. A JSON string represents a JSON object serialized into a string format.
 
 JSON string manipulation in Spice is based on [datafusion-functions-json](https://github.com/datafusion-contrib/datafusion-functions-json) which parses strings into JSON objects and provides the following functionality:
 
