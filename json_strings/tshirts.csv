@@ -1,0 +1,9 @@
+id,name,properties
+1,Ink Fusion T-Shirt,"{""size"": [""S"", ""M"", ""L"", ""XL""], ""color"": ""white"", ""inventory"": {""stock"": {""S"": 12, ""M"": 20, ""L"": 10, ""XL"": 4}, ""locations"": [""warehouse_1"", ""store_1""]}}"
+2,ThreadVerse T-Shirt,"{""size"": [""S"", ""M"", ""L"", ""XL""], ""color"": ""black"", ""inventory"": {""stock"": {""S"": 7, ""M"": 15, ""L"": 9, ""XL"": 3}, ""locations"": [""warehouse_2"", ""store_2""]}}"
+3,Design Dynamo T-Shirt,"{""size"": [""M"", ""L"", ""XL""], ""color"": ""blue"", ""inventory"": {""stock"": {""M"": 10, ""L"": 7, ""XL"": 2}, ""locations"": [""warehouse_3"", ""store_3""]}}"
+4,Artistry Apex T-Shirt,"{""size"": [""M"", ""L"", ""XL""], ""color"": ""red"", ""inventory"": {""stock"": {""M"": 10, ""L"": 8, ""XL"": 5}, ""locations"": [""warehouse_1"", ""store_4""]}}"
+5,Graphite Glow T-Shirt,"{""size"": [""S"", ""M"", ""L"", ""XL""], ""color"": ""gray"", ""inventory"": {""stock"": {""S"": 10, ""M"": 8, ""L"": 6, ""XL"": 3}, ""locations"": [""warehouse_2"", ""store_5""]}}"
+6,Sunburst Shine T-Shirt,"{""size"": [""S"", ""M"", ""L"", ""XL""], ""color"": ""yellow"", ""inventory"": {""stock"": {""S"": 20, ""M"": 25, ""L"": 15, ""XL"": 10}, ""locations"": [""warehouse_1"", ""store_6""]}}"
+7,Oceanic Opal T-Shirt,"{""size"": [""S"", ""M"", ""L"", ""XL""], ""color"": ""teal"", ""inventory"": {""stock"": {""S"": 5, ""M"": 7, ""L"": 4, ""XL"": 2}, ""locations"": [""warehouse_3"", ""store_7""]}}"
+8,Crimson Cascade T-Shirt,"{""size"": [""S"", ""M"", ""L"", ""XL""], ""color"": ""maroon"", ""inventory"": {""stock"": {""S"": 8, ""M"": 12, ""L"": 9, ""XL"": 3}, ""locations"": [""warehouse_4"", ""store_8""]}}"
