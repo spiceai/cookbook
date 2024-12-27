@@ -1,8 +1,12 @@
-# LLM Memory
+# LLM Memory: Persistent Memory for Language Models with Spice
 
-Spice can provide persistent memory capabilities for language models, allowing them to remember important details from conversations across sessions.
+Spice provides persistent memory capabilities for language models, enabling them to retain key information from conversations across sessions. This feature supports building more context-aware and intelligent applications by maintaining memory continuity.
 
-## Requirements
+[LLM Memory [uc8TCAPu1IM].webm](https://github.com/user-attachments/assets/052200c3-1068-4330-adc7-7876307835ff)
+
+## Prerequisites
+
+Ensure the following before starting:
 
 - [Spice CLI](https://docs.spiceai.org/getting-started) installed.
 - The following environment variables set:
