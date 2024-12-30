@@ -11,7 +11,7 @@ views:
       SELECT * FROM tetris LIMIT 50
 
 evals:
-  - name: small_tetris
+  - name: tetris
     dataset: small_tetris
     scorers:
       - match

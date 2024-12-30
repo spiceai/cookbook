@@ -20,7 +20,7 @@ spice run
 
 2. Run an evaluation against `my_model`. This will take a moment to complete.
 ```shell
-curl -XPOST "http://localhost:8090/v1/evals/small_tetris" \
+curl -XPOST "http://localhost:8090/v1/evals/tetris" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "my_model"
