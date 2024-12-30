@@ -1,0 +1,23 @@
+version: v1beta1
+kind: Spicepod
+name: spice-poo
+
+datasets:
+  - from: https://github.com/openai/evals/raw/refs/heads/main/evals/registry/data/tetris/tetris.jsonl
+    name: tetris
+views:
+  - name: small_tetris
+    sql: |
+      SELECT * FROM tetris LIMIT 50
+
+evals:
+  - name: small_tetris
+    dataset: small_tetris
+    scorers:
+      - match
+
+models:
+  - name: my_model
+    from: openai:gpt-4o-mini
+    params:
+      openai_api_key: ${ secrets:SPICE_OPENAI_API_KEY }
