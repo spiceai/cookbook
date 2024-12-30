@@ -66,6 +66,7 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 - [Spice.ai Cloud Platform Catalog Connector](./catalogs/spiceai/README.md)
 - [Databricks Unity Catalog Connector](./catalogs/databricks/README.md)
 - [Unity Catalog Connector](./catalogs/unity_catalog/README.md)
+- [Iceberg Catalog Connector](./catalogs/iceberg/README.md)
 
 ### Deployment and Installation
 
