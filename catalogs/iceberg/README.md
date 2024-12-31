@@ -50,7 +50,10 @@ spice run
 
 ```bash
 spice sql
-sql> SELECT * FROM ice.nyc.taxis LIMIT 10;
+```
+
+```sql
+SELECT * FROM ice.nyc.taxis LIMIT 10;
 ```
 
 Output:
@@ -77,4 +80,3 @@ sql> SELECT * FROM ice.nyc.taxis LIMIT 10;
 
 Time: 0.186233833 seconds. 10 rows.
 ```
-
