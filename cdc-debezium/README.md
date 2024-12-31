@@ -25,11 +25,15 @@ cd cookbook/cdc-debezium
 
 Start the Docker Compose stack, which includes a Postgres database, a Kafka broker (via Redpanda), and a Debezium connector:
 
-`docker compose up -d`
+```shell
+docker compose up -d
+```
 
 Navigate to <http://localhost:8080> to see the Redpanda console. Notice that no topics are created by Debezium yet. We need to tell Debezium to connect to the Postgres database and create the topics.
 
-`curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @register-connector.json`
+```shell
+curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @register-connector.json
+```
 
 Now the Debezium connector is registered and will start capturing changes from the `customer_addresses` table in the Postgres database. Open http://<localhost:8080/topics> and see the topic `cdc.public.customer_addresses` created.
 
