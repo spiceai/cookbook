@@ -17,7 +17,14 @@ instances are accessible from within Spice to demonstrate that you can query acr
     cd cookbook/mssql
     ```
 
-2. Start the MSSQL instances using `docker compose up -d`. In a production scenario you'd want to use [secrets](https://docs.spiceai.org/components/secret-stores) to protect your secrets
+2. Start the MSSQL instances using `docker compose up -d`. In a production scenario you'd want to use [secrets](https://docs.spiceai.org/components/secret-stores) to protect your secrets.
+
+    ```shell
+    docker compose up -d
+    ```
+
+    Give the containers a few seconds to start up. Follow the logs with `docker compose logs -f` and wait for the message `Server is ready`.
+
 3. Start up Spice using `spice run`
 
     ```shell

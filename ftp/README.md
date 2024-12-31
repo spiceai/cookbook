@@ -17,14 +17,6 @@ make # Start the FTP server
 
 **Step 2.** Start the Spice runtime.
 
-```bash
-# In a new terminal
-cd cookbook/ftp
-spice run
-```
-
-See the [datasets reference](https://docs.spiceai.org/reference/spicepod/datasets) for more dataset configuration options.
-
 Set the environment variable `FTP_PASS`/`SFTP_PASS` to the password for your FTP server. This can be specified on the command line when running the Spice runtime, or in a `.env` file in the same directory as `spicepod.yaml`.
 
 i.e. to set the password in a `.env` file:
@@ -32,6 +24,14 @@ i.e. to set the password in a `.env` file:
 ```bash
 echo "FTP_PASS=123" > .env
 ```
+
+```bash
+# In a new terminal
+cd cookbook/ftp
+spice run
+```
+
+See the [datasets reference](https://docs.spiceai.org/reference/spicepod/datasets) for more dataset configuration options.
 
 **Step 3.** Run `spice sql` in a new terminal to start an interactive SQL query session against the Spice runtime.
 
