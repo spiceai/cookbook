@@ -80,6 +80,8 @@ Query the `tpch_customer` dataset.
 
 ```sql
 select c_name, c_address, c_acctbal, c_mktsegment from tpch_customer limit 10;
+```
+```sql
 +--------------------+---------------------------------------+-----------+--------------+
 | c_name             | c_address                             | c_acctbal | c_mktsegment |
 +--------------------+---------------------------------------+-----------+--------------+
