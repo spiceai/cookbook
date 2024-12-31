@@ -103,7 +103,10 @@ spice sql
 Check that the taxi_trips table exists:
 
 ```sql
-sql> show tables;
+show tables;
+```
+
+```console
 +---------------+--------------+---------------+------------+
 | table_catalog | table_schema | table_name    | table_type |
 +---------------+--------------+---------------+------------+
@@ -118,8 +121,10 @@ Time: 0.010070708 seconds. 2 rows.
 Query against the `taxi_trips` table in the runtime.
 
 ```sql
-sql> select avg(total_amount), avg(tip_amount), count(1), passenger_count from taxi_trips group by passenger_count order by passenger_count asc;
+select avg(total_amount), avg(tip_amount), count(1), passenger_count from taxi_trips group by passenger_count order by passenger_count asc;
+```
 
+```console
 +------------------------------+----------------------------+-----------------+-----------------+
 | avg(taxi_trips.total_amount) | avg(taxi_trips.tip_amount) | count(Int64(1)) | passenger_count |
 +------------------------------+----------------------------+-----------------+-----------------+
@@ -285,5 +290,5 @@ Spice.ai runtime starting...
 **Step 8.** Run queries against the dataset using the Spice SQL REPL.
 
 ```sql
-sql> select avg(total_amount), avg(tip_amount), count(1), passenger_count from taxi_trips group by passenger_count order by passenger_count asc;
+select avg(total_amount), avg(tip_amount), count(1), passenger_count from taxi_trips group by passenger_count order by passenger_count asc;
 ```

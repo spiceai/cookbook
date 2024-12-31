@@ -67,6 +67,9 @@ Query the `taxi_trips` dataset, observing the long query time.
 
 ```sql
 select "VendorID", tpep_pickup_datetime, tpep_dropoff_datetime, passenger_count from taxi_trips limit 10;
+```
+
+```console
 +----------+----------------------+-----------------------+-----------------+
 | VendorID | tpep_pickup_datetime | tpep_dropoff_datetime | passenger_count |
 +----------+----------------------+-----------------------+-----------------+
@@ -114,6 +117,9 @@ datasets:
 
 ```sql
 select "VendorID", tpep_pickup_datetime, tpep_dropoff_datetime, passenger_count from taxi_trips limit 10;
+```
+
+```console
 +----------+----------------------+-----------------------+-----------------+
 | VendorID | tpep_pickup_datetime | tpep_dropoff_datetime | passenger_count |
 +----------+----------------------+-----------------------+-----------------+

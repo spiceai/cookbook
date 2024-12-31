@@ -179,6 +179,9 @@ You can now now query `sample_data` in the runtime.
 
 ```sql
 select * from sample_data limit 10;
+```
+
+```console
 +----+---------------------+--------+----------+--------------------+-----------------+----------+---------+------------+-------------+
 | id | datetime            | name   | phone    | email              | street_address  | zip_code | region  | latitude   | longitude   |
 +----+---------------------+--------+----------+--------------------+-----------------+----------+---------+------------+-------------+
