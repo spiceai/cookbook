@@ -42,7 +42,7 @@ Run the client: `python openai_sdk.py`
 2. Activate the virtual environment: `source .venv/bin/activate`
 3. Ensure the packages are installed: `uv sync`
 
-Run the client: `uv run openai_sdk.py`
+Run the client: `uv run spice_openai_sdk.py`
 
 ## About the client
 
