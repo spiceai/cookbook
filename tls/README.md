@@ -21,8 +21,8 @@ First a CA (Certificate Authority) will be created with OpenSSL. Then, certifica
 The rest of the commands in this tutorial should be run from the `tls` directory.
 
 ```bash
-git clone https://github.com/spiceai/samples.git
-cd samples/tls
+git clone https://github.com/spiceai/cookbook.git
+cd cookbook/tls
 ```
 
 ## Create a CA (Certificate Authority)

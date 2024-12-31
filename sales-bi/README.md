@@ -22,16 +22,16 @@ Superset requires a Python [DB API 2](https://peps.python.org/pep-0249/) databas
 
 ![diagram overview](https://imagedelivery.net/HyTs22ttunfIlvyd6vumhQ/2c99263b-23a2-454f-9fdc-a9cfd67f8d00/public)
 
-This sample consists of a Docker Compose file with the following components:
+This recipe consists of a Docker Compose file with the following components:
 
 - A Spice runtime accelerating the data from the parquet file in S3.
 - An Apache Superset instance to visualize the data, connected to the Spice instance.
 
-Clone the `spiceai/samples` repository and navigate to the `sales-bi` directory:
+Clone the `spiceai/cookbook` repository and navigate to the `sales-bi` directory:
 
 ```bash
-git clone https://github.com/spiceai/samples.git
-cd samples/sales-bi
+git clone https://github.com/spiceai/cookbook.git
+cd cookbook/sales-bi
 ```
 
 Run the following command to start the components in the Docker Compose file:

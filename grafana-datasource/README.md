@@ -8,11 +8,11 @@ This recipe requires [Docker](https://www.docker.com/) and [Docker Compose](http
 
 ## Running the recipe
 
-Clone the `spiceai/samples` repository and navigate to the `grafana-datasource` directory:
+Clone the `spiceai/cookbook` repository and navigate to the `grafana-datasource` directory:
 
 ```bash
-git clone https://github.com/spiceai/samples.git
-cd samples/grafana-datasource
+git clone https://github.com/spiceai/cookbook.git
+cd cookbook/grafana-datasource
 ```
 
 Run the following command to start the components in the Docker Compose file:
