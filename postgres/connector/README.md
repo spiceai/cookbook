@@ -25,22 +25,16 @@ docker run --name postgres -e POSTGRES_HOST_AUTH_METHOD=trust  -d -p 5432:5432 p
 
 - Configure postgres settings
 
-```bash
-export PGHOST=localhost
-export PGPORT=5432
-export PGUSER=postgres
-```
-
-Create an empty database `spice_demo` in local Postgres.
+Create an empty database `spice_demo` in the local Postgres.
 
 ```bash
-createdb spice_demo
+PGHOST=localhost PGPORT=5432 PGUSER=postgres createdb spice_demo
 ```
 
 Verify the creation of `spice_demo` by openning it with psql CLI.
 
 ```bash
-psql spice_demo
+PGHOST=localhost PGPORT=5432 PGUSER=postgres psql spice_demo
 ```
 
 Create a sample table named `sample_data`.
