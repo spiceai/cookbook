@@ -55,7 +55,7 @@ Using `Ctrl-C`, stop Spice and use a text editor to open the `spicepod.yaml` fil
 Before:
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: cache-recipe
 dependencies:
@@ -65,7 +65,7 @@ dependencies:
 After:
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: cache-recipe
 

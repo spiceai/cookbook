@@ -76,7 +76,7 @@ Use text editor to open `.spicepod.yaml` and uncomment `acceleration` section. S
 Before:
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: spice_app
 datasets:
@@ -94,7 +94,7 @@ datasets:
 After:
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: spice_app
 datasets:

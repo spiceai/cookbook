@@ -18,7 +18,7 @@ cd retention-recipe
 **Step 2.** Add a dataset with a retention policy by editing spicepod.yaml
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: retention-recipe
 datasets:

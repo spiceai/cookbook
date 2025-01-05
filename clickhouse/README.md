@@ -62,7 +62,7 @@ CLICKHOUSE_PASS=<password>
 If you followed the above [preparation](#preparation) to generate a Clickhouse server use this:
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: clickhouse_quickstart
 datasets:

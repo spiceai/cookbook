@@ -40,7 +40,7 @@ cd odbc-demo
 In the new `spicepod.yml`, configure your ODBC connection like the following spicepod definition:
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: odbc-demo
 datasets:

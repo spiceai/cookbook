@@ -14,7 +14,7 @@ Follow these steps to get started with using local files as a Data Connector.
 
   ```shell
   cat <<EOF > spicepod.yaml
-  version: v1beta1
+  version: v1
   kind: Spicepod
   name: file_recipe
   datasets:
@@ -77,7 +77,7 @@ Time: 0.0253585 seconds. 1 rows.
 
   ```shell
   cat <<EOF > spicepod.yaml
-  version: v1beta1
+  version: v1
   kind: Spicepod
   name: file_recipe
   datasets:

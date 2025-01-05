@@ -18,7 +18,7 @@ cd arrow-acceleration-qs
 **Step 2.** Configure s3 dataset: copy and paste the YAML below to `spicepod.yaml` in the Spice app.
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: arrow-acceleration-qs
 datasets:
@@ -91,7 +91,7 @@ Time: 4.291336125 seconds. 10 rows.
 **Step 5.** Update the `spicepod.yaml` to enable In-Memory Arrow acceleration.
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: arrow-acceleration-qs
 datasets:

@@ -65,7 +65,7 @@ In the `acceleration` section:
 The `spicepod.yaml` should be as below:
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: quickstart
 datasets:

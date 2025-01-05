@@ -41,7 +41,7 @@ Quit the DuckDB CLI (ctrl-c, ctrl-c).
 **Step 3.** Configure the dataset to use the DuckDB database file. Copy and paste the YAML below to `spicepod.yaml` in the Spice app.
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: duckdb-qs
 datasets:

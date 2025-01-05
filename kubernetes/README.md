@@ -71,7 +71,7 @@ show tables;
 cat <<EOF > values.yaml
 spicepod:
   name: app
-  version: v1beta1
+  version: v1
   kind: Spicepod
 
   datasets:

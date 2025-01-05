@@ -20,7 +20,7 @@ cd refresh-data-window-recipe
 **Step 2.** Add a new dataset
 
 ```bash
-version: v1beta1
+version: v1
 kind: Spicepod
 name: refresh-data-window-recipe
 datasets:
@@ -81,7 +81,7 @@ Time: 0.036439333 seconds. 5 rows.
 **Step 4.** Edit spicepod.yaml to add `refresh_data_window`
 
 ```bash
-version: v1beta1
+version: v1
 kind: Spicepod
 name: refresh-data-window-recipe
 datasets:

@@ -64,7 +64,7 @@ Spice.ai runtime starting...
 Use text editor add **snowflake_sample_data.tpch_sf1** dataset to `spicepod.yaml`. Modify the `params` section to specify desired warehouse or role to use.
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: snowflake-app
 datasets:
@@ -155,7 +155,7 @@ Use text editor to update `spicepod.yaml`
 Before:
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: snowflake-app
 datasets:
@@ -169,7 +169,7 @@ datasets:
 After:
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: test
 datasets:
