@@ -5,9 +5,16 @@ This recipe will use a demo instance of MySQL with a dataset generated using SQL
 ## Prerequisites
 
 - Install [MySQL](https://dev.mysql.com/doc/refman/8.0/en/installing.html).
+  - Alternatively, you can use [Docker](https://docs.docker.com/get-docker/) to run a MySQL instance.
 - Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation).
 
 ## Steps
+
+**Step 0.** Optional. Start a MySQL instance using Docker, if MySQL is not installed.
+
+```bash
+docker run -d --name mysql-spice-demo -e MYSQL_ROOT_PASSWORD=123 -e MYSQL_DATABASE=spice_demo -e MYSQL_PASSWORD=123 -p 3306:3306 mysql:8.0
+```
 
 **Step 1.** Create a sample MySQL database and generate a testing table using stored procedure.
 
@@ -15,6 +22,8 @@ Invoke MySQL in the prompt.
 
 ```bash
 mysql -u USERNAME -pPASSWORD
+# Or if using Docker
+docker exec -it mysql-spice-demo mysql -u root -p123
 ```
 
 Using the MySQL console, create a sample database named `spice_demo`.
@@ -155,6 +164,7 @@ Ensure the `MYSQL_PASS` environment variable is set to the password for your MyS
 
 ```bash
 echo "MYSQL_PASS=<password>" > .env
+# i.e. echo "MYSQL_PASS=123" > .env
 ```
 
 **Step 5.** Start the Spice runtime
