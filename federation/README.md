@@ -59,9 +59,6 @@ select * from s3_source;
 -- Query the accelerated S3 source
 select * from s3_source_accelerated;
 
--- Query the federated PostgreSQL source
-select * from pg_source;
-
 -- Query the federated Dremio source
 select * from dremio_source;
 
@@ -70,8 +67,6 @@ select * from dremio_source_accelerated;
 
 -- Perform an aggregation query that combines data from S3, PostgreSQL, and Dremio
 WITH all_sales AS (
-  SELECT sales FROM pg_source
-  UNION ALL
   SELECT sales FROM s3_source_accelerated
   UNION ALL
   select fare_amount+tip_amount as sales from dremio_source_accelerated
