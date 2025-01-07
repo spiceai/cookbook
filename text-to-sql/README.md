@@ -165,6 +165,21 @@ From this, you can see that `spice` runs the following [tools](https://docs.spic
   - `random_sample` to sample rows from each table.
   - `sample_distinct_columns` to sample distinct values from each column in the table.
 
+### Return the SQL Query
+The `v1/nsql` endpoint can return early if you only want the SQL query. To do this, specify the header `Accept: application/sql` in the text to SQL request.
+
+```shell
+curl -XPOST "http://localhost:8090/v1/nsql" \
+  -H "Content-Type: application/sql" \
+  -d '{
+    "query": "What’s the highest tip any passenger gave?",
+  }'
+```
+Returns:
+```sql
+SELECT MAX(tip_amount) AS highest_tip_amount FROM taxi_trips
+```
+
 ### Disable Sampling
 
 To disable sampling in text-to-SQL:
@@ -189,4 +204,53 @@ curl -XPOST "http://localhost:8090/v1/nsql" \
     "query": "Which vendors have made the most trips in 2024?",
     "tables": ["taxi_trips"]
   }'
+```
+
+
+
+## (Optional) Use a Local Model
+
+**Step 1.** In the `spicepod.yaml`, uncomment the model `local`.
+
+**Step 2.** Restart the `spiced` server.
+
+**Step 3.** Run the NSQL tool, and select the local model.
+
+```shell
+>>> ~/.spice/bin/spice nsql
+Welcome to the Spice.ai NSQL REPL!
+Use the arrow keys to navigate: ↓ ↑ → ←
+? Select model:
+    oai
+  ▸ local
+```
+
+**Step 4.** Ask a question
+
+```shell
+nsql> What’s the highest tip any passenger gave?
++--------------------+
+| highest_tip_amount |
++--------------------+
+| 428.0              |
++--------------------+
+
+Time: 9.141290 seconds. 1 rows.
+```
+
+Step 5.** (Optional) Check the underlying query
+
+```sql
+select start_time, parent_span_id, span_id, task, substr(input, 0, 64) as input, execution_duration_ms from runtime.task_history where trace_id=(select trace_id from runtime.task_history where task='nsql') order by start_time asc;
+```
+
+```shell
++----------------------------+------------------+------------------+---------------+-----------------------------------------------------------------+-----------------------+
+| start_time                 | parent_span_id   | span_id          | task          | input                                                           | execution_duration_ms |
++----------------------------+------------------+------------------+---------------+-----------------------------------------------------------------+-----------------------+
+| 2024-10-14T10:28:46.300138 |                  | 3ca45f3db11636c8 | nsql          | What’s the highest tip any passenger gave?                      | 9138.792000000001     |
+| 2024-10-14T10:28:46.300380 | 3ca45f3db11636c8 | 528cbddc53d55c70 | ai_completion | {"messages":[{"role":"system","content":"```SQL\nCREATE TABLE I | 9133.243999999999     |
+| 2024-10-14T10:28:55.433665 | 3ca45f3db11636c8 | 2b25cd3f59aa6362 | sql_query     | SELECT MAX(tip_amount) AS highest_tip_amount                    | 5.012                 |
+|                            |                  |                  |               | FROM taxi_trips                                                 |                       |
++----------------------------+------------------+------------------+---------------+-----------------------------------------------------------------+-----------------------+
 ```

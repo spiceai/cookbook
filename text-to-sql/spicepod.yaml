@@ -16,3 +16,7 @@ models:
     name: nql
     params:
       openai_api_key: ${ secrets:SPICE_OPENAI_API_KEY }
+  # - name: local
+  #   from: huggingface:huggingface.co/microsoft/Phi-3.5-mini-instruct
+  #   params:
+  #     model_type: phi3
