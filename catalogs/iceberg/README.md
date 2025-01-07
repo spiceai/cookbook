@@ -2,6 +2,8 @@
 
 The Iceberg Catalog Connector enables Spice to query Iceberg tables in an Iceberg catalog.
 
+[![Watch the Spice.ai OSS Iceberg Catalog connector demo](https://img.youtube.com/vi/Akq39ml8LO0/hqdefault.jpg)](https://www.youtube.com/embed/Akq39ml8LO0)
+
 ## Prerequisites
 
 - Access to an Iceberg catalog, or Docker to run an Iceberg catalog locally.
