@@ -27,7 +27,7 @@ Separate from using language models to interact with [runtime tools](https://doc
   curl -XPOST "http://localhost:8090/v1/nsql" \
     -H "Content-Type: application/json" \
     -d '{
-      "query": "Which vendors have made the most trips this year?"
+      "query": "Which vendors have made the most trips in 2024?"
     }'
   ```
 
@@ -173,7 +173,7 @@ To disable sampling in text-to-SQL:
 curl -XPOST "http://localhost:8090/v1/nsql" \
   -H "Content-Type: application/json" \
   -d '{
-    "query": "Which vendors have made the most trips this year?",
+    "query": "Which vendors have made the most trips in 2024?",
      "sample_data_enabled": false
   }'
 ```
@@ -186,7 +186,7 @@ To restrict the tables that `spice` uses for text-to-SQL:
 curl -XPOST "http://localhost:8090/v1/nsql" \
   -H "Content-Type: application/json" \
   -d '{
-    "query": "Which vendors have made the most trips this year?",
+    "query": "Which vendors have made the most trips in 2024?",
     "tables": ["taxi_trips"]
   }'
 ```
