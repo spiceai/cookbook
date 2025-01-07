@@ -22,6 +22,7 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 - [Text to SQL (Tools)](./text-to-sql/README.md)
 - [Nvidia NIM](./nvidia-nim/README.md) - Deploy Nvidia NIM infrastructure, on Kubernetes, with GPUs connected to Spice.
 - [Searching GitHub Files](./search_github_files/README.md) - Search GitHub files with embeddings and vector similarity search.
+- [xAI Models](./models/xai/README.md) - Use xAI models such as Grok.
 
 ### Data Acceleration - Materializing & accelerating data locally with Data Accelerators
 
