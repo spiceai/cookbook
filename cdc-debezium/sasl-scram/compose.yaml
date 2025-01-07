@@ -165,7 +165,7 @@ services:
         condition: service_completed_successfully
 
   debezium:
-    image: debezium/connect:2.7
+    image: debezium/connect:2.7.3.Final
     container_name: debezium
     environment:
       # Kafka connection settings
