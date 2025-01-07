@@ -95,7 +95,7 @@ spark.driver.memory 6g
    Welcome to the Spice.ai SQL REPL! Type 'help' for help.
 
    show tables; -- list available tables
-   sql> show tables
+   sql> show tables;
    +---------------+------------+
    | table_name    | table_type |
    +---------------+------------+
@@ -106,7 +106,7 @@ spark.driver.memory 6g
    ```
 
    ```shell
-   sql> describe nyc_taxi_trip
+   sql> describe nyc_taxi_trip;
    +-----------------------+------------------------------+-------------+
    | column_name           | data_type                    | is_nullable |
    +-----------------------+------------------------------+-------------+
