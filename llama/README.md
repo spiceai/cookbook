@@ -2,6 +2,8 @@
 
 Use the Llama family of models locally from HuggingFace using Spice.
 
+[![Watch the Spice.ai local Llama demo](https://img.youtube.com/vi/I2i6uZKBbd4/hqdefault.jpg)](https://www.youtube.com/embed/I2i6uZKBbd4)
+
 ## Requirements
 
 - [Spice CLI](https://docs.spiceai.org/getting-started) installed.

@@ -2,7 +2,7 @@
 
 Spice provides persistent memory capabilities for language models, enabling them to retain key information from conversations across sessions. This feature supports building more context-aware and intelligent applications by maintaining memory continuity.
 
-[LLM Memory [uc8TCAPu1IM].webm](https://github.com/user-attachments/assets/052200c3-1068-4330-adc7-7876307835ff)
+[![Watch the Spice.ai LLM memory demo](https://img.youtube.com/vi/uc8TCAPu1IM/hqdefault.jpg)](https://www.youtube.com/embed/uc8TCAPu1IM)
 
 ## Prerequisites
 
@@ -86,9 +86,9 @@ Output:
 
 ```json
 [
-    "Users name is Alice",
-    "Alice is a software engineer",
-    "Alice lives in Seattle",
-    "Alice thinks she deserves a promotion"
+  "Users name is Alice",
+  "Alice is a software engineer",
+  "Alice lives in Seattle",
+  "Alice thinks she deserves a promotion"
 ]
 ```
