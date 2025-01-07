@@ -1,0 +1,9 @@
+version: v1
+kind: Spicepod
+name: xai
+
+models:
+  - from: xai:grok2-latest
+    name: xai
+    params:
+      xai_api_key: ${secrets:SPICE_XAI_API_KEY}
