@@ -1,6 +1,6 @@
-version: v1beta1
+version: v1
 kind: Spicepod
-name: sample
+name: cqrs
 
 datasets:
   - from: postgres:public.products
@@ -29,4 +29,3 @@ datasets:
 views:
   - name: rankings
     sql: with a as (SELECT products.id, sum(count) as count FROM orders INNER JOIN products ON orders.product_id = products.id GROUP BY products.id) select name, count from products left join a on products.id = a.id order by count desc limit 5
-

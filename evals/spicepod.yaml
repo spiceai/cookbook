@@ -1,6 +1,6 @@
-version: v1beta1
+version: v1
 kind: Spicepod
-name: spice-poo
+name: evals
 
 datasets:
   - from: https://github.com/openai/evals/raw/refs/heads/main/evals/registry/data/tetris/tetris.jsonl

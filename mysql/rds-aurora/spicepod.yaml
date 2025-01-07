@@ -1,6 +1,6 @@
-version: v1beta1
+version: v1
 kind: Spicepod
-name: rds_aurora_mysql_recipe
+name: rds_aurora_mysql
 datasets:
   - from: mysql:[remote_table_path]
     name: [local_table_name]

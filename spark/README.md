@@ -72,7 +72,7 @@ spark.driver.memory 6g
 4. Configure a Spark dataset into the spicepod. Copy and paste the following `spicepod.yaml` configuration into your Spicepod.
 
    ```yaml
-   version: v1beta1
+   version: v1
    kind: Spicepod
    name: spark_demo
    datasets:

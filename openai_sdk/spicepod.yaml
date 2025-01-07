@@ -1,8 +1,9 @@
-version: v1beta1
+version: v1
 kind: Spicepod
-name: openai_sdk_recipe
+name: openai_sdk
+
 dependencies:
-    - spiceai/quickstart
+  - spiceai/quickstart
 
 models:
   - name: openai

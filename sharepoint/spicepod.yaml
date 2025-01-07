@@ -1,6 +1,7 @@
-version: v1beta1
+version: v1
 kind: Spicepod
-name: sharepoint-qs
+name: sharepoint
+
 datasets:
   - from: sharepoint:me/root
     name: important_documents

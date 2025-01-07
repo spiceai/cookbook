@@ -65,19 +65,19 @@ In the `acceleration` section:
 The `spicepod.yaml` should be as below:
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: quickstart
 datasets:
-- from: s3://spiceai-demo-datasets/taxi_trips/2024/
-  name: taxi_trips
-  description: taxi trips in s3
-  params:
-    file_format: parquet
-  acceleration:
-    enabled: true
-    refresh_mode: full
-    refresh_sql: select * from taxi_trips where passenger_count = 2
+  - from: s3://spiceai-demo-datasets/taxi_trips/2024/
+    name: taxi_trips
+    description: taxi trips in s3
+    params:
+      file_format: parquet
+    acceleration:
+      enabled: true
+      refresh_mode: full
+      refresh_sql: select * from taxi_trips where passenger_count = 2
 ```
 
 Save the file and note that the dataset has been updated:

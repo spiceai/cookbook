@@ -1,6 +1,6 @@
-version: v1beta1
+version: v1
 kind: Spicepod
-name: spicepod-graphql-spicehq-decisions
+name: github
 
 datasets:
   - from: github:github.com/spiceai/spiceai/files/trunk

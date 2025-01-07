@@ -1,6 +1,6 @@
-version: v1beta1
+version: v1
 kind: Spicepod
-name: localpod
+name: llama
 
 models:
   - name: llama3

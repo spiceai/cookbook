@@ -1,6 +1,7 @@
-version: v1beta1
+version: v1
 kind: Spicepod
-name: ftp_recipe
+name: ftp
+
 datasets:
   - from: ftp://localhost/customers.csv
     name: customers

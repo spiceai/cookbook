@@ -1,4 +1,4 @@
-version: v1beta1
+version: v1
 kind: Spicepod
 name: spice-in-docker
 
@@ -15,7 +15,7 @@ datasets:
       mysql_user: sakila
       mysql_pass: ${secrets:mysql_pass}
       mysql_sslmode: preferred
-    acceleration: 
+    acceleration:
       enabled: true
     columns:
       - name: description
