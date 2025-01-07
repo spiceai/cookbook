@@ -90,8 +90,8 @@ version: v1
 kind: Spicepod
 name: postgres-demo
 datasets:
-  - from: spice.ai/eth.recent_blocks
-    name: eth_recent_blocks
+  - from: spice.ai/spiceai/quickstart/datasets/taxi_trips
+    name: taxi_trips
     acceleration:
       enabled: true
       refresh_mode: full
@@ -109,8 +109,9 @@ datasets:
 Save the changes to `spicepod.yaml`. The Spice runtime terminal will show that the dataset has been loaded:
 
 ```console
-2024-05-07T23:56:44.094995Z  INFO runtime: Loaded dataset eth_recent_blocks
-2024-05-07T23:56:44.095902Z  INFO runtime::accelerated_table: [refresh] Loading data for dataset eth_recent_blocks
+2025-01-07T00:58:34.081889Z  INFO runtime::init::dataset: Dataset taxi_trips registered (spice.ai/spiceai/quickstart/datasets/taxi_trips), acceleration (postgres), results cache enabled.
+2025-01-07T00:58:34.083257Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
+2025-01-07T00:59:43.684903Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (8.41 GiB) for dataset taxi_trips in 1m 9s 601ms.
 ```
 
 Follow the [getting started guide](https://docs.spiceai.org/getting-started) to get started with the Spice.ai runtime.
@@ -125,55 +126,55 @@ In a new terminal, start the Spice SQL REPL
 spice sql
 ```
 
-You can now now query `eth_recent_blocks` in the runtime.
+You can now now query `taxi_trips` in the runtime.
 
 ```sql
-select number, "timestamp", hash, transaction_count, gas_used from eth_recent_blocks order by number desc limit 10;
+SELECT "VendorID", "tpep_pickup_datetime", "fare_amount" FROM taxi_trips LIMIT 10;
 ```
 
 ```shell
-+----------+------------+--------------------------------------------------------------------+-------------------+----------+
-| number   | timestamp  | hash                                                               | transaction_count | gas_used |
-+----------+------------+--------------------------------------------------------------------+-------------------+----------+
-| 19823523 | 1715149295 | 0x6a4619e01fae477b9034981c74908a2cf5110c56828227971a46b798c5c11f1b | 238               | 15921279 |
-| 19823522 | 1715149283 | 0x3d02a95cfd236d04476bb80e21df4c8a09f58fb360e36af63518b3b253203c57 | 108               | 8855119  |
-| 19823521 | 1715149271 | 0x6696fd2d68eb4a527c9e66a4c0c2ab236e2582f898b626a016cde57c4b034bd0 | 243               | 26104830 |
-| 19823520 | 1715149259 | 0x51b62fd46a27ec2bc5fa101088123fe2d34d7822fd76f88c419c19ffc98ecd43 | 325               | 29984648 |
-| 19823519 | 1715149247 | 0x7be4da28b09084b1e1c5de0b36f1850bf864e8ab5cdd37c507ca814ebd9151c6 | 43                | 1607845  |
-| 19823518 | 1715149235 | 0x24fba85aa5895adba1087539c9cd717e2b864f334881b94dd88c09c78c8daca4 | 152               | 13537024 |
-| 19823517 | 1715149223 | 0x52453257ae23dd4c910694031d1045a3a3cf71e1004446b4e9b5107c5e569cf2 | 202               | 20325159 |
-| 19823516 | 1715149211 | 0x583a7daceb11037d7974cd771e57c8e66cda0fac4c2fd552ad0fc3f49a32c093 | 207               | 18527037 |
-| 19823515 | 1715149199 | 0x4c73f16ec65f84f349692e82b34a800a5c12227ec33349f7b54ebebf4d7908e8 | 142               | 14151725 |
-| 19823514 | 1715149187 | 0x7486a3c326ddbc4a30d027b222fd10d7cd4f8bcdba7bca68541442f6c0b34b2a | 179               | 15232250 |
-+----------+------------+--------------------------------------------------------------------+-------------------+----------+
++----------+----------------------+-------------+
+| VendorID | tpep_pickup_datetime | fare_amount |
++----------+----------------------+-------------+
+| 2        | 2024-01-28T00:22:02  | 16.57       |
+| 2        | 2024-01-28T00:48:06  | -1.0        |
+| 2        | 2024-01-28T00:53:05  | 21.6        |
+| 2        | 2024-01-28T00:05:03  | 24.31       |
+| 1        | 2024-01-28T00:47:25  | 32.73       |
+| 2        | 2024-01-28T00:13:24  | 23.59       |
+| 1        | 2024-01-28T00:35:26  | 26.45       |
+| 1        | 2024-01-28T00:06:25  | 13.95       |
+| 2        | 2024-01-28T00:26:51  | 40.67       |
+| 2        | 2024-01-28T00:33:46  | 23.94       |
++----------+----------------------+-------------+
 
-Time: 0.010686041 seconds. 10 rows.
+Time: 0.0074185 seconds. 10 rows.
 ```
 
 For more information on using `spice sql`, see the [CLI reference](https://docs.spiceai.org/cli/reference/sql).
 
-`eth_recent_blocks` is locally materialized in PostgreSQL, using `psql` to query the same table `eth_recent_blocks` in PostgreSQL.
+`taxi_trips` is locally materialized in PostgreSQL, using `psql` to query the same table `taxi_trips` in PostgreSQL.
 
 ```sql
 psql spice_demo
 ```
 
 ```sql
-select number, "timestamp", hash, transaction_count, gas_used from eth_recent_blocks order by number desc limit 10;
+SELECT "VendorID", "tpep_pickup_datetime", "fare_amount" FROM taxi_trips LIMIT 10;
 ```
 
 ```shell
-  number  | timestamp  |                                hash                                | transaction_count | gas_used
-----------+------------+--------------------------------------------------------------------+-------------------+----------
- 19823523 | 1715149295 | 0x6a4619e01fae477b9034981c74908a2cf5110c56828227971a46b798c5c11f1b |               238 | 15921279
- 19823522 | 1715149283 | 0x3d02a95cfd236d04476bb80e21df4c8a09f58fb360e36af63518b3b253203c57 |               108 |  8855119
- 19823521 | 1715149271 | 0x6696fd2d68eb4a527c9e66a4c0c2ab236e2582f898b626a016cde57c4b034bd0 |               243 | 26104830
- 19823520 | 1715149259 | 0x51b62fd46a27ec2bc5fa101088123fe2d34d7822fd76f88c419c19ffc98ecd43 |               325 | 29984648
- 19823519 | 1715149247 | 0x7be4da28b09084b1e1c5de0b36f1850bf864e8ab5cdd37c507ca814ebd9151c6 |                43 |  1607845
- 19823518 | 1715149235 | 0x24fba85aa5895adba1087539c9cd717e2b864f334881b94dd88c09c78c8daca4 |               152 | 13537024
- 19823517 | 1715149223 | 0x52453257ae23dd4c910694031d1045a3a3cf71e1004446b4e9b5107c5e569cf2 |               202 | 20325159
- 19823516 | 1715149211 | 0x583a7daceb11037d7974cd771e57c8e66cda0fac4c2fd552ad0fc3f49a32c093 |               207 | 18527037
- 19823515 | 1715149199 | 0x4c73f16ec65f84f349692e82b34a800a5c12227ec33349f7b54ebebf4d7908e8 |               142 | 14151725
- 19823514 | 1715149187 | 0x7486a3c326ddbc4a30d027b222fd10d7cd4f8bcdba7bca68541442f6c0b34b2a |               179 | 15232250
+ VendorID | tpep_pickup_datetime | fare_amount 
+----------+----------------------+-------------
+        2 | 2024-01-28 00:22:02  |       16.57
+        2 | 2024-01-28 00:48:06  |          -1
+        2 | 2024-01-28 00:53:05  |        21.6
+        2 | 2024-01-28 00:05:03  |       24.31
+        1 | 2024-01-28 00:47:25  |       32.73
+        2 | 2024-01-28 00:13:24  |       23.59
+        1 | 2024-01-28 00:35:26  |       26.45
+        1 | 2024-01-28 00:06:25  |       13.95
+        2 | 2024-01-28 00:26:51  |       40.67
+        2 | 2024-01-28 00:33:46  |       23.94
 (10 rows)
 ```
