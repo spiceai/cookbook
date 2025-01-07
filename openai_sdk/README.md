@@ -34,7 +34,7 @@ These steps only need to be done once. Use a Python `virtualenv` to keep project
 2. Activate the virtual environment: `source .venv/bin/activate`
 3. Install the required packages: `pip install -r requirements.txt`
 
-Run the client: `python openai_sdk.py`
+Run the client: `python spice_openai_sdk.py`
 
 ### Using uv
 

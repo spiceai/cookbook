@@ -111,7 +111,7 @@ curl -XPOST http://localhost:8090/v1/search \
 
 Result:
 
-```json
+````json
 {
   "matches": [
     {
@@ -139,7 +139,7 @@ Result:
   ],
   "duration_ms": 48
 }
-```
+````
 
 4. Rerun the search, and retrieve the full document (as an entry in `additional_coluumns`).
 
@@ -157,7 +157,7 @@ curl -XPOST http://localhost:8090/v1/search \
 
 Result:
 
-```json
+````json
 {
   "matches": [
     {
@@ -187,7 +187,7 @@ Result:
   ],
   "duration_ms": 45
 }
-```
+````
 
 ## Pre-existing embeddings
 
@@ -216,7 +216,7 @@ curl -XPOST http://localhost:8091/v1/search \
 
 Result:
 
-```json
+````json
 {
   "matches": [
     {
@@ -244,4 +244,4 @@ Result:
   ],
   "duration_ms": 48
 }
-```
+````
