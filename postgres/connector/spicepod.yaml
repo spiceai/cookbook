@@ -1,6 +1,7 @@
-version: v1beta1
+version: v1
 kind: Spicepod
-name: postgres-connector-demo
+name: postgres-connector
+
 datasets:
   - from: postgres:sample_data
     name: sample_data

@@ -1,6 +1,6 @@
-version: v1beta1
+version: v1
 kind: Spicepod
-name: spicepod
+name: grafana
 
 datasets:
   - from: s3://spiceai-demo-datasets/taxi_trips/2024/

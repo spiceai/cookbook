@@ -12,11 +12,11 @@ Follow these steps to get started with Clickhouse as a Data Connector.
   ```bash
   ./clickhouse server
   ```
-  
+
 - Create a database and table, for example:
 
   ```bash
-  ./clickhouse client 
+  ./clickhouse client
   ```
 
   ```sql
@@ -62,7 +62,7 @@ CLICKHOUSE_PASS=<password>
 If you followed the above [preparation](#preparation) to generate a Clickhouse server use this:
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: clickhouse_quickstart
 datasets:

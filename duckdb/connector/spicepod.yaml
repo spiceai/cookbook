@@ -1,6 +1,6 @@
-version: v1beta1
+version: v1
 kind: Spicepod
-name: duckdb-recipe
+name: duckdb-connector
 datasets:
   - from: duckdb:customer
     name: tpch_customer

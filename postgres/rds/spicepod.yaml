@@ -1,6 +1,7 @@
-version: v1beta1
+version: v1
 kind: Spicepod
-name: rds_postgresql_recipe
+name: rds_postgresql
+
 datasets:
   - from: postgres:[remote_table_path]
     name: [local_table_name]

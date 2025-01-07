@@ -76,7 +76,7 @@ Use text editor to open `.spicepod.yaml` and uncomment `acceleration` section. S
 Before:
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: spice_app
 datasets:
@@ -94,19 +94,19 @@ datasets:
 After:
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: spice_app
 datasets:
-- from: s3://spiceai-demo-datasets/taxi_trips/2024/
-  name: taxi_trips
-  description: taxi trips in s3
-  params:
-    file_format: parquet
-  acceleration:
-    enabled: true
-    engine: sqlite
-    mode: file
+  - from: s3://spiceai-demo-datasets/taxi_trips/2024/
+    name: taxi_trips
+    description: taxi trips in s3
+    params:
+      file_format: parquet
+    acceleration:
+      enabled: true
+      engine: sqlite
+      mode: file
 ```
 
 The following output is shown in the Spice runtime terminal confirming new configuration is applied.

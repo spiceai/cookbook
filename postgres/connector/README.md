@@ -130,7 +130,7 @@ cd postgres-connector-demo
 **Step 3.** Configure the dataset to connect to Postgres. Copy and paste the configuration below to `spicepod.yaml` in the Spice app.
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: postgres-connector-demo
 datasets:

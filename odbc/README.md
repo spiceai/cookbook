@@ -40,14 +40,14 @@ cd odbc-demo
 In the new `spicepod.yml`, configure your ODBC connection like the following spicepod definition:
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: odbc-demo
 datasets:
-- from: odbc:taxi_trips
-  name: taxi_trips
-  params:
-    odbc_connection_string: Driver={PostgreSQL Unicode};Server=localhost;Port=5432;Database=spice_demo;Uid=postgres
+  - from: odbc:taxi_trips
+    name: taxi_trips
+    params:
+      odbc_connection_string: Driver={PostgreSQL Unicode};Server=localhost;Port=5432;Database=spice_demo;Uid=postgres
 ```
 
 **Step 6.** Start the Spice Runtime

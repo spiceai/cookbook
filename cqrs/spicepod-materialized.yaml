@@ -1,6 +1,6 @@
-version: v1beta1
+version: v1
 kind: Spicepod
-name: materialized
+name: cqrs-materialized
 
 datasets:
   - from: flightsql:rankings

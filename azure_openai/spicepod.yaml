@@ -1,4 +1,4 @@
-version: v1beta1
+version: v1
 kind: Spicepod
 name: azure_openai
 
@@ -51,7 +51,7 @@ datasets:
     description: Spice.ai project documentation (github.com/spiceai/spiceai)
     params:
       github_token: ${secrets:GITHUB_TOKEN}
-      include: "docs/**/*.md"
+      include: 'docs/**/*.md'
     acceleration:
       enabled: true
     columns:

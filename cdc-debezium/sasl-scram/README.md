@@ -46,7 +46,7 @@ Now the Debezium connector is registered and will start capturing changes from t
 This `spicepod.yaml` shows the config needed to configure Spice to connect to the Kafka topic and consume the Debezium changes with SASL/SCRAM authentication over TLS:
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: cdc-debezium-sasl-scram
 

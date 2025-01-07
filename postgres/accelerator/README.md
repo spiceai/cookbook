@@ -86,7 +86,7 @@ Spice.ai runtime starting...
 **Step 5.** Configure the dataset to use Postgres as data accelerator. Copy and paste the configuration below to `spicepod.yaml` in the Spice app.
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: postgres-demo
 datasets:

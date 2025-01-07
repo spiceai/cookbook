@@ -1,6 +1,6 @@
-version: v1beta1
+version: v1
 kind: Spicepod
-name: mysql-demo
+name: mysql-connector
 datasets:
   - from: mysql:spice_demo.sample_data
     name: sample_data

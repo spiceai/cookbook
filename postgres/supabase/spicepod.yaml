@@ -1,6 +1,7 @@
-version: v1beta1
+version: v1
 kind: Spicepod
-name: supabase_quickstart
+name: supabase
+
 datasets:
   - from: postgres:[remote_table_path]
     name: [local_table_name]

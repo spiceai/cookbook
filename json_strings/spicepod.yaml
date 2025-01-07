@@ -1,6 +1,6 @@
-version: v1beta1
+version: v1
 kind: Spicepod
-name: "json_strings"
+name: json_strings
 
 datasets:
   - from: file://tshirts.csv

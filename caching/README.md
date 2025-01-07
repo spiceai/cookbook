@@ -55,17 +55,17 @@ Using `Ctrl-C`, stop Spice and use a text editor to open the `spicepod.yaml` fil
 Before:
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: cache-recipe
 dependencies:
-- spiceai/tpch
+  - spiceai/tpch
 ```
 
 After:
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: cache-recipe
 
@@ -73,11 +73,11 @@ runtime:
   results_cache:
     enabled: true
     cache_max_size: 128MiB
-    eviction_policy: lru 
+    eviction_policy: lru
     item_ttl: 5m
 
 dependencies:
-- spiceai/tpch
+  - spiceai/tpch
 ```
 
 Run Spice
@@ -109,7 +109,7 @@ In a new terminal, start the Spice SQL REPL.
 spice sql
 ```
 
-Run *Pricing Summary Report Query (Q1)*. More information about TPC-H and all the queries involved can be found in the official [TPC Benchmark H Standard Specification](https://www.tpc.org/tpc_documents_current_versions/pdf/tpc-h_v2.17.1.pdf).
+Run _Pricing Summary Report Query (Q1)_. More information about TPC-H and all the queries involved can be found in the official [TPC Benchmark H Standard Specification](https://www.tpc.org/tpc_documents_current_versions/pdf/tpc-h_v2.17.1.pdf).
 
 ```sql
 select

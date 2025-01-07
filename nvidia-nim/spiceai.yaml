@@ -4,9 +4,10 @@ image:
 
 # This could be any Spicepod components you like!
 spicepod:
-  name: aapp
-  version: v1beta1
+  name: nim
+  version: v1
   kind: Spicepod
+
   models:
     - from: openai:meta/llama3-8b-instruct # This is from NIM `values.yaml`.
       name: nim

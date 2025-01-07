@@ -1,6 +1,7 @@
-version: v1beta1
+version: v1
 kind: Spicepod
-name: graphql_recipe
+name: graphql
+
 datasets:
   - from: graphql:https://api.github.com/graphql
     name: stargazers

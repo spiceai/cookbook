@@ -1,6 +1,6 @@
 # Snowflake Data Connector
 
->[Snowflake](https://www.snowflake.com/) is a leading cloud-based data warehousing service that enables users to store, compute, and analyze vast amounts of data in real-time.
+> [Snowflake](https://www.snowflake.com/) is a leading cloud-based data warehousing service that enables users to store, compute, and analyze vast amounts of data in real-time.
 
 The guide demonstrates how to configure [Spice with Snowflake Data Connector](https://docs.spiceai.org/data-connectors/snowflake) to access a Snowflake database.
 
@@ -64,15 +64,15 @@ Spice.ai runtime starting...
 Use text editor add **snowflake_sample_data.tpch_sf1** dataset to `spicepod.yaml`. Modify the `params` section to specify desired warehouse or role to use.
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: snowflake-app
 datasets:
-- from: snowflake:SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.LINEITEM
-  name: lineitem
-  params: 
-    snowflake_role: accountadmin
-    snowflake_warehouse: COMPUTE_WH
+  - from: snowflake:SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.LINEITEM
+    name: lineitem
+    params:
+      snowflake_role: accountadmin
+      snowflake_warehouse: COMPUTE_WH
 ```
 
 The following output is shown in the Spice runtime terminal:
@@ -106,7 +106,7 @@ sql> show tables;
 Time: 0.032075708 seconds. 2 rows.
 ```
 
-Run *Pricing Summary Report Query (Q1)*. More information about TPC-H and all the queries involved can be found in the official [TPC Benchmark H Standard Specification](https://www.tpc.org/tpc_documents_current_versions/pdf/tpc-h_v2.17.1.pdf).
+Run _Pricing Summary Report Query (Q1)_. More information about TPC-H and all the queries involved can be found in the official [TPC Benchmark H Standard Specification](https://www.tpc.org/tpc_documents_current_versions/pdf/tpc-h_v2.17.1.pdf).
 
 ```sql
 SELECT
@@ -155,33 +155,33 @@ Use text editor to update `spicepod.yaml`
 Before:
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: snowflake-app
 datasets:
-- from: snowflake:snowflake_sample_data.tpch_sf1.lineitem
-  name: lineitem
-  params: 
-    snowflake_role: accountadmin
-    snowflake_warehouse: COMPUTE_WH
+  - from: snowflake:snowflake_sample_data.tpch_sf1.lineitem
+    name: lineitem
+    params:
+      snowflake_role: accountadmin
+      snowflake_warehouse: COMPUTE_WH
 ```
 
 After:
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: test
 datasets:
-- from: snowflake:snowflake_sample_data.tpch_sf1.lineitem
-  name: lineitem
-  params: 
-    snowflake_role: accountadmin
-    snowflake_warehouse: COMPUTE_WH
-  acceleration:
-    enabled: true
-    refresh_sql: |
-      SELECT * FROM lineitem WHERE "L_SHIPDATE" <= DATE '1998-12-01'
+  - from: snowflake:snowflake_sample_data.tpch_sf1.lineitem
+    name: lineitem
+    params:
+      snowflake_role: accountadmin
+      snowflake_warehouse: COMPUTE_WH
+    acceleration:
+      enabled: true
+      refresh_sql: |
+        SELECT * FROM lineitem WHERE "L_SHIPDATE" <= DATE '1998-12-01'
 ```
 
 Note: we use `refresh_sql` parameter in this example to specify exact data we require local (specific date interval).
@@ -195,7 +195,7 @@ The following output is shown in the Spice runtime terminal confirming new confi
 2024-07-23T00:23:52.553037Z  INFO runtime: Dataset lineitem registered (snowflake:snowflake_sample_data.tpch_sf1.lineitem), acceleration (arrow), results cache enabled.
 ```
 
-Run *Pricing Summary Report Query* using the Spice SQL REPL.
+Run _Pricing Summary Report Query_ using the Spice SQL REPL.
 
 ```sql
 SELECT

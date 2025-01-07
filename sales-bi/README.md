@@ -41,7 +41,7 @@ Run the following command to start the components in the Docker Compose file:
 This will start the Spice runtime and Apache Superset. The Spice runtime will load two datasets based on the parquet file in S3 - one is accelerated and one is not:
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: sales-bi
 

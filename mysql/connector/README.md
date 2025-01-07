@@ -136,7 +136,7 @@ cd mysql-demo
 **Step 4.** Configure the dataset to connect to MySQL. Copy and paste the configuration below to `spicepod.yaml` in the Spice app.
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: mysql-demo
 datasets:
