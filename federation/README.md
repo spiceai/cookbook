@@ -65,7 +65,7 @@ select * from dremio_source;
 -- Query the accelerated Dremio source
 select * from dremio_source_accelerated;
 
--- Perform an aggregation query that combines data from S3, PostgreSQL, and Dremio
+-- Perform an aggregation query that combines data from S3 and Dremio
 WITH all_sales AS (
   SELECT sales FROM s3_source_accelerated
   UNION ALL
