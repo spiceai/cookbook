@@ -2,6 +2,8 @@
 
 The Spice.ai Cloud Platform Catalog Connector makes querying datasets in the Spice.ai Cloud Platform simple.
 
+This example will show how to connect to public datasets available in the Spice.ai Cloud Platform. Additional public datasets are available in [Spicerack](https://spicerack.org/).
+
 ## Prerequisites
 
 - A Spice.ai Cloud Platform account (sign up at <https://spice.ai>)
@@ -34,9 +36,11 @@ Add the following configuration to your `spicepod.yaml`:
 
 ```yaml
 catalogs:
-  - name: spiceai
-    from: spice.ai
+  - from: spice.ai/spiceai/tpch
+    name: scp
 ```
+
+This will register the `scp` catalog to connect to the [`spiceai/tpch`](https://spice.ai/spiceai/tpch) app and load all available tables.
 
 ## Step 5. Start the Spice runtime
 
@@ -51,7 +55,7 @@ spice sql
 ```
 
 ```sql
-SELECT * FROM spiceai.tpch.lineitem LIMIT 10;
+SELECT * FROM scp.tpch.lineitem LIMIT 10;
 ```
 
 ## Step 7. Explore the available datasets
@@ -60,30 +64,22 @@ Use `show tables;` in the Spice SQL REPL to see the available datasets.
 
 ```bash
 sql> show tables;
-+---------------+--------------+----------------------------------------------------------------+------------+
-| table_catalog | table_schema | table_name                                                     | table_type |
-+---------------+--------------+----------------------------------------------------------------+------------+
-| spiceai       | tpch         | region                                                         | BASE TABLE |
-| spiceai       | tpch         | orders                                                         | BASE TABLE |
-| spiceai       | tpch         | part                                                           | BASE TABLE |
-| spiceai       | tpch         | supplier                                                       | BASE TABLE |
-| spiceai       | tpch         | customer                                                       | BASE TABLE |
-| spiceai       | tpch         | partsupp                                                       | BASE TABLE |
-| spiceai       | tpch         | lineitem                                                       | BASE TABLE |
-| spiceai       | tpch         | nation                                                         | BASE TABLE |
-| spiceai       | ens          | domains                                                        | BASE TABLE |
-| spiceai       | spiceai      | datasets_tpch_partsupp                                         | BASE TABLE |
-| spiceai       | spiceai      | datasets_tpch_nation                                           | BASE TABLE |
-| spiceai       | spiceai      | datasets_eth_aave_v2_collateral_updates                        | BASE TABLE |
-| spiceai       | spiceai      | datasets_eth_sushiswap_pool_stats_detailed                     | BASE TABLE |
-| spiceai       | spiceai      | datasets_tpch_orders                                           | BASE TABLE |
-... (truncated)
-| spiceai       | goerli       | wallet_lst_balances                                            | BASE TABLE |
-| spice         | runtime      | task_history                                                   | BASE TABLE |
-| spice         | runtime      | metrics                                                        | BASE TABLE |
-+---------------+--------------+----------------------------------------------------------------+------------+
++---------------+--------------+--------------+------------+
+| table_catalog | table_schema | table_name   | table_type |
++---------------+--------------+--------------+------------+
+| scp           | tpch         | orders       | BASE TABLE |
+| scp           | tpch         | region       | BASE TABLE |
+| scp           | tpch         | part         | BASE TABLE |
+| scp           | tpch         | supplier     | BASE TABLE |
+| scp           | tpch         | lineitem     | BASE TABLE |
+| scp           | tpch         | nation       | BASE TABLE |
+| scp           | tpch         | customer     | BASE TABLE |
+| scp           | tpch         | partsupp     | BASE TABLE |
+| spice         | runtime      | task_history | BASE TABLE |
+| spice         | runtime      | metrics      | BASE TABLE |
++---------------+--------------+--------------+------------+
 
-Time: 0.007676958 seconds. 249 rows.
+Time: 0.005605209 seconds. 10 rows.
 ```
 
 ## Step 8. Filter the included tables with `include`
@@ -92,10 +88,11 @@ Specify an `include` filter to limit the tables registered in the catalog.
 
 ```yaml
 catalogs:
-  - name: spiceai
-    from: spice.ai
+  - from: spice.ai/spiceai/tpch
+    name: scp
     include:
-      - tpch.*
+      - tpch.part*
+      - tpch.supplier
 ```
 
 ```bash
@@ -103,13 +100,8 @@ sql> show tables;
 +---------------+--------------+---------------+------------+
 | table_catalog | table_schema | table_name    | table_type |
 +---------------+--------------+---------------+------------+
-| spiceai       | tpch         | nation        | BASE TABLE |
-| spiceai       | tpch         | orders        | BASE TABLE |
 | spiceai       | tpch         | partsupp      | BASE TABLE |
 | spiceai       | tpch         | part          | BASE TABLE |
-| spiceai       | tpch         | lineitem      | BASE TABLE |
-| spiceai       | tpch         | region        | BASE TABLE |
-| spiceai       | tpch         | customer      | BASE TABLE |
 | spiceai       | tpch         | supplier      | BASE TABLE |
 | spice         | runtime      | task_history  | BASE TABLE |
 | spice         | runtime      | metrics       | BASE TABLE |
@@ -117,3 +109,54 @@ sql> show tables;
 
 Time: 0.001866958 seconds. 9 rows.
 ```
+
+## Step 9. Add the Quickstart Catalog
+
+Add the Quickstart Catalog to the `spicepod.yaml` file. This demonstrates how to include tables from multiple Spice.ai Cloud Platform apps.
+
+```yaml
+catalogs:
+  # ... existing catalog ...
+
+  - from: spice.ai/spiceai/quickstart
+    name: quickstart
+```
+
+```bash
+spice sql
+sql> show tables;
++---------------+--------------+--------------+------------+
+| table_catalog | table_schema | table_name   | table_type |
++---------------+--------------+--------------+------------+
+| spiceai       | tpch         | partsupp     | BASE TABLE |
+| spiceai       | tpch         | part         | BASE TABLE |
+| spiceai       | tpch         | supplier     | BASE TABLE |
+| quickstart    | public       | taxi_trips   | BASE TABLE |
+| spice         | runtime      | task_history | BASE TABLE |
+| spice         | runtime      | metrics      | BASE TABLE |
++---------------+--------------+--------------+------------+
+
+Time: 0.011640125 seconds. 6 rows.
+
+sql> SELECT passenger_count, fare_amount FROM quickstart.public.taxi_trips LIMIT 10;
++-----------------+-------------+
+| passenger_count | fare_amount |
++-----------------+-------------+
+| 2               | 8.6         |
+| 2               | 70.0        |
+| 2               | 5.8         |
+| 2               | 7.2         |
+| 2               | 7.9         |
+| 2               | 12.8        |
+| 2               | 6.5         |
+| 2               | 10.0        |
+| 2               | 10.7        |
+| 2               | 34.5        |
++-----------------+-------------+
+
+Time: 1.167164208 seconds. 10 rows.
+```
+
+## Next Steps
+
+Discover the apps available in [Spicerack](https://spicerack.org/) and use them as catalogs in the Spice.ai Cloud Platform catalog connector.
