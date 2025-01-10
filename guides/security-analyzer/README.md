@@ -102,7 +102,7 @@ datasets:
 
 Let's break down these configuration choices:
 
-- `refresh_mode: append` optimizes for real-time log ingestion
+- `refresh_mode: append` optimizes for real-time log ingestion by only appending new data based on the `time_column`
 - `refresh_check_interval: 5s` provides near-real-time analysis
 - `retention_period: 30d` keeps a month of history for pattern analysis
 
@@ -113,9 +113,10 @@ The real power comes from our AI configuration. We'll use GPT-4 through Spice.ai
 ```yaml
 models:
   - name: security-analyzer
-    from: openai:gpt-4
+    from: openai:gpt-4o
     params:
       openai_api_key: ${env:OPENAI_API_KEY}
+      tools: auto
       system_prompt: |
         You are a database security expert analyzing SQL query patterns for potential security risks. 
         
@@ -132,8 +133,12 @@ models:
         - Combinations of queries that could bypass security controls
         
         Provide specific, actionable recommendations and clear explanations of risks.
-    tools: sql, table_schema
 ```
+
+This configuration tells Spice.ai to:
+
+- Instruct the LLM to use tools to run SQL queries and get the schema of the datasets. This is what enables the LLM controlled access to the data it needs to analyze.
+- Sets the `system_prompt` to provide the LLM with specific instructions and context for its analysis.
 
 ## Adding Pattern Analysis Views
 
@@ -184,34 +189,17 @@ Here's our `analyzer.py`:
 # /// script
 # requires-python = ">=3.12"
 # dependencies = [
-#     "psycopg2-binary",
-#     "requests",
-#     "python-dotenv",
+#     "requests"
 # ]
 # ///
-import psycopg2
 import requests
 import json
 import time
 from datetime import datetime, timedelta
-from dotenv import load_dotenv
 import os
 
 class QueryPatternAnalyzer:
     def __init__(self):
-        # Load environment variables from .env file
-        load_dotenv()
-        
-        # Build connection string from environment variables
-        db_params = {
-            'dbname': os.getenv('PG_DB'),
-            'user': os.getenv('PG_USER'),
-            'password': os.getenv('PG_PASS'),
-            'host': os.getenv('PG_HOST'),
-            'port': os.getenv('PG_PORT')
-        }
-        
-        self.conn = psycopg2.connect(**db_params)
         self.spice_url = "http://localhost:8090"
     
     def analyze_patterns(self):
@@ -239,6 +227,34 @@ class QueryPatternAnalyzer:
                 print(f"Error during analysis: {e}")
             
             time.sleep(30)  # Run analysis every 30 seconds
+    
+    def build_analysis_prompt(self):
+        return """
+        Analyze the recent query patterns in the user_query_patterns table for suspicious activity.
+        Consider the following:
+        1. Users accessing unusually large amounts of data
+        2. Users querying tables they don't normally access
+        3. Sequential patterns that could indicate data harvesting
+        4. Queries running at unusual times
+        
+        Provide your analysis with:
+        1. Description of any suspicious patterns
+        2. Severity level (low, medium, high)
+        3. Specific recommendations for security team
+        """
+    
+    def handle_analysis_results(self, analysis):
+        try:
+            content = analysis['choices'][0]['message']['content']
+            print(content)
+            
+        except Exception as e:
+            print(f"Error handling analysis results: {e}")
+
+if __name__ == "__main__":
+    print("Starting Query Pattern Analyzer")
+    analyzer = QueryPatternAnalyzer()
+    analyzer.analyze_patterns()
 ```
 
 ## Testing the System
