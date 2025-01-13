@@ -6,7 +6,14 @@ This recipe demonstrates how to use the Spice Rust SDK to connect to a Spice run
 
 This recipe requires [Rust](https://www.rust-lang.org/) to be installed.
 
-## Start spice runtime
+## Clone sample application
+
+```shell
+git clone https://github.com/spiceai/cookbook.git
+cd cookbook/client-sdk/spice-rs-sdk-sample
+```
+
+## Start Spice runtime
 
 ```shell
 spice run
