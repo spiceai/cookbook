@@ -8,18 +8,35 @@ One of Spice's best features is to act in place of the OpenAI API. Even better, 
 2. Python package manager (`pip` or `uv`)
 3. Spice [installed](https://docs.spiceai.org/getting-started)
 4. OpenAI API Key
-5. A clone of this repository on your local machine
 
 ## Starting Spice
 
 The first step is to get the Spice instance up and running.
 
 ```bash
-cd openai_sdk
+git clone https://github.com/spiceai/cookbook # Skip if already cloned
+cd cookbook/openai_sdk
 # Add your OpenAI API key to the .env.local file
 echo "SPICE_OPENAI_API_KEY=your_openai_api_key" > .env.local
 # Start Spice
 spice run
+```
+
+Output:
+
+```bash
+2025/01/13 13:27:41 INFO Spice.ai runtime starting...
+2025-01-13T21:27:41.702275Z  INFO runtime::init::dataset: Initializing dataset taxi_trips
+2025-01-13T21:27:41.703569Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
+2025-01-13T21:27:41.704347Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2025-01-13T21:27:41.704514Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2025-01-13T21:27:41.703575Z  INFO runtime::init::model: Loading model [openai] from openai:gpt-4o...
+2025-01-13T21:27:41.713543Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
+2025-01-13T21:27:41.902271Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2025-01-13T21:27:42.242310Z  INFO runtime::init::model: Model [openai] deployed, ready for inferencing
+2025-01-13T21:27:42.576976Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow, 10s refresh), results cache enabled.
+2025-01-13T21:27:42.578442Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
+2025-01-13T21:27:53.260052Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (399.41 MiB) for dataset taxi_trips in 10s 681ms.
 ```
 
 Spice will use your OpenAI API key to communicate with OpenAI on your client code's behalf.
@@ -34,7 +51,13 @@ These steps only need to be done once. Use a Python `virtualenv` to keep project
 2. Activate the virtual environment: `source .venv/bin/activate`
 3. Install the required packages: `pip install -r requirements.txt`
 
-Run the client: `python spice_openai_sdk.py`
+Run the client: `python spice_openai_sdk.py` and observe the model's response to the `What datasets do I have access to?` question:
+
+```bash
+You have access to the following dataset:
+
+- **taxi_trips**: This dataset contains data about taxi trips in s3.
+```
 
 ### Using uv
 
@@ -42,7 +65,13 @@ Run the client: `python spice_openai_sdk.py`
 2. Activate the virtual environment: `source .venv/bin/activate`
 3. Ensure the packages are installed: `uv sync`
 
-Run the client: `uv run spice_openai_sdk.py`
+Run the client: `uv run spice_openai_sdk.py` and observe the model's response to the `What datasets do I have access to?` question:
+
+```bash
+You have access to the following dataset:
+
+- **taxi_trips**: This dataset contains data about taxi trips in s3.
+```
 
 ## About the client
 
