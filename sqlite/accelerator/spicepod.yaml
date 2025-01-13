@@ -8,7 +8,7 @@ datasets:
     description: taxi trips in s3
     params:
       file_format: parquet
-    # acceleration:
-    #   enabled: true
-    #   engine: sqlite
-    #   mode: file
+    acceleration:
+      enabled: false
+      engine: sqlite
+      mode: file
