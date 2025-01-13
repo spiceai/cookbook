@@ -4,6 +4,10 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 
 ## Recipes
 
+### Guides
+
+- [Real-time Data Access Pattern Analysis](./guides/security-analyzer/README.md) - Use AI to analyze query patterns and detect potential security risks.
+
 ### Core scenarios
 
 - [Federated SQL Query](./federation/README.md) - Query data from S3, PostgreSQL, and Dremio in a single query.
