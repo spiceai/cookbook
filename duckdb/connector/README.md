@@ -30,10 +30,40 @@ LOAD tpch;
 CALL dbgen(sf = 1);
 ```
 
+Output:
+
+```SQL
+100% ▕████████████████████████████████████████████████████████████▏ 
+┌─────────┐
+│ Success │
+│ boolean │
+├─────────┤
+│ 0 rows  │
+└─────────┘
+```
+
 Show the TPCH tables were correctly generated.
 
 ```SQL
 SHOW TABLES;
+```
+
+Output:
+
+```SQL
+┌──────────┐
+│   name   │
+│ varchar  │
+├──────────┤
+│ customer │
+│ lineitem │
+│ nation   │
+│ orders   │
+│ part     │
+│ partsupp │
+│ region   │
+│ supplier │
+└──────────┘
 ```
 
 Quit the DuckDB CLI (ctrl-c, ctrl-c).
