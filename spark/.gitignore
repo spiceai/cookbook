@@ -1,1 +1,6 @@
 spark-*
+!spark-defaults.conf
+metastore
+notebooks
+warehouse
+spark_demo

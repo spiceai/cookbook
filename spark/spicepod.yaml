@@ -1,0 +1,9 @@
+version: v1
+kind: Spicepod
+name: spark_demo
+
+datasets:
+- from: spark:nyc_taxis
+  name: nyc_taxis
+  params:
+      spark_remote: sc://localhost:15002

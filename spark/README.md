@@ -1,158 +1,143 @@
 # Apache Spark Data Connector
 
-Spice can read data from a Spark instance. This guide will create an app, configure Spark to run locally, load and query a dataset. It assumes:
+Spice can read data from a Spark instance. This guide will start Spark isntance with sample data, create an app, load and query a dataset.
 
-- Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation).
-- Apache Spark package newer than v3.4.0 is downloaded (see the [Download Apache Spark](https://spark.apache.org/downloads.html) to download Apache Spark package )
-- Spark is configured with enough spark driver memory before starting the Spark Connect Server. Add the following configuration to the `./conf/spark-defaults.conf` in apache spark package.
+## Prerequisites
 
-```shell
-spark.driver.memory 6g
+This recipe requires [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/) to be installed.
+
+Also ensure that you have the `spice` CLI installed. You can find instructions on how to install it [here](https://docs.spiceai.org/getting-started).
+
+## How to run
+
+Clone this cookbook repo locally and navigate to the `spark` directory:
+
+```bash
+git clone https://github.com/spiceai/cookbook.git
+cd cookbook/spark
 ```
 
-- Spark Connect Server is running locally (refer to the [Quickstart: Spark Connect](https://spark.apache.org/docs/latest/api/python/getting_started/quickstart_connect.html) to launch spark server with spark connect)
-- Install [Spark dependencies](https://spark.apache.org/docs/latest/api/python/getting_started/install.html#dependencies) in a dedicated python virtual environment.
+1. Start the Docker Compose stack, which includes a Spark instance and init notebook to load the NYC taxi trip parquet data:
 
-1. Initialise a Spice app
+  ```shell
+  make
+  ```
 
-   ```shell
-   spice init spark_demo
-   cd spark_demo
-   ```
+  It will take about about 30 seconds to start the Spark instance and load the sample dataset.
 
-2. Start the Spice runtime
+2. Initialise a Spice app
 
-   ```shell
-   >>> spice run
-   Spice.ai runtime starting...
-   2024-05-20T23:54:42.323695Z  INFO spiced: Metrics listening on 127.0.0.1:9090
-   2024-05-20T23:54:42.325278Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-   2024-05-20T23:54:42.327243Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-   2024-05-20T23:54:42.327255Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-   ```
+  ```shell
+  spice init spark_demo
+  cd spark_demo
+  ```
 
-3. Create the Sample Dataset in Spark
+3. Start the Spice runtime
 
-   This Quickstarts use NYC taxi trip parquet data from [TLC Trip Record Data](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page) to create a sample table in Spark.
-
-   Download the NYC taxi trip parquet file using the following command
-
-   ```shell
-   wget https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-01.parquet
-   ```
-
-   Change the `parquet_file_path` in python script to the absolute file path where `yellow_tripdata_2024-01.parquet` is located. Run the following python script in the python virtual environment that already have [Spark dependencies](https://spark.apache.org/docs/latest/api/python/getting_started/install.html#dependencies) downloaded.
-
-   ```python
-   from pyspark.sql import SparkSession
-   from pyspark.sql import Row
-
-   SparkSession.builder.master("local[*]").getOrCreate().stop()
-   spark = SparkSession.builder.remote("sc://localhost:15002").getOrCreate()
-
-   parquet_table_name = "nyc_taxi_trip"
-   parquet_file_path = "/absolute/path/to/yellow_tripdata_2024-01.parquet"
-
-   df = spark.read.format('parquet').options(header=True,inferSchema=True).load(parquet_file_path)
-   df.write.option("path", f"./{parquet_table_name}").mode("overwrite").saveAsTable(parquet_table_name)
-   ```
-
-   Execute the following python code to confirm the creation of `nyc_taxi_trip` table
-
-   ```python
-   spark.sql("SHOW TABLES").show()
-
-   +---------+-------------+-----------+
-   |namespace|    tableName|isTemporary|
-   +---------+-------------+-----------+
-   |  default|nyc_taxi_trip|      false|
-   +---------+-------------+-----------+
-   ```
+  ```shell
+  >>> spice run
+  2025/01/14 02:52:58 INFO Checking for latest Spice runtime release...
+  2025/01/14 02:52:59 INFO Spice.ai runtime starting...
+  2025-01-13T17:53:00.171638Z  INFO runtime::init::dataset: No datasets were configured. If this is unexpected, check the Spicepod configuration.
+  2025-01-13T17:53:00.181202Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+  2025-01-13T17:53:00.181420Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
+  2025-01-13T17:53:00.185632Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+  2025-01-13T17:53:00.185712Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
+  2025-01-13T17:53:00.196585Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+  ```
 
 4. Configure a Spark dataset into the spicepod. Copy and paste the following `spicepod.yaml` configuration into your Spicepod.
 
-   ```yaml
-   version: v1
-   kind: Spicepod
-   name: spark_demo
-   datasets:
-   - from: spark:nyc_taxi_trip
-      name: nyc_taxi_trip
+  ```yaml
+  version: v1
+  kind: Spicepod
+  name: spark_demo
+
+  datasets:
+    - from: spark:nyc_taxis
+      name: nyc_taxis
       params:
-         spark_remote: sc://localhost:15002
-   ```
+          spark_remote: sc://localhost:15002
+  ```
 
 5. Confirm that the runtime has loaded the new table (in the original terminal)
 
-   ```shell
-   2024-05-21T01:51:11.688868Z  INFO runtime: Registered dataset nyc_taxi_trip
-   ```
+  ```shell
+  2025-01-13T17:54:33.672161Z  INFO runtime::init::dataset: Dataset nyc_taxis registered (spark:nyc_taxis), results cache enabled.
+  ```
 
 6. Check the table exists from the Spice REPL
 
-   ```shell
-   >>> spice sql
-   Welcome to the Spice.ai SQL REPL! Type 'help' for help.
+  ```shell
+  >>> spice sql
+  Welcome to the Spice.ai SQL REPL! Type 'help' for help.
 
-   show tables; -- list available tables
-   sql> show tables;
-   +---------------+------------+
-   | table_name    | table_type |
-   +---------------+------------+
-   | nyc_taxi_trip | BASE TABLE |
-   +---------------+------------+
+  show tables; -- list available tables
+  sql> show tables;
+  +---------------+--------------+--------------+------------+
+  | table_catalog | table_schema | table_name   | table_type |
+  +---------------+--------------+--------------+------------+
+  | spice         | runtime      | task_history | BASE TABLE |
+  | spice         | runtime      | metrics      | BASE TABLE |
+  | spice         | public       | nyc_taxis    | BASE TABLE |
+  +---------------+--------------+--------------+------------+
 
-   Time: 0.013910458 seconds. 1 rows.
-   ```
+  Time: 0.031211 seconds. 3 rows.
+  ```
 
-   ```shell
-   sql> describe nyc_taxi_trip;
-   +-----------------------+------------------------------+-------------+
-   | column_name           | data_type                    | is_nullable |
-   +-----------------------+------------------------------+-------------+
-   | VendorID              | Int32                        | YES         |
-   | tpep_pickup_datetime  | Timestamp(Microsecond, None) | YES         |
-   | tpep_dropoff_datetime | Timestamp(Microsecond, None) | YES         |
-   | passenger_count       | Int64                        | YES         |
-   | trip_distance         | Float64                      | YES         |
-   | RatecodeID            | Int64                        | YES         |
-   | store_and_fwd_flag    | Utf8                         | YES         |
-   | PULocationID          | Int32                        | YES         |
-   | DOLocationID          | Int32                        | YES         |
-   | payment_type          | Int64                        | YES         |
-   | fare_amount           | Float64                      | YES         |
-   | extra                 | Float64                      | YES         |
-   | mta_tax               | Float64                      | YES         |
-   | tip_amount            | Float64                      | YES         |
-   | tolls_amount          | Float64                      | YES         |
-   | improvement_surcharge | Float64                      | YES         |
-   | total_amount          | Float64                      | YES         |
-   | congestion_surcharge  | Float64                      | YES         |
-   | Airport_fee           | Float64                      | YES         |
-   +-----------------------+------------------------------+-------------+
-   Time: 0.00544475 seconds. 19 rows.
-   ```
+  ```shell
+  sql> describe nyc_taxis;
+  +-----------------------+-----------------------------------------+-------------+
+  | column_name           | data_type                               | is_nullable |
+  +-----------------------+-----------------------------------------+-------------+
+  | VendorID              | Int64                                   | YES         |
+  | tpep_pickup_datetime  | Timestamp(Microsecond, Some("Etc/UTC")) | YES         |
+  | tpep_dropoff_datetime | Timestamp(Microsecond, Some("Etc/UTC")) | YES         |
+  | passenger_count       | Float64                                 | YES         |
+  | trip_distance         | Float64                                 | YES         |
+  | RatecodeID            | Float64                                 | YES         |
+  | store_and_fwd_flag    | Utf8                                    | YES         |
+  | PULocationID          | Int64                                   | YES         |
+  | DOLocationID          | Int64                                   | YES         |
+  | payment_type          | Int64                                   | YES         |
+  | fare_amount           | Float64                                 | YES         |
+  | extra                 | Float64                                 | YES         |
+  | mta_tax               | Float64                                 | YES         |
+  | tip_amount            | Float64                                 | YES         |
+  | tolls_amount          | Float64                                 | YES         |
+  | improvement_surcharge | Float64                                 | YES         |
+  | total_amount          | Float64                                 | YES         |
+  | congestion_surcharge  | Float64                                 | YES         |
+  | airport_fee           | Float64                                 | YES         |
+  +-----------------------+-----------------------------------------+-------------+
+
+  Time: 0.006024208 seconds. 19 rows.
+  ```
 
 7. Query against the Spark table. The spice runtime will make a network call to the Spark instance.
 
-   ```shell
-   >>> spice sql
-   sql> SELECT avg(total_amount), avg(tip_amount), count(1), passenger_count FROM nyc_taxi_trip GROUP BY passenger_count ORDER BY passenger_count ASC;
-   +---------------------------------+-------------------------------+-----------------+-----------------+
-   | AVG(nyc_taxi_trip.total_amount) | AVG(nyc_taxi_trip.tip_amount) | COUNT(Int64(1)) | passenger_count |
-   +---------------------------------+-------------------------------+-----------------+-----------------+
-   | 25.327816939455595              | 3.0722599713968206            | 31465           | 0               |
-   | 26.20523044547389               | 3.3712622884691075            | 2188739         | 1               |
-   | 29.520659930934283              | 3.717130211328188             | 405103          | 2               |
-   | 29.138309044288356              | 3.537045539216639             | 91262           | 3               |
-   | 30.87726671027726               | 3.466037634201733             | 51974           | 4               |
-   | 26.26912911120369               | 3.379707813526131             | 33506           | 5               |
-   | 25.801183286359812              | 3.3440987786874916            | 22353           | 6               |
-   | 57.735                          | 8.37                          | 8               | 7               |
-   | 95.66803921568625               | 11.972156862745098            | 51              | 8               |
-   | 18.45                           | 3.05                          | 1               | 9               |
-   | 25.811736633327225              | 1.5459567500463327            | 140162          |                 |
-   +---------------------------------+-------------------------------+-----------------+-----------------+
+  ```shell
+  sql> SELECT * FROM nyc_taxis LIMIT 10;
+  +----------+----------------------+-----------------------+-----------------+---------------+------------+--------------------+--------------+--------------+--------------+-------------+-------+---------+------------+--------------+-----------------------+--------------+----------------------+-------------+
+  | VendorID | tpep_pickup_datetime | tpep_dropoff_datetime | passenger_count | trip_distance | RatecodeID | store_and_fwd_flag | PULocationID | DOLocationID | payment_type | fare_amount | extra | mta_tax | tip_amount | tolls_amount | improvement_surcharge | total_amount | congestion_surcharge | airport_fee |
+  +----------+----------------------+-----------------------+-----------------+---------------+------------+--------------------+--------------+--------------+--------------+-------------+-------+---------+------------+--------------+-----------------------+--------------+----------------------+-------------+
+  | 1        | 2022-03-01T00:13:08Z | 2022-03-01T00:24:35Z  | 1.0             | 2.4           | 1.0        | N                  | 90           | 209          | 2            | 10.0        | 3.0   | 0.5     | 0.0        | 0.0          | 0.3                   | 13.8         | 2.5                  | 0.0         |
+  | 1        | 2022-03-01T00:47:52Z | 2022-03-01T01:00:08Z  | 1.0             | 2.2           | 1.0        | N                  | 148          | 234          | 2            | 10.5        | 3.0   | 0.5     | 0.0        | 0.0          | 0.3                   | 14.3         | 2.5                  | 0.0         |
+  | 2        | 2022-03-01T00:02:46Z | 2022-03-01T00:46:43Z  | 1.0             | 19.78         | 2.0        | N                  | 132          | 249          | 1            | 52.0        | 0.0   | 0.5     | 11.06      | 0.0          | 0.3                   | 67.61        | 2.5                  | 1.25        |
+  | 2        | 2022-03-01T00:52:43Z | 2022-03-01T01:03:40Z  | 2.0             | 2.94          | 1.0        | N                  | 211          | 66           | 1            | 11.0        | 0.5   | 0.5     | 4.44       | 0.0          | 0.3                   | 19.24        | 2.5                  | 0.0         |
+  | 2        | 2022-03-01T00:15:35Z | 2022-03-01T00:34:13Z  | 1.0             | 8.57          | 1.0        | N                  | 138          | 197          | 1            | 25.0        | 0.5   | 0.5     | 5.51       | 0.0          | 0.3                   | 33.06        | 0.0                  | 1.25        |
+  | 1        | 2022-03-01T00:11:57Z | 2022-03-01T00:53:05Z  | 2.0             | 14.0          | 1.0        | N                  | 132          | 33           | 1            | 43.5        | 1.75  | 0.5     | 9.2        | 0.0          | 0.3                   | 55.25        | 0.0                  | 1.25        |
+  | 2        | 2022-03-01T00:05:11Z | 2022-03-01T00:08:22Z  | 1.0             | 0.61          | 1.0        | N                  | 166          | 151          | 1            | 4.5         | 0.5   | 0.5     | 1.0        | 0.0          | 0.3                   | 6.8          | 0.0                  | 0.0         |
+  | 2        | 2022-03-01T00:30:56Z | 2022-03-01T00:46:21Z  | 1.0             | 2.83          | 1.0        | N                  | 74           | 238          | 1            | 13.0        | 0.5   | 0.5     | 3.7        | 0.0          | 0.3                   | 18.0         | 0.0                  | 0.0         |
+  | 2        | 2022-03-01T00:30:28Z | 2022-03-01T00:30:36Z  | 1.0             | 0.1           | 1.0        | N                  | 145          | 145          | 3            | -2.5        | -0.5  | -0.5    | 0.0        | 0.0          | -0.3                  | -3.8         | 0.0                  | 0.0         |
+  | 2        | 2022-03-01T00:30:28Z | 2022-03-01T00:30:36Z  | 1.0             | 0.1           | 1.0        | N                  | 145          | 145          | 2            | 2.5         | 0.5   | 0.5     | 0.0        | 0.0          | 0.3                   | 3.8          | 0.0                  | 0.0         |
+  +----------+----------------------+-----------------------+-----------------+---------------+------------+--------------------+--------------+--------------+--------------+-------------+-------+---------+------------+--------------+-----------------------+--------------+----------------------+-------------+
 
-   Time: 0.522384708 seconds. 11 rows.
-   ```
+  Time: 1.139626792 seconds. 10 rows.
+  ```
+
+8. Stop the Spark instance and the Spice runtime
+
+  ```shell
+  make clean
+  ```
