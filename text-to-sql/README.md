@@ -65,8 +65,7 @@ Separate from using language models to interact with [runtime tools](https://doc
       )
       AND task = 'ai_completion';
     " \
-    | jq -cr '.[0].input' \
-    | jq '.'
+    | jq -cr '.[0].input' | jq '.'
   ```
 
   Result:
@@ -170,9 +169,10 @@ The `v1/nsql` endpoint can return early if you only want the SQL query. To do th
 
 ```shell
 curl -XPOST "http://localhost:8090/v1/nsql" \
-  -H "Content-Type: application/sql" \
+  -H "Accept: application/sql" \
+  -H "Content-Type: application/json" \
   -d '{
-    "query": "What’s the highest tip any passenger gave?",
+    "query": "What’s the highest tip any passenger gave?"
   }'
 ```
 Returns:

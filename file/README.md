@@ -59,7 +59,7 @@ rm spicepod.yaml
 1. Download markdown documents
 
 ```shell
-base_url="https://raw.githubusercontent.com/spiceai/docs/refs/heads/trunk/spiceaidocs/docs/components/data-connectors"
+base_url="https://raw.githubusercontent.com/spiceai/docs/refs/heads/trunk/website/docs/components/data-connectors"
 
 files=(
   "clickhouse.md"
