@@ -138,23 +138,23 @@ sql> show tables;
 
 Time: 0.011640125 seconds. 6 rows.
 
-sql> SELECT passenger_count, fare_amount FROM quickstart.public.taxi_trips LIMIT 10;
-+-----------------+-------------+
-| passenger_count | fare_amount |
-+-----------------+-------------+
-| 2               | 8.6         |
-| 2               | 70.0        |
-| 2               | 5.8         |
-| 2               | 7.2         |
-| 2               | 7.9         |
-| 2               | 12.8        |
-| 2               | 6.5         |
-| 2               | 10.0        |
-| 2               | 10.7        |
-| 2               | 34.5        |
-+-----------------+-------------+
+sql> SELECT trip_distance, fare_amount FROM quickstart.public.taxi_trips LIMIT 10;
++---------------+-------------+
+| trip_distance | fare_amount |
++---------------+-------------+
+| 2.4           | 12.1        |
+| 0.9           | 7.2         |
+| 2.02          | 11.4        |
+| 2.08          | 14.2        |
+| 1.03          | 8.6         |
+| 0.71          | 5.8         |
+| 1.0           | 6.5         |
+| 2.8           | 17.7        |
+| 0.5           | 5.8         |
+| 5.7           | 24.7        |
++---------------+-------------+
 
-Time: 1.167164208 seconds. 10 rows.
+Time: 0.267290292 seconds. 10 rows.
 ```
 
 ## Next Steps
