@@ -24,6 +24,43 @@ cd cookbook/spark
   ```
 
   It will take about about 30 seconds to start the Spark instance and load the sample dataset.
+  Check service logs to see when the Spark instance is ready:
+
+  ```shell
+  docker compose logs -f spark
+  spark  | 25/01/14 14:11:12 INFO CodeGenerator: Code generated in 14.890809 ms
+  spark  | +--------+--------------------+---------------------+---------------+-------------+----------+------------------+------------+------------+------------+-----------+-----+-------+----------+------------+---------------------+------------+--------------------+-----------+
+  spark  | |VendorID|tpep_pickup_datetime|tpep_dropoff_datetime|passenger_count|trip_distance|RatecodeID|store_and_fwd_flag|PULocationID|DOLocationID|payment_type|fare_amount|extra|mta_tax|tip_amount|tolls_amount|improvement_surcharge|total_amount|congestion_surcharge|airport_fee|
+  spark  | +--------+--------------------+---------------------+---------------+-------------+----------+------------------+------------+------------+------------+-----------+-----+-------+----------+------------+---------------------+------------+--------------------+-----------+
+  spark  | |       1| 2022-03-01 00:13:08|  2022-03-01 00:24:35|            1.0|          2.4|       1.0|                 N|          90|         209|           2|       10.0|  3.0|    0.5|       0.0|         0.0|                  0.3|        13.8|                 2.5|        0.0|
+  spark  | |       1| 2022-03-01 00:47:52|  2022-03-01 01:00:08|            1.0|          2.2|       1.0|                 N|         148|         234|           2|       10.5|  3.0|    0.5|       0.0|         0.0|                  0.3|        14.3|                 2.5|        0.0|
+  spark  | |       2| 2022-03-01 00:02:46|  2022-03-01 00:46:43|            1.0|        19.78|       2.0|                 N|         132|         249|           1|       52.0|  0.0|    0.5|     11.06|         0.0|                  0.3|       67.61|                 2.5|       1.25|
+  spark  | |       2| 2022-03-01 00:52:43|  2022-03-01 01:03:40|            2.0|         2.94|       1.0|                 N|         211|          66|           1|       11.0|  0.5|    0.5|      4.44|         0.0|                  0.3|       19.24|                 2.5|        0.0|
+  spark  | |       2| 2022-03-01 00:15:35|  2022-03-01 00:34:13|            1.0|         8.57|       1.0|                 N|         138|         197|           1|       25.0|  0.5|    0.5|      5.51|         0.0|                  0.3|       33.06|                 0.0|       1.25|
+  spark  | |       1| 2022-03-01 00:11:57|  2022-03-01 00:53:05|            2.0|         14.0|       1.0|                 N|         132|          33|           1|       43.5| 1.75|    0.5|       9.2|         0.0|                  0.3|       55.25|                 0.0|       1.25|
+  spark  | |       2| 2022-03-01 00:05:11|  2022-03-01 00:08:22|            1.0|         0.61|       1.0|                 N|         166|         151|           1|        4.5|  0.5|    0.5|       1.0|         0.0|                  0.3|         6.8|                 0.0|        0.0|
+  spark  | |       2| 2022-03-01 00:30:56|  2022-03-01 00:46:21|            1.0|         2.83|       1.0|                 N|          74|         238|           1|       13.0|  0.5|    0.5|       3.7|         0.0|                  0.3|        18.0|                 0.0|        0.0|
+  spark  | |       2| 2022-03-01 00:30:28|  2022-03-01 00:30:36|            1.0|          0.1|       1.0|                 N|         145|         145|           3|       -2.5| -0.5|   -0.5|       0.0|         0.0|                 -0.3|        -3.8|                 0.0|        0.0|
+  spark  | |       2| 2022-03-01 00:30:28|  2022-03-01 00:30:36|            1.0|          0.1|       1.0|                 N|         145|         145|           2|        2.5|  0.5|    0.5|       0.0|         0.0|                  0.3|         3.8|                 0.0|        0.0|
+  spark  | +--------+--------------------+---------------------+---------------+-------------+----------+------------------+------------+------------+------------+-----------+-----+-------+----------+------------+---------------------+------------+--------------------+-----------+
+  spark  |
+  spark  | 25/01/14 14:11:12 INFO SparkContext: Invoking stop() from shutdown hook
+  spark  | 25/01/14 14:11:12 INFO SparkContext: SparkContext is stopping with exitCode 0.
+  spark  | 25/01/14 14:11:12 INFO SparkUI: Stopped Spark web UI at http://2556af46dcb0:4040
+  spark  | 25/01/14 14:11:12 INFO StandaloneSchedulerBackend: Shutting down all executors
+  spark  | 25/01/14 14:11:12 INFO StandaloneSchedulerBackend$StandaloneDriverEndpoint: Asking each executor to shut down
+  spark  | 25/01/14 14:11:12 INFO MapOutputTrackerMasterEndpoint: MapOutputTrackerMasterEndpoint stopped!
+  spark  | 25/01/14 14:11:12 INFO MemoryStore: MemoryStore cleared
+  spark  | 25/01/14 14:11:12 INFO BlockManager: BlockManager stopped
+  spark  | 25/01/14 14:11:12 INFO BlockManagerMaster: BlockManagerMaster stopped
+  spark  | 25/01/14 14:11:12 INFO OutputCommitCoordinator$OutputCommitCoordinatorEndpoint: OutputCommitCoordinator stopped!
+  spark  | 25/01/14 14:11:12 INFO SparkContext: Successfully stopped SparkContext
+  spark  | 25/01/14 14:11:12 INFO ShutdownHookManager: Shutdown hook called
+  spark  | 25/01/14 14:11:12 INFO ShutdownHookManager: Deleting directory /tmp/spark-e026e8e3-f302-4adf-bdf3-de083138fa40
+  spark  | 25/01/14 14:11:12 INFO ShutdownHookManager: Deleting directory /tmp/spark-314a37cb-843b-4e6a-a4a2-8e71944f85bf
+  spark  | 25/01/14 14:11:12 INFO ShutdownHookManager: Deleting directory /tmp/spark-314a37cb-843b-4e6a-a4a2-8e71944f85bf/pyspark-ffa34bfd-aa50-4a7a-80f5-4b6dc6e0b0fb
+  spark  | Spark services started! ✅
+  ```
 
 2. Initialise a Spice app
 

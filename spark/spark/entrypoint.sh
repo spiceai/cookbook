@@ -58,4 +58,6 @@ fi
 
 sleep 5
 
+echo "Spark services started! ✅"
+
 exec "$@"
