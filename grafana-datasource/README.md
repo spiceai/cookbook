@@ -1,6 +1,6 @@
 # Adding Spice as a Grafana Datasource
 
-This recipe will show how to configure a Grafana dashboard to use Spice as the data source using [Infinity](https://grafana.com/docs/plugins/yesoreyeram-infinity-datasource/latest/) plugins.
+This recipe will show how to configure a Grafana dashboard to use Spice as the data source using the [Infinity](https://grafana.com/docs/plugins/yesoreyeram-infinity-datasource/latest/) plugin.
 
 ## Prerequisites
 
