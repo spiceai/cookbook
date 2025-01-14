@@ -38,11 +38,3 @@ spark.sql("""
 """)
 
 spark.sql("SELECT * FROM nyc_taxis LIMIT 10").show()
-
-# df = spark.read.parquet("/home/spark/data/yellow_tripdata_2022-04.parquet")
-# df.write.format("parquet") \
-#     .mode("overwrite") \
-#     .option("path", "/home/spark/warehouse/nyc_taxis") \
-#     .saveAsTable("spark_catalog.default.nyc_taxis")
-
-# spark.sql("SELECT * FROM spark_catalog.default.nyc_taxis LIMIT 10").show()

@@ -20,7 +20,7 @@ cd cookbook/spark
 1. Start the Docker Compose stack, which includes a Spark instance and init notebook to load the NYC taxi trip parquet data:
 
   ```shell
-  make
+  docker compose up -d
   ```
 
   It will take about about 30 seconds to start the Spark instance and load the sample dataset.
@@ -136,8 +136,8 @@ cd cookbook/spark
   Time: 1.139626792 seconds. 10 rows.
   ```
 
-8. Stop the Spark instance and the Spice runtime
+8. Stop the Spark instance and cleanup
 
   ```shell
-  make clean
+  docker compose down --volumes --rmi local
   ```

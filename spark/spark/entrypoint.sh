@@ -19,16 +19,22 @@
 
 #!/bin/bash
 
-# Create directories if they don't exist
 mkdir -p /home/spark/warehouse
 chmod -R 777 /home/spark/warehouse
+mkdir -p /home/spark/metastore
+chmod -R 777 /home/spark/metastore
+
+# Remove existing metastore_db directory if it exists
+if [ -d "/home/spark/metastore/metastore_db" ]; then
+    rm -rf /home/spark/metastore/metastore_db
+fi
 
 # Start Spark services
 start-master.sh -p 7077
 sleep 5  # Give master time to start
 
 start-worker.sh spark://spark:7077
-sleep 5  # Give worker time to start
+sleep 15  # Give worker time to start
 
 # Start Spark Connect server first
 $SPARK_HOME/bin/spark-submit \

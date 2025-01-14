@@ -6,4 +6,6 @@ all:
 clean:
 	@docker compose down --volumes --rmi local
 	@echo "Cleaned up project containers, volumes, and locally built images"
-	rm -r .spice
+	rm -rf ./metastore
+	rm -rf ./notebooks
+	rm -rf ./warehouse
