@@ -1,12 +1,15 @@
 # Spice on Databricks (mode: delta_lake)
 
-Spice can read data straight from a Databricks instance. This recipe will create an app, configure Databricks, load and query a dataset directly from Delta Lake Tables. It assumes:
+Spice can read data straight from a Databricks instance. This recipe will create an app, configure Databricks, load and query a dataset directly from Delta Lake Tables through `mode: delta_lake` and from Databricks instance through `mode: spark_connect`. It assumes:
 
 - Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation).
 - The Databricks instance is running against AWS S3 storage in `us-east-1`.
 - Basic AWS authentication is configured (with environment variable credentials `AWS_ACCESS_KEY_ID` & `AWS_SECRET_ACCESS_KEY`).
 - A Databricks personal access token is available (as the environment variable `DATABRICKS_TOKEN`).
+- A Databricks cluster id is available (as the environment variable `DATABRICKS_CLUSTER_ID`).
 - A table already exists in Databricks, called `spice_data.public.awesome_table`.
+
+## mode: delta_lake
 
 1. Initialize a Spice app
 
@@ -15,7 +18,7 @@ Spice can read data straight from a Databricks instance. This recipe will create
    cd databricks_demo
    ```
 
-1. In another terminal, working in the `databricks_demo` directory, configure Spice with the Databricks credentials
+2. In another terminal, working in the `databricks_demo` directory, configure Spice with the Databricks credentials
 
    ```shell
    spice login databricks \
@@ -27,7 +30,7 @@ Spice can read data straight from a Databricks instance. This recipe will create
 
    Executing `spice login` and successfully authenticating will create a `.env` file in the `databricks_demo` directory with the Databricks credentials.
 
-1. Start the Spice runtime
+3. Start the Spice runtime
 
    ```shell
    >>> spice run
@@ -36,7 +39,7 @@ Spice can read data straight from a Databricks instance. This recipe will create
    2024-03-27T05:27:52.696606Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
    ```
 
-1. Configure a Databricks dataset into the spicepod. The table provided must be a reference to a table in the Databricks unity catalog.
+4. Configure a Databricks dataset into the spicepod. The table provided must be a reference to a table in the Databricks unity catalog.
 
    ```shell
    >>> spice dataset configure
@@ -49,7 +52,7 @@ Spice can read data straight from a Databricks instance. This recipe will create
    Saved datasets/my_table/dataset.yaml
    ```
 
-1. Edit the dataset to add `mode: delta_lake` to the `params` section:
+5. Edit the dataset to add `mode: delta_lake` to the `params` section:
 
    ```yaml
    params:
@@ -57,13 +60,13 @@ Spice can read data straight from a Databricks instance. This recipe will create
      databricks_endpoint: <existing_endpoint>
    ```
 
-1. Confirm that the runtime has registered the new table (in the original terminal)
+6. Confirm that the runtime has registered the new table (in the original terminal)
 
    ```shell
    2024-03-27T05:27:54.051229Z  INFO runtime: Dataset my_table registered (databricks:spice_data.public.awesome_table), results cache enabled.
    ```
 
-1. Check the table exists from the Spice REPL
+7. Check the table exists from the Spice REPL
 
    ```shell
    >>> spice sql
@@ -110,7 +113,7 @@ Spice can read data straight from a Databricks instance. This recipe will create
    Time: 0.00507075 seconds
    ```
 
-1. Query against the Databricks table. Since the table isn't accelerated, the spice runtime will make a network call to the object storage service.
+8. Query against the Databricks table. Since the table isn't accelerated, the spice runtime will make a network call to the object storage service.
 
    ```shell
    >>> spice sql
@@ -134,7 +137,7 @@ Spice can read data straight from a Databricks instance. This recipe will create
    Time: 6.56567 seconds
    ```
 
-## (Optional): Accelerating Databricks
+### (Optional): Accelerating Databricks
 
 To improve the query performance, the Databricks dataset can be accelerated.
 
@@ -179,3 +182,70 @@ To improve the query performance, the Databricks dataset can be accelerated.
    ```
 
 Note: A dataset can be accelerated when configured by specifying yes (y) to `locally accelerate (y/n)?`.
+
+## mode: spark_connect
+
+1. Initialize a Spice app
+
+   ```shell
+   spice init databricks_demo_spark_connect
+   cd databricks_demo_spark_connect
+   ```
+
+2. Run the following command to set databricks secrets
+
+   ```bash
+   export DATABRICKS_HOST=<your-databricks-host>
+   export DATABRICKS_TOKEN=<your-databricks-token>
+   export DATABRICKS_CLUSTER_ID=<your-databricks-cluster-id>
+   ```
+
+3. Configure the spicepod.yaml as following, replace the `<catalog>.<schema>.<table>` with the actual catalog, schema, and table in databricks
+
+   ```yaml
+   version: v1
+   kind: Spicepod
+   name: databricks_demo_spark_connect
+   datasets:
+   - from: databricks:<catalog>.<schema>.<table>
+      name: my_table
+      params:
+         mode: spark_connect
+         databricks_endpoint: ${ secrets:DATABRICKS_HOST }
+         databricks_token: ${ secrets:DATABRICKS_TOKEN }
+         databricks_cluster_id: ${ secrets:DATABRICKS_CLUSTER_ID }
+   ```
+
+4. Start the Spice runtime, and confirm that runtime has register the table under `mode: spark_connect`
+
+   ```shell
+   >>> spice run
+   2025-01-15T04:44:40.207555Z  INFO runtime::init::dataset: Initializing dataset my_table
+   2025-01-15T04:44:40.208013Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+   2025-01-15T04:44:40.208015Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
+   2025-01-15T04:44:40.208823Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+   2025-01-15T04:44:40.211694Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
+   2025-01-15T04:44:40.238106Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+   2025-01-15T04:44:41.299484Z  INFO runtime::init::dataset: Dataset my_table registered (databricks:<catalog>.<schema>.<table>), results cache enabled.
+   ```
+
+5. Check the table exists from the Spice REPL
+
+   ```shell
+   >>> spice sql
+   Welcome to the Spice.ai SQL REPL! Type 'help' for help.
+
+   show tables; -- list available tables
+   sql> show tables;
+   +---------------+--------------+---------------+------------+
+   | table_catalog | table_schema | table_name    | table_type |
+   +---------------+--------------+---------------+------------+
+   | spice         | public       | my_table      | BASE TABLE |
+   | spice         | runtime      | task_history  | BASE TABLE |
+   | spice         | runtime      | metrics       | BASE TABLE |
+   +---------------+--------------+---------------+------------+
+
+   Time: 0.008540708 seconds
+   ```
+
+6. Query against the Databricks table connected with `mode: spark_connect`
