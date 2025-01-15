@@ -38,8 +38,6 @@ services:
       iceberg_net:
     ports:
       - 8181:8181
-    volumes:
-      - ./data:/data
     environment:
       - AWS_ACCESS_KEY_ID=admin
       - AWS_SECRET_ACCESS_KEY=password
@@ -48,7 +46,7 @@ services:
       - CATALOG_IO__IMPL=org.apache.iceberg.aws.s3.S3FileIO
       - CATALOG_S3_ENDPOINT=http://minio:9000
       - CATALOG_CATALOG__IMPL=org.apache.iceberg.jdbc.JdbcCatalog
-      - CATALOG_URI=jdbc:sqlite:/data/iceberg.db
+      - CATALOG_URI=jdbc:sqlite:/tmp/iceberg.db
   minio:
     image: minio/minio
     container_name: minio
