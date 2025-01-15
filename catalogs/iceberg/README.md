@@ -110,3 +110,13 @@ Output:
 
 Time: 0.186233833 seconds. 10 rows.
 ```
+
+## Step 6. View the Iceberg tables in MinIO
+
+Navigate to [http://localhost:9001](http://localhost:9001) and login with `admin` and `password`. View the `iceberg` bucket to see the created Iceberg tables.
+
+## Step 7. Clean up
+
+```bash
+docker compose down
+```
