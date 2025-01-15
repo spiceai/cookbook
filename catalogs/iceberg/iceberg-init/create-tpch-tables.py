@@ -1,11 +1,4 @@
 from pyiceberg.catalog import load_catalog
-from pyiceberg.schema import Schema
-from pyiceberg.types import (
-    NestedField,
-    LongType,
-    StringType,
-    TimestampType
-)
 import pyarrow.parquet as pq
 import os
 
