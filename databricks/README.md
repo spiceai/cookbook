@@ -249,3 +249,12 @@ Note: A dataset can be accelerated when configured by specifying yes (y) to `loc
    ```
 
 6. Query against the Databricks table connected with `mode: spark_connect`
+
+   ```shell
+   sql> select * from my_table limit 1;
+   +-----------+--------------------+-------------------+-------------+-----------------+-----------+--------------+----------------------------------------------------------------+
+   | c_custkey | c_name             | c_address         | c_nationkey | c_phone         | c_acctbal | c_mktsegment | c_comment                                                      |
+   +-----------+--------------------+-------------------+-------------+-----------------+-----------+--------------+----------------------------------------------------------------+
+   | 1         | Customer#000000001 | j5JsirBM9PsCy0O1m | 15          | 25-989-741-2988 | 711.56    | BUILDING     | y final requests wake slyly quickly special accounts. blithely |
+   +-----------+--------------------+-------------------+-------------+-----------------+-----------+--------------+----------------------------------------------------------------+
+   ```
