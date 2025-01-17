@@ -1,4 +1,4 @@
-# Nvidia NIM
+# Nvidia NIM on Kubernetes with Spice
 
 This recipe deploys Nvidia [NIM](https://docs.nvidia.com/nim/) infrastructure, on Kubernetes, with GPUs. Specifically, we will:
 
