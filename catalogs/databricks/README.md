@@ -121,3 +121,50 @@ sql> select trace_id, block_number from db_uc.default.traces limit 10;
 
 Time: 1.5179735 seconds. 10 rows.
 ```
+
+## Step 7. Refresh the datasets in catalog
+
+When datasets are dynamically added or removed in the Databricks catalog, Spice runtime will refresh the catalog accordingly.
+
+**Create a new Delta Lake table**: In Databricks SQL Editor, run the following query (replace `<CATALOG_NAME>` and `<SCHEMA_NAME>` with your catalog and schema names):
+
+```SQL
+CREATE TABLE <CATALOG_NAME>.<SCHEMA_NAME>.test_table_no_v2checkpoint
+TBLPROPERTIES (
+  'delta.minReaderVersion' = '1',
+  'delta.minWriterVersion' = '2'
+)
+AS
+SELECT 1 AS id;
+```
+
+**Verify table addition in Spice**: Check the Spice runtime log for the new table:
+
+```shell
+2025-01-18T00:58:48.747333Z  INFO data_components::unity_catalog::provider: Refreshed schema <CATALOG_NAME>.<SCHEMA_NAME>. Tables added: test_table_no_v2checkpoint.
+```
+
+**Query the new table**: In another terminal, run `spice sql` and query the new table:
+
+```shell
+>> spice sql
+Welcome to the Spice.ai SQL REPL! Type 'help' for help.
+sql> select * from db_uc.<SCHEMA_NAME>.test_table_no_v2checkpoint;
++----+
+| id |
++----+
+| 1  |
++----+
+```
+
+**Delete the table**: Run the following command in Databricks to delete the table:
+
+```shell
+drop table <CATALOG_NAME>.<SCHEMA_NAME>.test_table_no_v2checkpoint;
+```
+
+**Verify table removal in Spice**: Observe that the table has beem removed in spice runtime log
+
+```shell
+2025-01-18T00:59:49.121835Z  INFO data_components::unity_catalog::provider: Refreshed schema <CATALOG_NAME>.<SCHEMA_NAME>. Tables removed: test_table_no_v2checkpoint.
+```
