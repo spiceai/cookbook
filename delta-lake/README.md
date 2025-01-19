@@ -1,9 +1,9 @@
 # Delta Lake Data Connector
 
-Spice can read data straight from a Delta Lake Table. This recipe will create an app that load and query a dataset directly from Delta Lake Tables. It assumes:
+Spice supports reading data directly from Delta Lake tables. This recipe will create an app that loads and queries a dataset from a Delta Lake table in AWS S3. It assumes:
 
 - Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation).
-- A Delta Lake Table already exists available in AWS s3.
+- A Delta Lake table is configured and available in AWS S3.
 - Basic AWS authentication is configured (with environment variable credentials `AWS_ACCESS_KEY_ID` & `AWS_SECRET_ACCESS_KEY`).
 
 1. Initialize a Spice app
@@ -13,14 +13,14 @@ Spice can read data straight from a Delta Lake Table. This recipe will create an
    cd delta_lake_demo
    ```
 
-2. Run the following command to set AWS secrets to access Delta Lake table in s3.
+2. Run the following command to set AWS secrets to access the Delta Lake table in S3.
 
    ```bash
    export AWS_ACCESS_KEY_ID=<your-aws-access-key-id>
    export AWS_SECRET_ACCESS_KEY=<your-aws-secret-access-key>
    ```
 
-3. Configure the spicepod.yaml as following, replace the `<s3://my_bucket/path/to/s3/delta/table/>` with the actual delta lake table path in S3.
+3. Configure the `spicepod.yaml` as following, replacing the `<s3://my_bucket/path/to/s3/delta/table/>` with the Delta Lake table path in S3.
 
    ```yaml
    version: v1
@@ -34,7 +34,7 @@ Spice can read data straight from a Delta Lake Table. This recipe will create an
          delta_lake_aws_secret_access_key: ${secrets:AWS_SECRET_ACCESS_KEY}
    ```
 
-4. Start the Spice runtime, and confirm that runtime has register the table `delta_lake_table`
+4. Start the Spice runtime, and the `delta_lake_table` dataset has been registered:
 
    ```shell
    >>> spice run
@@ -49,7 +49,11 @@ Spice can read data straight from a Delta Lake Table. This recipe will create an
    2025-01-18T00:30:49.116731Z  INFO runtime::init::dataset: Dataset delta_lake_table registered (delta_lake:s3:<s3://my_bucket/path/to/s3/delta/table/>), results cache enabled.
    ```
 
-5. In another terminal window, run `spice sql`, and check the table `delta_lake_table` exists from the Spice REPL
+5. In another terminal window, run `spice sql` and check the `delta_lake_table` dataset exists from the Spice REPL:
+
+    ```sql
+    show tables;
+    ```
 
    ```shell
    >>> spice sql
@@ -69,6 +73,10 @@ Spice can read data straight from a Delta Lake Table. This recipe will create an
    ```
 
 6. Query against the Delta Lake table.
+
+   ```sql
+    select * from delta_lake_table limit 10;
+   ```
 
    ```shell
    sql> select * from delta_lake_table limit 10;
