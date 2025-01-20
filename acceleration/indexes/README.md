@@ -62,4 +62,4 @@ SELECT * FROM traces WHERE trace_id = 'call_0x22ba49176f15ec5524434d87c47fc9dbff
 Much faster! Try exploring with indexes in different acceleration engines to get a sense of how they behave.
 
 ## Learn more
-- [Data Acceleration Indexes Documentation](https://spiceai.org/docs/features/data-acceleration/indexes).
+- [Data Acceleration Indexes Documentation](https://spiceai.org/docs/features/data-acceleration/indexes)
