@@ -2,10 +2,6 @@
 
 Fetch combined data from S3 Parquet, PostgreSQL, and Dremio in a single query.
 
-## Requirements
-
-- Docker
-
 ## Follow these steps to use Spice to federate SQL queries across data sources
 
 **Step 1.** Clone the [github.com/spiceai/cookbook](https://github.com/spiceai/cookbook) repo and navigate to the `federation` directory.
@@ -28,25 +24,19 @@ name: (federation)?
 spice login dremio -u demo -p demo1234
 ```
 
-**Step 4.** Start a local PostgreSQL instance preloaded with demo data via Docker Compose.
-
-```bash
-make
-```
-
-**Step 5.** Add the `spiceai/fed-demo` Spicepod from [spicerack.org](https://spicerack.org).
+**Step 4.** Add the `spiceai/fed-demo` Spicepod from [spicerack.org](https://spicerack.org).
 
 ```bash
 spice add spiceai/fed-demo
 ```
 
-**Step 6.** Start the Spice runtime.
+**Step 5.** Start the Spice runtime.
 
 ```bash
 spice run
 ```
 
-**Step 7.** In another terminal window, start the Spice SQL REPL and perform the following SQL queries:
+**Step 6.** In another terminal window, start the Spice SQL REPL and perform the following SQL queries:
 
 ```bash
 spice sql
@@ -77,10 +67,4 @@ SELECT SUM(sales) as total_sales,
        MAX(sales) AS max_sale,
        AVG(sales) AS avg_sale
 FROM all_sales;
-```
-
-**Step 8.** Clean up the demo environment:
-
-```bash
-make clean
 ```
