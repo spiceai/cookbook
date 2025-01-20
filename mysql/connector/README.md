@@ -23,7 +23,7 @@ Invoke MySQL in the prompt.
 ```bash
 mysql -u USERNAME -pPASSWORD
 # Or if using Docker
-docker exec -it mysql-spice-demo mysql -u root -p123
+docker exec -it mysql-spice-demo mysql -u root -p123 --port 3306
 ```
 
 Using the MySQL console, create a sample database named `spice_demo`.
