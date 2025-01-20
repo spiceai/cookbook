@@ -23,7 +23,11 @@ This will start the Spice runtime and Grafana server. The Spice runtime will loa
 
 ### Setup with Infinity Grafana plugin
 
-Follow steps 1-3 from the previous section.
+1. Open Grafana in your browser at [http://localhost:3000](http://localhost:3000).
+1. Log in with the default credentials `admin`/`admin`, skip the password change prompt.
+![screenshot](./img/grafana-datasource-1.png)
+
+1. Navigate to Administation -> Plugins and data -> Plugins.
 
 1. Select "State: All", and search for "Infinity". Install and click on "Add new data source".
    ![screenshot](./img/grafana-datasource-7.png)
@@ -32,13 +36,14 @@ Follow steps 1-3 from the previous section.
    ![screenshot](./img/grafana-datasource-8.png)
 
 1. Click on "Build a dashboard" and add a new visualization. Select "Infinity" from the list of data sources.
-1. Change "Method" to "POST" and "URL" to `http://spice:8090/v1/sql`. Add SQL query in body, using "Raw" mode:
+ - Change "Method" to "POST" and "URL" to `http://spice:8090/v1/sql`.
+ - Add SQL query in body, using "Raw" mode:
 
    ```sql
    SELECT to_timestamp(tpep_dropoff_datetime), fare_amount FROM public.taxi_trips LIMIT 100
    ```
-
-   Add the header `Accept: application/json` as well.
+- Add the header `Accept: application/json` as well.
+- Set visualization to `Table`
 
 ![screenshot](./img/grafana-datasource-9.png)
 
