@@ -155,17 +155,31 @@ Time: 0.0088075 seconds. 10 rows.
 List beta release notes files:
 
 ```sql
-select name, path, download_url, content from spiceai.files where path like 'docs/release_notes/%-beta.md';
+select name, path, download_url from spiceai.files where path like 'docs/release_notes/%-beta.md';
 ```
 
 ```console
-+-----------------+------------------------------------+---------------------------------------------------------------------------------------------------+
-| name            | path                               | download_url                                                                                      |
-+-----------------+------------------------------------+---------------------------------------------------------------------------------------------------+
-| v0.17.0-beta.md | docs/release_notes/v0.17.0-beta.md | https://raw.githubusercontent.com/spiceai/spiceai/v0.17.2-beta/docs/release_notes/v0.17.0-beta.md |
-| v0.17.1-beta.md | docs/release_notes/v0.17.1-beta.md | https://raw.githubusercontent.com/spiceai/spiceai/v0.17.2-beta/docs/release_notes/v0.17.1-beta.md |
-| v0.17.2-beta.md | docs/release_notes/v0.17.2-beta.md | https://raw.githubusercontent.com/spiceai/spiceai/v0.17.2-beta/docs/release_notes/v0.17.2-beta.md |
-+-----------------+------------------------------------+---------------------------------------------------------------------------------------------------+
++-----------------+-----------------------------------------+-------------------------------------------------------------------------------------------------+
+| name            | path                                    | download_url                                                                                    |
++-----------------+-----------------------------------------+-------------------------------------------------------------------------------------------------+
+| v0.17.0-beta.md | docs/release_notes/beta/v0.17.0-beta.md | https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/release_notes/beta/v0.17.0-beta.md |
+| v0.17.1-beta.md | docs/release_notes/beta/v0.17.1-beta.md | https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/release_notes/beta/v0.17.1-beta.md |
+| v0.17.2-beta.md | docs/release_notes/beta/v0.17.2-beta.md | https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/release_notes/beta/v0.17.2-beta.md |
+| v0.17.3-beta.md | docs/release_notes/beta/v0.17.3-beta.md | https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/release_notes/beta/v0.17.3-beta.md |
+| v0.17.4-beta.md | docs/release_notes/beta/v0.17.4-beta.md | https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/release_notes/beta/v0.17.4-beta.md |
+| v0.18.0-beta.md | docs/release_notes/beta/v0.18.0-beta.md | https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/release_notes/beta/v0.18.0-beta.md |
+| v0.18.1-beta.md | docs/release_notes/beta/v0.18.1-beta.md | https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/release_notes/beta/v0.18.1-beta.md |
+| v0.18.2-beta.md | docs/release_notes/beta/v0.18.2-beta.md | https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/release_notes/beta/v0.18.2-beta.md |
+| v0.18.3-beta.md | docs/release_notes/beta/v0.18.3-beta.md | https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/release_notes/beta/v0.18.3-beta.md |
+| v0.19.0-beta.md | docs/release_notes/beta/v0.19.0-beta.md | https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/release_notes/beta/v0.19.0-beta.md |
+| v0.19.1-beta.md | docs/release_notes/beta/v0.19.1-beta.md | https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/release_notes/beta/v0.19.1-beta.md |
+| v0.19.2-beta.md | docs/release_notes/beta/v0.19.2-beta.md | https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/release_notes/beta/v0.19.2-beta.md |
+| v0.19.3-beta.md | docs/release_notes/beta/v0.19.3-beta.md | https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/release_notes/beta/v0.19.3-beta.md |
+| v0.19.4-beta.md | docs/release_notes/beta/v0.19.4-beta.md | https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/release_notes/beta/v0.19.4-beta.md |
+| v0.20.0-beta.md | docs/release_notes/beta/v0.20.0-beta.md | https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/release_notes/beta/v0.20.0-beta.md |
++-----------------+-----------------------------------------+-------------------------------------------------------------------------------------------------+
+
+Time: 0.0051505 seconds. 15 rows.
 ```
 
 Read release notes of Spice `v0.17.2-beta` release
