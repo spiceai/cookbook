@@ -61,23 +61,20 @@ date: Thu, 07 Nov 2024 01:53:20 GMT
 ## CLI
 
 1. Start Spice with `spice run`, then open a new terminal
-1. Run `spice status` without an API key
+1. Run `spice pods` without an API key
 
 ```bash
-$ spice status
-2024/11/07 17:29:48 ERROR getting spiced status error="error fetching runtime information: Unauthorized"
+$ spice pods
+2025/01/21 00:44:11 ERROR listing spiced pods error=Unauthorized
 ```
 
-1. Now, run `spice status` with the API key
+1. Now, run `spice pods` with the API key
 
 ```bash
-$ spice status --api-key foobar
+$ spice pods --api-key foobar
 
-NAME          ENDPOINT        STATUS
-http          127.0.0.1:8090  Ready
-flight        127.0.0.1:50051 Ready
-metrics       127.0.0.1:9090  Ready
-opentelemetry 127.0.0.1:50052 Ready
+VERSION NAME    DATASETSCOUNT MODELSCOUNT DEPENDENCIESCOUNT 
+v1      api_key 0             0           0                 
 ```
 
 ## SQL REPL
