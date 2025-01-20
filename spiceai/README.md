@@ -103,7 +103,7 @@ In a new terminal, start the Spice SQL REPL
 spice sql
 ```
 
-You can now now query `eth_recent_blocks` in the runtime.
+You can now now query `taxi_trips` in the runtime.
 
 ```sql
 SELECT tpep_pickup_datetime, passenger_count, trip_distance FROM taxi_trips ORDER BY tpep_pickup_datetime LIMIT 10;
@@ -129,6 +129,6 @@ Time: 0.852775583 seconds. 10 rows.
 ```
 
 **Next Steps**
-This quickstart queries the Spice.ai Cloud Platform directly without any acceleration.  Experiment with different acceleration options using [Spice Data Accelerators](https://docs.spiceai.org/data-accelerators).
+This recipe queries the Spice.ai Cloud Platform directly without any acceleration.  Experiment with different acceleration options using [Spice Data Accelerators](https://docs.spiceai.org/data-accelerators).
 
 View the [Spice.ai documentation](https://docs.spice.ai/building-blocks/datasets) and search on [spicerack.org](https://spicerack.org/) to explore and experiment with retrieving and accelerating multiple datasets to use with Spice.
