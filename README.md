@@ -20,6 +20,7 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 
 - [Azure OpenAI Models](./azure_openai/README.md)
 - [Running Llama3 Locally](./llama/README.md) - Use the Llama family of models locally from HuggingFace using Spice.
+- [OpenAI Models](./models/openai/README.md) - Use OpenAI LLM and embedding models.
 - [OpenAI SDK](./openai_sdk/README.md) - Use the OpenAI SDK to connect to models hosted on Spice.
 - [LLM Memory](./llm-memory/README.md) - Persistent memory for language models.
 - [Text to SQL (NSQL)](./nsql/README.md) - Ask natural language questions of your datasets.
