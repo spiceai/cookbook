@@ -128,6 +128,16 @@ sql> select order_date, sales from cleaned_sales_data limit 3;
 +---------------------+---------+
 
 Time: 0.610236 seconds. 3 rows.
+sql> select order_date, sales from cleaned_sales_data_accelerated limit 3;
++---------------------+---------+
+| order_date          | sales   |
++---------------------+---------+
+| 2003-02-24T00:00:00 | 2871.0  |
+| 2003-05-07T00:00:00 | 2765.9  |
+| 2003-07-01T00:00:00 | 3884.34 |
++---------------------+---------+
+
+Time: 0.006600542 seconds. 3 rows.
 ```
 
 ## Clean up
