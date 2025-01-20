@@ -1,0 +1,36 @@
+version: v1
+kind: Spicepod
+name: azure_openai
+
+datasets:
+  - from: github:github.com/spiceai/spiceai/files/trunk
+    name: spiceai.docs
+    description: Spice.ai project documentation (github.com/spiceai/spiceai)
+    params:
+      github_token: ${secrets:GITHUB_TOKEN}
+      include: 'docs/**/*.md'
+    acceleration:
+      enabled: true
+    columns:
+      - name: content
+        embeddings:
+          - from: embeddings-model
+            row_id:
+              - path
+            chunking:
+              enabled: false
+              target_chunk_size: 256
+              overlap_size: 64
+              file_format: md
+
+embeddings:
+  - from: openai:text-embedding-3-small
+    name: embeddings-model
+
+models:
+  - from: openai:gpt-4o
+    name: chat-model
+    params:
+      tools: auto
+      system_prompt: |
+        You are a helpful Spice.ai Docs assistant.
