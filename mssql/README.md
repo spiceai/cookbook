@@ -12,50 +12,50 @@ instances are accessible from within Spice to demonstrate that you can query acr
 
 1. Clone the Spice cookbook repository and navigate to the `mssql` directory:
 
-    ```shell
-    git clone https://github.com/spiceai/cookbook.git
-    cd cookbook/mssql
-    ```
+   ```shell
+   git clone https://github.com/spiceai/cookbook.git
+   cd cookbook/mssql
+   ```
 
 2. Start the MSSQL instances using `docker compose up -d`. In a production scenario you'd want to use [secrets](https://docs.spiceai.org/components/secret-stores) to protect your secrets.
 
-    ```shell
-    docker compose up -d
-    ```
+   ```shell
+   docker compose up -d
+   ```
 
-    Give the containers a few seconds to start up. Follow the logs with `docker compose logs -f` and wait for the message `Server is ready`.
+   Give the containers a few seconds to start up. Follow the logs with `docker compose logs -f` and wait for the message `Server is ready`.
 
 3. Start up Spice using `spice run`
 
-    ```shell
-    Checking for latest Spice runtime release...
-    Spice.ai runtime starting...
-    2024-09-23T19:43:29.074453Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
-    2024-09-23T19:43:29.074284Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-    2024-09-23T19:43:29.075193Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-    2024-09-23T19:43:29.091737Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-    2024-09-23T19:43:29.274085Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-    2024-09-23T19:43:29.280949Z  WARN tiberius::client::tls_stream::rustls_tls_stream: Trusting the server certificate without validation.
-    2024-09-23T19:43:29.281023Z  WARN tiberius::client::tls_stream::rustls_tls_stream: Trusting the server certificate without validation.
-    2024-09-23T19:43:29.281987Z  WARN tiberius::client::tls_stream::rustls_tls_stream: Trusting the server certificate without validation.
-    2024-09-23T19:43:29.296410Z  INFO runtime: Dataset sales.customer registered (mssql:Sales.Customer), acceleration (arrow), results cache enabled.
-    2024-09-23T19:43:29.296456Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset sales.customer
-    2024-09-23T19:43:29.298284Z  INFO runtime: Dataset sales.customer2022 registered (mssql:Sales.Customer), acceleration (arrow), results cache enabled.
-    2024-09-23T19:43:29.298383Z  INFO runtime: Dataset sales.salesorderheader registered (mssql:Sales.SalesOrderHeader), acceleration (arrow), results cache enabled.
-    2024-09-23T19:43:29.299097Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset sales.salesorderheader
-    2024-09-23T19:43:29.299104Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset sales.customer2022
-    2024-09-23T19:43:29.374935Z  INFO runtime::accelerated_table::refresh_task: Loaded 19,820 rows (2.20 MiB) for dataset sales.customer in 78ms.
-    2024-09-23T19:43:29.387697Z  INFO runtime::accelerated_table::refresh_task: Loaded 19,820 rows (2.20 MiB) for dataset sales.customer2022 in 88ms.
-    2024-09-23T19:43:29.394271Z  INFO runtime::accelerated_table::refresh_task: Loaded 31,465 rows (7.19 MiB) for dataset sales.salesorderheader in 95ms.
-    ```
+   ```shell
+   Checking for latest Spice runtime release...
+   Spice.ai runtime starting...
+   2024-09-23T19:43:29.074453Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
+   2024-09-23T19:43:29.074284Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+   2024-09-23T19:43:29.075193Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+   2024-09-23T19:43:29.091737Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
+   2024-09-23T19:43:29.274085Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+   2024-09-23T19:43:29.280949Z  WARN tiberius::client::tls_stream::rustls_tls_stream: Trusting the server certificate without validation.
+   2024-09-23T19:43:29.281023Z  WARN tiberius::client::tls_stream::rustls_tls_stream: Trusting the server certificate without validation.
+   2024-09-23T19:43:29.281987Z  WARN tiberius::client::tls_stream::rustls_tls_stream: Trusting the server certificate without validation.
+   2024-09-23T19:43:29.296410Z  INFO runtime: Dataset sales.customer registered (mssql:Sales.Customer), acceleration (arrow), results cache enabled.
+   2024-09-23T19:43:29.296456Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset sales.customer
+   2024-09-23T19:43:29.298284Z  INFO runtime: Dataset sales.customer2022 registered (mssql:Sales.Customer), acceleration (arrow), results cache enabled.
+   2024-09-23T19:43:29.298383Z  INFO runtime: Dataset sales.salesorderheader registered (mssql:Sales.SalesOrderHeader), acceleration (arrow), results cache enabled.
+   2024-09-23T19:43:29.299097Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset sales.salesorderheader
+   2024-09-23T19:43:29.299104Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset sales.customer2022
+   2024-09-23T19:43:29.374935Z  INFO runtime::accelerated_table::refresh_task: Loaded 19,820 rows (2.20 MiB) for dataset sales.customer in 78ms.
+   2024-09-23T19:43:29.387697Z  INFO runtime::accelerated_table::refresh_task: Loaded 19,820 rows (2.20 MiB) for dataset sales.customer2022 in 88ms.
+   2024-09-23T19:43:29.394271Z  INFO runtime::accelerated_table::refresh_task: Loaded 31,465 rows (7.19 MiB) for dataset sales.salesorderheader in 95ms.
+   ```
 
 4. In another shell, fire up the Spice SQL REPL using `spice sql`
 
-    ```shell
-    Welcome to the Spice.ai SQL REPL! Type 'help' for help.
+   ```shell
+   Welcome to the Spice.ai SQL REPL! Type 'help' for help.
 
-    show tables; -- list available tables
-    ```
+   show tables; -- list available tables
+   ```
 
 ## Example Queries
 
@@ -70,11 +70,11 @@ FROM (
     SELECT
         COUNT(*) AS count_2019,
         MAX(count_2022) AS count_2022
-    FROM Sales.Customer
+    FROM sales.customer
     JOIN (
         SELECT
             COUNT(*) AS count_2022
-        FROM Sales.Customer2022
+        FROM sales.customer2022
     ) ON 1=1
 );
 ```
@@ -96,8 +96,8 @@ SELECT c."CustomerID",
     MAX(CAST("OrderDate" AS DATE)) AS LatestOrderDate,
     ROUND(AVG("TotalDue"), 2) AS AverageOrderValue,
     COUNT("SalesOrderID") AS TotalNumberOfOrders
-FROM Sales.Customer c
-LEFT OUTER JOIN Sales.SalesOrderHeader soh
+FROM sales.customer c
+LEFT OUTER JOIN sales.salesorderheader soh
     ON c."CustomerID" = soh."CustomerID"
 GROUP BY c."CustomerID"
 ORDER BY TotalNumberOfOrders DESC
