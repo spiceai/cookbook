@@ -15,7 +15,14 @@ Navigate to the [Azure OpenAI Model Deployment](https://ai.azure.com/resource/de
 
 Note: Other models can be used if available. Update `spicepod.yaml` to match the model name.
 
-## Populate `.env` and Configure Spicepod
+## Clone cookbook repo, populate `.env` and Configure Spicepod
+
+Clone this cookbook repo locally:
+
+```bash
+git clone https://github.com/spiceai/cookbook.git
+cd cookbook/azure_openai/
+```
 
 Populate `.env` with the following:
 
