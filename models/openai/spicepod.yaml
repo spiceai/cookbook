@@ -26,11 +26,14 @@ datasets:
 embeddings:
   - from: openai:text-embedding-3-small
     name: embeddings-model
+    params:
+      openai_api_key: ${secrets:OPENAI_API_KEY}
 
 models:
   - from: openai:gpt-4o
     name: chat-model
     params:
+      openai_api_key: ${secrets:OPENAI_API_KEY}
       tools: auto
       system_prompt: |
         You are a helpful Spice.ai Docs assistant.

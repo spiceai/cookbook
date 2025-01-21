@@ -40,11 +40,14 @@ datasets:
 embeddings:
   - from: openai:text-embedding-3-small
     name: embeddings-model
+    params:
+      openai_api_key: ${secrets:OPENAI_API_KEY}
 
 models:
   - from: openai:gpt-4o
     name: chat-model
     params:
+      openai_api_key: ${secrets:OPENAI_API_KEY}
       tools: auto
       system_prompt: |
         You are a helpful Spice.ai Docs assistant.
@@ -168,16 +171,6 @@ I have access to the following dataset:
   - **Can Search Documents:** Yes
 
 This dataset contains documentation related to the Spice.ai project.
-```
-
-```shell
-chat> how many records in taxi trips dataset
-There are a total of 2,964,624 records in the taxi trips dataset.
-```
-
-```shell
-chat> what is the longest taxi trip distance recorded
-The longest taxi trip distance recorded is approximately 312,722.3 meters.
 ```
 
 ```shell
