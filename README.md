@@ -29,6 +29,7 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 - [Nvidia NIM on AWS EC2](./nvidia-nim/ec2/README.md) - Deploy Nvidia NIM on AWS GPU-optimized EC2 instances connected to Spice.
 - [Searching GitHub Files](./search_github_files/README.md) - Search GitHub files with embeddings and vector similarity search.
 - [xAI Models](./models/xai/README.md) - Use xAI models such as Grok.
+- [DeepSeek Model](./deepseek/README.md) - Use DeepSeek model through Spice.
 
 ### Data Acceleration - Materializing & accelerating data locally with Data Accelerators
 
@@ -51,7 +52,8 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
   - [AWS RDS Aurora (MySQL Compatible)](./mysql/rds-aurora/README.md)
   - [PlanetScale](./mysql/planetscale/README.md)
 - [Clickhouse Data Connector](./clickhouse/README.md)
-- [Databricks Connector](./databricks/README.md) - Delta Lake and Spark Connect
+- [Databricks Connector](./databricks/README.md) - Delta Lake and Spark Connect.
+- [Delta Lake Connector](./delta-lake/README.md) - Query data from Delta Lake tables.
 - [Debezium Change Data Capture (CDC) Data Connector from Postgres](./cdc-debezium/README.md) - Stream changes from a Postgres database to Spice.
   - [Debezium CDC SASL/SCRAM Authentication from MySQL](./cdc-debezium/sasl-scram/README.md) - Stream changes from a MySQL database to Spice using SASL/SCRAM authentication.
 - [Dremio Data Connector](./dremio/README.md)
