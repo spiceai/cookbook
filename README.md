@@ -23,7 +23,6 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 - [OpenAI Models](./models/openai/README.md) - Use OpenAI LLM and embedding models.
 - [OpenAI SDK](./openai_sdk/README.md) - Use the OpenAI SDK to connect to models hosted on Spice.
 - [LLM Memory](./llm-memory/README.md) - Persistent memory for language models.
-- [Text to SQL (NSQL)](./nsql/README.md) - Ask natural language questions of your datasets.
 - [Text to SQL (Tools)](./text-to-sql/README.md)
 - [Nvidia NIM on Kubernetes](./nvidia-nim/kubernetes/README.md) - Deploy Nvidia NIM infrastructure, on Kubernetes, with GPUs connected to Spice.
 - [Nvidia NIM on AWS EC2](./nvidia-nim/ec2/README.md) - Deploy Nvidia NIM on AWS GPU-optimized EC2 instances connected to Spice.
