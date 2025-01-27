@@ -74,7 +74,7 @@ cd cookbook/spark
 3. Start the Spice runtime
 
   ```shell
-  >>> spice run
+  spice run
   ```
   ```shell
   2025/01/14 02:52:58 INFO Checking for latest Spice runtime release...
@@ -110,7 +110,9 @@ cd cookbook/spark
 6. Check the table exists from the Spice REPL
 
   ```shell
-  >>> spice sql
+  spice sql
+  ```
+  ```
   Welcome to the Spice.ai SQL REPL! Type 'help' for help.
 
   show tables; -- list available tables
