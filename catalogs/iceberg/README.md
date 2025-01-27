@@ -48,6 +48,19 @@ catalogs:
 spice run
 ```
 
+```bash
+2025/01/27 11:08:36 INFO Checking for latest Spice runtime release...
+2025/01/27 11:08:37 INFO Spice.ai runtime starting...
+2025-01-27T19:08:37.494155Z  INFO runtime::init::dataset: No datasets were configured. If this is unexpected, check the Spicepod configuration.
+2025-01-27T19:08:37.494905Z  INFO runtime::init::catalog: Registering catalog 'ice' for iceberg
+2025-01-27T19:08:37.499162Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
+2025-01-27T19:08:37.499174Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2025-01-27T19:08:37.500689Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2025-01-27T19:08:37.503376Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
+2025-01-27T19:08:37.696469Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2025-01-27T19:08:37.697178Z  INFO runtime::init::catalog: Registered catalog 'ice' with 1 schema and 8 tables
+```
+
 ## Step 5. Query the Iceberg catalog
 
 ```bash
