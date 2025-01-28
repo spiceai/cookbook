@@ -129,7 +129,7 @@ spice sql
 You can now now query `taxi_trips` in the runtime.
 
 ```sql
-SELECT "VendorID", "tpep_pickup_datetime", "fare_amount" FROM taxi_trips LIMIT 10;
+SELECT VendorID, tpep_pickup_datetime, fare_amount FROM taxi_trips LIMIT 10;
 ```
 
 ```shell
@@ -160,7 +160,7 @@ psql spice_demo
 ```
 
 ```sql
-SELECT "VendorID", "tpep_pickup_datetime", "fare_amount" FROM taxi_trips LIMIT 10;
+SELECT VendorID, tpep_pickup_datetime, fare_amount FROM taxi_trips LIMIT 10;
 ```
 
 ```shell
