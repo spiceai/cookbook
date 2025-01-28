@@ -102,7 +102,7 @@ Now let's make some changes to the MySQL database and observe that Spice consume
 Stop the Spice SQL REPL or open a third terminal and connect to the MySQL database with `mysql`:
 
 ```bash
-mysql -h localhost -u root -p inventory -P 3306
+mysql -h 127.0.0.1 -u root -pdebezium inventory -P 3306
 ```
 
 ```sql
