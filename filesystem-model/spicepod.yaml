@@ -1,0 +1,9 @@
+version: v1
+kind: Spicepod
+name: local_model
+
+models:
+  - from: file:phi-3-mini
+    name: local_model
+    params:
+      model_type: phi3
