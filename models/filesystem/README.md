@@ -10,7 +10,7 @@ Clone this cookbook repo locally:
 
 ```bash
 git clone https://github.com/spiceai/cookbook.git
-cd cookbook/filesystem-model
+cd cookbook/models/filesystem
 ```
 
 ## Download model to the filesystem
@@ -90,3 +90,7 @@ Therefore, Charlie is the youngest.
 
 Time: 6.91s (first token 0.31s). Tokens: 178. Prompt: 27. Completion: 151 (22.89/s).
 ```
+
+## Further Reading
+
+[Filesytem Models Documentation](https://spiceai.org/docs/components/models/filesystem)
