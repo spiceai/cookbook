@@ -1,4 +1,4 @@
-# Filesystem (local) Model
+# Filesystem Hosted Model
 
 This recipe demonstrates how to use model hosted on a filesystem in Spice.ai.
 
@@ -21,24 +21,22 @@ The [Phi-3-mini-4k-instruct model](https://huggingface.co/microsoft/Phi-3-mini-4
 mkdir -p phi-3-mini && BASE_URL="https://huggingface.co/microsoft/Phi-3-mini-4k-instruct/resolve/main" \
 && wget -q --show-progress -P phi-3-mini \
   "$BASE_URL/config.json" \
+  "$BASE_URL/generation_config.json" \
   "$BASE_URL/model-00001-of-00002.safetensors" \
   "$BASE_URL/model-00002-of-00002.safetensors" \
-  "$BASE_URL/model.safetensors.index.json" \
-  "$BASE_URL/special_tokens_map.json" \
   "$BASE_URL/tokenizer.json" \
   "$BASE_URL/tokenizer.model" \
   "$BASE_URL/tokenizer_config.json"
 ```
 
 ```shell
-config.json                                          100%[===================================================================================================================>]     967  --.-KB/s    in 0s      
-model-00001-of-00002.safetensors                     100%[===================================================================================================================>]   4.63G  40.1MB/s    in 1m 58s  
-model-00002-of-00002.safetensors                     100%[===================================================================================================================>]   2.49G  40.3MB/s    in 63s     
-model.safetensors.index.json                         100%[===================================================================================================================>]  16.15K  --.-KB/s    in 0.003s  
-special_tokens_map.json                              100%[===================================================================================================================>]     599  --.-KB/s    in 0s      
-tokenizer.json                                       100%[===================================================================================================================>]   1.85M  9.42MB/s    in 0.2s    
-tokenizer.model                                      100%[===================================================================================================================>] 488.01K  --.-KB/s    in 0.07s   
-tokenizer_config.json                                100%[===================================================================================================================>]   3.36K  --.-KB/s    in 0s 
+config.json                      100%[=========================================================>]     967  --.-KB/s    in 0s      
+generation_config.json           100%[=========================================================>]     181  --.-KB/s    in 0s      
+model-00001-of-00002.safetensors 100%[=========================================================>]   4.63G  40.0MB/s    in 1m 58s  
+model-00002-of-00002.safetensors 100%[=========================================================>]   2.49G  40.7MB/s    in 63s     
+tokenizer.json                   100%[=========================================================>]   1.85M  9.40MB/s    in 0.2s    
+tokenizer.model                  100%[=========================================================>] 488.01K  --.-KB/s    in 0.07s   
+tokenizer_config.json            100%[=========================================================>]   3.36K  --.-KB/s    in 0s  
 ```
 
 ## Run Spice
@@ -93,4 +91,4 @@ Time: 6.91s (first token 0.31s). Tokens: 178. Prompt: 27. Completion: 151 (22.89
 
 ## Further Reading
 
-[Filesytem Models Documentation](https://spiceai.org/docs/components/models/filesystem)
+[Filesytem Hosted Models Documentation](https://spiceai.org/docs/components/models/filesystem)
