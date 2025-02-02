@@ -1,4 +1,4 @@
-# Outlook IMAP Data Connector
+# Connecting to an Outlook mailbox
 
 Follow these steps to get started with the IMAP Data Connector, connecting to an Outlook/Microsoft 365 mailbox.
 

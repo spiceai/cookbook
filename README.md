@@ -69,6 +69,8 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 - [Snowflake Data Connector](./snowflake/README.md)
 - [Spice.ai Cloud Platform Data Connector](./spiceai/README.md)
 - [Apache Spark Data Connector](./spark/README.md)
+- [IMAP Data Connector](./imap/README.md)
+  - [Connecting to an Outlook mailbox](./imap/outlook.md)
 
 ### Connecting to Data Sources with Catalog Connectors
 
