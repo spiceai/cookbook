@@ -46,7 +46,7 @@ models:
   - from: azure:gpt-4o-mini
     name: chat-model
     params:
-      spice_tools: auto
+      tools: auto
       endpoint: ${ secrets:SPICE_AZURE_AI_ENDPOINT }
       azure_api_version: 2024-08-01-preview
       azure_deployment_name: gpt-4o-mini
