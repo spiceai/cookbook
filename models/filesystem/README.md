@@ -1,6 +1,6 @@
 # Filesystem Hosted Model
 
-This recipe demonstrates how to use model hosted on a filesystem in Spice.ai.
+This recipe demonstrates how to use models hosted on filesystems.
 
 ## Prerequisites
 
