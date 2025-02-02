@@ -1,0 +1,9 @@
+version: v1
+kind: Spicepod
+name: imap_email
+datasets:
+  - from: imap:<IMAP_EMAIL>
+    name: awesome_mailbox
+    params:
+      imap_password: ${secrets:IMAP_PASSWORD}
+      imap_host: <IMAP_HOST>
