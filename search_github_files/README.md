@@ -7,13 +7,21 @@ This recipe demonstrates how to create embeddings for GitHub files and perform v
 ## Prerequisites
 
 - Ensure you have the Spice CLI installed. Follow the [Getting Started](https://docs.spiceai.org/getting-started) if you haven't done so.
-- Populate `.env`.
+- Populate `.env` in the `cookbook/search_github_files` directory.
   - `GITHUB_TOKEN`: With a [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic).
   - `SPICE_OPENAI_API_KEY`: A valid OpenAI API key (or equivalent).
 
 ## SQL Search
 
-1. Execute a Basic SQL Query to perform keyword searches within your dataset:
+1. Start spice runtime:
+
+```shell
+git clone https://github.com/spiceai/cookbook # Skip if already cloned
+cd cookbook/search_github_files
+spice run
+```
+
+2. Execute a Basic SQL Query to perform keyword searches within your dataset:
 
 ```shell
 spice sql
@@ -111,7 +119,7 @@ curl -XPOST http://localhost:8090/v1/search \
 
 Result:
 
-```json
+````json
 {
   "matches": [
     {
@@ -139,7 +147,7 @@ Result:
   ],
   "duration_ms": 48
 }
-```
+````
 
 4. Rerun the search, and retrieve the full document (as an entry in `additional_coluumns`).
 
@@ -157,7 +165,7 @@ curl -XPOST http://localhost:8090/v1/search \
 
 Result:
 
-```json
+````json
 {
   "matches": [
     {
@@ -187,7 +195,7 @@ Result:
   ],
   "duration_ms": 45
 }
-```
+````
 
 ## Pre-existing embeddings
 
@@ -216,7 +224,7 @@ curl -XPOST http://localhost:8091/v1/search \
 
 Result:
 
-```json
+````json
 {
   "matches": [
     {
@@ -244,4 +252,4 @@ Result:
   ],
   "duration_ms": 48
 }
-```
+````
