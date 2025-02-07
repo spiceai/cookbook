@@ -1,0 +1,30 @@
+version: v1
+kind: Spicepod
+name: websearch
+
+runtime:
+  task_history:
+    captured_output: truncated
+
+models:
+  - name: openai-w-internet
+    from: openai:gpt-4o-mini
+    params:
+      openai_api_key: ${ secrets:SPICE_OPENAI_API_KEY }
+      tools: the_internet
+      system_prompt: |
+        You have access to the internet. You don't know what day it is today.
+
+  - name: perp
+    from: perplexity:sonar
+    params:
+      perplexity_auth_token: ${ secrets:SPICE_PERPLEXITY_AUTH_TOKEN }
+      system_prompt: |
+        When asked a question with dates, locations or numbers, use an ASCII table when appropriate. Don't overuse it.
+tools:
+  - name: the_internet
+    from: websearch
+    description: "Search the web for information"
+    params:
+      engine: perplexity
+      perplexity_auth_token: ${ secrets:SPICE_PERPLEXITY_AUTH_TOKEN }
