@@ -40,11 +40,8 @@ However, this approach requires dedicated runtime resources for each application
 
 ## Configuration Examples
 
-:::tip
-
-Start off with the simplest configuration (i.e. full refresh) and then move to more complex configurations (i.e. append mode, CDC) as the dataset size and refresh requirements increase.
-
-:::
+> [!TIP]
+> Start off with the simplest configuration (i.e. full refresh) and then move to more complex configurations (i.e. append mode, CDC) as the dataset size and refresh requirements increase.
 
 ### Simple Full Refresh
 
