@@ -129,4 +129,4 @@ Common operational challenges include slow startup times, memory pressure, and d
 
 The sidecar pattern is most effective for applications requiring minimal data access latency, with small to medium dataset sizes and limited deployment instances. Alternative architectures should be considered when dataset sizes grow too large, deployments require many instances, or complex data sharing patterns exist.
 
-For additional deployment patterns, refer to the [Deployment Architectures Overview](/docs/deployment/architectures/index.md).
+For additional deployment patterns, refer to the [Deployment Architectures Overview](https://spiceai.org/docs/deployment/architectures).
