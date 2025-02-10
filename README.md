@@ -30,6 +30,7 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 - [xAI Models](./models/xai/README.md) - Use xAI models such as Grok.
 - [DeepSeek Model](./deepseek/README.md) - Use DeepSeek model through Spice.
 - [Filesystem Hosted Model](./models/filesystem/README.md) - Use models hosted directly on filesystems.
+- [Web Search Tools using Perplexity)[./websearch/README.md) - Provide LLMs with web search access for more informed answers.
 
 ### Data Acceleration - Materializing & accelerating data locally with Data Accelerators
 
