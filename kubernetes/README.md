@@ -284,7 +284,7 @@ helm upgrade spiceai-dev spiceai/spiceai -f values.yaml
 
 ## Configure Secrets (optional)
 
-Use instructions below to propogate  OpenAI API Key secret to Spice. 
+Use instructions below to propogate OpenAI API Key secret to Spice. 
 
 Create `spice-openai-api-key` secret
 
