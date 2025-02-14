@@ -7,13 +7,21 @@ This recipe demonstrates how to create embeddings for GitHub files and perform v
 ## Prerequisites
 
 - Ensure you have the Spice CLI installed. Follow the [Getting Started](https://docs.spiceai.org/getting-started) if you haven't done so.
-- Populate `.env`.
+- Populate `.env` in the `cookbook/search_github_files` directory.
   - `GITHUB_TOKEN`: With a [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic).
   - `SPICE_OPENAI_API_KEY`: A valid OpenAI API key (or equivalent).
 
 ## SQL Search
 
-1. Execute a Basic SQL Query to perform keyword searches within your dataset:
+1. Start spice runtime:
+
+```shell
+git clone https://github.com/spiceai/cookbook # Skip if already cloned
+cd cookbook/search_github_files
+spice run
+```
+
+2. Execute a Basic SQL Query to perform keyword searches within your dataset:
 
 ```shell
 spice sql
@@ -37,6 +45,7 @@ Result:
 +------------------------------+
 | docs/criteria/definitions.md |
 | docs/dev/error_handling.md   |
+| docs/dev/metrics.md          |
 | docs/dev/style_guide.md      |
 +------------------------------+
 ```
@@ -91,57 +100,7 @@ Result:
 }
 ```
 
-### Additional Configuration - Chunking
-
-1. Update the spicepod `datasets[0].columns[0].embeddings.chunking.enabled: true`.
-2. Restart the spiced.
-3. Rerun the search
-
-```shell
-curl -XPOST http://localhost:8090/v1/search \
--H 'Content-Type: application/json' \
--d "{
-    \"datasets\": [\"spiceai.files\"],
-    \"text\": \"errors\",
-    \"where\": \"not contains(path, 'docs/release_notes')\",
-    \"additional_columns\": [\"download_url\"],
-    \"limit\": 2
-}"
-```
-
-Result:
-
-```json
-{
-  "matches": [
-    {
-      "value": "# Spice.ai Extensibility\n\nThis document is an overview of all the interfaces and extension points in Spice.ai.\n\n| Component       | Description                                                                                                                                | Definition Link                                            |\n| --------------- | -----------------------------",
-      "score": 0.7811596783985292,
-      "dataset": "spiceai.files",
-      "primary_key": {
-        "path": "docs/EXTENSIBILITY.md"
-      },
-      "metadata": {
-        "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/EXTENSIBILITY.md"
-      }
-    },
-    {
-      "value": "# Guidelines for error handlling\n\n## Rust Error Traits\n\nIn Rust, the Error trait implements both the Debug and Display traits. All user-facing errors should use the Display trait, not the Debug trait.\n\ni.e.\n\nGood (uses Display trait)\n```rust\nif let Err(user_facing_err) = upload_data(datasource) {\n    tracing::error!(\"Unable to upload data to {datasource}: {user_facing_err}\");\n}\n``",
-      "score": 0.8009972672322939,
-      "dataset": "spiceai.files",
-      "primary_key": {
-        "path": "docs/dev/error_handling.md"
-      },
-      "metadata": {
-        "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/dev/error_handling.md"
-      }
-    }
-  ],
-  "duration_ms": 48
-}
-```
-
-4. Rerun the search, and retrieve the full document (as an entry in `additional_coluumns`).
+4. Rerun the search, and retrieve the full document by adding `content` column to `additional_columns`).
 
 ```shell
 curl -XPOST http://localhost:8090/v1/search \
@@ -157,7 +116,7 @@ curl -XPOST http://localhost:8090/v1/search \
 
 Result:
 
-```json
+````json
 {
   "matches": [
     {
@@ -187,7 +146,7 @@ Result:
   ],
   "duration_ms": 45
 }
-```
+````
 
 ## Pre-existing embeddings
 
@@ -216,7 +175,7 @@ curl -XPOST http://localhost:8091/v1/search \
 
 Result:
 
-```json
+````json
 {
   "matches": [
     {
@@ -244,4 +203,4 @@ Result:
   ],
   "duration_ms": 48
 }
-```
+````

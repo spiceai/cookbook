@@ -49,13 +49,18 @@ Spice.ai runtime starting...
 
 Run `spice sql` to check the number of rows and the 5 earliest records sorted by `tpep_pickup_datetime`
 
-```sql
+```shell
 spice sql
-
+```
+```shell
 Welcome to the Spice.ai SQL REPL! Type 'help' for help.
 
 show tables; -- list available tables
-sql> select count(1) from taxi_trips;
+```
+```sql
+select count(1) from taxi_trips;
+```
+```shell
 +-----------------+
 | COUNT(Int64(1)) |
 +-----------------+
@@ -63,8 +68,12 @@ sql> select count(1) from taxi_trips;
 +-----------------+
 
 Time: 0.012826375 seconds. 1 rows.
+```
 
-sql> select * from taxi_trips order by tpep_pickup_datetime limit 5;
+```sql
+select * from taxi_trips order by tpep_pickup_datetime limit 5;
+```
+```shell
 +----------+----------------------+-----------------------+-----------------+---------------+------------+--------------------+--------------+--------------+--------------+-------------+-------+---------+------------+--------------+-----------------------+--------------+----------------------+-------------+
 | VendorID | tpep_pickup_datetime | tpep_dropoff_datetime | passenger_count | trip_distance | RatecodeID | store_and_fwd_flag | PULocationID | DOLocationID | payment_type | fare_amount | extra | mta_tax | tip_amount | tolls_amount | improvement_surcharge | total_amount | congestion_surcharge | Airport_fee |
 +----------+----------------------+-----------------------+-----------------+---------------+------------+--------------------+--------------+--------------+--------------+-------------+-------+---------+------------+--------------+-----------------------+--------------+----------------------+-------------+
@@ -108,7 +117,9 @@ Check if dataset has been reloaded
 Check the number of rows again, and it shows 5 rows difference. The previous 5 earliest records are excluded after reloading.
 
 ```sql
-sql> select count(1) from taxi_trips;
+select count(1) from taxi_trips;
+```
+```shell
 +-----------------+
 | COUNT(Int64(1)) |
 +-----------------+
@@ -116,8 +127,11 @@ sql> select count(1) from taxi_trips;
 +-----------------+
 
 Time: 0.010782792 seconds. 1 rows.
-
-sql> select * from taxi_trips order by tpep_pickup_datetime limit 1;
+```
+```sql
+select * from taxi_trips order by tpep_pickup_datetime limit 1;
+```
+```shell
 +----------+----------------------+-----------------------+-----------------+---------------+------------+--------------------+--------------+--------------+--------------+-------------+-------+---------+------------+--------------+-----------------------+--------------+----------------------+-------------+
 | VendorID | tpep_pickup_datetime | tpep_dropoff_datetime | passenger_count | trip_distance | RatecodeID | store_and_fwd_flag | PULocationID | DOLocationID | payment_type | fare_amount | extra | mta_tax | tip_amount | tolls_amount | improvement_surcharge | total_amount | congestion_surcharge | Airport_fee |
 +----------+----------------------+-----------------------+-----------------+---------------+------------+--------------------+--------------+--------------+--------------+-------------+-------+---------+------------+--------------+-----------------------+--------------+----------------------+-------------+

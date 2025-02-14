@@ -11,5 +11,5 @@ models:
   - name: chat_model
     from: openai:gpt-4o
     params:
-      spice_tools: memory
+      tools: memory
       openai_api_key: ${secrets:SPICE_OPENAI_API_KEY}

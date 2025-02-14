@@ -71,7 +71,7 @@ Time: 2.1508365 seconds. 10 rows.
 
 ## Step3. Enable SQLite Accelerator
 
-Use text editor to open `.spicepod.yaml` and set `acceleration.enabled: true`. Save.
+Use text editor to open `spicepod.yaml` and set `acceleration.enabled: true`. Save.
 
 Before:
 

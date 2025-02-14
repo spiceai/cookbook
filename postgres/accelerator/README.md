@@ -160,7 +160,7 @@ psql spice_demo
 ```
 
 ```sql
-SELECT VendorID, tpep_pickup_datetime, fare_amount FROM taxi_trips LIMIT 10;
+SELECT "VendorID", tpep_pickup_datetime, fare_amount FROM taxi_trips LIMIT 10;
 ```
 
 ```shell

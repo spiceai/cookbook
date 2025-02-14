@@ -100,7 +100,9 @@ spice sql
 Now query `taxi_trips`:
 
 ```sql
-sql> select avg(total_amount), avg(tip_amount), count(1), passenger_count from taxi_trips group by passenger_count order by passenger_count asc;
+select avg(total_amount), avg(tip_amount), count(1), passenger_count from taxi_trips group by passenger_count order by passenger_count asc;
+```
+```sql
 +------------------------------+----------------------------+-----------------+-----------------+
 | avg(taxi_trips.total_amount) | avg(taxi_trips.tip_amount) | count(Int64(1)) | passenger_count |
 +------------------------------+----------------------------+-----------------+-----------------+

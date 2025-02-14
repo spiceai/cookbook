@@ -30,7 +30,7 @@ models:
   - name: openai
     from: openai:gpt-4o
     params:
-      spice_tools: auto
+      tools: auto
       openai_api_key: ${ secrets:SPICE_OPENAI_API_KEY }
       system_prompt: |
         Use the SQL tool when:

@@ -13,14 +13,14 @@ See [kind installation](https://kind.sigs.k8s.io/docs/user/quick-start/#installa
 
 ```bash
 helm repo add spiceai https://helm.spiceai.org
-helm install spiceai spiceai/spiceai
+helm install spiceai-dev spiceai/spiceai
 ```
 
 Output:
 
 ```bash
-NAME: spiceai
-LAST DEPLOYED: Wed Nov 27 13:55:43 2024
+NAME: spiceai-dev
+LAST DEPLOYED: Thu Feb  6 16:18:14 2025
 NAMESPACE: default
 STATUS: deployed
 REVISION: 1
@@ -31,7 +31,19 @@ TEST SUITE: None
 
 ```bash
 kubectl get pods
-kubectl logs deploy/spiceai
+```
+
+Output:
+
+```bash
+NAME                       READY   STATUS    RESTARTS   AGE
+spiceai-dev-5dbb7b77bb-9p8p6   1/1     Running   0          22s
+```
+
+```bash
+kubectl logs spiceai-dev-5dbb7b77bb-9p8p6
+# or just
+kubectl logs deploy/spiceai-dev
 ```
 
 Output:
@@ -47,7 +59,7 @@ Output:
 **Step 4.** Run the Spice SQL REPL inside the running pod:
 
 ```bash
-kubectl exec -it deploy/spiceai -- spiced --repl
+kubectl exec -it deploy/spiceai-dev -- spiced --repl
 ```
 
 **Step 5.** Run these queries in the Spice SQL REPL:
@@ -65,7 +77,7 @@ show tables;
 +---------------+--------------+---------------+------------+
 ```
 
-**Step 6.** Create a `values.yaml` file to configure the Spice deployment:
+**Step 6.** Create a `values.yaml` file to configure the Spice deployment. See [Spice Helm Values](https://spiceai.org/docs/deployment/kubernetes#values) for more deails.
 
 ```bash
 cat <<EOF > values.yaml
@@ -88,15 +100,15 @@ EOF
 **Step 7.** Update the Spice deployment with the new configuration:
 
 ```bash
-helm upgrade spiceai spiceai/spiceai -f values.yaml
+helm upgrade spiceai-dev spiceai/spiceai -f values.yaml
 ```
 
 Output:
 
 ```bash
-Release "spiceai" has been upgraded. Happy Helming!
-NAME: spiceai
-LAST DEPLOYED: Wed Nov 27 13:57:35 2024
+Release "spiceai-dev" has been upgraded. Happy Helming!
+NAME: spiceai-dev
+LAST DEPLOYED: Thu Feb  6 16:23:20 2025
 NAMESPACE: default
 STATUS: deployed
 REVISION: 2
@@ -106,7 +118,7 @@ TEST SUITE: None
 **Step 8.** Rerun the Spice SQL REPL
 
 ```bash
-kubectl exec -it deploy/spiceai -- spiced --repl
+kubectl exec -it deploy/spiceai-dev -- spiced --repl
 ```
 
 **Step 9.** Run these queries in the Spice SQL REPL:
