@@ -60,7 +60,7 @@ Copy the `access_token` property to use in the Spicepod
 
 ### 3. Spicepod setup
 
-Edit the `spicepod.yaml` file in this directory, and replace the `<IMAP_EMAIL>` with the Outlook email address. Delete the `imap_host` parameter, as it is set automatically.
+Edit the `spicepod.outlook.yaml` file in this directory, and replace the `<IMAP_EMAIL>` with the Outlook email address.
 
 The OAuth access token for the IMAP connection will be used as the password, supplied as a secret via an environment variable.
 
@@ -74,7 +74,7 @@ datasets:
   - from: imap:mymail@outlook.com
     name: outlook_mailbox
     params:
-      imap_password: ${secrets:OAUTH_ACCESS_TOKEN}
+      imap_access_token: ${secrets:IMAP_ACCESS_TOKEN}
 ```
 
 ### 4. Start Spice
@@ -84,7 +84,7 @@ Start Spice, supplying the OAuth Access Token as an environment variable.
 For example, in an `.env` file:
 
 ```bash
-OAUTH_ACCESS_TOKEN="eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ik5HVEZ2ZEstZnl0aEV1Q..."
+IMAP_ACCESS_TOKEN="eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ik5HVEZ2ZEstZnl0aEV1Q..."
 ```
 
 Once started, the mailbox should be registered in the Spice Runtime logs:
