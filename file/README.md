@@ -6,17 +6,17 @@ Using the [File Data Connector](https://spiceai.org/docs/components/data-connect
 
 - Spice.ai CLI installed (see [Getting Started](https://docs.spiceai.org/getting-started))
 
-## Query Parquet files
+## Query Parquet Files
 
 Follow these steps to get started with using local Parquet files as a dataset.
 
-1. Download or move a Parquet file locally.
+### Step 1: Download or Move a Parquet File Locally
 
 ```shell
 wget https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-01.parquet -O yellow_tripdata_2024-01.parquet
 ```
 
-2. Create the Spicepod.
+### Step 2: Create the Spicepod
 
 ```shell
 cat <<EOF > spicepod.yaml
@@ -29,15 +29,15 @@ datasets:
 EOF
 ```
 
-3. Start the Spice runtime.
+### Step 3: Start the Spice Runtime
 
 ```shell
 spice run
 ```
 
-4. Query the dataset using SQL.
+### Step 4: Query the Dataset Using SQL
 
-In a new terminal, run the CLI command `spice sql`.
+Open a new terminal and run the CLI command `spice sql`.
 
 ```shell
 spice sql
@@ -49,7 +49,7 @@ Then execute a query on the `yellow_taxis` dataset.
 select avg(passenger_count) from yellow_taxis;
 ```
 
-You should see the following output.
+You should see the following output:
 
 ```output
 sql> select avg(passenger_count) from yellow_taxis;
@@ -62,7 +62,11 @@ sql> select avg(passenger_count) from yellow_taxis;
 Time: 0.0253585 seconds. 1 rows.
 ```
 
-5. (Optional) Cleanup
+### Step 5: Terminate the Spice Runtime
+
+Press Ctrl-C to terminate the running Spice runtime.
+
+### Step 6: (Optional) Cleanup
 
 ```shell
 # Remove the spicepod.yaml
@@ -72,11 +76,11 @@ rm spicepod.yaml
 rm yellow_tripdata_2024-01.parquet
 ```
 
-## Query Markdown documents
+## Query Markdown Documents
 
 Follow these steps to get started with using local Markdown files as a dataset.
 
-1. Download Markdown documents.
+### Step 1: Download Markdown Documents
 
 ```shell
 base_url="https://raw.githubusercontent.com/spiceai/docs/refs/heads/trunk/website/docs/components/data-connectors"
@@ -93,7 +97,7 @@ for file in "${files[@]}"; do
 done
 ```
 
-2. Create the Spicepod.
+### Step 2: Create the Spicepod
 
 ```shell
 cat <<EOF > spicepod.yaml
@@ -108,15 +112,15 @@ datasets:
 EOF
 ```
 
-3. Start the Spice runtime
+### Step 3: Start the Spice Runtime
 
 ```shell
 spice run
 ```
 
-4. Query the dataset using SQL.
+### Step 4: Query the Dataset Using SQL
 
-In a new terminal, run the CLI command `spice sql`.
+Open a new terminal and run the CLI command `spice sql`.
 
 ```shell
 spice sql
@@ -128,7 +132,7 @@ Then execute a query on the `docs` dataset.
 select location from docs;
 ```
 
-You should see outputs similar to the following.
+You should see outputs similar to the following:
 
 ```text
 +---------------------------------------------+
@@ -140,6 +144,20 @@ You should see outputs similar to the following.
 | Users/lukim/dev/cookbook/file/clickhouse.md |
 | Users/lukim/dev/cookbook/file/delta-lake.md |
 +---------------------------------------------+
+```
+
+### Step 5: Terminate the Spice Runtime
+
+Press Ctrl-C to terminate the running Spice runtime.
+
+### Step 6: (Optional) Cleanup
+
+```shell
+# Remove the spicepod.yaml
+rm spicepod.yaml
+
+# Remove the downloaded Markdown files
+rm *.md
 ```
 
 ## Additional Resources
