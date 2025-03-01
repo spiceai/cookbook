@@ -64,7 +64,7 @@ Time: 0.0253585 seconds. 1 rows.
 
 ### Step 5: Terminate the Spice Runtime
 
-Press Ctrl-C to terminate the running Spice runtime.
+Close the running Spice runtime and Spice SQL REPL
 
 ### Step 6: (Optional) Cleanup
 
@@ -146,9 +146,11 @@ You should see outputs similar to the following:
 +---------------------------------------------+
 ```
 
+Press Ctrl-C to close Spice SQL REPL.
+
 ### Step 5: Terminate the Spice Runtime
 
-Press Ctrl-C to terminate the running Spice runtime.
+Close the running Spice runtime.
 
 ### Step 6: (Optional) Cleanup
 
