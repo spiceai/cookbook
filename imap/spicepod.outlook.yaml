@@ -1,8 +1,8 @@
 version: v1
 kind: Spicepod
-name: imap_email
+name: imap_outlook
 datasets:
   - from: imap:<IMAP_EMAIL>
-    name: awesome_mailbox
+    name: outlook_mailbox
     params:
       imap_access_token: ${secrets:IMAP_ACCESS_TOKEN}
