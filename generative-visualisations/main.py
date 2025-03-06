@@ -2,25 +2,26 @@ from openai import Client as OpenAI
 from openai.types.chat import ChatCompletion
 from openai import APIConnectionError
 from dotenv import load_dotenv
-import os
-import logging
 import json
 import sys
 from dataclasses import dataclass
 from typing import List
 from typing import Dict
 from spicepy import Client as SpiceClient
+from dataclasses_json import dataclass_json
 
 load_dotenv()
 
 # Uncomment the following line to enable debug logging
 #logging.basicConfig(level=logging.DEBUG)
 
+@dataclass_json
 @dataclass
 class visualisation_and_sql:
     sql: str
     chart_js_html: str
 
+@dataclass_json
 @dataclass
 class SummaryInput:
     user_question: str
@@ -35,7 +36,7 @@ def create_visualisation_and_sql(user_question: str) -> "visualisation_and_sql":
     return visualisation_and_sql(**json.loads(response))
 
 def create_summary(user_question: str, sql: str, data: SummaryInput) -> str:
-    return try_completion(openai_client(), "summary_maker", json.dumps(data))
+    return try_completion(openai_client(), "summary_maker", data.to_json())
 
 def get_data(sql: str) -> List[Dict]:
     return SpiceClient().query(sql).read_pandas().to_dict(orient="records")
@@ -52,7 +53,7 @@ def try_completion(client: OpenAI, model: str, msg: str) -> str:
             ],
             model=model,
         ).choices[0].message.content
-    except APIConnectionError as e:
+    except APIConnectionError:
         print("Error: Could not connect to the Spice API server.", file=sys.stderr)
         print("\nEnsure Spice is running locally (spice run) and retry.", file=sys.stderr)
         sys.exit(1)
@@ -61,7 +62,7 @@ def try_completion(client: OpenAI, model: str, msg: str) -> str:
         sys.exit(1)
 
 def main():
-    user_question = "How has per month sales trended over the last year?"
+    user_question = "How has per month sales trended?"
     visualisation_and_sql = create_visualisation_and_sql(user_question)
     print(visualisation_and_sql.chart_js_html)
     print(visualisation_and_sql.sql)
@@ -69,7 +70,7 @@ def main():
     data = get_data(visualisation_and_sql.sql)
     print(data)
 
-    summary = create_summary(user_question, visualisation_and_sql.sql, SummaryInput(user_question, visualisation_and_sql.sql, []))
+    summary = create_summary(user_question, visualisation_and_sql.sql, SummaryInput(user_question, visualisation_and_sql.sql, data))
 
     print(summary)
 
