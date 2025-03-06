@@ -1,0 +1,54 @@
+version: v1
+kind: Spicepod
+name: visualisation-generator
+
+runtime:
+  task_history:
+    captured_output: truncated
+
+datasets:
+  - from: file:/Users/jeadie/Github/spiceai/cleaned_sales_data.parquet
+    name: sales
+
+models:
+  - name: visualisation_and_sql
+    from: openai:gpt-4o
+    params:
+      openai_api_key: ${ secrets:SPICE_OPENAI_API_KEY }
+      tools: sql, list_datasets, table_schema
+      system_prompt: |
+        Your job is to make a chart.js scripts and the SQL query needed for the given question a user asks. Use the `list_datasets` and `table_schema` tools to ensure the SQL query is correct. Before you return the SQL query, make sure it works by running `EXPLAIN <query>`.
+      openai_response_format:
+        type: json_schema
+        json_schema:
+          name: visualisation_and_sql
+          schema:
+            type: object
+            properties:
+              sql:
+                type: string
+              chart_js_html:
+                type: string
+            additionalProperties: false
+            required:
+              - sql
+              - chart_js_html
+        strict: true
+
+  - name: summary_maker
+    from: openai:o3-mini
+    params:
+      openai_api_key: ${ secrets:SPICE_OPENAI_API_KEY }
+      system_prompt: |
+        You are a data analyst. Your job is to sumarise the trends in the data provided. You will receive the initial question the user provided, the query another analyst ran, and the data it returned from the system.
+
+        <examples>
+        <example-1>
+        <input>{
+          "user_question": "How has per month sales trended over the last year?".
+          "sql_query": "SELECT month, COUNT(*) as sales_count FROM spice.public.sales GROUP BY month ORDER BY month",
+          "data": [{"month":1,"sales_count":229},{"month":2,"sales_count":224},{"month":3,"sales_count":212},{"month":4,"sales_count":178},{"month":5,"sales_count":252},{"month":6,"sales_count":131},{"month":7,"sales_count":141},{"month":8,"sales_count":191},{"month":9,"sales_count":171},{"month":10,"sales_count":317},{"month":11,"sales_count":597},{"month":12,"sales_count":180}]
+        }<input/>
+        <output>- Sales have been varied between months, with a maximum of 597 in November and low of 131 in June.\n- Broadly the middle months of the year received lower sales except for december (130) which appears to be a lull from the high of November (597). <output/>
+        <example-1/>
+        <examples/>
