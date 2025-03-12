@@ -1,0 +1,65 @@
+name: Cookbook AI QA
+
+on:
+  workflow_dispatch:
+    inputs:
+      spice_version:
+        description: 'Spice.ai version to test'
+        required: true
+        default: 'v1.0.5'
+        type: string
+
+jobs:
+  api-call:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        recipe_name: ['File Data Connector']
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Create output directory
+        run: mkdir -p api_responses
+
+      - name: Call Spice AI Completion API
+        id: api_call
+        run: |
+          recipe_file_path="$(echo "${{ matrix.recipe_name }}" | tr '[:upper:]' '[:lower:]' | tr ' ' '_')"
+          output_file="api_responses/${recipe_file_path}.json"
+
+          # Call API
+          response=$(curl -s \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.SPICE_API_KEY }}" \
+            -d '{
+              "model": "timmy",
+              "messages": [
+                {
+                  "role": "user",
+                  "content": "Install Spice.ai OSS using the spiceai docs. Add it to the PATH. If it is already installed, run spice upgrade to upgrade it. Verify installation of version ${{ github.event.inputs.spice_version }} by running the CLI command spice version. Use the ${{ toJson(matrix.recipe_name) }} Recipe to conduct testing. Ensure you execute all instructions in the recipe. Ensure you report on the spice sql query or spice chat results if the recipe includes them."
+                }
+              ],
+              "temperature": 0.1
+            }' \
+            https://data.spiceai.io/v1/completions)
+
+          # Save the response to a file
+          echo "$response" > $output_file
+
+          # Output response for debugging
+          echo "API Response saved to $output_file"
+
+          # Check for errors
+          if echo "$response" | grep -q "\"error\""; then
+            echo "Error detected in API response"
+            echo "$response"
+            exit 1
+          fi
+
+      - name: Upload response file
+        uses: actions/upload-artifact@v3
+        with:
+          name: api-response-${recipe_file_path}
+          path: api_responses/${recipe_file_path}.json
