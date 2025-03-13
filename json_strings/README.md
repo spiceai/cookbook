@@ -192,6 +192,47 @@ WHERE properties ->> 'color' IN ('black', 'white');
 +---------------------+-------+
 ```
 
+## Using views to simplify working with JSON columns
+
+Views can be used to add extra columns representing JSON fields. For example:
+
+```yaml
+views:
+  - name: products_with_color
+    sql: |
+      SELECT products.*, properties->>'color' color from products;
+```
+
+Query products and their colors using the created view:
+
+```console
+sql> describe products_with_color;
++-------------+-----------+-------------+
+| column_name | data_type | is_nullable |
++-------------+-----------+-------------+
+| id          | Int64     | YES         |
+| name        | Utf8      | YES         |
+| properties  | Utf8      | YES         |
+| color       | Utf8      | YES         |
++-------------+-----------+-------------+
+```
+
+```console
+sql> select id, name, color from products_with_color;
++----+-------------------------+--------+
+| id | name                    | color  |
++----+-------------------------+--------+
+| 1  | Ink Fusion T-Shirt      | white  |
+| 2  | ThreadVerse T-Shirt     | black  |
+| 3  | Design Dynamo T-Shirt   | blue   |
+| 4  | Artistry Apex T-Shirt   | red    |
+| 5  | Graphite Glow T-Shirt   | gray   |
+| 6  | Sunburst Shine T-Shirt  | yellow |
+| 7  | Oceanic Opal T-Shirt    | teal   |
+| 8  | Crimson Cascade T-Shirt | maroon |
++----+-------------------------+--------+
+```
+
 ## Further Reading
 
 JSON strings manipulation with [datafusion-functions-json](https://github.com/datafusion-contrib/datafusion-functions-json).
