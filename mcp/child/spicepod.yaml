@@ -1,0 +1,7 @@
+name: spicepod
+version: v1beta1
+kind: Spicepod
+
+tools:
+  - name: spice_mcp
+    from: mcp:http://localhost:8090/v1/mcp/sse

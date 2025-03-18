@@ -1,0 +1,30 @@
+version: v1
+kind: Spicepod
+name: tooling
+
+runtime:
+  task_history:
+    captured_output: truncated
+
+tools:
+  - name: fs
+    from: mcp:npx
+    description: Tooling to interact with the filesystem
+    params:
+      mcp_args: -y @modelcontextprotocol/server-filesystem ${secrets:SPICE_ALLOWED_DIR}
+
+models:
+  - name: openai-with-spice
+    from: openai:gpt-4o-mini
+    params:
+      openai_api_key: ${ secrets:SPICE_OPENAI_API_KEY }
+      tools: fs
+      system_prompt: |
+        If you need to use the filesystem, check which directories are allowed by running `list_allowed_directories`.
+
+datasets:
+  - from: s3://spiceai-demo-datasets/taxi_trips/2024/
+    name: taxi_trips
+    description: taxi trips in s3
+    params:
+      file_format: parquet
