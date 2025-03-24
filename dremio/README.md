@@ -23,12 +23,14 @@ spice run
 
 **Step 4.** Configure the dataset to connect to Dremio:
 
-In another terminal window in the `dremio-demo` folder:
+Open a new terminal window and navigate to the `dremio-demo` directory, and then run the dataset configuration command:
 
 ```bash
 cd dremio-demo
 spice dataset configure
 ```
+
+When running `spice dataset configure`, you'll be guided through an interactive setup process. When prompted, provide the following inputs:
 
 Enter the name of the dataset:
 
