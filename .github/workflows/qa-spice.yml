@@ -33,6 +33,21 @@ jobs:
           recipe_file_path="$(echo "${{ matrix.recipe_name }}" | tr '[:upper:]' '[:lower:]' | tr ' ' '_')"
           output_file="api_responses/${recipe_file_path}.json"
 
+          curl -s \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $SUPER_SECRET" \
+            -d '{
+              "model": "timmy",
+              "messages": [
+                {
+                  "role": "user",
+                  "content": "Install Spice.ai OSS using the spiceai docs. Add it to the PATH. If it is already installed, run spice upgrade to upgrade it. Verify installation of version ${{ github.event.inputs.spice_version }} by running the CLI command spice version. Use the ${{ toJson(matrix.recipe_name) }} Recipe to conduct testing. Ensure you execute all instructions in the recipe. Ensure you report on the spice sql query or spice chat results if the recipe includes them."
+                }
+              ],
+              "temperature": 0.1
+            }' \
+            https://data.spiceai.io/v1/completions
+
           # Call API
           response=$(curl -s \
             -H "Content-Type: application/json" \
