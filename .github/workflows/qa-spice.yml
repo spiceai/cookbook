@@ -11,7 +11,7 @@ on:
 
 jobs:
   test:
-    name: Test recipe ${{ matrix.recipe_name }}
+    name: Test ${{ matrix.recipe_name }} Recipe
     runs-on: ubuntu-latest
     strategy:
       matrix:
