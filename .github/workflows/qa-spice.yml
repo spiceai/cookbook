@@ -10,7 +10,8 @@ on:
         type: string
 
 jobs:
-  api-call:
+  test:
+    name: Test recipe ${{ matrix.recipe_name }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
