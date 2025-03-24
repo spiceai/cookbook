@@ -34,7 +34,7 @@ jobs:
 
           curl -s \
             -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $SPICE_API_KEY" \
+            -H "X-API-Key: $SPICE_API_KEY" \
             -d '{
               "model": "timmy",
               "messages": [
@@ -45,12 +45,12 @@ jobs:
               ],
               "temperature": 0.1
             }' \
-            https://data.spiceai.io/v1/completions
+            https://data.spiceai.io/v1/chat/completions
 
           # Call API
           response=$(curl -s \
             -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $SPICE_API_KEY" \
+            -H "X-API-Key: $SPICE_API_KEY" \
             -d '{
               "model": "timmy",
               "messages": [
@@ -61,7 +61,7 @@ jobs:
               ],
               "temperature": 0.1
             }' \
-            https://data.spiceai.io/v1/completions)
+            https://data.spiceai.io/v1/chat/completions)
 
           # Save the response to a file
           echo "$response" > $output_file
