@@ -26,6 +26,7 @@ jobs:
         run: mkdir -p api_responses
 
       - name: Call Spice AI Completion API
+        shell: bash
         env:
           SPICE_API_KEY: ${{ secrets.SPICE_API_KEY }}
         run: |
