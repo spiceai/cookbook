@@ -1,4 +1,4 @@
-name: Cookbook AI QA
+name: QASpice
 
 on:
   workflow_dispatch:
@@ -6,7 +6,7 @@ on:
       spice_version:
         description: 'Spice.ai version to test'
         required: true
-        default: 'v1.0.5'
+        default: 'v1.0.6'
         type: string
 
 jobs:
@@ -14,11 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        recipe_name: ['File Data Connector']
+        recipe_name:
+          - 'File Data Connector'
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Create output directory
         run: mkdir -p api_responses
@@ -59,7 +60,7 @@ jobs:
           fi
 
       - name: Upload response file
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: api-response-${recipe_file_path}
           path: api_responses/${recipe_file_path}.json
