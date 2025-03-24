@@ -1,4 +1,4 @@
-name: QASpice
+name: SpiceQA
 
 on:
   workflow_dispatch:
