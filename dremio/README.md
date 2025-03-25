@@ -6,12 +6,12 @@ The Dremio recipe uses a publicly accessible demo instance of Dremio loaded with
 
 ```bash
 spice init dremio-demo
-cd dremio-demo
 ```
 
 **Step 2.** Set the login credentials that the Spice runtime will use when accessing Dremio. Ensure this command is run in the `dremio-demo` directory.
 
 ```bash
+cd dremio-demo
 spice login dremio -u demo -p demo1234
 ```
 
@@ -30,36 +30,36 @@ cd dremio-demo
 spice dataset configure
 ```
 
-When running `spice dataset configure`, you'll be guided through an interactive setup process. When prompted, provide the following inputs:
+In the same terminal window, you'll be prompted for several inputs. Enter each value exactly as shown below after each prompt appears, type enter when you finish each input:
 
-Enter the name of the dataset:
+1. Enter the name of the dataset. When you see `dataset name: (dremio-demo)`, type:
 
 ```bash
-dataset name: (dremio-demo)  taxi_trips
+taxi_trips
 ```
 
-Enter the description of the dataset:
+2. Enter the description of the dataset. When you see `description:`, type:
 
 ```bash
-description: taxi trips data in Dremio
+taxi trips data in Dremio
 ```
 
-Specify the location of the dataset:
+3. Specify the location of the dataset. When you see `from:`, type:
 
 ```bash
-from: dremio:datasets.taxi_trips
+dremio:datasets.taxi_trips
 ```
 
-Specify the Dremio endpoint:
+4. Specify the Dremio endpoint. When you see `endpoint:`, type:
 
 ```bash
-endpoint: grpc://20.163.171.8:32010
+grpc://20.163.171.8:32010
 ```
 
-Select "y" when prompted whether to locally accelerate the dataset:
+5. Select whether to locally accelerate the dataset. When you see `Locally accelerate (y/n)?`, type:
 
 ```bash
-Locally accelerate (y/n)? y
+y
 ```
 
 The CLI will confirm the dataset has been configured with the following output:
