@@ -244,6 +244,8 @@ Time: 9.141290 seconds. 1 rows.
 
 Step 5.\*\* (Optional) Check the underlying query
 
+Run `spice sql` in a separate terminal to check the underlying query
+
 ```sql
 select start_time, parent_span_id, span_id, task, substr(input, 0, 64) as input, execution_duration_ms from runtime.task_history where trace_id=(select trace_id from runtime.task_history where task='nsql') order by start_time asc;
 ```
