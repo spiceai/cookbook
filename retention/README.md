@@ -15,7 +15,7 @@ spice init retention-recipe
 cd retention-recipe
 ```
 
-**Step 2.** Add a dataset with a retention policy by editing spicepod.yaml
+**Step 2.** Add a dataset without a acceleration retention policy by editing spicepod.yaml
 
 ```yaml
 version: v1
@@ -29,15 +29,11 @@ datasets:
       file_format: parquet
     acceleration:
       enabled: true
-      refresh_check_interval: 10m
-      retention_check_enabled: true
-      retention_check_interval: 60s
-      retention_period: 35040h # 4 years, this will evict 5 rows of data from the dataset
 ```
 
-**Step 3.** Run spice and see the retention policy in action
+**Step 3.** Run spice and see the dataset loaded
 
-When dataset is being refreshed, the retention policy won't evict any data as 0 rows are loaded.
+When dataset is being accelerated, there's no retention policy applied to the dataset.
 
 ```bash
 2024-08-26T22:58:35.727218Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
@@ -47,12 +43,10 @@ When dataset is being refreshed, the retention policy won't evict any data as 0 
 2024-08-26T22:58:35.929371Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
 2024-08-26T22:58:36.532031Z  INFO runtime: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow, 10m refresh, 60s retention), results cache enabled.
 2024-08-26T22:58:36.533166Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
-2024-08-26T22:58:36.533272Z  INFO runtime::accelerated_table: [retention] Evicting data for taxi_trips where tpep_pickup_datetime < 2020-08-27T22:58:36+00:00...
-2024-08-26T22:58:36.534969Z  INFO runtime::accelerated_table: [retention] Evicted 0 records for taxi_trips
 2024-08-26T22:58:43.217885Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (421.71 MiB) for dataset taxi_trips in 6s 684ms.
 ```
 
-**Step 4.** Run queries against the dataset using the Spice SQL REPL after the dataset is loaded and before the next retention check interval
+**Step 4.** Run queries against the dataset using the Spice SQL REPL after the dataset is loaded.
 
 ```bash
 spice sql
@@ -82,14 +76,46 @@ sql> select * from taxi_trips order by tpep_pickup_datetime limit 5;
 Time: 0.053698917 seconds. 5 rows.
 ```
 
-**Step 5.** Wait for the next retention check interval and see the retention policy evict data
+**Step 6.** Stop spice runtime by pressing (ctrl + c), update the spicepod config to include a retention configuration that will exclude 5 rows of data from the dataset.
 
-```bash
-2024-04-22T04:18:24.378312Z  INFO runtime::accelerated_table: [retention] Evicting data for taxi_trips where tpep_pickup_datetime < 2020-04-23T04:18:24+00:00...
-2024-04-22T04:18:24.395165Z  INFO runtime::accelerated_table: [retention] Evicted 5 records for taxi_trips
+```yaml
+version: v1
+kind: Spicepod
+name: retention-recipe
+datasets:
+  - from: s3://spiceai-demo-datasets/taxi_trips/2024/
+    name: taxi_trips
+    time_column: tpep_pickup_datetime
+    params:
+      file_format: parquet
+    acceleration:
+      enabled: true
+      refresh_check_interval: 10m
+      retention_check_enabled: true
+      retention_check_interval: 60s
+      retention_period: 35040h # 4 years, this will exclude 5 rows of data from the dataset
 ```
 
-**Step 6.** Run queries against the dataset using the Spice SQL REPL again to check the outdated data has been evicted
+**Step 7.** Start the spice runtime by running `spice run`
+
+Observe that the log shows that 0 records evicted for the dataset, and the loaded dataset include 5 less rows. This is because the retention policy is filtered out during the initial data loading.
+
+```bash
+2025-03-27T03:34:34.371144Z  INFO spiced: Starting runtime v1.0.7-build.7f8f25179+models.metal
+2025-03-27T03:34:35.713104Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2025-03-27T03:34:35.713340Z  INFO runtime::init::dataset: Initializing dataset taxi_trips
+2025-03-27T03:34:35.715105Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
+2025-03-27T03:34:35.715138Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2025-03-27T03:34:35.715406Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
+2025-03-27T03:34:35.716024Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2025-03-27T03:34:39.220352Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow, 600s refresh, 180s retention), results cache enabled.
+2025-03-27T03:34:39.221986Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
+2025-03-27T03:34:39.222061Z  INFO runtime::accelerated_table: [retention] Evicting data for taxi_trips where tpep_pickup_datetime < 2021-03-28T03:34:39+00:00...
+2025-03-27T03:34:39.226484Z  INFO runtime::accelerated_table: [retention] Evicted 0 records for taxi_trips
+2025-03-27T03:35:25.610069Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,619 rows (400.10 MiB) for dataset taxi_trips in 46s 388ms.
+```
+
+**Step 6.** Run queries against the dataset using the Spice SQL REPL again to check the outdated data is no longer within the dataset.
 
 ```bash
 sql> select count(1) from taxi_trips;
