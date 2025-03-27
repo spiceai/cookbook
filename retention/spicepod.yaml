@@ -1,0 +1,22 @@
+version: v1
+kind: Spicepod
+name: retention
+
+datasets:
+  - from: postgres:users
+    name: users
+    time_column: updated_at
+    params:
+      pg_host: postgres
+      pg_db: postgres
+      pg_user: postgres
+      pg_pass: postgres
+      pg_sslmode: disable
+    acceleration:
+      enabled: true
+      engine: duckdb
+      refresh_mode: append
+      refresh_check_interval: 5s
+      retention_period: 30s
+      retention_check_enabled: true
+      retention_check_interval: 10s

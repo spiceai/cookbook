@@ -1,115 +1,86 @@
 # Accelerated Dataset Retention Policy
 
-This recipe demonstrates how to configure a retention policy for an accelerated dataset to evict data that is older than a specified duration.
+This recipe shows how to set up a [retention policy](https://spiceai.org/docs/features/data-acceleration/data-refresh#retention-policy) for an accelerated dataset to evict data older than a specified duration.
 
 ## Pre-requisites
 
-- Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation).
+This recipe requires [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/) to be installed.
 
-## Steps
+## How to run
 
-**Step 1.** Initialize and start Spice
-
-```bash
-spice init retention-recipe
-cd retention-recipe
-```
-
-**Step 2.** Add a dataset with a retention policy by editing spicepod.yaml
-
-```yaml
-version: v1
-kind: Spicepod
-name: retention-recipe
-datasets:
-  - from: s3://spiceai-demo-datasets/taxi_trips/2024/
-    name: taxi_trips
-    time_column: tpep_pickup_datetime
-    params:
-      file_format: parquet
-    acceleration:
-      enabled: true
-      refresh_check_interval: 10m
-      retention_check_enabled: true
-      retention_check_interval: 60s
-      retention_period: 35040h # 4 years, this will evict 5 rows of data from the dataset
-```
-
-**Step 3.** Run spice and see the retention policy in action
-
-When dataset is being refreshed, the retention policy won't evict any data as 0 rows are loaded.
+Clone this cookbook repo locally:
 
 ```bash
-2024-08-26T22:58:35.727218Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2024-08-26T22:58:35.727245Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
-2024-08-26T22:58:35.729973Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2024-08-26T22:58:35.732064Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2024-08-26T22:58:35.929371Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2024-08-26T22:58:36.532031Z  INFO runtime: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow, 10m refresh, 60s retention), results cache enabled.
-2024-08-26T22:58:36.533166Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
-2024-08-26T22:58:36.533272Z  INFO runtime::accelerated_table: [retention] Evicting data for taxi_trips where tpep_pickup_datetime < 2020-08-27T22:58:36+00:00...
-2024-08-26T22:58:36.534969Z  INFO runtime::accelerated_table: [retention] Evicted 0 records for taxi_trips
-2024-08-26T22:58:43.217885Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (421.71 MiB) for dataset taxi_trips in 6s 684ms.
+git clone https://github.com/spiceai/cookbook.git
+cd cookbook/retention
 ```
 
-**Step 4.** Run queries against the dataset using the Spice SQL REPL after the dataset is loaded and before the next retention check interval
+Start the Docker Compose stack:
 
-```bash
-spice sql
+`make`
 
+Then observe the logs the worker service.
+
+`docker logs -f spiceai-retention-demo-worker`
+
+```console
+Inserted new user user_1743059111919094138@example.com with username user_1743059111919131971
+Inserted new user user_1743059116946543113@example.com with username user_1743059116946571113
+Inserted new user user_1743059121968650335@example.com with username user_1743059121968694585
+Inserted new user user_1743059126987340233@example.com with username user_1743059126987350733
+Inserted new user user_1743059131996107498@example.com with username user_1743059131996143414
+Inserted new user user_1743059137019737701@example.com with username user_1743059137019748826
+Inserted new user user_1743059142033727592@example.com with username user_1743059142033752467
+Inserted new user user_1743059147049323917@example.com with username user_1743059147049330500
+Inserted new user user_1743059152063665845@example.com with username user_1743059152063694678
+```
+
+Run `docker logs -f spiceai-retention-demo` and Wait for the next retention check interval and see the retention policy evict data:
+
+```console
+2025-03-27T07:08:50.616347Z  INFO runtime::accelerated_table::refresh_task: Loaded 1 rows (34.64 kiB) for dataset users in 16ms.
+2025-03-27T07:08:54.291596Z  INFO runtime::accelerated_table: [retention] Evicting data for users where updated_at < 2025-03-27T07:08:24+00:00...
+2025-03-27T07:08:54.299160Z  INFO runtime::accelerated_table: [retention] Evicted 2 records for users
+2025-03-27T07:08:55.634074Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset users
+2025-03-27T07:08:55.650633Z  INFO runtime::accelerated_table::refresh_task: Loaded 1 rows (34.64 kiB) for dataset users in 31ms.
+2025-03-27T07:09:00.660625Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset users
+2025-03-27T07:09:00.673057Z  INFO runtime::accelerated_table::refresh_task: Loaded 1 rows (34.64 kiB) for dataset users in 20ms.
+2025-03-27T07:09:04.293654Z  INFO runtime::accelerated_table: [retention] Evicting data for users where updated_at < 2025-03-27T07:08:34+00:00...
+2025-03-27T07:09:04.302727Z  INFO runtime::accelerated_table: [retention] Evicted 2 records for users
+2025-03-27T07:09:05.689919Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset users
+2025-03-27T07:09:05.697891Z  INFO runtime::accelerated_table::refresh_task: Loaded 1 rows (34.64 kiB) for dataset users in 23ms.
+2025-03-27T07:09:10.712582Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset users
+2025-03-27T07:09:10.729119Z  INFO runtime::accelerated_table::refresh_task: Loaded 1 rows (34.64 kiB) for dataset users in 25ms.
+```
+
+In addition to viewing the logs, run queries with the Spice SQL REPL to explore the data and confirm that only recently added users are in the dataset.
+
+`docker exec -it spiceai-retention-demo spiced --repl`
+
+```console
 Welcome to the Spice.ai SQL REPL! Type 'help' for help.
 
 show tables; -- list available tables
-sql> select count(1) from taxi_trips;
-+-----------------+
-| COUNT(Int64(1)) |
-+-----------------+
-| 2964624         |
-+-----------------+
+sql> show tables;
++---------------+--------------+--------------+------------+
+| table_catalog | table_schema | table_name   | table_type |
++---------------+--------------+--------------+------------+
+| spice         | public       | users        | BASE TABLE |
+| spice         | runtime      | task_history | BASE TABLE |
++---------------+--------------+--------------+------------+
 
-Time: 0.012826375 seconds. 1 rows.
-sql> select * from taxi_trips order by tpep_pickup_datetime limit 5;
-+----------+----------------------+-----------------------+-----------------+---------------+------------+--------------------+--------------+--------------+--------------+-------------+-------+---------+------------+--------------+-----------------------+--------------+----------------------+-------------+
-| VendorID | tpep_pickup_datetime | tpep_dropoff_datetime | passenger_count | trip_distance | RatecodeID | store_and_fwd_flag | PULocationID | DOLocationID | payment_type | fare_amount | extra | mta_tax | tip_amount | tolls_amount | improvement_surcharge | total_amount | congestion_surcharge | Airport_fee |
-+----------+----------------------+-----------------------+-----------------+---------------+------------+--------------------+--------------+--------------+--------------+-------------+-------+---------+------------+--------------+-----------------------+--------------+----------------------+-------------+
-| 2        | 2002-12-31T22:59:39  | 2002-12-31T23:05:41   | 1               | 0.63          | 1          | N                  | 170          | 170          | 3            | 6.5         | 0.0   | 0.5     | 0.0        | 0.0          | 1.0                   | 10.5         | 2.5                  | 0.0         |
-| 2        | 2002-12-31T22:59:39  | 2002-12-31T23:05:41   | 1               | 0.63          | 1          | N                  | 170          | 170          | 3            | -6.5        | 0.0   | -0.5    | 0.0        | 0.0          | -1.0                  | -10.5        | -2.5                 | 0.0         |
-| 2        | 2009-01-01T00:24:09  | 2009-01-01T01:13:00   | 2               | 10.88         | 1          | N                  | 138          | 264          | 2            | 50.6        | 9.25  | 0.5     | 0.0        | 6.94         | 1.0                   | 68.29        | 0.0                  | 0.0         |
-| 2        | 2009-01-01T23:30:39  | 2009-01-02T00:01:39   | 1               | 10.99         | 1          | N                  | 237          | 264          | 2            | 45.0        | 3.5   | 0.5     | 0.0        | 0.0          | 1.0                   | 50.0         | 0.0                  | 0.0         |
-| 2        | 2009-01-01T23:58:40  | 2009-01-02T00:01:40   | 1               | 0.46          | 1          | N                  | 137          | 264          | 2            | 4.4         | 3.5   | 0.5     | 0.0        | 0.0          | 1.0                   | 9.4          | 0.0                  | 0.0         |
-+----------+----------------------+-----------------------+-----------------+---------------+------------+--------------------+--------------+--------------+--------------+-------------+-------+---------+------------+--------------+-----------------------+--------------+----------------------+-------------+
+Time: 0.014326448 seconds. 2 rows.
+sql> select email, username, created_at from users;
++--------------------------------------+--------------------------+----------------------------+
+| email                                | username                 | created_at                 |
++--------------------------------------+--------------------------+----------------------------+
+| user_1743059257413535768@example.com | user_1743059257413551018 | 2025-03-27T07:07:37.414097 |
+| user_1743059262422040686@example.com | user_1743059262422063394 | 2025-03-27T07:07:42.423914 |
+| user_1743059267444354559@example.com | user_1743059267444361351 | 2025-03-27T07:07:47.444588 |
+| user_1743059272460513902@example.com | user_1743059272460540943 | 2025-03-27T07:07:52.462135 |
+| user_1743059277474480320@example.com | user_1743059277474485236 | 2025-03-27T07:07:57.474682 |
+| user_1743059282485177704@example.com | user_1743059282485198954 | 2025-03-27T07:08:02.485777 |
++--------------------------------------+--------------------------+----------------------------+
 
-Time: 0.053698917 seconds. 5 rows.
-```
-
-**Step 5.** Wait for the next retention check interval and see the retention policy evict data
-
-```bash
-2024-04-22T04:18:24.378312Z  INFO runtime::accelerated_table: [retention] Evicting data for taxi_trips where tpep_pickup_datetime < 2020-04-23T04:18:24+00:00...
-2024-04-22T04:18:24.395165Z  INFO runtime::accelerated_table: [retention] Evicted 5 records for taxi_trips
-```
-
-**Step 6.** Run queries against the dataset using the Spice SQL REPL again to check the outdated data has been evicted
-
-```bash
-sql> select count(1) from taxi_trips;
-+-----------------+
-| COUNT(Int64(1)) |
-+-----------------+
-| 2964619         |
-+-----------------+
-
-Time: 0.008739667 seconds. 1 rows.
-sql> select * from taxi_trips order by tpep_pickup_datetime limit 5;
-+----------+----------------------+-----------------------+-----------------+---------------+------------+--------------------+--------------+--------------+--------------+-------------+-------+---------+------------+--------------+-----------------------+--------------+----------------------+-------------+
-| VendorID | tpep_pickup_datetime | tpep_dropoff_datetime | passenger_count | trip_distance | RatecodeID | store_and_fwd_flag | PULocationID | DOLocationID | payment_type | fare_amount | extra | mta_tax | tip_amount | tolls_amount | improvement_surcharge | total_amount | congestion_surcharge | Airport_fee |
-+----------+----------------------+-----------------------+-----------------+---------------+------------+--------------------+--------------+--------------+--------------+-------------+-------+---------+------------+--------------+-----------------------+--------------+----------------------+-------------+
-| 2        | 2023-12-31T23:39:17  | 2023-12-31T23:42:00   | 2               | 0.47          | 1          | N                  | 90           | 68           | 1            | 5.1         | 1.0   | 0.5     | 0.0        | 0.0          | 1.0                   | 10.1         | 2.5                  | 0.0         |
-| 2        | 2023-12-31T23:41:02  | 2023-12-31T23:48:03   | 1               | 0.4           | 1          | N                  | 246          | 246          | 2            | 7.2         | 1.0   | 0.5     | 0.0        | 0.0          | 1.0                   | 12.2         | 2.5                  | 0.0         |
-| 2        | 2023-12-31T23:47:28  | 2023-12-31T23:57:07   | 2               | 1.44          | 1          | N                  | 68           | 137          | 1            | 10.7        | 1.0   | 0.5     | 3.14       | 0.0          | 1.0                   | 18.84        | 2.5                  | 0.0         |
-| 2        | 2023-12-31T23:49:12  | 2024-01-01T00:04:32   | 1               | 3.14          | 1          | N                  | 234          | 237          | 1            | 17.0        | 1.0   | 0.5     | 6.6        | 0.0          | 1.0                   | 28.6         | 2.5                  | 0.0         |
-| 2        | 2023-12-31T23:54:27  | 2024-01-01T00:13:12   | 1               | 7.7           | 1          | N                  | 229          | 244          | 1            | 33.1        | 1.0   | 0.5     | 7.62       | 0.0          | 1.0                   | 45.72        | 2.5                  | 0.0         |
-+----------+----------------------+-----------------------+-----------------+---------------+------------+--------------------+--------------+--------------+--------------+-------------+-------+---------+------------+--------------+-----------------------+--------------+----------------------+-------------+
-
-Time: 0.050874208 seconds. 5 rows.
+Time: 0.00946948 seconds. 6 rows.
 ```
