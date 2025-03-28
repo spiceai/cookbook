@@ -13,6 +13,7 @@ jobs:
   test:
     name: Test ${{ matrix.recipe_name }} Recipe
     runs-on: ubuntu-latest
+    environment: Production
     strategy:
       matrix:
         recipe_name:
