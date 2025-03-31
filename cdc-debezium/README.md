@@ -45,17 +45,24 @@ kind: Spicepod
 name: cdc-debezium
 
 datasets:
-  - from: debezium:cdc.public.customer_addresses
+  - from: debezium:cdc.inventory.customer_addresses
     name: cdc
     params:
       debezium_transport: kafka
       debezium_message_format: json
       kafka_bootstrap_servers: localhost:19092
+      kafka_security_protocol: SASL_SSL
+      kafka_sasl_mechanism: SCRAM-SHA-512
+      kafka_sasl_username: kafka
+      kafka_sasl_password: kafka_password
+      kafka_ssl_ca_location: ./certs/kafka_ca_cert.pem
+      kafka_enable_ssl_certificate_verification: true
     acceleration:
       enabled: true
       engine: sqlite
       mode: file
       refresh_mode: changes
+
 ```
 
 Spice runtime is already configured to run with the debug level of information, with environment variable configured in `cdc-debezium/.env`
