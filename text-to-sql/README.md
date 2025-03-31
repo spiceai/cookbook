@@ -13,7 +13,7 @@ This recipe will walk you through using Spice as a text to SQL interface.
 
 ## Steps
 
-Separate from using language models to interact with [runtime tools](https://docs.spiceai.org/features/ai-gateway/runtime_tools), `spice` has a standalone text to SQL endpoint. This provides more granular control of how SQL generation is done, and is more robust to hallucination and misuse of tools.
+Separate from using language models to interact with [runtime tools](https://spiceai.org/docs/components/tools), `spice` has a standalone text to SQL endpoint. This provides more granular control of how SQL generation is done, and is more robust to hallucination and misuse of tools.
 
 1. Start Spice
 
@@ -155,7 +155,7 @@ Result:
 }
 ```
 
-From this, you can see that `spice` runs the following [tools](https://docs.spiceai.org/features/ai-gateway/runtime_tools) to help the model write contextual, correct SQL:
+From this, you can see that `spice` runs the following [tools](https://spiceai.org/docs/components/tools) to help the model write contextual, correct SQL:
 
 - `table_schema`: To show the table schema of each relevant table.
 - Sample data from the relevant table(s), both:
@@ -243,6 +243,8 @@ Time: 9.141290 seconds. 1 rows.
 ```
 
 Step 5.\*\* (Optional) Check the underlying query
+
+Run `spice sql` in a separate terminal to check the underlying query
 
 ```sql
 select start_time, parent_span_id, span_id, task, substr(input, 0, 64) as input, execution_duration_ms from runtime.task_history where trace_id=(select trace_id from runtime.task_history where task='nsql') order by start_time asc;
