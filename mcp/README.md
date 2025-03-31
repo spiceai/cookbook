@@ -114,7 +114,7 @@ tools:
 
 4. Run the second Spice instance on separate ports.
 ```bash
-spice run -- --http 127.0.0.1:8091 --flight 127.0.0.1:50061 --open_telemetry 127.0.0.1:50062
+spiced --http 127.0.0.1:8091 --flight 127.0.0.1:50061 --open_telemetry 127.0.0.1:50062 --metrics 127.0.0.1:9091
 ```
 
 5.  Show the tools available in the second Spice instance (note the different port).
