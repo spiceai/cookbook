@@ -1,6 +1,6 @@
 services:
   ftp-server:
-    image: garethflowers/ftp-server
+    image: garethflowers/ftp-server:0.9.0
     container_name: my-ftp-server
     environment:
       - FTP_PASS=123

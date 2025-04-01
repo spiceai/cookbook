@@ -2,7 +2,7 @@
 
 > [Snowflake](https://www.snowflake.com/) is a leading cloud-based data warehousing service that enables users to store, compute, and analyze vast amounts of data in real-time.
 
-The guide demonstrates how to configure [Spice with Snowflake Data Connector](https://docs.spiceai.org/data-connectors/snowflake) to access a Snowflake database.
+The guide demonstrates how to configure [Spice with Snowflake Data Connector](https://spiceai.org/docs/components/data-connectors/snowflake) to access a Snowflake database.
 
 The guide requires a Snowflake account. Start [free trial](https://signup.snowflake.com/) if needed.
 

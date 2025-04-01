@@ -14,7 +14,7 @@ services:
       retries: 5
 
   tls-init:
-    image: bitnami/kafka:latest
+    image: bitnami/kafka:3.9.0
     entrypoint: ["/bin/sh", "-c"]
     command:
       - |
@@ -124,7 +124,7 @@ services:
       - ./certs:/bitnami/kafka/config/certs
 
   kafka:
-    image: bitnami/kafka:latest
+    image: bitnami/kafka:3.9.0
     environment:
       - KAFKA_CFG_LISTENERS=PLAINTEXT://:29092,INTERNAL_SASL_SSL://:9092,EXTERNAL_SASL_SSL://:19092
       - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:29092,INTERNAL_SASL_SSL://kafka:9092,EXTERNAL_SASL_SSL://localhost:19092
