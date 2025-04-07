@@ -84,3 +84,9 @@ sql> select email, username, created_at from users;
 
 Time: 0.00946948 seconds. 6 rows.
 ```
+
+##  Clean up
+
+```bash
+malke clean
+```
