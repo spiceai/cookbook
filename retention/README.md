@@ -88,5 +88,5 @@ Time: 0.00946948 seconds. 6 rows.
 ##  Clean up
 
 ```bash
-malke clean
+make clean
 ```
