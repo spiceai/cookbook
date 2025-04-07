@@ -6,14 +6,28 @@
 ## Connect to MCP servers
 Spice can run, or connect to MCP servers.
 
-1. Fill in `.env`
+1. Clone the cookbook, and navigate to the MCP recipe.
 
-2. Start Spice
+```bash
+git clone https://github.com/spiceai/cookbook.git
+cd cookbook/mcp
+```
+
+2. Update the `.env` file with the required secrets.
+
+```bash
+SPICE_OPENAI_API_KEY="{OpenAI API key}"
+SPICE_ALLOWED_DIR="{directory the fs MCP tool is allowed to access}"
+```
+
+For this recipe, `SPICE_ALLOWED_DIR` should be set to allow access to this cookbook directory - like `SPICE_ALLOWED_DIR="./"`.
+
+3. Start Spice
 ```bash
 spice run
 ```
 
-3. Show the available tools
+4. Show the available tools.
 ```bash
 curl http://127.0.0.1:8090/v1/tools | jq '.[].name'
 ```
@@ -42,29 +56,19 @@ curl http://127.0.0.1:8090/v1/tools | jq '.[].name'
 ```
 This shows both the built in tools (e.g. `sql`) and all the tools listed by the MCP server `fs`.
 
-4. Use one of the tools (the path must be, or within `$SPICE_ALLOWED_DIR`, from `.env`).
+5. List the files from the current directory using the `fs/list_directory` MCP tool.
 ```bash
 curl -XPOST http://127.0.0.1:8090/v1/tools/fs/list_directory \
-    -d '{"path": "/Users/jeadie/Github/cookbook"}' | jq -r '.[0].text'
+    -d '{"path": "./"}' | jq -r '.[0].text'
 ```
 ```bash
-[FILE] LICENSE
+[FILE] .env
 [FILE] README.md
-[DIR] acceleration
-[DIR] api_key
-[DIR] architectures
-[DIR] arrow
-[DIR] azure_openai
-[DIR] caching
-[DIR] catalogs
-[DIR] cdc-debezium
-[DIR] clickhouse
-[DIR] client-sdk
-[DIR] cqrs
-... # And many more!
+[DIR] child
+[FILE] spicepod.yaml
 ```
 
-5. Use the MCP server from a model.
+6. Use the `fs` MCP server from a model.
 ```bash
 spice chat
 ```
@@ -87,18 +91,33 @@ The README.md for the Spice.ai OSS Cookbook serves as a comprehensive guide to c
 ## Connect to Spice over MCP
 Spice is an MCP server. It can be connected to like any other MCP server running over HTTP SSE.
 
+1. Clone the cookbook, and navigate to the MCP recipe.
 
-1. If the Spice instance is not running, restart it.
+```bash
+git clone https://github.com/spiceai/cookbook.git
+cd cookbook/mcp
+```
+
+2. Update the `.env` file with the required secrets.
+
+```bash
+SPICE_OPENAI_API_KEY="{OpenAI API key}"
+SPICE_ALLOWED_DIR="{directory the fs MCP tool is allowed to access}"
+```
+
+For this recipe, `SPICE_ALLOWED_DIR` should be set to allow access to this cookbook directory - like `SPICE_ALLOWED_DIR="./"`.
+
+3. Start Spice.
 ```bash
 spice run
 ```
 
-2. In a new terminal, change to `child`
+4. In a new terminal, change to the `child` directory.
 ```bash
 cd child
 ```
 
-3. Inspect the spicepod
+5. Inspect the spicepod.
 ```bash
 cat spicepod.yaml
 ```
@@ -112,12 +131,12 @@ tools:
     from: mcp:http://localhost:8090/v1/mcp/sse
 ```
 
-4. Run the second Spice instance on separate ports.
+6. Run the second Spice instance on separate ports.
 ```bash
 spiced --http 127.0.0.1:8091 --flight 127.0.0.1:50061 --open_telemetry 127.0.0.1:50062 --metrics 127.0.0.1:9091
 ```
 
-5.  Show the tools available in the second Spice instance (note the different port).
+7.  Show the tools available in the second Spice instance (note the different port).
 ```bash
 curl http://127.0.0.1:8091/v1/tools | jq '.[].name'
 ```
@@ -155,9 +174,9 @@ curl http://127.0.0.1:8091/v1/tools | jq '.[].name'
 "random_sample"
 ```
 Now you will see the following tools:
-1. Builtin tools within the second spicepod.
-2. Builtin tools from the first spicepod, over MCP (e.g. `spice_mcp/sql`).
-3. Tools from the filesystem MCP server, connected to via the first spicepod, over MCP (e.g. `spice_mcp/fs/read_file`).
+* Builtin tools within the second spicepod.
+* Builtin tools from the first spicepod, over MCP (e.g. `spice_mcp/sql`).
+* Tools from the filesystem MCP server, connected to via the first spicepod, over MCP (e.g. `spice_mcp/fs/read_file`).
    ```ascii
    +-------------------------+     +--------------------+     +-----------------+
    | 2nd Spice Instance      |     | 1st Spice Instance |     | `fs` MCP Server |
@@ -168,7 +187,7 @@ Now you will see the following tools:
    +-------------------------+     +--------------------+     +-----------------+
    ```
 
-6. Like before, use a tool
+8. Use the SQL tool of the first Spice server, over MCP.
 ```bash
 curl -XPOST http://127.0.0.1:8091/v1/tools/spice_mcp/sql \
     -d '{"query": "SELECT * FROM taxi_trips LIMIT 1"}'
