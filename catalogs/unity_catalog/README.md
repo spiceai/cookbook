@@ -41,6 +41,7 @@ Configure credentials for the underlying Delta Lake tables object store.
 
 ```yaml
 params:
+  unity_catalog_token: ${env:UNITY_CATALOG_TOKEN}
   unity_catalog_aws_access_key_id: ${env:AWS_ACCESS_KEY_ID}
   unity_catalog_aws_secret_access_key: ${env:AWS_SECRET_ACCESS_KEY}
   unity_catalog_aws_region: <region> # E.g. us-east-1, us-west-2
