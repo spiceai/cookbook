@@ -32,7 +32,7 @@ jobs:
           SPICE_API_KEY: ${{ secrets.SPICE_API_KEY }}
         run: |
           recipe_file_path="$(echo "${{ matrix.recipe_name }}" | tr '[:upper:]' '[:lower:]' | tr ' ' '_')"
-          output_file="api_responses/${recipe_file_path}.json"
+          output_file="api_responses/${recipe_file_path}_stream.log"
 
           curl -s \
             -H "Content-Type: application/json" \
@@ -69,7 +69,7 @@ jobs:
           echo "$response" > $output_file
 
           # Output response for debugging
-          echo "API Response saved to $output_file"
+          echo "Stream Chat Completion Response saved to $output_file"
 
           # Check for errors
           if echo "$response" | grep -q "\"error\""; then
@@ -78,8 +78,17 @@ jobs:
             exit 1
           fi
 
+      - name: Retrieve response from streaming result
+        shell: bash
+        env:
+          SPICE_API_KEY: ${{ secrets.SPICE_API_KEY }}
+        run: |
+          input_file="api_responses/${recipe_file_path}_stream.log"
+          output_file="api_responses/${recipe_file_path}.log"
+          python .github/scripts/process_response.sh "$input_file" "$output_file"
+
       - name: Upload response file
         uses: actions/upload-artifact@v4
         with:
           name: api-response-${recipe_file_path}
-          path: api_responses/${recipe_file_path}.json
+          path: api_responses/${recipe_file_path}.log
