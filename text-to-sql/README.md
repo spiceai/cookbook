@@ -164,7 +164,7 @@ From this, you can see that `spice` runs the following [tools](https://spiceai.o
 
 ### Return the SQL Query
 
-The `v1/nsql` endpoint can the SQL query it used in addition to the results. To do this, specify the header `Accept: application/vnd.spiceai.sql.v1+json` in the text to SQL request.
+The `v1/nsql` endpoint can return the SQL query it used in addition to the results. To do this, specify the `Accept: application/vnd.spiceai.sql.v1+json` header.
 
 ```shell
 curl -XPOST "http://localhost:8090/v1/nsql" \
