@@ -179,9 +179,23 @@ Returns:
 
 ```json
 {
+  "row_count": 1,
+  "schema": {
+    "fields": [
+      {
+        "name": "highest_tip",
+        "data_type": "Float64",
+        "nullable": true,
+        "dict_id": 0,
+        "dict_is_ordered": false,
+        "metadata": {}
+      }
+    ],
+    "metadata": {}
+  },
   "data": [
     {
-      "highest_tip": 428
+      "highest_tip": 428.0
     }
   ],
   "sql": "SELECT MAX(\"tip_amount\") AS \"highest_tip\"\nFROM \"spice\".\"public\".\"taxi_trips\""
