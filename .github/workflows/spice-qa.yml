@@ -85,7 +85,7 @@ jobs:
         run: |
           input_file="api_responses/${recipe_file_path}_stream.log"
           output_file="api_responses/${recipe_file_path}.log"
-          python .github/scripts/process_response.sh "$input_file" "$output_file"
+          python .github/scripts/convert_stream.py "$input_file" "$output_file"
 
       - name: Upload response file
         uses: actions/upload-artifact@v4
