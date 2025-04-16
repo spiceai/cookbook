@@ -30,7 +30,7 @@ jobs:
         shell: bash
         run: |
           curl https://install.spiceai.org | /bin/bash
-          export PATH=/home/runner/.spice/bin:$PATH
+          echo "/home/runner/.spice/bin" >> $GITHUB_PATH
 
       - name: Verify Spice Installation
         shell: bash
