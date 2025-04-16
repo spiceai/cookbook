@@ -52,6 +52,9 @@ jobs:
             }' \
             https://data.spiceai.io/v1/chat/completions)
 
+          # Show response
+          echo "$response"
+
           # Save the response to a file
           echo "$response" > $output_file
 
