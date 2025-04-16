@@ -26,13 +26,13 @@ jobs:
       - name: Create output directory
         run: mkdir -p api_responses
 
-      # - name: Call Spice AI Completion API
-      #   shell: bash
-      #   env:
-      #     SPICE_API_KEY: ${{ secrets.SPICE_API_KEY }}
-      #   run: |
-      #     recipe_file_path="$(echo "${{ matrix.recipe_name }}" | tr '[:upper:]' '[:lower:]' | tr ' ' '_')"
-      #     output_file="api_responses/${recipe_file_path}_stream.log"
+      - name: Call Spice AI Completion API
+        shell: bash
+        env:
+          SPICE_API_KEY: ${{ secrets.SPICE_API_KEY }}
+        run: |
+          recipe_file_path="$(echo "${{ matrix.recipe_name }}" | tr '[:upper:]' '[:lower:]' | tr ' ' '_')"
+          output_file="api_responses/${recipe_file_path}_stream.log"
 
       #     curl -s \
       #       -H "Content-Type: application/json" \
@@ -83,8 +83,10 @@ jobs:
         env:
           SPICE_API_KEY: ${{ secrets.SPICE_API_KEY }}
         run: |
-          input_file="api_responses/${recipe_file_path}_stream.log"
-          output_file="api_responses/${recipe_file_path}.log"
+          # input_file="api_responses/${recipe_file_path}_stream.log"
+          # output_file="api_responses/${recipe_file_path}.log"
+          input_file="api_responses/response_stream.log"
+          output_file="api_responses/response.log"
           python .github/scripts/convert_stream.py "$input_file" "$output_file"
 
       - name: Upload response file
