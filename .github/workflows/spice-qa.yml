@@ -32,6 +32,7 @@ jobs:
           SPICE_API_KEY: ${{ secrets.SPICE_API_KEY }}
         run: |
           recipe_file_path="$(echo "${{ matrix.recipe_name }}" | tr '[:upper:]' '[:lower:]' | tr ' ' '_')"
+          echo "RECIPE_FILE_PATH=$recipe_file_path" >> $GITHUB_ENV
           output_file="api_responses/${recipe_file_path}_stream.log"
 
           # Call API
@@ -69,12 +70,12 @@ jobs:
         env:
           SPICE_API_KEY: ${{ secrets.SPICE_API_KEY }}
         run: |
-          input_file="api_responses/${recipe_file_path}_stream.log"
-          output_file="api_responses/${recipe_file_path}.log"
+          input_file="api_responses/${{ env.RECIPE_FILE_PATH }}_stream.log"
+          output_file="api_responses/${{ env.RECIPE_FILE_PATH }}.log"
           python .github/scripts/convert_stream.py "$input_file" "$output_file"
 
       - name: Upload response file
         uses: actions/upload-artifact@v4
         with:
-          name: api-response-${recipe_file_path}
-          path: api_responses/${recipe_file_path}.log
+          name: api-response-${{ env.RECIPE_FILE_PATH }}
+          path: api_responses/${{ env.RECIPE_FILE_PATH }}.log
