@@ -24,10 +24,13 @@ python3 main.py
 
 Expected output:
 ```
-pyarrow.Table                                                                                                           the_answer: int64 not null
-----                                                                                                                    the_answer: [[42]]
 pyarrow.Table
-one: int64 not null                                                                                                     ----
+the_answer: int64 not null
+----
+the_answer: [[42]]
+pyarrow.Table
+one: int64 not null
+----
 one: [[1]]
 ```
 
