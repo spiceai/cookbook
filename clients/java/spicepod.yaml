@@ -3,7 +3,7 @@ kind: Spicepod
 name: java
 
 datasets:
-  - from: file:data/test_data.csv
+  - from: file:src/main/resources/test_data.csv
     name: accounts
     params:
       file_format: csv
