@@ -13,8 +13,8 @@ This repository provides a simple cookbook example demonstrating how to use Pyth
 ### 1. Clone this repository
 
 ```bash
-git clone https://github.com/your-org/your-repo.git
-cd clients/adbc
+git clone https://github.com/spiceai/cookbook.git
+cd cookbook/clients/adbc
 ```
 
 ### 2. Install dependencies
