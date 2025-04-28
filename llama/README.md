@@ -75,6 +75,20 @@ For more information, see the [Spice HuggingFace documentation](https://docs.spi
    - For batched inference, Llama-3B-6B (which is the 6GB variant) is suggested to have around 12 GB per run, either in picoraw bytes (GB is the correct unit for your request).
    ```
 
+   You can also interact with the llama model by sending a one-shot chat request through `spice chat <message>`
+
+   ```sh
+   spice chat "Roughly how much memory do I need to run llama 3.2-3B-instruct locally as GBs?"
+   Using model: llama3
+   The amount of memory required to run Llama 3 on a local machine can vary greatly depending on several factors, such as the size of the input dataset, the computational resources, and the specific implementation.
+
+   However, as a rough estimate, the Llama 3 model has a small footprint of around 350 MB to 400 MB in its `model` directory after being installed, plus additional GBs of memory used for in-processing inputs, caching results, and outputting results.
+
+   Assuming an average size of 600 MB, 1 GB, of overall memory usage you could expect be sufficient for mostly small to moderate-sized local training and inference tasks.
+
+   Time: 16.09s (first token 0.53s). Tokens: 197. Prompt: 64. Completion: 133 (8.55/s).
+   ```
+
 ## Optional: Enable Hardware Acceleration
 
 If you have the required hardware (NVIDIA GPU or Apple M-series processor), you can build and run Spice with hardware acceleration.
