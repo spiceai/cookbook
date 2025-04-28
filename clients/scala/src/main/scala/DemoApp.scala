@@ -7,77 +7,75 @@ import org.skife.jdbi.v2.tweak.ResultSetMapper
 import java.util.{List => JavaList}
 import scala.jdk.CollectionConverters._
 
-case class ComponentRecord(
-  RecordId: String,
-  GroupId: String,
-  ComponentId: String,
-  ComponentTypeId: String,
-  ComponentConfig: String,
-  CreationTimestamp: Timestamp,
-  UpdateTimestamp: Timestamp
+case class MessagingServiceAddOn(
+  AccountSid: String,
+  MessagingServiceSid: String,
+  AddOnSid: String,
+  AddOnTypeSid: String,
+  AddOnJson: String,
+  DateCreated: Timestamp,
+  DateUpdated: Timestamp
 )
 
 @UseStringTemplate3StatementLocator
-trait ComponentRecordDao {
+trait MessagingServiceDao {
   @SqlQuery(
     """
-       SELECT RecordId, GroupId, ComponentId, ComponentTypeId, ComponentConfig, CreationTimestamp, UpdateTimestamp
+       SELECT AccountId,ServiceId,AddOnSid,AddOnTypeSid,AddOnJson,DateCreated,DateUpdated
        FROM addons
-       WHERE RecordId = :recordId and GroupId = :groupId
-       ORDER BY CreationTimestamp DESC
-    """
-  )
-  def getComponentsByRecordAndGroup(
-      @Bind("recordId") recordId: String,
-      @Bind("groupId") groupId: String
-  ): JavaList[ComponentRecord]
+       WHERE AccountId = :accountId and ServiceId = :serviceId
+       ORDER BY DateCreated DESC
+    """)
+  def getMessagingServiceAddOns(
+      @Bind("accountId") accountSid: String,
+      @Bind("serviceId") serviceId: String
+  ): JavaList[MessagingServiceAddOn]
 
   @SqlQuery(
     """
-       SELECT RecordId, GroupId, ComponentId, ComponentTypeId, ComponentConfig, CreationTimestamp, UpdateTimestamp
+       SELECT AccountId,ServiceId,AddOnSid,AddOnTypeSid,AddOnJson,DateCreated,DateUpdated
        FROM addons
-       WHERE ComponentTypeId = :componentTypeId
-       LIMIT :batchSize
-    """
-  )
-  def getComponentsByType(
-      @Bind("componentTypeId") componentTypeId: String,
+       WHERE AddOnTypeSid = :addOnTypeSid
+       limit :batchSize
+    """)
+  def getMessagingServiceAddOnByAddOnType(
+      @Bind("addOnTypeSid") addOnTypeSid: String,
       @Bind("batchSize") batchSize: Int
-  ): JavaList[ComponentRecord]
+  ): JavaList[MessagingServiceAddOn]
 }
 
-object DemoApp {
+object MessagingServiceApp {
   def main(args: Array[String]): Unit = {
-    val jdbcUrl = "jdbc:arrow-flight-sql://host.docker.internal:63915?useEncryption=false"
+    val jdbcUrl = "jdbc:arrow-flight-sql://localhost:50051?useEncryption=false"
     val username = ""
-    val password = ""
+    val password = "123"
 
     val dbi = new DBI(jdbcUrl, username, password)
 
-    dbi.registerMapper(new ResultSetMapper[ComponentRecord] {
-      override def map(index: Int, rs: ResultSet, ctx: StatementContext): ComponentRecord = {
-        ComponentRecord(
-          RecordId = rs.getString("RecordId"),
-          GroupId = rs.getString("GroupId"),
-          ComponentId = rs.getString("ComponentId"),
-          ComponentTypeId = rs.getString("ComponentTypeId"),
-          ComponentConfig = rs.getString("ComponentConfig"),
-          CreationTimestamp = rs.getTimestamp("CreationTimestamp"),
-          UpdateTimestamp = rs.getTimestamp("UpdateTimestamp")
+    dbi.registerMapper(new ResultSetMapper[MessagingServiceAddOn] {
+      override def map(index: Int, rs: ResultSet, ctx: StatementContext): MessagingServiceAddOn = {
+        MessagingServiceAddOn(
+          AccountSid = rs.getString("AccountId"),
+          MessagingServiceSid = rs.getString("ServiceId"),
+          AddOnSid = rs.getString("AddOnSid"),
+          AddOnTypeSid = rs.getString("AddOnTypeSid"),
+          AddOnJson = rs.getString("AddOnJson"),
+          DateCreated = rs.getTimestamp("DateCreated"),
+          DateUpdated = rs.getTimestamp("DateUpdated")
         )
       }
     })
 
-    val dao = dbi.onDemand(classOf[ComponentRecordDao])
+    val dao = dbi.onDemand(classOf[MessagingServiceDao])
 
     try {
-      val components1 = dao.getComponentsByRecordAndGroup("record123", "group456")
-      println("Components by record and group:")
-      components1.asScala.foreach(println)
+      val addOns1 = dao.getMessagingServiceAddOns("account123", "service456")
+      println("Add-ons by account and service:")
+      addOns1.asScala.foreach(println)
 
-      val components2 = dao.getComponentsByType("type789", 10)
-      println("\nComponents by component type:")
-      components2.asScala.foreach(println)
+      val addOns2 = dao.getMessagingServiceAddOnByAddOnType("type789", 10)
+      println("\nAdd-ons by add-on type:")
+      addOns2.asScala.foreach(println)
     } finally {
       dbi.close(dao)
     }
