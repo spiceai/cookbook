@@ -1,0 +1,9 @@
+version: v1
+kind: Spicepod
+name: scala
+
+datasets:
+  - from: file:data/test_data.csv
+    name: addons
+    params:
+      file_format: csv

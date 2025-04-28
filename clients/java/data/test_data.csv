@@ -1,0 +1,11 @@
+RecordId,GroupId,ComponentId,ComponentTypeId,ComponentConfig,CreationTimestamp,UpdateTimestamp
+record123,group456,component1,type789,"{\"feature\":\"data_analysis\"}",2025-04-01 10:00:00,2025-04-01 10:00:00
+record123,group456,component2,type789,"{\"feature\":\"media_support\"}",2025-04-02 12:30:00,2025-04-03 09:15:00
+record123,group789,component3,type123,"{\"feature\":\"audio_processing\"}",2025-04-03 15:45:00,2025-04-03 15:45:00
+record456,group456,component4,type789,"{\"feature\":\"data_analysis\"}",2025-04-04 08:20:00,2025-04-05 11:10:00
+record456,group123,component5,type456,"{\"feature\":\"automation\"}",2025-04-05 14:00:00,2025-04-05 14:00:00
+record123,group456,component6,type789,"{\"feature\":\"media_support\"}",2025-04-06 09:00:00,2025-04-07 16:25:00
+record789,group789,component7,type123,"{\"feature\":\"audio_processing\"}",2025-04-07 11:30:00,2025-04-07 11:30:00
+record789,group456,component8,type789,"{\"feature\":\"data_analysis\"}",2025-04-08 13:15:00,2025-04-09 10:40:00
+record123,group123,component9,type456,"{\"feature\":\"automation\"}",2025-04-09 17:00:00,2025-04-09 17:00:00
+record456,group789,component10,type789,"{\"feature\":\"media_support\"}",2025-04-10 09:45:00,2025-04-10 09:45:00

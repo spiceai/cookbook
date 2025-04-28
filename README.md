@@ -44,6 +44,8 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 - [Sales BI (Apache Superset)](./sales-bi/README.md) - Visualize data in Spice with Apache Superset.
 - [Grafana Datasource](./grafana-datasource/README.md) - Add Spice as a Grafana datasource.
 - [Python ADBC Client](./clients/adbc/README.md) - Query Spice using ADBC and Parameterized Queries with Python.
+- [Java JDBC Client](./clients/java/README.md) - Query Spice using JDBC and Parameterized Queries with Java.
+- [Scala JDBC Client](./clients/scala/README.md) - Query Spice using JDBC and Parameterized Queries with Scala.
 
 ### Connecting to Data Sources with Data Connectors
 

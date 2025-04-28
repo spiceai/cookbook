@@ -1,0 +1,9 @@
+version: v1
+kind: Spicepod
+name: java
+
+datasets:
+  - from: file:data/test_data.csv
+    name: accounts
+    params:
+      file_format: csv
