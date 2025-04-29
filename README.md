@@ -30,7 +30,7 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 - [xAI Models](./models/xai/README.md) - Use xAI models such as Grok.
 - [DeepSeek Model](./deepseek/README.md) - Use DeepSeek model through Spice.
 - [Filesystem Hosted Model](./models/filesystem/README.md) - Use models hosted directly on filesystems.
-- [Web Search Tools using Perplexity)[./websearch/README.md) - Provide LLMs with web search access for more informed answers.
+- [Web Search Tools using Perplexity](./websearch/README.md) - Provide LLMs with web search access for more informed answers.
 
 ### Data Acceleration - Materializing & accelerating data locally with Data Accelerators
 
@@ -43,6 +43,7 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 
 - [Sales BI (Apache Superset)](./sales-bi/README.md) - Visualize data in Spice with Apache Superset.
 - [Grafana Datasource](./grafana-datasource/README.md) - Add Spice as a Grafana datasource.
+- [Python ADBC Client](./clients/adbc/README.md) - Query Spice using ADBC and Parameterized Queries with Python.
 
 ### Connecting to Data Sources with Data Connectors
 
