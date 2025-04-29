@@ -34,7 +34,7 @@ spice run
 ### 4. Run the Java client
 
 ```bash
-mvn exec:java -Dexec.mainClass="FlightSQLTestApp"
+mvn exec:java -Dexec.mainClass="MessagingServiceApp"
 ```
 
 Expected output:
