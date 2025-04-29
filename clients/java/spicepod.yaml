@@ -4,6 +4,6 @@ name: java
 
 datasets:
   - from: file:src/main/resources/test_data.csv
-    name: accounts
+    name: addons
     params:
       file_format: csv

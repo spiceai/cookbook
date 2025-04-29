@@ -8,8 +8,7 @@ import org.jdbi.v3.sqlobject.customizer.Bind;
 public interface MessagingServiceDao {
 
     @SqlQuery("SELECT * FROM addons WHERE AccountId = :accountId AND ServiceId = :serviceId")
-    List<MessagingServiceAddOn> getMessagingServiceAddOns(@Bind("accountId") String accountId,
-                                                           @Bind("serviceId") String serviceSid);
+    List<MessagingServiceAddOn> getMessagingServiceAddOns(@Bind("accountId") String accountId, @Bind("serviceId") String serviceId);
 
     @SqlQuery("SELECT * FROM addons WHERE AddOnTypeSid = :addOnTypeSid LIMIT :limit")
     List<MessagingServiceAddOn> getMessagingServiceAddOnByAddOnType(@Bind("addOnTypeSid") String addOnTypeSid,
