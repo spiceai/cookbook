@@ -34,10 +34,16 @@ jobs:
         run: |
           curl https://install.spiceai.org | /bin/bash
           echo "/home/runner/.spice/bin" >> $GITHUB_PATH
+
       - name: Verify Spice Installation
         shell: bash
         run: |
           spice version
+
+      - name: Install Spice Runtime
+        shell: bash
+        run: |
+          spice install
 
       - name: Call Spice AI Completion API
         shell: bash
