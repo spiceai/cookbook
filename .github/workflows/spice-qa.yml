@@ -32,16 +32,10 @@ jobs:
           curl https://install.spiceai.org | /bin/bash
           echo "/home/runner/.spice/bin" >> $GITHUB_PATH
 
-      # - name: Install Spice Runtime
-      #   shell: bash
-      #   run: |
-      #     spice install
-
       - name: Verify Spice Installation
         shell: bash
         run: |
           spice version
-
 
       - name: Call Spice AI Completion API
         shell: bash
@@ -54,7 +48,7 @@ jobs:
 
           chat_input="Install Spice.ai OSS using the spiceai docs. Add it to the PATH. If it is already installed, run spice upgrade to upgrade it. Verify installation of version '${{ github.event.inputs.spice_version }}' by running the CLI command spice version. Use the '${{ matrix.recipe_name }}' Recipe to conduct testing. Ensure you execute all instructions in the recipe. Ensure you report on the spice sql query or spice chat results if the recipe includes them."
 
-          spice chat --http-endpoint https://data.spiceai.io --model timmy "$chat_input" > "$output_file" 2>&1
+          spice chat --cloud --http-endpoint https://data.spiceai.io --model timmy "$chat_input" > "$output_file" 2>&1
 
           # Output response for debugging
           echo "API Response saved to $output_file"
