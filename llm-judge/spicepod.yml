@@ -1,0 +1,143 @@
+version: v1
+kind: Spicepod
+name: llm_judge
+
+runtime:
+  task_history:
+    enabled: true
+    captured_output: truncated
+
+models:
+  - name: sql-analyst
+    from: openai:gpt-4o-mini
+    params:
+      openai_api_key: ${ secrets:SPICE_OPENAI_API_KEY }
+      tools: list_datasets, table_schema, sql
+      system_prompt: |
+        You are a data analyst specialising in SQL. Return a SQL query that would answer the user provided question.
+
+        To ensure the SQL query is valid, you must make a `sql` tool call to generate an explain plan. This can be done with the SQL
+        ```sql
+        EXPLAIN <query>
+        ```
+
+    # When writing SQL queries, do not put double quotes around schema-qualified table names. For example:
+    #   Correct: SELECT * FROM schema.table
+    #   Correct: SELECT * FROM database.schema.table
+    #   Incorrect: SELECT * FROM "schema.table"
+    #   Incorrect: SELECT * FROM "database.schema.table"
+    # Only use double quotes when you need to preserve case sensitivity or when identifiers contain special characters.
+
+    # Prefer quoting column names. For example:
+    #   Correct: `SELECT COUNT(*) AS "total_records" FROM "spice"."public"."taxi_trips"`
+    #   Incorrect: `SELECT COUNT(*) AS total_records FROM "spice"."public"."taxi_trips"`
+  - name: llm-judge
+    from: openai:gpt-4.1
+    params:
+      parameterized_prompt: enabled
+      openai_api_key: ${ secrets:SPICE_OPENAI_API_KEY }
+      tools: sql
+      openai_response_format:
+        type: json_schema
+        json_schema:
+          name: math_reasoning
+          schema:
+            type: object
+            properties:
+              score:
+                type: number
+                format: float
+            additionalProperties: false
+            required:
+              - score
+        strict: true
+      system_prompt: |
+        You are to judge whether a SQL query answers the user provided question.
+
+        Yo must also ensure the SQL query is valid by making a `sql` tool call to generate an explain plan. This can be done with the SQL
+        ```sql
+        EXPLAIN <query>
+        ```
+
+        Question: {{ input }}
+        SQL query: |
+          ```sql
+          {{ ideal }}
+          ```
+        Return a score between 0.0 and 1.0.
+
+views:
+  - name: tpch_judge
+    sql: |
+      SELECT sql as ideal, input as input from tpch_nsql limit 4;
+
+evals:
+  - name: tpch_nsql
+    dataset: tpch_judge
+    scorers:
+      - llm-judge
+
+tpch_acceleration: &tpch_acceleration
+  enabled: true
+  mode: file
+  engine: duckdb
+
+datasets:
+  - name: tpch_nsql
+    from: file:./data/tpch_nsql.jsonl
+
+  - from: s3://spiceai-demo-datasets/tpch/customer/
+    name: customer
+    params:
+      file_format: parquet
+      client_timeout: 60s
+    acceleration: *tpch_acceleration
+
+  - from: s3://spiceai-demo-datasets/tpch/lineitem/
+    name: lineitem
+    params:
+      file_format: parquet
+      client_timeout: 80s
+    acceleration: *tpch_acceleration
+
+  - from: s3://spiceai-demo-datasets/tpch/nation/
+    name: nation
+    params:
+      file_format: parquet
+      client_timeout: 60s
+    acceleration: *tpch_acceleration
+
+  - from: s3://spiceai-demo-datasets/tpch/orders/
+    name: orders
+    params:
+      file_format: parquet
+      client_timeout: 60s
+    acceleration: *tpch_acceleration
+
+  - from: s3://spiceai-demo-datasets/tpch/part/
+    name: part
+    params:
+      file_format: parquet
+      client_timeout: 60s
+    acceleration: *tpch_acceleration
+
+  - from: s3://spiceai-demo-datasets/tpch/partsupp/
+    name: partsupp
+    params:
+      file_format: parquet
+      client_timeout: 60s
+    acceleration: *tpch_acceleration
+
+  - from: s3://spiceai-demo-datasets/tpch/region/
+    name: region
+    params:
+      file_format: parquet
+      client_timeout: 60s
+    acceleration: *tpch_acceleration
+
+  - from: s3://spiceai-demo-datasets/tpch/supplier/
+    name: supplier
+    params:
+      file_format: parquet
+      client_timeout: 60s
+    acceleration: *tpch_acceleration
