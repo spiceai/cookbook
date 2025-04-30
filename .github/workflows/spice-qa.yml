@@ -65,5 +65,5 @@ jobs:
       - name: Upload response file
         uses: actions/upload-artifact@v4
         with:
-          name: api-response-${recipe_file_path}
-          path: api_responses/${recipe_file_path}.json
+          name: api-response-${{ env.RECIPE_FILE_PATH }}
+          path: api_responses/${{ env.RECIPE_FILE_PATH }}.log
