@@ -14,12 +14,24 @@ models:
       openai_api_key: ${ secrets:SPICE_OPENAI_API_KEY }
       tools: list_datasets, table_schema
       system_prompt: |
-        You are a data analyst specialising in SQL. Return a SQL query that would answer the user provided question. Do not return anything extra.
-
-        <example>
-          <question>How many heads of the departments are older than 56?</question>
-          <answer>SELECT count(*) FROM head WHERE age > 56</answer>
-        </example>
+        You are a data analyst specialising in SQL. Return a SQL query that would answer the user provided question.
+#         Return only valid SQL.
+# 
+#         Good:
+#           <example>
+#             <question>How many heads of the departments are older than 56?</question>
+#             <answer>SELECT count(*) FROM head WHERE age > 56</answer>
+#           </example>
+# 
+#         Bad:
+#           <example>
+#             <question>How many heads of the departments are older than 56?</question>
+#             <answer>To find the part oldest head of department, you can use the following SQL query:\n\n```sql\nSELECT p_brand FROM spice.public.part WHERE p_partkey = 3;\n```SELECT count(*) FROM head WHERE age > 56```</answer>
+#           </example>
+#           <example>
+#             <question>How many heads of the departments are older than 56?</question>
+#             <answer>```sql\nSELECT count(*) FROM head WHERE age > 56\n```</answer>
+#           </example>
 
   - name: answers-question
     from: openai:gpt-4.1
@@ -59,7 +71,7 @@ models:
           - Only score above 0.8 if the SQL query is both correct and nothing additional is returned.
 
   - name: sql-explain
-    from: openai:gpt-4.1-nano
+    from: openai:gpt-4.1
     description: |
       This LLM judge uses `EXPLAIN <query>` SQL queries to judge if the LLM-created SQL is both:
         1. Valid syntax
@@ -83,12 +95,24 @@ models:
               - score
         strict: true
       system_prompt: |
-        You are to check if the provided SQL query is valid by making a `sql` tool call to generate an explain plan. This can be done with the SQL
+        You are to check if the provided input is a valid SQL query by making a `sql` tool call to generate an explain plan. This can be done with the SQL
         ```sql
-        EXPLAIN <query>
+        EXPLAIN <input>
         ```
-        SQL query: `{{ actual }}`
-        Return 0.0 if the explain query failed, 1.0 otherwise.
+        <input>{{ actual }}</input>
+
+        Return 0.0 if the explain query failed, 1.0 otherwise. It is **critical that you pass the content within the <input> tags to the sql tool exactly as it appears**, without any modifications, cleaning, or alterations. Include all text, symbols, and formatting as it is provided within the tags. Do not remove or change anything within the <input> tags.
+
+        <example>
+          <input>
+            Here is the SQL query to find the part brand for the part with key 3:\n\n```sql\SELECT sql as ideal, input as input from tpch_nsql limit 5;```
+          </input>
+          <sql_tool>
+            {
+              "query": "Here is the SQL query to find the part brand for the part with key 3:\n\n```sql\SELECT sql as ideal, input as input from tpch_nsql limit 5;\n```"
+            }
+          </sql_tool>
+        </example>
 
 views:
   - name: tpch_judge
@@ -99,8 +123,8 @@ evals:
   - name: tpch_nsql
     dataset: tpch_judge
     scorers:
-      - answers-question
       - sql-explain
+      - answers-question
       - match
 
 tpch_acceleration: &tpch_acceleration

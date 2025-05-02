@@ -2,7 +2,10 @@
 
 Spice can be used to run language models (LLM) but also to evaluate their performance on specific tasks. Sometimes it's useful to use another language model to judge the performance of another LLM. This is often called an [LLM judge](https://spiceai.org/docs/features/large-language-models/evals#llm-judge).
 
-This recipe demonstrates how to evaluate a language model in Spice, and how to use an LLM judge to evaluate their performance.
+This recipe demonstrates how to evaluate an LLM in Spice, and how to use an LLM judge to evaluate their performance. Specifically:
+ 1. Evaluate the performance of a text-to-sql LLM against basic checks and an LLM-judge scorer.
+ 2. Alter the LLM system and reevaluate its performance.
+ 3.
 
 
 ## Prerequisites
@@ -25,7 +28,7 @@ spice eval tpch_nsql \
 ```
 ```bash
 ID                               CREATEDAT           DATASET    MODEL       STATUS    SCORERS                              METRICS
-a4277f8ab59690f327a7e0ffc0009ad6 2025-05-01T07:02:27 tpch_judge sql-analyst Completed [answers-question sql-explain match] map[answers-question/mean:0.98 match/mean:0 sql-explain/mean:1]
+30156ee21d410e4e2db37c70e4d1d03b 2025-05-02T00:43:35 tpch_judge sql-analyst Completed [answers-question sql-explain match] map[answers-question/mean:0.87999994 match/mean:0 sql-explain/mean:0]
 ```
 
 3. Inspect the trace of this eval run (i.e. everything that occurred internally). Note: The example below is truncated for brevity.
@@ -70,23 +73,100 @@ curl -X POST "http://localhost:8090/v1/sql" \
 ```json
 [
     {
+        "input": "find part brand for part with key 3. Fields: part_brand",
+        "actual": "Heres the SQL query to find the part brand for the part with key 3:\n\n```sql\nSELECT p_brand\nFROM spice.public.part\nWHERE p_partkey = 3;\n```",
+        "expected": "select p_brand from part where p_partkey = 3;"
+    },
+    {
         "input": "what is total number of orders. Fields: total_orders",
-        "actual": "SELECT count(*) AS total_orders FROM orders",
-        "expected": "select count(*) as total_orders from orders;",
-        "expected": 0.0
+        "actual": "Here is the SQL query to calculate the total number of orders:\n\n```sql\nSELECT COUNT(o_orderkey) AS total_orders\nFROM spice.public.orders;\n```",
+        "expected": "select count(o_orderkey) as total_orders from spice.public.orders;"
     },
     {
         "input": "what is customer Customer#000000001 nation. Fields: nation",
-        "actual": "SELECT n.n_name \nFROM spice.public.customer c \nJOIN spice.public.nation n ON c.c_nationkey = n.n_nationkey \nWHERE c.c_custkey = 1;",
-        "expected": "select n_name as nation from customer c, nation n where c.c_name = Customer#000000001 and c.c_nationkey = n.n_nationkey;",
-        "expected": 0.0
-    },
-    {
-        "input": "how many customers reside in each nation. Return top 3 ordered by nation name. Fields: nation_name, customer_count",
-        "actual": "SELECT n.n_name AS nation_name, COUNT(c.c_custkey) AS customer_count \nFROM spice.public.customer c \nJOIN spice.public.nation n ON c.c_nationkey = n.n_nationkey \nGROUP BY n.n_name \nORDER BY n.n_name \nLIMIT 3;",
-        "expected": "select n.n_name as nation_name, count(*) as customer_count from customer c, nation n where c.c_nationkey = n.n_nationkey group by n.n_name order by n.n_name limit 3;",
-        "expected": 0.0
+        "actual": "The following SQL query will return the nation for the customer with `Customer#000000001`:\n\n```sql\nSELECT n.n_name AS nation\nFROM spice.public.customer c\nJOIN spice.public.nation n ON c.c_nationkey = n.n_nationkey\nWHERE c.c_custkey = 1; -- Assuming Customer#000000001 corresponds to c_custkey = 1\n``` \n\nMake sure to adjust the key as necessary if the mapping between customer ID and customer number differs.",
+        "expected": "select n_name as nation from customer c, nation n where c.c_name = Customer#000000001 and c.c_nationkey = n.n_nationkey",
     }
 ]
 ```
-From this, you can see one of the core limitations of basic scorers like `match` (even `fuzzy_match` would struggle due to the important of punctation in SQL).
+
+The `sql-explain` tool fails because it attempts to provide the entire output from the LLM to the sql query `EXPLAIN <output>`.
+
+You can see this by looking at the input of the trace:
+```bash
+spice trace eval_run --include-input --truncate
+```
+```bash
+TREE                                 STATUS DURATION   SPANID           INPUT
+eval_run                             ✅     49427.82ms 8e4f47c1373ab69b {"name":"tpch_nsql","dataset":"tpch_judge","scorers":["answers-question","sql-ex... (16 characters omitted)
+  ├── sql_query                      ✅         6.61ms 15a45f1d13bdf469 SELECT input, ideal FROM spice.public.tpch_judge
+  ├── eval_step                      ✅      2963.18ms 2b20192cff2f7d9a "find part brand for part with key 3. Fields: part_brand"
+...
+│ ├── run_scorer::sql-explain      ✅      5349.97ms 78656a7c1715cb5a "how many customers reside in each nation. Return top 3 ordered by nation name. ... (36 characters omitted)
+  │ │ ├── ai_completion              ✅      4746.65ms 1f32cb2bb113d44c {"messages":[{"role":"system","content":"You are to check if the provided input ... (2324 characters omitted)
+  │ │ ├── tool_use::sql              🚫         2.06ms 89a253ee445f9c6e {"query":"EXPLAIN To count how many customers reside in each nation and return t... (583 characters omitted)
+  │ │ │ └── sql_query                🚫         1.78ms 42c8442de4ea74ca EXPLAIN To count how many customers reside in each nation and return the top 3 o... (554 characters omitted)
+  │ │ └── ai_completion              ✅       595.04ms 551f0504c747dabf {"messages":[{"role":"system","content":"You are to check if the provided input ... (3387 characters omitted)
+```
+
+### Improving the LLM
+An easy way to improve the `sql-analyst` is to provide an example of the expected return format (i.e. just SQL).
+
+5. Add an example to the  `sql-analyst` `system_prompt (currently commented out)
+```yaml
+system_prompt: |
+  You are a data analyst specialising in SQL. Return a SQL query that would answer the user provided question.
+  Return only valid SQL.
+
+  Good:
+    <example>
+      <question>How many heads of the departments are older than 56?</question>
+      <answer>SELECT count(*) FROM head WHERE age > 56</answer>
+    </example>
+
+  Bad:
+    <example>
+      <question>How many heads of the departments are older than 56?</question>
+      <answer>To find the part oldest head of department, you can use the following SQL query:\n\n```sql\nSELECT p_brand FROM spice.public.part WHERE p_partkey = 3;\n```SELECT count(*) FROM head WHERE age > 56```</answer>
+    </example>
+    <example>
+      <question>How many heads of the departments are older than 56?</question>
+      <answer>```sql\nSELECT count(*) FROM head WHERE age > 56\n```</answer>
+    </example>
+```
+
+6. Rerun the eval
+```bash
+spice eval tpch_nsql \
+    --model sql-analyst
+```
+```
+ID                               CREATEDAT           DATASET    MODEL       STATUS    SCORERS                              METRICS
+c6b7de93883cf2e97e645a4d2a4c5af0 2025-05-02T00:54:32 tpch_judge sql-analyst Completed [answers-question sql-explain match] map[answers-question/mean:1 match/mean:0 sql-explain/mean:1]
+```
+
+7. And compare the results
+```bash
+curl -X POST "http://localhost:8090/v1/sql" \
+    --data "SELECT input, actual, value expected FROM eval.results WHERE scorer='match' LIMIT 3;"
+```
+```json
+[
+    {
+        "input": "find part brand for part with key 3. Fields: part_brand",
+        "actual": "SELECT p_brand FROM spice.public.part WHERE p_partkey = 3",
+        "expected": "select p_brand from part where p_partkey = 3;"
+    },
+    {
+        "input": "what is total number of orders. Fields: total_orders",
+        "actual": "SELECT count(*) AS total_orders FROM spice.public.orders;",
+        "expected": "select count(*) as total_orders from orders;"
+    },
+    {
+        "input": "what is customer Customer#000000001 nation. Fields: nation",
+        "actual": "SELECT n_name \nFROM spice.public.customer c \nJOIN spice.public.nation n ON c.c_nationkey = n.n_nationkey \nWHERE c.c_custkey = 1;",
+        "expected": "select n_name as nation from customer c, nation n where c.c_name = Customer#000000001 and c.c_nationkey = n.n_nationkey;"
+    }
+]
+```
+You can see one of the core limitations of basic scorers like `match` whereby an exact match isn't the only way to produce a valid SQL that would answer the question (even `fuzzy_match` would struggle due to the important of punctation in SQL). Furthermore, one advantage of scoring models like `sql-explain` & `answers-question` is that they don't require having correct SQL queries to get a score. LLM-judges like these can be used to bootstrap synthetic data that can be then further QA'ed.
