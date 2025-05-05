@@ -26,47 +26,29 @@ jobs:
       - name: Create output directory
         run: mkdir -p api_responses
 
+      - name: Install Spice
+        shell: bash
+        run: |
+          curl https://install.spiceai.org | /bin/bash
+          echo "~/.spice/bin" >> $GITHUB_PATH
+
+      - name: Verify Spice Installation
+        shell: bash
+        run: |
+          spice version
+
       - name: Call Spice AI Completion API
         shell: bash
         env:
-          SPICE_API_KEY: ${{ secrets.SPICE_API_KEY }}
+          SPICE_SPICEAI_API_KEY: ${{ secrets.SPICE_API_KEY }}
         run: |
           recipe_file_path="$(echo "${{ matrix.recipe_name }}" | tr '[:upper:]' '[:lower:]' | tr ' ' '_')"
-          output_file="api_responses/${recipe_file_path}.json"
+          echo "RECIPE_FILE_PATH=$recipe_file_path" >> $GITHUB_ENV
+          output_file="api_responses/${recipe_file_path}.log"
 
-          curl -s \
-            -H "Content-Type: application/json" \
-            -H "X-API-Key: $SPICE_API_KEY" \
-            -d '{
-              "model": "timmy",
-              "messages": [
-                {
-                  "role": "user",
-                  "content": "Install Spice.ai OSS using the spiceai docs. Add it to the PATH. If it is already installed, run spice upgrade to upgrade it. Verify installation of version ${{ github.event.inputs.spice_version }} by running the CLI command spice version. Use the ${{ toJson(matrix.recipe_name) }} Recipe to conduct testing. Ensure you execute all instructions in the recipe. Ensure you report on the spice sql query or spice chat results if the recipe includes them."
-                }
-              ],
-              "temperature": 0.1
-            }' \
-            https://data.spiceai.io/v1/chat/completions
+          chat_input="Install Spice.ai OSS using the spiceai docs. Add it to the PATH. If it is already installed, run spice upgrade to upgrade it. Verify installation of version '${{ github.event.inputs.spice_version }}' by running the CLI command spice version. Use the '${{ matrix.recipe_name }}' Recipe to conduct testing. Ensure you execute all instructions in the recipe. Ensure you report on the spice sql query or spice chat results if the recipe includes them."
 
-          # Call API
-          response=$(curl -s \
-            -H "Content-Type: application/json" \
-            -H "X-API-Key: $SPICE_API_KEY" \
-            -d '{
-              "model": "timmy",
-              "messages": [
-                {
-                  "role": "user",
-                  "content": "Install Spice.ai OSS using the spiceai docs. Add it to the PATH. If it is already installed, run spice upgrade to upgrade it. Verify installation of version ${{ github.event.inputs.spice_version }} by running the CLI command spice version. Use the ${{ toJson(matrix.recipe_name) }} Recipe to conduct testing. Ensure you execute all instructions in the recipe. Ensure you report on the spice sql query or spice chat results if the recipe includes them."
-                }
-              ],
-              "temperature": 0.1
-            }' \
-            https://data.spiceai.io/v1/chat/completions)
-
-          # Save the response to a file
-          echo "$response" > $output_file
+          spice chat --cloud --http-endpoint https://data.spiceai.io --model timmy "$chat_input" > "$output_file" 2>&1
 
           # Output response for debugging
           echo "API Response saved to $output_file"
@@ -81,5 +63,5 @@ jobs:
       - name: Upload response file
         uses: actions/upload-artifact@v4
         with:
-          name: api-response-${recipe_file_path}
-          path: api_responses/${recipe_file_path}.json
+          name: api-response-${{ env.RECIPE_FILE_PATH }}
+          path: api_responses/${{ env.RECIPE_FILE_PATH }}.log
