@@ -13,7 +13,7 @@ This recipe will walk you through using Spice as a text to SQL interface.
 
 ## Steps
 
-Separate from using language models to interact with [runtime tools](https://docs.spiceai.org/features/ai-gateway/runtime_tools), `spice` has a standalone text to SQL endpoint. This provides more granular control of how SQL generation is done, and is more robust to hallucination and misuse of tools.
+Separate from using language models to interact with [runtime tools](https://spiceai.org/docs/components/tools), `spice` has a standalone text to SQL endpoint. This provides more granular control of how SQL generation is done, and is more robust to hallucination and misuse of tools.
 
 1. Start Spice
 
@@ -155,7 +155,7 @@ Result:
 }
 ```
 
-From this, you can see that `spice` runs the following [tools](https://docs.spiceai.org/features/ai-gateway/runtime_tools) to help the model write contextual, correct SQL:
+From this, you can see that `spice` runs the following [tools](https://spiceai.org/docs/components/tools) to help the model write contextual, correct SQL:
 
 - `table_schema`: To show the table schema of each relevant table.
 - Sample data from the relevant table(s), both:
@@ -164,11 +164,11 @@ From this, you can see that `spice` runs the following [tools](https://docs.spic
 
 ### Return the SQL Query
 
-The `v1/nsql` endpoint can return early if you only want the SQL query. To do this, specify the header `Accept: application/sql` in the text to SQL request.
+The `v1/nsql` endpoint can return the SQL query it used in addition to the results. To do this, specify the `Accept: application/vnd.spiceai.sql.v1+json` header.
 
 ```shell
 curl -XPOST "http://localhost:8090/v1/nsql" \
-  -H "Accept: application/sql" \
+  -H "Accept: application/vnd.spiceai.sql.v1+json" \
   -H "Content-Type: application/json" \
   -d '{
     "query": "What’s the highest tip any passenger gave?"
@@ -177,8 +177,29 @@ curl -XPOST "http://localhost:8090/v1/nsql" \
 
 Returns:
 
-```sql
-SELECT MAX(tip_amount) AS highest_tip_amount FROM taxi_trips
+```json
+{
+  "row_count": 1,
+  "schema": {
+    "fields": [
+      {
+        "name": "highest_tip",
+        "data_type": "Float64",
+        "nullable": true,
+        "dict_id": 0,
+        "dict_is_ordered": false,
+        "metadata": {}
+      }
+    ],
+    "metadata": {}
+  },
+  "data": [
+    {
+      "highest_tip": 428.0
+    }
+  ],
+  "sql": "SELECT MAX(\"tip_amount\") AS \"highest_tip\"\nFROM \"spice\".\"public\".\"taxi_trips\""
+}
 ```
 
 ### Disable Sampling
@@ -243,6 +264,8 @@ Time: 9.141290 seconds. 1 rows.
 ```
 
 Step 5.\*\* (Optional) Check the underlying query
+
+Run `spice sql` in a separate terminal to check the underlying query
 
 ```sql
 select start_time, parent_span_id, span_id, task, substr(input, 0, 64) as input, execution_duration_ms from runtime.task_history where trace_id=(select trace_id from runtime.task_history where task='nsql') order by start_time asc;

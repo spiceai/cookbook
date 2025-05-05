@@ -5,3 +5,11 @@ name: json_strings
 datasets:
   - from: file://tshirts.csv
     name: products
+    acceleration:
+      enabled: true
+      engine: arrow
+
+views:
+  - name: products_with_color
+    sql: |
+      SELECT products.*, properties->>'color' color from products;

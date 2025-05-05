@@ -1,33 +1,33 @@
 # In-Memory Results Caching
 
-> Spice.ai OSS supports in-memory caching of query results.
-> Results caching can help improve performance for bursts of requests and for non-accelerated results such as refresh data returned [on zero results](https://docs.spiceai.org/data-accelerators/data-refresh#behavior-on-zero-results).
+> Spice.ai OSS supports in-memory caching of query results to improve performance for bursts of requests and non-accelerated results, such as refresh data returned [on zero results](https://docs.spiceai.org/data-accelerators/data-refresh#behavior-on-zero-results).
 >
 > [Spice.ai OSS Docs: Results Caching](https://docs.spiceai.org/features/caching)
 
-The recipe will use [TPC-H Benchmark Sample Data](https://github.com/spiceai/cookbook/tree/trunk/tpc-h), but instead of using local acceleration, we will leverage in-memory caching to boost query performance.
+This recipe demonstrates using [TPC-H Benchmark Sample Data](https://github.com/spiceai/cookbook/tree/trunk/tpc-h) with in-memory caching to boost query performance.
 
-**Step 1.** Initialize and start Spice
+---
+
+## Step 1: Initialize and Start Spice
+
+Run the following commands to initialize and start the Spice runtime:
 
 ```bash
 spice init cache-recipe
-```
-
-```bash
 cd cache-recipe
 spice run
 ```
 
-**Step 2.** Add the TPC-H Benchmark Spicepod
+## Step 2: Add the TPC-H Benchmark Spicepod
 
-In a separate terminal, using the same directory, add the TPC-H Benchmark Spicepod to the project.
+In a separate terminal, navigate to the `cache-recipe` directory and add the `spiceai/tpch` Spicepod:
 
 ```bash
 cd cache-recipe
 spice add spiceai/tpch
 ```
 
-The following output is shown in the Spice runtime terminal:
+Observe the Spice runtime terminal for cache initialization. Example output:
 
 ```bash
 2024-08-05T05:25:10.627005Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
@@ -48,11 +48,11 @@ Notice the following line confirming the default cache configuration with cached
 2024-08-05T05:25:10.628875Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
 ```
 
-**Step 3.** Increase the cached items' expiration time
+## Step 3: Update Cache Configuration
 
-Using `Ctrl-C`, stop Spice and use a text editor to open the `spicepod.yaml` file. Add a custom in-memory caching configuration below to increase the cached items' duration to `5 minutes`. Read [Spice.ai OSS Docs: Results Caching](https://docs.spiceai.org/features/caching) to learn more about the available configuration parameters.
+Stop the Spice runtime using `Ctrl-C`. Open the `spicepod.yaml` file and add a custom cache configuration to increase the cached items' expiration time to 5 minutes.
 
-Before:
+**Before:**
 
 ```yaml
 version: v1
@@ -62,7 +62,7 @@ dependencies:
   - spiceai/tpch
 ```
 
-After:
+**After:**
 
 ```yaml
 version: v1
@@ -80,13 +80,13 @@ dependencies:
   - spiceai/tpch
 ```
 
-Run Spice
+Restart the Spice runtime:
 
 ```bash
 spice run
 ```
 
-The following output is shown in the Spice runtime terminal, confirming the updated in-memory caching settings (`300s`):
+Verify the following output is shown in the Spice runtime terminal, confirming that the updated in-memory caching settings (`Initialized results cache; max size: 128.00 MiB, item ttl: 300s`) were applied:
 
 ```bash
 2024-08-05T05:29:06.876281Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
@@ -101,15 +101,15 @@ The following output is shown in the Spice runtime terminal, confirming the upda
 2024-08-05T05:29:08.712402Z  INFO runtime: Dataset customer registered (s3://spiceai-demo-datasets/tpch/customer/), results cache enabled.
 ```
 
-**Step 3.** Run queries against the dataset using the Spice SQL REPL.
+## Step 4: Run Queries
 
-In a new terminal, start the Spice SQL REPL.
+Start the Spice SQL REPL in a new terminal:
 
 ```bash
 spice sql
 ```
 
-Run _Pricing Summary Report Query (Q1)_. More information about TPC-H and all the queries involved can be found in the official [TPC Benchmark H Standard Specification](https://www.tpc.org/tpc_documents_current_versions/pdf/tpc-h_v2.17.1.pdf).
+Run the _Pricing Summary Report Query (Q1)_:
 
 ```sql
 select
@@ -136,9 +136,9 @@ order by
 ;
 ```
 
-Output:
+Observe the query execution time. First run:
 
-```sql
+```console
 +--------------+--------------+-------------+-----------------+-------------------+---------------------+-----------+--------------+----------+-------------+
 | l_returnflag | l_linestatus | sum_qty     | sum_base_price  | sum_disc_price    | sum_charge          | avg_qty   | avg_price    | avg_disc | count_order |
 +--------------+--------------+-------------+-----------------+-------------------+---------------------+-----------+--------------+----------+-------------+
@@ -151,9 +151,9 @@ Output:
 Time: 4.178523666 seconds. 4 rows.
 ```
 
-Execute the same query again and observe a significant reduction in query execution time, from **4.178523666** to **0.004944792** seconds, due to the result being retrieved from the in-memory cache. The cached item will expire 5 minutes after the initial query execution.
+Execute the same query again and observe a significant reduction in query execution time, from **4.178523666** to **0.004944792** seconds, due to the result being retrieved from the in-memory cache. The cached item will expire 5 minutes after the initial query execution. Cached run:
 
-```sql
+```console
 +--------------+--------------+-------------+-----------------+-------------------+---------------------+-----------+--------------+----------+-------------+
 | l_returnflag | l_linestatus | sum_qty     | sum_base_price  | sum_disc_price    | sum_charge          | avg_qty   | avg_price    | avg_disc | count_order |
 +--------------+--------------+-------------+-----------------+-------------------+---------------------+-----------+--------------+----------+-------------+
@@ -165,3 +165,9 @@ Execute the same query again and observe a significant reduction in query execut
 
 Time: 0.004944792 seconds. 4 rows (cached).
 ```
+
+The cached result will expire 5 minutes after the initial query execution.
+
+## Additional Resources
+
+- [Results Caching Documentation](https://docs.spiceai.org/features/caching)

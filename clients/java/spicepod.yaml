@@ -1,0 +1,9 @@
+version: v1
+kind: Spicepod
+name: java
+
+datasets:
+  - from: file:src/main/resources/test_data.csv
+    name: addons
+    params:
+      file_format: csv

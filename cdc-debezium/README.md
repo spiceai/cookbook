@@ -51,6 +51,7 @@ datasets:
       debezium_transport: kafka
       debezium_message_format: json
       kafka_bootstrap_servers: localhost:19092
+      kafka_security_protocol: PLAINTEXT
     acceleration:
       enabled: true
       engine: sqlite

@@ -152,6 +152,18 @@ Ensure that the `pg_pass` connctor parameter is only set when `pg_user` used in 
 spice run
 ```
 
+```bash
+2025-03-31T18:58:04.713696Z  INFO spiced: Starting runtime v1.1.0-build.ff1d3fec2+models.metal
+2025-03-31T18:58:05.268188Z  INFO runtime::init::dataset: Initializing dataset sample_data
+2025-03-31T18:58:05.269626Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2025-03-31T18:58:05.272079Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2025-03-31T18:58:05.272103Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
+2025-03-31T18:58:05.272500Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
+2025-03-31T18:58:05.278168Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2025-03-31T18:58:05.315178Z  INFO runtime::init::dataset: Dataset sample_data registered (postgres:sample_data), results cache enabled.
+2025-03-31T18:58:05.416584Z  INFO runtime: All components are loaded. Spice runtime is ready!
+```
+
 Follow the [getting started guide](https://docs.spiceai.org/getting-started) to get started with the Spice.ai runtime.
 
 See the [datasets reference](https://docs.spiceai.org/reference/spicepod/datasets) for more dataset configuration options.
@@ -168,15 +180,15 @@ List available datasets in spice runtime.
 
 ```sql
 sql> show tables;
-+---------------+--------------+---------------+------------+
-| table_catalog | table_schema | table_name    | table_type |
-+---------------+--------------+---------------+------------+
-| spice         | public       | sample_data   | BASE TABLE |
-| spice         | runtime      | task_history  | BASE TABLE |
-| spice         | runtime      | metrics       | BASE TABLE |
-+---------------+--------------+---------------+------------+
++---------------+--------------+--------------+------------+
+| table_catalog | table_schema | table_name   | table_type |
++---------------+--------------+--------------+------------+
+| spice         | runtime      | task_history | BASE TABLE |
+| spice         | runtime      | metrics      | BASE TABLE |
+| spice         | public       | sample_data  | BASE TABLE |
++---------------+--------------+--------------+------------+
 
-Time: 0.028967208 seconds. 4 rows.
+Time: 0.004413208 seconds. 3 rows.
 ```
 
 You can now now query `sample_data` in the runtime.

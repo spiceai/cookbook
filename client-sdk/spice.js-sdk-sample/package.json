@@ -9,6 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@spiceai/spice": "^2.0.0"
+    "@spiceai/spice": "^2.0.1"
   }
 }

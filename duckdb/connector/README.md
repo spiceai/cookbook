@@ -133,7 +133,7 @@ Time: 0.003510375 seconds. 10 rows.
 
 ## Learn more
 
-- [DuckDB Data Connector Documentation](https://docs.spiceai.org/data-connectors/duckdb).
+- [DuckDB Data Connector Documentation](https://spiceai.org/docs/components/data-connectors/duckdb).
 
 - For using `spice sql`, see the [CLI reference](https://docs.spiceai.org/cli/reference/sql).
 

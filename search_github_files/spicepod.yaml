@@ -12,14 +12,14 @@ datasets:
       enabled: true
     columns:
       - name: content
-        # embeddings:
-        #   - from: local_embedding_model
-        #     row_id: path
-        #     chunking:
-        #       enabled: true
-        #       target_chunk_size: 256
-        #       overlap_size: 64
-        #       file_format: md
+      #  embeddings:
+      #    - from: local_embedding_model
+      #      row_id: path
+      #      chunking:
+      #        enabled: true
+      #        target_chunk_size: 256
+      #        overlap_size: 64
+      #        file_format: md
 
 embeddings:
   - name: local_embedding_model

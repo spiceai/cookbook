@@ -1,4 +1,3 @@
-
 # Dremio Data Connector
 
 The Dremio recipe uses a publicly accessible demo instance of Dremio loaded with sample datasets. Thus, setting up your own Dremio instance is not required to complete the recipe, but the same steps can be used to connect to any Dremio instance.
@@ -16,7 +15,7 @@ cd dremio-demo
 spice login dremio -u demo -p demo1234
 ```
 
-**Step 3.** Start the runtime.
+**Step 3.** In the same terminal window, start the runtime.
 
 ```bash
 spice run
@@ -24,12 +23,14 @@ spice run
 
 **Step 4.** Configure the dataset to connect to Dremio:
 
-In another terminal window in the `dremio-demo` folder:
+Open a new terminal window and navigate to the `dremio-demo` directory, and then run the dataset configuration command:
 
 ```bash
 cd dremio-demo
 spice dataset configure
 ```
+
+When running `spice dataset configure`, you'll be guided through an interactive setup process. When prompted, provide the following inputs:
 
 Enter the name of the dataset:
 
@@ -102,6 +103,7 @@ Now query `taxi_trips`:
 ```sql
 select avg(total_amount), avg(tip_amount), count(1), passenger_count from taxi_trips group by passenger_count order by passenger_count asc;
 ```
+
 ```sql
 +------------------------------+----------------------------+-----------------+-----------------+
 | avg(taxi_trips.total_amount) | avg(taxi_trips.tip_amount) | count(Int64(1)) | passenger_count |
@@ -119,4 +121,4 @@ Time: 0.03241875 seconds. 7 rows.
 ```
 
 **Next Steps**
-This recipe accelerates query performance using [Spice Data Accelerators](https://docs.spiceai.org/data-accelerators).  Experiment with different acceleration options by editing the dataset.yaml file or removing acceleration altogether to have the Spice runtime federate the query to Dremio directly.
+This recipe accelerates query performance using [Spice Data Accelerators](https://docs.spiceai.org/data-accelerators). Experiment with different acceleration options by editing the dataset.yaml file or removing acceleration altogether to have the Spice runtime federate the query to Dremio directly.

@@ -38,7 +38,7 @@ ENV PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.9.7-src.zip:$
 
 WORKDIR ${SPARK_HOME}
 
-ENV SPARK_VERSION=3.5.4
+ENV SPARK_VERSION=3.5.5
 
 RUN mkdir -p /home/spark/data \
     /home/spark/notebooks \
@@ -55,7 +55,7 @@ RUN cd ${SPARK_HOME} \
     && tar xvzf spark-${SPARK_VERSION}-bin-hadoop3.tgz --directory /opt/spark --strip-components 1 \
     && rm -rf spark-${SPARK_VERSION}-bin-hadoop3.tgz
 
-ENV SPARK_VERSION=3.5.4
+ENV SPARK_VERSION=3.5.5
 RUN cd ${SPARK_HOME} && \
     wget https://repo1.maven.org/maven2/org/apache/spark/spark-connect_2.12/${SPARK_VERSION}/spark-connect_2.12-${SPARK_VERSION}.jar -P jars/ && \
     wget https://repo1.maven.org/maven2/org/apache/spark/spark-connect-client-jvm_2.12/${SPARK_VERSION}/spark-connect-client-jvm_2.12-${SPARK_VERSION}.jar -P jars/ && \
