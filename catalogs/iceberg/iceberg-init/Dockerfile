@@ -27,9 +27,11 @@ RUN curl https://public-data.spiceai.org/tpch_sf1/customer/customer.parquet -o /
 
 WORKDIR /home/iceberg
 
-RUN uv init && uv add pyiceberg && uv add pyarrow
-
+COPY pyproject.toml .
+COPY uv.lock .
 COPY create-tpch-tables.py .
 COPY entrypoint.sh .
+
+RUN uv sync && uv add pyiceberg && uv add pyarrow
 
 ENTRYPOINT ["/bin/bash", "-c", "/home/iceberg/entrypoint.sh"]
