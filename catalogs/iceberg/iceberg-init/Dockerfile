@@ -32,6 +32,6 @@ COPY uv.lock .
 COPY create-tpch-tables.py .
 COPY entrypoint.sh .
 
-RUN uv sync && uv add pyiceberg && uv add pyarrow
+RUN uv sync
 
 ENTRYPOINT ["/bin/bash", "-c", "/home/iceberg/entrypoint.sh"]
