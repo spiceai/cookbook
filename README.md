@@ -31,6 +31,8 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 - [DeepSeek Model](./deepseek/README.md) - Use DeepSeek model through Spice.
 - [Filesystem Hosted Model](./models/filesystem/README.md) - Use models hosted directly on filesystems.
 - [Web Search Tools using Perplexity](./websearch/README.md) - Provide LLMs with web search access for more informed answers.
+- [Language Model Evaluations](./evals/README.md) - Use Spice to evaluate language models.
+- [LLM as a Judge](./llm-judge/README.md) - Define LLM judge models to evaluate the performance of other language models.
 
 ### Data Acceleration - Materializing & accelerating data locally with Data Accelerators
 

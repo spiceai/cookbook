@@ -4,9 +4,7 @@ Spice can be used to run language models (LLM) but also to evaluate their perfor
 
 This recipe demonstrates how to evaluate an LLM in Spice, and how to use an LLM judge to evaluate their performance. Specifically:
  1. Evaluate the performance of a text-to-sql LLM against basic checks and an LLM-judge scorer.
- 2. Alter the LLM system and reevaluate its performance.
- 3.
-
+ 2. Use the results of the evaluation to alter the LLM system and reevaluate its performance.
 
 ## Prerequisites
 
