@@ -15,9 +15,12 @@ jobs:
     runs-on: ubuntu-latest
     environment: Production
     strategy:
+      fail-fast: false
+      max-parallel: 1
       matrix:
         recipe_name:
           - 'File Data Connector'
+          - 'Dremio Data Connector'
 
     steps:
       - name: Checkout code
