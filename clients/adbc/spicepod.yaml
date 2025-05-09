@@ -1,3 +1,9 @@
 version: v1
 kind: Spicepod
-name: "adbc"
+name: adbc_python
+
+datasets:
+  - from: file:data/test_data.csv
+    name: addons
+    params:
+      file_format: csv
