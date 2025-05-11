@@ -44,10 +44,17 @@ sbt run
 Expected output:
 
 ```
-the_answer
-42
-one
-1
+[info] Add-ons by account and service:
+[info] MessagingServiceAddOn(account123,service456,addon6,type789,{\feature\":\"mms_support\"}",2025-04-06 16:00:00.0,2025-04-07 23:25:00.0)
+[info] MessagingServiceAddOn(account123,service456,addon2,type789,{\feature\":\"mms_support\"}",2025-04-02 19:30:00.0,2025-04-03 16:15:00.0)
+[info] MessagingServiceAddOn(account123,service456,addon1,type789,{\feature\":\"sms_analytics\"}",2025-04-01 17:00:00.0,2025-04-01 17:00:00.0)
+[info] Add-ons by add-on type:
+[info] MessagingServiceAddOn(account123,service456,addon1,type789,{\feature\":\"sms_analytics\"}",2025-04-01 17:00:00.0,2025-04-01 17:00:00.0)
+[info] MessagingServiceAddOn(account123,service456,addon2,type789,{\feature\":\"mms_support\"}",2025-04-02 19:30:00.0,2025-04-03 16:15:00.0)
+[info] MessagingServiceAddOn(account456,service456,addon4,type789,{\feature\":\"sms_analytics\"}",2025-04-04 15:20:00.0,2025-04-05 18:10:00.0)
+[info] MessagingServiceAddOn(account123,service456,addon6,type789,{\feature\":\"mms_support\"}",2025-04-06 16:00:00.0,2025-04-07 23:25:00.0)
+[info] MessagingServiceAddOn(account789,service456,addon8,type789,{\feature\":\"sms_analytics\"}",2025-04-08 20:15:00.0,2025-04-09 17:40:00.0)
+[info] MessagingServiceAddOn(account456,service789,addon10,type789,{\feature\":\"mms_support\"}",2025-04-10 16:45:00.0,2025-04-10 16:45:00.0)
 ```
 
 ## Learn more

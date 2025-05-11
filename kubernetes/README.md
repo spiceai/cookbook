@@ -197,7 +197,7 @@ Time: 0.01968175 seconds. 10 rows.
 Uninstall the Spice Helm chart:
 
 ```bash
-helm uninstall spiceai
+helm uninstall spiceai-dev
 ```
 
 Delete the Kind cluster:

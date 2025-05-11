@@ -88,6 +88,19 @@ The README.md for the Spice.ai OSS Cookbook serves as a comprehensive guide to c
 ...
 ```
 
+7. Make sure the LLM called the MCP tool (and didn't hallucinate)
+```bash
+>>> spice trace ai_chat
+
+TREE                   STATUS DURATION   TASK
+d2aea75693c13de3       ✅      8577.00ms ai_chat
+  ├── 6b7d17547c4822ab ✅      8575.48ms ai_completion
+  ├── 7d669dfe8152ccb4 ✅         2.17ms tool_use::fs/list_allowed_directories
+  ├── 234e619826c618f0 ✅      7475.86ms ai_completion
+  ├── fdce46ad22f9051e ✅        11.41ms tool_use::fs/read_file
+  └── 4f0a4e941f4d0efe ✅      6337.73ms ai_completion
+```
+
 ## Connect to Spice over MCP
 Spice is an MCP server. It can be connected to like any other MCP server running over HTTP SSE.
 
@@ -133,7 +146,7 @@ tools:
 
 6. Run the second Spice instance on separate ports.
 ```bash
-spiced --http 127.0.0.1:8091 --flight 127.0.0.1:50061 --open_telemetry 127.0.0.1:50062 --metrics 127.0.0.1:9091
+spice run --http-endpoint 127.0.0.1:8091 --flight-endpoint 127.0.0.1:50061 --metrics-endpoint 127.0.0.1:9091 -- --open_telemetry 127.0.0.1:50062
 ```
 
 7.  Show the tools available in the second Spice instance (note the different port).
