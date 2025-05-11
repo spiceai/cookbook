@@ -14,13 +14,4 @@ with connect(
         table = cur.fetch_arrow_table()
         print(table)
 
-        cur.execute("""
-            SELECT AccountId,ServiceId,AddOnSid,AddOnTypeSid,AddOnJson,DateCreated,DateUpdated
-            FROM addons
-            WHERE ServiceId=:id_pattern
-            LIMIT :batchSize
-            """, parameters={"id_pattern": "service123"}) # "batchSize": 5}) # "id_pattern": "s%9",   WHERE ServiceId LIKE :id_pattern
-        table = cur.fetch_arrow_table()
-        print(table)
-
     conn.close()
