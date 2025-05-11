@@ -200,3 +200,18 @@ curl -XPOST http://127.0.0.1:8091/v1/tools/spice_mcp/sql \
   }
 ]
 ```
+
+9. Similarily to above, Use the `fs` MCP server from a model. In this case, the runtime will call the first spice instance, which subsequently, calls the `fs` MCP server.
+```bash
+spice chat --http-endpoint http://127.0.0.1:8091
+```
+```bash
+Using model: openai-with-spice
+chat> Summarise the README.md
+
+The README.md for the Spice.ai Model Context Protocol (MCP) details a comprehensive setup guide for using Spice with MCP servers. Here's a summary of its contents:
+
+### Overview
+- **Spice.ai OSS Cookbook**: A collection of recipes aimed at utilizing Spice.ai for developing data and AI applications.
+...
+```

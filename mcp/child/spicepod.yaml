@@ -5,3 +5,12 @@ kind: Spicepod
 tools:
   - name: spice_mcp
     from: mcp:http://localhost:8090/v1/mcp/sse
+
+models:
+  - name: openai-with-spice
+    from: openai:gpt-4o-mini
+    params:
+      openai_api_key: ${ secrets:SPICE_OPENAI_API_KEY }
+      tools: spice_mcp
+      system_prompt: |
+        If you need to use the filesystem, check which directories are allowed by running `list_allowed_directories`.
