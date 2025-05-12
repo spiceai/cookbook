@@ -193,7 +193,7 @@ params:
 spice run
 ```
 
-## Step 6. Query a dataset
+## Step 10. Query a dataset
 
 ```bash
 spice sql
