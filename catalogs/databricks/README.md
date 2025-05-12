@@ -168,3 +168,37 @@ drop table <CATALOG_NAME>.<SCHEMA_NAME>.test_table_no_v2checkpoint;
 ```shell
 2025-01-18T00:59:49.121835Z  INFO data_components::unity_catalog::provider: Refreshed schema <CATALOG_NAME>.<SCHEMA_NAME>. Tables removed: test_table_no_v2checkpoint.
 ```
+
+## Step 8. Use Databricks Service Principal
+
+Create a Databricks service principal by following the [Databricks documentation](https://docs.databricks.com/aws/en/dev-tools/auth/oauth-m2m).
+
+Update spicepod by replacing `databricks_token` with the `databricks_client_id` and `databricks_client_secret` from the Databricks service principal.
+
+```yaml
+params:
+  mode: delta_lake
+  databricks_endpoint: <instance-id>.cloud.databricks.com
+  databricks_client_id: ${env:DATABRICKS_CLIENT_ID}
+  databricks_client_secret: ${env:DATABRICKS_CLIENT_SECRET}
+  databricks_aws_access_key_id: ${env:AWS_ACCESS_KEY_ID}
+  databricks_aws_secret_access_key: ${env:AWS_SECRET_ACCESS_KEY}
+  databricks_aws_region: <region> # E.g. us-east-1, us-west-2
+  databricks_aws_endpoint: <endpoint> # If using an S3-compatible service, like Minio
+```
+
+## Step 9. Restart the Spice runtime
+
+```bash
+spice run
+```
+
+## Step 6. Query a dataset
+
+```bash
+spice sql
+```
+
+```sql
+SELECT * FROM db_uc.<SCHEMA_NAME>.<TABLE_NAME> LIMIT 10;
+```
