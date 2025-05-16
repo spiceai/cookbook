@@ -284,7 +284,7 @@ Note: A dataset can be accelerated when configured by specifying yes (y) to `loc
    name: databricks_demo_spark_connect
    datasets:
    - from: databricks:<catalog>.<schema>.<table>
-      name: my_table
+      name: customer
       params:
          mode: sql_warehouse
          databricks_endpoint: ${ secrets:DATABRICKS_HOST }
