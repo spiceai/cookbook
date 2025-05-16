@@ -28,7 +28,7 @@ catalogs:
   - from: databricks:<CATALOG_NAME>
     name: db_uc
     params:
-      mode: spark_connect # or delta_lake
+      mode: spark_connect # or delta_lake or sql_warehouse
       databricks_token: ${env:DATABRICKS_TOKEN}
       databricks_endpoint: <instance-id>.cloud.databricks.com
       databricks_cluster_id: <cluster-id>
