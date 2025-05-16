@@ -289,7 +289,7 @@ Note: A dataset can be accelerated when configured by specifying yes (y) to `loc
          mode: sql_warehouse
          databricks_endpoint: ${ secrets:DATABRICKS_HOST }
          databricks_token: ${ secrets:DATABRICKS_TOKEN }
-         databricks_cluster_id: ${ secrets:DATABRICKS_SQL_WAREHOUSE_ID }
+         databricks_sql_warehouse_id: ${ secrets:DATABRICKS_SQL_WAREHOUSE_ID }
    ```
 
 4. Start the Spice runtime, and confirm that runtime has register the table under `mode: sql_warehouse`
