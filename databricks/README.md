@@ -281,7 +281,7 @@ Note: A dataset can be accelerated when configured by specifying yes (y) to `loc
    ```yaml
    version: v1
    kind: Spicepod
-   name: databricks_demo_spark_connect
+   name: databricks_demo_sql_warehouse
    datasets:
    - from: databricks:<catalog>.<schema>.<table>
       name: customer
