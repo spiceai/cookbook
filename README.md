@@ -40,6 +40,7 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 - [PostgreSQL Data Accelerator](./postgres/accelerator/README.md)
 - [SQLite Data Accelerator](./sqlite/accelerator/README.md)
 - [Apache Arrow Data Accelerator](./arrow/README.md)
+- [Accelerated Views](./views/README.md)
 
 ### Consuming and visualizing data with clients
 
