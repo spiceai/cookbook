@@ -39,11 +39,19 @@ mvn exec:java -Dexec.mainClass="MessagingServiceApp"
 
 Expected output:
 
-```
-the_answer
-42
-one
-1
+```bash
+Add-ons by account and service:
+addon1
+addon2
+addon6
+
+Add-ons by add-on type:
+addon1
+addon2
+addon4
+addon6
+addon8
+addon10
 ```
 
 ## Learn more

@@ -2,8 +2,6 @@
 
 Follow these steps to get started with the IMAP Data Connector, connecting to an IMAP server with a plain username and password.
 
-For connecting to a hosted email service like Outlook, see the [Connecting to an Outlook mailbox recipe](./outlook.md)
-
 ## Pre-requisites
 
 - The latest version of Spice. [Install Spice](https://docs.spiceai.org/getting-started/installation).
