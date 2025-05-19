@@ -175,6 +175,8 @@ Create a Databricks service principal by following the [Databricks documentation
 
 Update spicepod by replacing `databricks_token` with the `databricks_client_id` and `databricks_client_secret` from the Databricks service principal.
 
+### mode: delta_lake
+
 ```yaml
 params:
   mode: delta_lake
@@ -185,6 +187,32 @@ params:
   databricks_aws_secret_access_key: ${env:AWS_SECRET_ACCESS_KEY}
   databricks_aws_region: <region> # E.g. us-east-1, us-west-2
   databricks_aws_endpoint: <endpoint> # If using an S3-compatible service, like Minio
+```
+
+### mode: spark_connect
+
+Pre-requisite: Configure `can attach to` permission for service principal in `Compute` > `Clusters` > `your-test-cluster` > `Permissions`
+
+```yaml
+params:
+  mode: spark_connect
+  databricks_endpoint: <instance-id>.cloud.databricks.com
+  databricks_client_id: ${env:DATABRICKS_CLIENT_ID}
+  databricks_client_secret: ${env:DATABRICKS_CLIENT_SECRET}
+  databricks_cluster_id: ${env:DATABRICKS_CLUSTER_ID}
+```
+
+### mode: sql_warehouse
+
+Pre-requisite: Configure `can use` permission for service principal in `SQL Warehouses` > `your-test-sql-warehouse` > `Permissions`
+
+```yaml
+params:
+  mode: sql_warehouse
+  databricks_endpoint: <instance-id>.cloud.databricks.com
+  databricks_client_id: ${env:DATABRICKS_CLIENT_ID}
+  databricks_client_secret: ${env:DATABRICKS_CLIENT_SECRET}
+  databricks_sql_warehouse_id: ${env:DATABRICKS_SQL_WAREHOUSE_ID}
 ```
 
 ## Step 9. Restart the Spice runtime
