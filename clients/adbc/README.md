@@ -45,13 +45,21 @@ Expected output:
 
 ```
 pyarrow.Table
-the_answer: int64 not null
+AccountId: string
+ServiceId: string
+AddOnSid: string
+AddOnTypeSid: string
+AddOnJson: string
+DateCreated: timestamp[s]
+DateUpdated: timestamp[s]
 ----
-the_answer: [[42]]
-pyarrow.Table
-one: int64 not null
-----
-one: [[1]]
+AccountId: [["account123","account789","account456"]]
+ServiceId: [["service789","service789","service789"]]
+AddOnSid: [["addon3","addon7","addon10"]]
+AddOnTypeSid: [["type123","type123","type789"]]
+AddOnJson: [["{\feature\":\"voice_integration\"}"","{\feature\":\"voice_integration\"}"","{\feature\":\"mms_support\"}""]]
+DateCreated: [[2025-04-03 15:45:00,2025-04-07 11:30:00,2025-04-10 09:45:00]]
+DateUpdated: [[2025-04-03 15:45:00,2025-04-07 11:30:00,2025-04-10 09:45:00]]
 ```
 
 ## Learn more
