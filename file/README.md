@@ -101,7 +101,7 @@ files=(
 )
 
 for file in "${files[@]}"; do
-  curl -o "$base_url/$file"
+  curl -O "$base_url/$file"
 done
 ```
 
