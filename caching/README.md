@@ -168,6 +168,41 @@ Time: 0.004944792 seconds. 4 rows (cached).
 
 The cached result will expire 5 minutes after the initial query execution.
 
+## (Optional) Step 5: Update the hashing algorithm
+
+The hashing algorithm determines how cache keys are hashed before being stored, impacting both lookup speed and protection against potential DOS attacks. The Runtime supports a hashing algorithm of either `siphash` or `ahash`.
+
+Stop the Spice Runtime using `Ctrl-C`. Update the `spicepod.yaml` to specify the `ahash` hashing algorithm in the results cache settings:
+
+```yaml
+runtime:
+  results_cache:
+    hashing_algorithm: ahash
+```
+
+Restart the Spice Runtime:
+
+```bash
+spice run
+```
+
+Observe the Spice runtime terminal for cache initialization. Example output:
+
+```console
+2024-08-05T05:25:10.627005Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
+2024-08-05T05:25:10.628875Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2024-08-05T05:26:50.262092Z  INFO runtime: Dataset customer registered (s3://spiceai-demo-datasets/tpch/customer/), results cache enabled.
+2024-08-05T05:26:51.569841Z  INFO runtime: Dataset lineitem registered (s3://spiceai-demo-datasets/tpch/lineitem/), results cache enabled.
+2024-08-05T05:26:52.871013Z  INFO runtime: Dataset nation registered (s3://spiceai-demo-datasets/tpch/nation/), results cache enabled.
+2024-08-05T05:26:54.201229Z  INFO runtime: Dataset orders registered (s3://spiceai-demo-datasets/tpch/orders/), results cache enabled.
+2024-08-05T05:26:55.583954Z  INFO runtime: Dataset part registered (s3://spiceai-demo-datasets/tpch/part/), results cache enabled.
+2024-08-05T05:26:56.933827Z  INFO runtime: Dataset partsupp registered (s3://spiceai-demo-datasets/tpch/partsupp/), results cache enabled.
+2024-08-05T05:26:58.182547Z  INFO runtime: Dataset region registered (s3://spiceai-demo-datasets/tpch/region/), results cache enabled.
+2024-08-05T05:26:59.501475Z  INFO runtime: Dataset supplier registered (s3://spiceai-demo-datasets/tpch/supplier/), results cache enabled.
+```
+
+For more information about selecting an appropriate hashing algorithm, refer to the [Results Caching Documentation](https://docs.spiceai.org/features/caching)
+
 ## Additional Resources
 
 - [Results Caching Documentation](https://docs.spiceai.org/features/caching)
