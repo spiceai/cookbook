@@ -63,6 +63,8 @@ Because they always follow the trail of coffee cups back home! ☕🌲
 Hope that gives you a chuckle! Let me know if there's anything else you'd like to know or chat about.
 ```
 
+Press Ctrl-C to exit the chat.
+
 **Step 5.** Check stored memories
 
 ```shell
@@ -85,6 +87,19 @@ Output:
 | 019319e4-ca14-7a12-a91a-f2d52fb70fba | Alice is a software engineer        |
 | 019319e4-ca14-7a12-a91a-f2e2656ff222 | Alice lives in Seattle              |
 +--------------------------------------+-------------------------------------+
+```
+
+**Step 6.** Re-run spice chat and ask "Who am I?"
+
+```shell
+spice chat
+```
+
+Then:
+
+```shell
+chat> Who am I?
+You are Alice, and you work as a software engineer.
 ```
 
 ### Using Memory Tools Directly
