@@ -192,7 +192,7 @@ Notice on the `name: spiceai.issues` dataset, there are embeddings on both the `
     -H "Content-Type: application/json" \
     -d "{
       \"datasets\": [\"spiceai.issues\"],
-      \"text\": \"Milestone\",
+      \"text\": \"AI\",
       \"where\": \"state='CLOSED'\",
       \"additional_columns\": [\"url\"],
       \"limit\": 3
