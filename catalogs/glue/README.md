@@ -37,7 +37,7 @@ Edit your `spicepod.yaml` file to include the Glue catalog configuration:
 ```yaml
 catalogs:
   - from: glue
-    name: my_glue_catalog 
+    name: my_glue_catalog
     include:
       - "<database_name>.<table_name>"
     params:
