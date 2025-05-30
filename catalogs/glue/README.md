@@ -47,7 +47,7 @@ catalogs:
       glue_secret: ${env:AWS_SECRET_ACCESS_KEY}
 ```
 
-Replace `<database-name>` with the name of your AWS Glue database and `<table_name>` with the name of your AWS Glue table. You can use wildcards to specify multiple databases and/or tables (e.g. "mydatabase.mytable_*").
+Replace `<database_name>` with the name of your AWS Glue database and `<table_name>` with the name of your AWS Glue table. You can use wildcards to specify multiple databases and/or tables (e.g. "mydatabase.mytable_*").
 
 > **Note:** The connector currently supports querying tables registered in AWS Glue that reference supported S3 data in Iceberg and Hive-style parquet tables.
 
