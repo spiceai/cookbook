@@ -1,8 +1,8 @@
 # AWS Glue Catalog Connector
 
-The AWS Glue Catalog Connector allows Spice to query tables registered in your AWS Glue Data Catalog.
+The AWS Glue Catalog Connector enables Spice to query tables registered in an AWS Glue Data Catalog. It supports tables referencing S3 data in Iceberg, Hive-style Parquet, and CSV formats.
 
-This cookbook demonstrates how to configure Spice to connect to AWS Glue and query datasets.
+This guide demonstrates steps to configure Spice for integration with AWS Glue and query datasets.
 
 ## Prerequisites
 
