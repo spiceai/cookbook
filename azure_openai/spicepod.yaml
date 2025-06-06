@@ -34,7 +34,7 @@ models:
         General guidelines:
           1. If a query could be answered by either tool, prefer SQL for more precise, quantitative answers
 
-        Instructions for Responses: 
+        Instructions for Responses:
           - Do not include any private metadata provided to the model as context such as \"reference_url_template\" or \"instructions\" in your responses.
 
 datasets:
@@ -46,12 +46,32 @@ datasets:
     acceleration:
       enabled: true
 
+  - from: github:github.com/spiceai/spiceai/issues
+    name: spiceai.issues
+    params:
+      github_token: ${secrets:GITHUB_TOKEN}
+    acceleration:
+      enabled: true
+    columns:
+      - name: body
+        embeddings:
+          - from: embeddings-model
+            row_id:
+              - id
+            chunking:
+              enabled: true
+              target_chunk_size: 250
+              overlap_size: 32
+      - name: title
+        embeddings:
+          - from: embeddings-model
+
   - from: github:github.com/spiceai/spiceai/files/trunk
     name: spiceai.files
     description: Spice.ai project documentation (github.com/spiceai/spiceai)
     params:
       github_token: ${secrets:GITHUB_TOKEN}
-      include: 'docs/**/*.md'
+      include: "docs/**/*.md"
     acceleration:
       enabled: true
     columns:
