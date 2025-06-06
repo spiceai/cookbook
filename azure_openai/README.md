@@ -134,20 +134,24 @@ Result:
 
 ```json
 {
-  "matches": [
+  "results": [
     {
-      "value": "# Metrics Naming\n\n## TL;DR\n\n**Metric Naming Guide**: Prioritize Developer Experience (DX) with intuitive, readable names that ...",
+      "matches": {
+        "content": "value": "# Metrics Naming\n\n## TL;DR\n\n**Metric Naming Guide**: Prioritize Developer Experience (DX) with intuitive, readable names that ..."
+      },
       "score": 0.7572349075959143,
       "dataset": "spiceai.files",
-      "metadata": {
+      "data": {
         "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/dev/metrics.md"
       }
     },
     {
-      "value": "# Criteria Definitions\n\n## RC\n\nAcronym for \"Release Candidate\". Identifies a version that is eligible for general/stable release ....",
+      "matches": {
+        "content": "value": "# Criteria Definitions\n\n## RC\n\nAcronym for \"Release Candidate\". Identifies a version that is eligible for general/stable release ...."
+      },
       "score": 0.6719117129814338,
       "dataset": "spiceai.files",
-      "metadata": {
+      "data": {
         "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/criteria/definitions.md"
       }
     }
