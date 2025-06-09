@@ -6,11 +6,18 @@ This guide demonstrates steps to configure Spice for integration with AWS Glue a
 
 ## Prerequisites
 
-- An AWS account with an AWS Glue Data Catalog populated with a table. ([AWS Glue documentation](https://docs.aws.amazon.com/glue/latest/dg/what-is-glue.html))
+- An AWS account with an AWS Glue Data Catalog populated with a table. ([AWS Glue documentation](https://docs.aws.amazon.com/glue/latest/dg/what-is-glue.html)).
 - AWS credentials with sufficient permissions to access the Glue Catalog and the underlying data in S3.
 - Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation).
 
-## Step 1. Set up AWS Credentials
+## Step 1. Create a new Spicepod
+
+```bash
+spice init glue-connector-demo
+cd glue-connector-demo/
+```
+
+## Step 2. Set up AWS Credentials
 
 The Spice runtime must be able to access AWS Glue and the underlying data in S3. Set the following environment variables in a `.env` file in your project directory:
 
@@ -21,14 +28,6 @@ echo "AWS_REGION=<your-aws-region>" >> .env
 ```
 
 Replace `<your-access-key>`, `<your-secret-key>`, and `<your-aws-region>` with your actual AWS credentials and preferred region (e.g., `us-east-1`).
-
-## Step 2. Create a new directory and initialize a Spicepod
-
-```bash
-mkdir glue-connector-demo
-cd glue-connector-demo
-spice init
-```
 
 ## Step 3. Add the AWS Glue Data Connector to `spicepod.yaml`
 
@@ -53,9 +52,10 @@ Here, `tpch` is the name of the database and `lineitem` is the name of the table
 spice run
 ```
 
-You should see logs indicating that the Glue data connector was registered and tables were discovered.
+Observe logs indicating that the Glue data connector was registered and tables were discovered.
 
-Example log output:
+Example output:
+
 ```bash
 2025-06-06T16:38:44.476681Z  INFO runtime::init::dataset: Dataset lineitem registered (glue:tpch.lineitem), results cache enabled.
 ```
@@ -112,4 +112,4 @@ Time: 24.456572 seconds. 10 rows.
 ## References
 
 - [AWS Glue Documentation](https://docs.aws.amazon.com/glue/latest/dg/what-is-glue.html)
-- [Spice.ai Documentation](https://docs.spiceai.org/components/data-connectors/glue)
+- [Spice.ai Glue Documentation](https://docs.spiceai.org/components/data-connectors/glue)
