@@ -10,7 +10,14 @@ This guide demonstrates steps to configure Spice for integration with AWS Glue a
 - AWS credentials with sufficient permissions to access the Glue Catalog and the underlying data in S3.
 - Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation).
 
-## Step 1. Set up AWS Credentials
+## Step 1. Create a new directory and initialize a Spicepod
+
+```bash
+spice init glue-catalog-demo
+cd glue-catalog-demo
+```
+
+## Step 2. Set up AWS Credentials
 
 The Spice runtime must be able to access AWS Glue and the underlying data in S3. For production, it is recommended to use [IAM auth](https://docs.aws.amazon.com/IAM/latest/UserGuide/getting-started.html). Set the following environment variables in a `.env` file in your project directory:
 
@@ -21,14 +28,6 @@ echo "AWS_REGION=<your-aws-region>" >> .env
 ```
 
 Replace `<your-access-key>`, `<your-secret-key>`, and `<your-aws-region>` with your actual AWS credentials and preferred region (e.g., `us-east-1`).
-
-## Step 2. Create a new directory and initialize a Spicepod
-
-```bash
-mkdir glue-catalog-demo
-cd glue-catalog-demo
-spice init
-```
 
 ## Step 3. Add the AWS Glue Catalog Connector to `spicepod.yaml`
 
@@ -59,7 +58,7 @@ spice run
 
 You should see logs indicating that the Glue catalog was registered and tables were discovered.
 
-Example log output:
+Example output:
 ```bash
 2025-05-30T17:53:41.123456Z  INFO runtime::init::catalog: Registering catalog 'my_glue_catalog' for glue
 2025-05-30T17:53:41.223456Z  INFO runtime::init::catalog: Registered catalog 'my_glue_catalog' with 1 schema and 2 tables
@@ -143,4 +142,4 @@ Time: 14.702751 seconds. 10 rows.
 ## References
 
 - [AWS Glue Documentation](https://docs.aws.amazon.com/glue/latest/dg/what-is-glue.html)
-- [Spice.ai Documentation](https://docs.spiceai.org/components/catalogs/glue)
+- [Spice.ai Glue Documentation](https://docs.spiceai.org/components/catalogs/glue)
