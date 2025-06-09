@@ -148,6 +148,25 @@ Result:
 }
 ````
 
+## Full Text Search
+Spice can build full-text search indexes from dataset columns. Enable full text search at the column level (see `doc.pulls` dataset).
+
+1. In the `spicepod.yaml`, uncomment `datasets[1]` (i.e. `doc.pulls` dataset).
+2. Restart the spiced.
+3. Perform a basic search
+
+```shell
+curl -XPOST http://localhost:8090/v1/search \
+    -H "Content-Type: application/json" \
+    -d '{
+        "datasets": ["doc.pulls"],
+        "text": "Glue data",
+        "limit": 3
+    }'
+```
+
+Note: Only the columns marked `full_text_search.enabled: true` and the table primary keys are stored in the search index.
+
 ## Pre-existing embeddings
 
 Spiced can perform vector search on table that already have the required embedding columns. To try this:
