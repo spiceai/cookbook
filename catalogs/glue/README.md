@@ -59,6 +59,7 @@ spice run
 You should see logs indicating that the Glue catalog was registered and tables were discovered.
 
 Example output:
+
 ```bash
 2025-05-30T17:53:41.123456Z  INFO runtime::init::catalog: Registering catalog 'my_glue_catalog' for glue
 2025-05-30T17:53:41.223456Z  INFO runtime::init::catalog: Registered catalog 'my_glue_catalog' with 1 schema and 2 tables
