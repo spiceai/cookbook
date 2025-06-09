@@ -14,7 +14,7 @@ This guide demonstrates steps to configure Spice for integration with AWS Glue a
 
 ```bash
 spice init glue-connector-demo
-cd glue-connector-demo/
+cd glue-connector-demo
 ```
 
 ## Step 2. Set up AWS Credentials
