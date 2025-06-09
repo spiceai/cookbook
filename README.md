@@ -67,6 +67,7 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 - [DuckDB Data Connector](./duckdb/connector/README.md) - Use a DuckDB database with sample TPCH data.
 - [File Data Connector](./file/README.md) - Query data from local files.
 - [FTP Data Connector](./ftp/README.md) - Query data from an FTP server.
+- [Glue Data Connector](./glue/README.md)
 - [GitHub Data Connector](./github/README.md)
 - [GraphQL Data Connector](./graphql/README.md)
 - [MSSQL (Microsoft SQL Server) Data Connector](./mssql/README.md)
@@ -85,6 +86,7 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 - [Databricks Unity Catalog Connector](./catalogs/databricks/README.md)
 - [Unity Catalog Connector](./catalogs/unity_catalog/README.md)
 - [Iceberg Catalog Connector](./catalogs/iceberg/README.md)
+- [Glue Catalog Connector](./catalogs/glue/README.md)
 
 ### Deployment and Installation
 
