@@ -64,23 +64,24 @@ Result:
 ```shell
 2024/12/12 14:10:00 INFO Checking for latest Spice runtime release...
 2024/12/12 14:10:00 INFO Spice.ai runtime starting...
-2024-12-12T22:10:00.770177Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2024-12-12T22:10:00.770235Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
-2024-12-12T22:10:00.770385Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2024-12-12T22:10:00.771411Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2024-12-12T22:10:01.248755Z  INFO runtime::init::embedding: Embedding [embeddings-model] ready to embed
-2024-12-12T22:10:01.248915Z  INFO runtime::init::dataset: Initializing dataset spiceai.files
-2024-12-12T22:10:01.248921Z  INFO runtime::init::dataset: Initializing dataset taxi_trips
-2024-12-12T22:10:01.248962Z  INFO runtime::init::model: Loading model [chat-model] from azure:gpt-4o-mini...
-2024-12-12T22:10:01.448894Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2024-12-12T22:10:01.640572Z  INFO runtime::init::dataset: Dataset spiceai.files registered (github:github.com/spiceai/spiceai/files/trunk), acceleration (arrow), results cache enabled.
-2024-12-12T22:10:01.641876Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset spiceai.files
-2024-12-12T22:10:01.920208Z  INFO runtime::init::model: Model [chat-model] deployed, ready for inferencing
-2024-12-12T22:10:02.221149Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled.
-2024-12-12T22:10:02.222425Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
-2024-12-12T22:10:06.212606Z  INFO runtime::accelerated_table::refresh_task: Loaded 74 rows (1.06 MiB) for dataset spiceai.files in 4s 570ms.
-2024-12-12T22:10:10.896203Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (419.31 MiB) for dataset taxi_trips in 8s 673ms.
-
+2025-06-09T18:37:02.219828Z  INFO spiced: Starting runtime v1.4.0-rc.1-build.8eee8ad4b+models
+2025-06-09T18:37:02.237764Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2025-06-09T18:37:02.239915Z  INFO runtime::init::caching: Initialized search results cache;
+2025-06-09T18:37:04.779216Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2025-06-09T18:37:04.779834Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
+2025-06-09T18:37:04.791987Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2025-06-09T18:37:05.391071Z  INFO runtime::init::embedding: Embedding [embeddings-model] ready to embed
+2025-06-09T18:37:05.393055Z  INFO runtime::init::dataset: Initializing dataset taxi_trips
+2025-06-09T18:37:05.393154Z  INFO runtime::init::dataset: Initializing dataset spiceai.files
+2025-06-09T18:37:05.394916Z  INFO runtime::init::model: Loading model [chat-model] from azure:gpt-4o-mini...
+2025-06-09T18:37:06.093392Z  INFO runtime::init::model: Model [chat-model] deployed, ready for inferencing
+2025-06-09T18:37:06.410938Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled.
+2025-06-09T18:37:06.412179Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
+2025-06-09T18:37:07.820493Z  INFO runtime::init::dataset: Dataset spiceai.files registered (github:github.com/spiceai/spiceai/files/trunk), acceleration (arrow), results cache enabled.
+2025-06-09T18:37:07.821845Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset spiceai.files
+2025-06-09T18:37:12.970260Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (399.41 MiB) for dataset taxi_trips in 6s 556ms.
+2025-06-09T18:38:07.327510Z  INFO runtime::accelerated_table::refresh_task: Loaded 111 rows (5.96 MiB) for dataset spiceai.files in 59s 505ms.
+2025-06-09T18:38:07.365632Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
 ## SQL Search
@@ -134,25 +135,35 @@ Result:
 
 ```json
 {
-  "matches": [
+  "results": [
     {
-      "value": "# Metrics Naming\n\n## TL;DR\n\n**Metric Naming Guide**: Prioritize Developer Experience (DX) with intuitive, readable names that ...",
-      "score": 0.7572349075959143,
-      "dataset": "spiceai.files",
-      "metadata": {
+      "matches": {
+        "content": "# Metrics Naming\n\n## TL;DR\n\n**Metric Naming Guide**: Prioritize Developer Experience (DX) with intuitive, readable names that follow consistent conventions. Start with a domain prefix, use snake_case, avoid plurals in names (except counters), include units where relevant, and use labels for variations. Align with Prometheus and OpenTelemetry standards, and adhere to UCUM for units.\n\n## Definitions\n"
+      },
+      "data": {
         "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/dev/metrics.md"
-      }
+      },
+      "primary_key": {
+        "path": "docs/dev/metrics.md"
+      },
+      "score": 0.8291534111182746,
+      "dataset": "spiceai.files"
     },
     {
-      "value": "# Criteria Definitions\n\n## RC\n\nAcronym for \"Release Candidate\". Identifies a version that is eligible for general/stable release ....",
-      "score": 0.6719117129814338,
-      "dataset": "spiceai.files",
-      "metadata": {
-        "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/criteria/definitions.md"
-      }
+      "matches": {
+        "content": "An end-to-end [Throughput Test](../definitions.md) is performed on the accelerator using the TPC-H dataset at scale factor 1 in all [Access Modes](../definitions.md).\n  - [ ] End-to-end tests should perform [Throughput Tests](../definitions.md) at the required [parallel query count](../definitions.md)\n  - [ ] [Throughput Metric](../definitions.md) is calculated and reported as a metric with a parallel query count of 1 to serve as a baseline metric.\n  - [ ] [Throughput Metric](../definitions.md) is calculated and reported as a metric at the required [parallel query count](../definitions.md).\n  - [ ] Memory usage is collected at the end of the end-to-end test and reported as a metric on the overall connector.\n\n#### TPC-DS\n\n- [ ] A"
+      },
+      "data": {
+        "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/criteria/accelerators/stable.md"
+      },
+      "primary_key": {
+        "path": "docs/criteria/accelerators/stable.md"
+      },
+      "score": 0.7292726746901792,
+      "dataset": "spiceai.files"
     }
   ],
-  "duration_ms": 535
+  "duration_ms": 171
 }
 ```
 
@@ -195,21 +206,25 @@ Perform test queries:
 chat> what datasets you have access to
 I have access to the following datasets:
 
-1. **Taxi Trips Dataset**
-   - **Description**: Taxi trips in S3
-   - **Can Search Documents**: No
+1. **Taxi Trips**: This dataset contains information about taxi trips, including various details related to the trips.
 
-2. **Spice.ai Project Documentation**
-   - **Description**: Spice.ai project documentation (github.com/spiceai/spiceai)
-   - **Can Search Documents**: Yes
+2. **Spice.ai Project Documentation**: This dataset includes documentation related to the Spice.ai project, which can be useful for understanding and using the project effectively. 
+
+Let me know if you need any specific information from these datasets!
+
+Time: 1.74s (first token 1.16s). Tokens: 1236. Prompt: 1156. Completion: 80 (136.23/s).
 ```
 
 ```shell
 chat> how many records in taxi trips dataset
-There are a total of 2,964,624 records in the taxi trips dataset.
+The taxi trips dataset contains a total of 2,964,624 records.
+
+Time: 2.48s (first token 2.28s). Tokens: 1272. Prompt: 1249. Completion: 23 (118.41/s).
 ```
 
 ```shell
 chat> what is the longest taxi trip distance recorded
 The longest taxi trip distance recorded is approximately 312,722.3 meters.
+
+Time: 4.82s (first token 4.62s). Tokens: 1342. Prompt: 1313. Completion: 29 (146.15/s).
 ```
