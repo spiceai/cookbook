@@ -12,7 +12,7 @@ This guide demonstrates steps to configure Spice for integration with AWS Glue a
 
 ## Step 1. Set up AWS Credentials
 
-The Spice runtime must be able to access AWS Glue and the underlying data in S3. Set the following environment variables in a `.env` file in your project directory:
+The Spice runtime must be able to access AWS Glue and the underlying data in S3. For production, it is recommended to use [IAM auth](https://docs.aws.amazon.com/IAM/latest/UserGuide/getting-started.html). Set the following environment variables in a `.env` file in your project directory:
 
 ```bash
 echo "AWS_ACCESS_KEY_ID=<your-access-key>" >> .env
