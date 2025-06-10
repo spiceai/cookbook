@@ -40,7 +40,7 @@ sleep 15  # Give worker time to start
 $SPARK_HOME/bin/spark-submit \
     --master spark://spark:7077 \
     --class org.apache.spark.sql.connect.service.SparkConnectServer \
-    --packages org.apache.spark:spark-connect_2.12:${SPARK_VERSION} \
+    --packages org.apache.spark:spark-connect_2.13:${SPARK_VERSION} \
     --conf "spark.sql.catalogImplementation=hive" \
     --conf "spark.sql.warehouse.dir=/home/spark/warehouse" \
     --conf "spark.hadoop.javax.jdo.option.ConnectionURL=jdbc:derby:;databaseName=/home/spark/metastore/metastore_db;create=true" \
