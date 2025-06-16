@@ -65,4 +65,27 @@ spice run
 
 For more information on using `spice sql`, see the [CLI reference](https://docs.spiceai.org/cli/reference/sql).
 
-**Step 4.** Execute the query `select * from [local_table_name];` to see GraphQL response accelerated locally.
+**Step 4.** Execute the query to see GraphQL response accelerated locally:
+
+```sql
+select * from stargazers limit 10;
+```
+
+```console
++----------------------+---------------------------------------------------------------------------------+
+| starredAt            | node                                                                            |
++----------------------+---------------------------------------------------------------------------------+
+| 2021-08-13T10:40:54Z | {id: MDQ6VXNlcjIyOTIwOQ==, name: Andrew Armstrong, login: Plasma}               |
+| 2021-09-07T06:18:49Z | {id: MDQ6VXNlcjg3OTQ0NQ==, name: Phillip LeBlanc, login: phillipleblanc}        |
+| 2021-09-07T19:57:24Z | {id: MDQ6VXNlcjcwNzIw, name: Thomas Dohmke, login: ashtom}                      |
+| 2021-09-07T20:06:11Z | {id: MDQ6VXNlcjEzODk4ODM=, name: Lane Harris, login: haardvark}                 |
+| 2021-09-07T20:16:06Z | {id: MDQ6VXNlcjgzMjM0, name: Txus, login: txus}                                 |
+| 2021-09-07T20:16:13Z | {id: MDQ6VXNlcjY4OTI4NDM4, name: Iblameandrew, login: andres-ulloa-de-la-torre} |
+| 2021-09-07T20:26:53Z | {id: MDQ6VXNlcjE2Mjk1Mjgz, name: Yaron Schneider, login: yaron2}                |
+| 2021-09-07T20:28:28Z | {id: MDQ6VXNlcjY4Njg5NjY=, name: , login: nightlyworker}                        |
+| 2021-09-07T21:10:56Z | {id: MDQ6VXNlcjMxNDU3, name: Nate Todd, login: ntodd}                           |
+| 2021-09-07T21:15:22Z | {id: MDQ6VXNlcjMwNjUyNA==, name: Felix Chan, login: felixchan}                  |
++----------------------+---------------------------------------------------------------------------------+
+
+Time: 0.00609725 seconds. 10 rows.
+```
