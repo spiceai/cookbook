@@ -65,7 +65,7 @@ date: Thu, 07 Nov 2024 01:53:20 GMT
 
 ```bash
 $ spice pods
-2025/01/21 00:44:11 ERROR listing spiced pods error=Unauthorized
+2025/06/16 12:45:49 ERROR listing spiced pods error="unauthorized: invalid or missing Spice API key"
 ```
 
 1. Now, run `spice pods` with the API key
@@ -73,8 +73,8 @@ $ spice pods
 ```bash
 $ spice pods --api-key foobar
 
-VERSION NAME    DATASETSCOUNT MODELSCOUNT DEPENDENCIESCOUNT 
-v1      api_key 0             0           0                 
+VERSION NAME    DATASETSCOUNT MODELSCOUNT DEPENDENCIESCOUNT
+v1      api_key 0             0           0
 ```
 
 ## SQL REPL
