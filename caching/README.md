@@ -70,7 +70,7 @@ kind: Spicepod
 name: cache-recipe
 
 runtime:
-  caching:
+  results_cache:
     sql_results:
       enabled: true
       max_size: 128MiB
@@ -177,7 +177,7 @@ Stop the Spice Runtime using `Ctrl-C`. Update the `spicepod.yaml` to specify the
 
 ```yaml
 runtime:
-  caching:
+  results_cache:
     sql_results:
       enabled: true
       max_size: 128MiB
