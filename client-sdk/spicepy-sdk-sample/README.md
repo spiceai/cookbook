@@ -4,7 +4,11 @@ This recipe demonstrates how to use the Spice Python SDK to connect to a Spice r
 
 ## Prerequisites
 
-This recipe requires [Python](https://www.python.org/) to be installed.
+This recipe requires [uv](https://docs.astral.sh/uv/) to be installed.
+
+- Install `uv` with:
+  - macOS/Linux: `curl -LsSf https://astral.sh/uv/install.sh | sh`
+  - Windows: `powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`
 
 Navigate to `spicepy-sdk-sample`:
 
@@ -33,24 +37,16 @@ spice run
 2025-01-27T19:54:13.743056Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (399.41 MiB) for dataset taxi_trips in 10s 874ms.
 ```
 
-## Install dependencies
-
-```shell
-python -m venv .venv
-source .venv/bin/activate
-pip install git+https://github.com/spiceai/spicepy@v3.0.0
-```
-
 ## Run sample application
 
 ```shell
-python sample.py
+uv run sample.py
 ```
 
 Results:
 
 ```shell
-➜ python sample.py 
+➜ uv run sample.py 
    trip_distance  total_amount
 0      312722.30         22.15
 1       97793.92         36.31
