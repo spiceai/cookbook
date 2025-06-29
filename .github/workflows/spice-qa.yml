@@ -40,14 +40,14 @@ jobs:
       #   run: |
       #     spice version
 
-      # - name: Call Spice AI Completion API
-      #   shell: bash
-      #   env:
-      #     SPICE_SPICEAI_API_KEY: ${{ secrets.SPICE_API_KEY }}
-      #   run: |
-      #     recipe_file_path="$(echo "${{ matrix.recipe_name }}" | tr '[:upper:]' '[:lower:]' | tr ' ' '_')"
-      #     echo "RECIPE_FILE_PATH=$recipe_file_path" >> $GITHUB_ENV
-      #     output_file="api_responses/${recipe_file_path}.log"
+      - name: Call Spice AI Completion API
+        shell: bash
+        env:
+          SPICE_SPICEAI_API_KEY: ${{ secrets.SPICE_API_KEY }}
+        run: |
+          recipe_file_path="$(echo "${{ matrix.recipe_name }}" | tr '[:upper:]' '[:lower:]' | tr ' ' '_')"
+          echo "RECIPE_FILE_PATH=$recipe_file_path" >> $GITHUB_ENV
+          output_file="api_responses/${recipe_file_path}.log"
 
       #     chat_input="Install Spice.ai OSS using the spiceai docs. Add it to the PATH. Verify installation of version '${{ github.event.inputs.spice_version }}' by running the CLI command spice version. Use the '${{ matrix.recipe_name }}' Recipe to conduct testing. Ensure you execute all instructions in the recipe. Ensure you report on the spice sql query or spice chat results if the recipe includes them."
 
@@ -74,12 +74,9 @@ jobs:
         env:
           SPICE_SPICEAI_API_KEY: ${{ secrets.SPICE_API_KEY }}
         run: |
-          recipe_file_path="$(echo "${{ matrix.recipe_name }}" | tr '[:upper:]' '[:lower:]' | tr ' ' '_')"
-          echo "RECIPE_FILE_PATH=$recipe_file_path" >> $GITHUB_ENV
-
           read -r qa_stat qa_score < <(
             grep -oE '✅ QA passed \([0-9]+% confidence\)|❌ QA failed \([0-9]+% confidence\)' \
-              "api_responses/$RECIPE_FILE_PATH.log" \
+              "api_responses/${{ env.RECIPE_FILE_PATH }}.log" \
             | sed -E \
                 -e 's/✅ QA passed \(([0-9]+)% confidence\)/passed \1/' \
                 -e 's/❌ QA failed \(([0-9]+)% confidence\)/failed \1/'
