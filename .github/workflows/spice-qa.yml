@@ -79,7 +79,7 @@ jobs:
 
           read -r qa_stat qa_score < <(
             grep -oE '✅ QA passed \([0-9]+% confidence\)|❌ QA failed \([0-9]+% confidence\)' \
-              "api_responses/${RECIPE_FILE_PATH}.log" \
+              "api_responses/$RECIPE_FILE_PATH.log" \
             | sed -E \
                 -e 's/✅ QA passed \(([0-9]+)% confidence\)/passed \1/' \
                 -e 's/❌ QA failed \(([0-9]+)% confidence\)/failed \1/'
