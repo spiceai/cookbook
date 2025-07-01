@@ -139,17 +139,16 @@ Time: 0.015666208 seconds. 500/100000 rows displayed.
 ```sql
 -- Perform an aggregation query that combines data from S3 and Dremio
 WITH all_sales AS (
-SELECT sales FROM s3_source_accelerated
-UNION ALL
-select fare_amount+tip_amount as sales from dremio_source_accelerated
+    SELECT sales FROM s3_source_accelerated
+    UNION ALL
+    select fare_amount+tip_amount as sales from dremio_source_accelerated
 )
 
 SELECT SUM(sales) as total_sales,
-COUNT(*) AS total_transactions,
-MAX(sales) AS max_sale,
-AVG(sales) AS avg_sale
+       COUNT(*) AS total_transactions,
+       MAX(sales) AS max_sale,
+       AVG(sales) AS avg_sale
 FROM all_sales;
-
 ```
 
 ```output
