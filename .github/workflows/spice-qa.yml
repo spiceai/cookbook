@@ -84,6 +84,6 @@ jobs:
           echo "QA Status: $qa_stat"
           echo "QA Score: $qa_score"
 
-          if [[ "$qa_stat" == "failed" ]]; then
+          if [[ "$qa_stat" != "passed" ]]; then
             exit 1
           fi
