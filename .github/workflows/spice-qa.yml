@@ -21,6 +21,7 @@ jobs:
         recipe_name:
           - 'File Data Connector'
           - 'Dremio Data Connector'
+          - 'Federated SQL Query'
 
     steps:
       - name: Checkout code
