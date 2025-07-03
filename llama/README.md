@@ -24,7 +24,7 @@ For more information, see the [Spice HuggingFace documentation](https://docs.spi
 
 2. **Configure the spicepod with the Llama model:**
 
-   Edit the `spicepod.yml` file to include the Llama model configuration:
+   Edit the `spicepod.yaml` file to include the Llama model configuration:
 
    ```yaml
    models:
@@ -34,7 +34,7 @@ For more information, see the [Spice HuggingFace documentation](https://docs.spi
          hf_token: ${ secrets:SPICE_HUGGINGFACE_API_KEY }
    ```
 
-   An example `spicepod.yml` is also provided in the recipe directory.
+   An example `spicepod.yaml` is also provided in the recipe directory.
 
 3. **Update `.env` with the HuggingFace variable:**
 
