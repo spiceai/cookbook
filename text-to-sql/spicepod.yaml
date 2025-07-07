@@ -19,4 +19,4 @@ models:
   # - name: local
   #   from: huggingface:huggingface.co/meta-llama/Llama-3.2-3B-Instruct
   #   params:
-  #     token: ${ secrets:SPICE_HF_TOKEN }
+  #     hf_token: ${ secrets:SPICE_HF_TOKEN }
