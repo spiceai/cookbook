@@ -28,13 +28,13 @@ catalogs:
   - from: databricks:<CATALOG_NAME>
     name: db_uc
     params:
-      mode: spark_connect # or delta_lake
+      mode: spark_connect # or delta_lake or sql_warehouse
       databricks_token: ${env:DATABRICKS_TOKEN}
       databricks_endpoint: <instance-id>.cloud.databricks.com
       databricks_cluster_id: <cluster-id>
 ```
 
-For `mode` you can choose between `spark_connect` or `delta_lake`. `spark_connect` is the default mode and requires an [All-Purpose Compute Cluster](https://docs.databricks.com/en/compute/index.html) to be available. `delta_lake` mode queries directly against Delta Lake tables in object storage, and requires Spice to have the necessary permissions to access the object storage directly.
+For `mode` you can choose between `spark_connect`, `delta_lake`, or `sql_warehouse`. `spark_connect` is the default mode and requires an [All-Purpose Compute Cluster](https://docs.databricks.com/en/compute/index.html) to be available. `delta_lake` mode queries directly against Delta Lake tables in object storage, and requires Spice to have the necessary permissions to access the object storage directly. `sql_warehouse` uses the SQL Statement Execution API.
 
 Set the `DATABRICKS_TOKEN` environment variable to the Databricks personal access token created in Step 1. A `.env` file created in the same directory as `spicepod.yaml` can be used to set the variable, i.e.:
 
@@ -167,4 +167,66 @@ drop table <CATALOG_NAME>.<SCHEMA_NAME>.test_table_no_v2checkpoint;
 
 ```shell
 2025-01-18T00:59:49.121835Z  INFO data_components::unity_catalog::provider: Refreshed schema <CATALOG_NAME>.<SCHEMA_NAME>. Tables removed: test_table_no_v2checkpoint.
+```
+
+## Step 8. Use Databricks Service Principal
+
+Create a Databricks service principal by following the [Databricks documentation](https://docs.databricks.com/aws/en/dev-tools/auth/oauth-m2m).
+
+Update spicepod by replacing `databricks_token` with the `databricks_client_id` and `databricks_client_secret` from the Databricks service principal.
+
+### mode: delta_lake
+
+```yaml
+params:
+  mode: delta_lake
+  databricks_endpoint: <instance-id>.cloud.databricks.com
+  databricks_client_id: ${env:DATABRICKS_CLIENT_ID}
+  databricks_client_secret: ${env:DATABRICKS_CLIENT_SECRET}
+  databricks_aws_access_key_id: ${env:AWS_ACCESS_KEY_ID}
+  databricks_aws_secret_access_key: ${env:AWS_SECRET_ACCESS_KEY}
+  databricks_aws_region: <region> # E.g. us-east-1, us-west-2
+  databricks_aws_endpoint: <endpoint> # If using an S3-compatible service, like Minio
+```
+
+### mode: spark_connect
+
+Pre-requisite: Configure `can attach to` permission for service principal in `Compute` > `Clusters` > `your-test-cluster` > `Permissions`
+
+```yaml
+params:
+  mode: spark_connect
+  databricks_endpoint: <instance-id>.cloud.databricks.com
+  databricks_client_id: ${env:DATABRICKS_CLIENT_ID}
+  databricks_client_secret: ${env:DATABRICKS_CLIENT_SECRET}
+  databricks_cluster_id: ${env:DATABRICKS_CLUSTER_ID}
+```
+
+### mode: sql_warehouse
+
+Pre-requisite: Configure `can use` permission for service principal in `SQL Warehouses` > `your-test-sql-warehouse` > `Permissions`
+
+```yaml
+params:
+  mode: sql_warehouse
+  databricks_endpoint: <instance-id>.cloud.databricks.com
+  databricks_client_id: ${env:DATABRICKS_CLIENT_ID}
+  databricks_client_secret: ${env:DATABRICKS_CLIENT_SECRET}
+  databricks_sql_warehouse_id: ${env:DATABRICKS_SQL_WAREHOUSE_ID}
+```
+
+## Step 9. Restart the Spice runtime
+
+```bash
+spice run
+```
+
+## Step 10. Query a dataset
+
+```bash
+spice sql
+```
+
+```sql
+SELECT * FROM db_uc.<SCHEMA_NAME>.<TABLE_NAME> LIMIT 10;
 ```

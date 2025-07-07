@@ -31,6 +31,8 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 - [DeepSeek Model](./deepseek/README.md) - Use DeepSeek model through Spice.
 - [Filesystem Hosted Model](./models/filesystem/README.md) - Use models hosted directly on filesystems.
 - [Web Search Tools using Perplexity](./websearch/README.md) - Provide LLMs with web search access for more informed answers.
+- [Language Model Evaluations](./evals/README.md) - Use Spice to evaluate language models.
+- [LLM as a Judge](./llm-judge/README.md) - Define LLM judge models to evaluate the performance of other language models.
 
 ### Data Acceleration - Materializing & accelerating data locally with Data Accelerators
 
@@ -38,6 +40,7 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 - [PostgreSQL Data Accelerator](./postgres/accelerator/README.md)
 - [SQLite Data Accelerator](./sqlite/accelerator/README.md)
 - [Apache Arrow Data Accelerator](./arrow/README.md)
+- [Accelerated Views](./views/README.md)
 
 ### Consuming and visualizing data with clients
 
@@ -64,6 +67,7 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 - [DuckDB Data Connector](./duckdb/connector/README.md) - Use a DuckDB database with sample TPCH data.
 - [File Data Connector](./file/README.md) - Query data from local files.
 - [FTP Data Connector](./ftp/README.md) - Query data from an FTP server.
+- [Glue Data Connector](./glue/README.md)
 - [GitHub Data Connector](./github/README.md)
 - [GraphQL Data Connector](./graphql/README.md)
 - [MSSQL (Microsoft SQL Server) Data Connector](./mssql/README.md)
@@ -82,6 +86,7 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 - [Databricks Unity Catalog Connector](./catalogs/databricks/README.md)
 - [Unity Catalog Connector](./catalogs/unity_catalog/README.md)
 - [Iceberg Catalog Connector](./catalogs/iceberg/README.md)
+- [Glue Catalog Connector](./catalogs/glue/README.md)
 
 ### Deployment and Installation
 

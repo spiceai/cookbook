@@ -1,0 +1,10 @@
+[project]
+name = "iceberg-init"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pyarrow==20.0.0",
+    "pyiceberg==0.9.1",
+]

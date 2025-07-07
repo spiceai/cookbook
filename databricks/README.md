@@ -258,3 +258,160 @@ Note: A dataset can be accelerated when configured by specifying yes (y) to `loc
    | 1         | Customer#000000001 | j5JsirBM9PsCy0O1m | 15          | 25-989-741-2988 | 711.56    | BUILDING     | y final requests wake slyly quickly special accounts. blithely |
    +-----------+--------------------+-------------------+-------------+-----------------+-----------+--------------+----------------------------------------------------------------+
    ```
+
+## mode: sql_warehouse
+
+1. Initialize a Spice app
+
+   ```shell
+   spice init databricks_demo_sql_warehouse
+   cd databricks_demo_sql_warehouse
+   ```
+
+2. Run the following command to set databricks secrets
+
+   ```bash
+   export DATABRICKS_HOST=<your-databricks-host>
+   export DATABRICKS_TOKEN=<your-databricks-token>
+   export DATABRICKS_SQL_WAREHOUSE_ID=<your-databricks-sql-warehouse-id>
+   ```
+
+3. Configure the spicepod.yaml as following, replace the `<catalog>.<schema>.<table>` with the actual catalog, schema, and table in databricks
+
+   ```yaml
+   version: v1
+   kind: Spicepod
+   name: databricks_demo_sql_warehouse
+   datasets:
+   - from: databricks:<catalog>.<schema>.<table>
+      name: customer
+      params:
+         mode: sql_warehouse
+         databricks_endpoint: ${ secrets:DATABRICKS_HOST }
+         databricks_token: ${ secrets:DATABRICKS_TOKEN }
+         databricks_sql_warehouse_id: ${ secrets:DATABRICKS_SQL_WAREHOUSE_ID }
+   ```
+
+4. Start the Spice runtime, and confirm that runtime has register the table under `mode: sql_warehouse`
+
+   ```shell
+   >>> spice run
+   2025-05-16T17:29:08.062816Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+   2025-05-16T17:29:08.063208Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
+   2025-05-16T17:29:08.065607Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+   2025-05-16T17:29:08.068465Z  INFO runtime::init::dataset: Initializing dataset customer
+   2025-05-16T17:29:08.084175Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+   2025-05-16T17:29:15.290665Z  INFO runtime::init::dataset: Dataset customer registered (databricks:<catalog>.<schema>.<table>), results cache enabled.
+   2025-05-16T17:29:15.393903Z  INFO runtime: All components are loaded. Spice runtime is ready!
+   ```
+
+5. Check the table exists from the Spice REPL
+
+   ```shell
+   >>> spice sql
+   Welcome to the Spice.ai SQL REPL! Type 'help' for help.
+
+   show tables; -- list available tables
+   sql> show tables;
+   +---------------+--------------+--------------+------------+
+   | table_catalog | table_schema | table_name   | table_type |
+   +---------------+--------------+--------------+------------+
+   | spice         | runtime      | task_history | BASE TABLE |
+   | spice         | public       | customer     | BASE TABLE |
+   +---------------+--------------+--------------+------------+
+
+   Time: 0.035188167 seconds. 2 rows.
+   ```
+
+6. Query against the Databricks table connected with `mode: spark_connect`
+
+   ```shell
+   sql> select * from customer limit 1;
+   +-----------+--------------------+-------------------+-------------+-----------------+-----------+--------------+----------------------------------------------------------------+
+   | c_custkey | c_name             | c_address         | c_nationkey | c_phone         | c_acctbal | c_mktsegment | c_comment                                                      |
+   +-----------+--------------------+-------------------+-------------+-----------------+-----------+--------------+----------------------------------------------------------------+
+   | 1         | Customer#000000001 | IVhzIApeRb ot,c,E | 15          | 25-989-741-2988 | 711.5600  | BUILDING     | to the even, regular platelets. regular, ironic epitaphs nag e |
+   +-----------+--------------------+-------------------+-------------+-----------------+-----------+--------------+----------------------------------------------------------------+
+   ```
+
+## Databricks Service Principal auth (M2M)
+
+Create a Databricks service principal by following the [Databricks documentation](https://docs.databricks.com/aws/en/dev-tools/auth/oauth-m2m).
+
+1. Initialize a Spice app
+
+   ```shell
+   spice init databricks_demo_spark_connect
+   cd databricks_demo_spark_connect
+   ```
+
+2. Run the following command to set databricks secrets
+
+   ```bash
+   export DATABRICKS_HOST=<your-databricks-host>
+   export DATABRICKS_CLIENT_ID=<your-databricks-client-id>
+   export DATABRICKS_CLIENT_SECRET=<your-databricks-client-secret>
+   export DATABRICKS_CLUSTER_ID=<your-databricks-cluster-id>
+   ```
+
+3. Configure the spicepod.yaml as following, replace the `<catalog>.<schema>.<table>` with the actual catalog, schema, and table in databricks
+
+   ```yaml
+   version: v1
+   kind: Spicepod
+   name: databricks_demo_spark_connect
+   datasets:
+   - from: databricks:<catalog>.<schema>.<table>
+      name: my_table
+      params:
+         mode: spark_connect
+         databricks_endpoint: ${ secrets:DATABRICKS_HOST }
+         databricks_client_id: ${ secrets:DATABRICKS_CLIENT_ID }
+         databricks_client_secret: ${ secrets:DATABRICKS_CLIENT_SECRET }
+         databricks_cluster_id: ${ secrets:DATABRICKS_CLUSTER_ID }
+   ```
+
+4. Start the Spice runtime, and confirm that runtime has register the table under `mode: spark_connect`
+
+   ```shell
+   >>> spice run
+   2025-01-15T04:44:40.207555Z  INFO runtime::init::dataset: Initializing dataset my_table
+   2025-01-15T04:44:40.208013Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+   2025-01-15T04:44:40.208015Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
+   2025-01-15T04:44:40.208823Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+   2025-01-15T04:44:40.211694Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
+   2025-01-15T04:44:40.238106Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+   2025-01-15T04:44:41.299484Z  INFO runtime::init::dataset: Dataset my_table registered (databricks:<catalog>.<schema>.<table>), results cache enabled.
+   ```
+
+5. Check the table exists from the Spice REPL
+
+   ```shell
+   >>> spice sql
+   Welcome to the Spice.ai SQL REPL! Type 'help' for help.
+
+   show tables; -- list available tables
+   sql> show tables;
+   +---------------+--------------+---------------+------------+
+   | table_catalog | table_schema | table_name    | table_type |
+   +---------------+--------------+---------------+------------+
+   | spice         | public       | my_table      | BASE TABLE |
+   | spice         | runtime      | task_history  | BASE TABLE |
+   | spice         | runtime      | metrics       | BASE TABLE |
+   +---------------+--------------+---------------+------------+
+
+   Time: 0.008540708 seconds
+   ```
+
+6. Query against the Databricks table connected with `mode: spark_connect`
+
+   ```shell
+   sql> select * from my_table limit 1;
+   +-----------+--------------------+-------------------+-------------+-----------------+-----------+--------------+----------------------------------------------------------------+
+   | c_custkey | c_name             | c_address         | c_nationkey | c_phone         | c_acctbal | c_mktsegment | c_comment                                                      |
+   +-----------+--------------------+-------------------+-------------+-----------------+-----------+--------------+----------------------------------------------------------------+
+   | 1         | Customer#000000001 | j5JsirBM9PsCy0O1m | 15          | 25-989-741-2988 | 711.56    | BUILDING     | y final requests wake slyly quickly special accounts. blithely |
+   +-----------+--------------------+-------------------+-------------+-----------------+-----------+--------------+----------------------------------------------------------------+
+   ```
+
+## Databricks Service Principal auth

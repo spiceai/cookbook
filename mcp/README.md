@@ -77,7 +77,7 @@ spice chat
 Spice.ai OSS CLI v1.1.0
 Using model: openai-with-spice
 
-chat> Summarise the README.md
+chat> Summarize the README.md
 The README.md for the Spice.ai OSS Cookbook serves as a comprehensive guide to creating and deploying data and AI applications using Spice.ai. It is structured into various sections, each offering recipes for different use cases and features. Here’s a summary of its contents:
 
 ### Overview
@@ -86,6 +86,19 @@ The README.md for the Spice.ai OSS Cookbook serves as a comprehensive guide to c
 ### Main Sections
 - **Guides**: Provides practical instructions, such as the "Real-time Data Access Pattern Analysis" for security analysis.
 ...
+```
+
+7. Make sure the LLM called the MCP tool (and didn't hallucinate)
+```bash
+>>> spice trace ai_chat
+
+TREE                   STATUS DURATION   TASK
+d2aea75693c13de3       ✅      8577.00ms ai_chat
+  ├── 6b7d17547c4822ab ✅      8575.48ms ai_completion
+  ├── 7d669dfe8152ccb4 ✅         2.17ms tool_use::fs/list_allowed_directories
+  ├── 234e619826c618f0 ✅      7475.86ms ai_completion
+  ├── fdce46ad22f9051e ✅        11.41ms tool_use::fs/read_file
+  └── 4f0a4e941f4d0efe ✅      6337.73ms ai_completion
 ```
 
 ## Connect to Spice over MCP
@@ -133,7 +146,7 @@ tools:
 
 6. Run the second Spice instance on separate ports.
 ```bash
-spiced --http 127.0.0.1:8091 --flight 127.0.0.1:50061 --open_telemetry 127.0.0.1:50062 --metrics 127.0.0.1:9091
+spice run --http-endpoint 127.0.0.1:8091 --flight-endpoint 127.0.0.1:50061 --metrics-endpoint 127.0.0.1:9091 -- --open_telemetry 127.0.0.1:50062
 ```
 
 7.  Show the tools available in the second Spice instance (note the different port).
@@ -199,4 +212,19 @@ curl -XPOST http://127.0.0.1:8091/v1/tools/spice_mcp/sql \
     "text": "\"[{\\\"VendorID\\\":1,\\\"tpep_pickup_datetime\\\":\\\"2024-01-29T12:51:51\\\",\\\"tpep_dropoff_datetime\\\":\\\"2024-01-29T13:00:42\\\",\\\"passenger_count\\\":1,\\\"trip_distance\\\":0.9,\\\"RatecodeID\\\":1,\\\"store_and_fwd_flag\\\":\\\"N\\\",\\\"PULocationID\\\":230,\\\"DOLocationID\\\":161,\\\"payment_type\\\":2,\\\"fare_amount\\\":8.6,\\\"extra\\\":2.5,\\\"mta_tax\\\":0.5,\\\"tip_amount\\\":0.0,\\\"tolls_amount\\\":0.0,\\\"improvement_surcharge\\\":1.0,\\\"total_amount\\\":12.6,\\\"congestion_surcharge\\\":2.5,\\\"Airport_fee\\\":0.0}\""
   }
 ]
+```
+
+9. Similarily to above, Use the `fs` MCP server from a model. In this case, the runtime will call the first spice instance, which subsequently, calls the `fs` MCP server.
+```bash
+spice chat --http-endpoint http://127.0.0.1:8091
+```
+```bash
+Using model: openai-with-spice
+chat> Summarize the README.md
+
+The README.md for the Spice.ai Model Context Protocol (MCP) details a comprehensive setup guide for using Spice with MCP servers. Here's a summary of its contents:
+
+### Overview
+- **Spice.ai OSS Cookbook**: A collection of recipes aimed at utilizing Spice.ai for developing data and AI applications.
+...
 ```

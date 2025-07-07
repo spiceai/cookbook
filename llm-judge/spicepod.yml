@@ -1,0 +1,193 @@
+version: v1
+kind: Spicepod
+name: llm_judges
+
+runtime:
+  task_history:
+    enabled: true
+    captured_output: truncated
+
+models:
+  - name: sql-analyst
+    from: openai:gpt-4o-mini
+    params:
+      openai_api_key: ${ secrets:SPICE_OPENAI_API_KEY }
+      tools: list_datasets, table_schema
+      system_prompt: |
+        You are a data analyst specialising in SQL. Return a SQL query that would answer the user provided question.
+#         Return only valid SQL.
+# 
+#         Good:
+#           <example>
+#             <question>How many heads of the departments are older than 56?</question>
+#             <answer>SELECT count(*) FROM head WHERE age > 56</answer>
+#           </example>
+# 
+#         Bad:
+#           <example>
+#             <question>How many heads of the departments are older than 56?</question>
+#             <answer>To find the part oldest head of department, you can use the following SQL query:\n\n```sql\nSELECT p_brand FROM spice.public.part WHERE p_partkey = 3;\n```SELECT count(*) FROM head WHERE age > 56```</answer>
+#           </example>
+#           <example>
+#             <question>How many heads of the departments are older than 56?</question>
+#             <answer>```sql\nSELECT count(*) FROM head WHERE age > 56\n```</answer>
+#           </example>
+
+  - name: answers-question
+    from: openai:gpt-4.1
+    description: This LLM judge scores whether the LLM-created SQL answers the user's question.
+    params:
+      parameterized_prompt: enabled
+      openai_api_key: ${ secrets:SPICE_OPENAI_API_KEY }
+      openai_response_format:
+        type: json_schema
+        json_schema:
+          name: math_reasoning
+          schema:
+            type: object
+            properties:
+              score:
+                type: number
+                format: float
+              justification:
+                type: string
+                description: Justify the provided 'score' based off the scoring criteria.
+            additionalProperties: false
+            required:
+              - score
+              - justifiction
+        strict: true
+      system_prompt: |
+        You are to judge whether a SQL query answers the provided user question.
+
+        User question: {{ input }}
+        SQL query: `{{ actual }}`
+
+        Return a score between 0.0 and 1.0. Scoring criteria:
+          - If no SQL is provided, or it is invalid SQL, score it 0.0.
+          - If the SQL uses the correct table, score it no less than 0.3.
+          - If the SQL has the correct SELECT columns, score it no less than 0.5.
+          - If the SQL has the correct WHERE columns, score it no less than 0.7.
+          - Only score above 0.8 if the SQL query is both correct and nothing additional is returned.
+
+  - name: sql-explain
+    from: openai:gpt-4.1
+    description: |
+      This LLM judge uses `EXPLAIN <query>` SQL queries to judge if the LLM-created SQL is both:
+        1. Valid syntax
+        2. References existing tables and columns in the database.
+    params:
+      parameterized_prompt: enabled
+      openai_api_key: ${ secrets:SPICE_OPENAI_API_KEY }
+      tools: sql
+      openai_response_format:
+        type: json_schema
+        json_schema:
+          name: math_reasoning
+          schema:
+            type: object
+            properties:
+              score:
+                type: number
+                format: float
+            additionalProperties: false
+            required:
+              - score
+        strict: true
+      system_prompt: |
+        You are to check if the provided input is a valid SQL query by making a `sql` tool call to generate an explain plan. This can be done with the SQL
+        ```sql
+        EXPLAIN <input>
+        ```
+        <input>{{ actual }}</input>
+
+        Return 0.0 if the explain query failed, 1.0 otherwise. It is **critical that you pass the content within the <input> tags to the sql tool exactly as it appears**, without any modifications, cleaning, or alterations. Include all text, symbols, and formatting as it is provided within the tags. Do not remove or change anything within the <input> tags.
+
+        <example>
+          <input>
+            Here is the SQL query to find the part brand for the part with key 3:\n\n```sql\SELECT sql as ideal, input as input from tpch_nsql limit 5;```
+          </input>
+          <sql_tool>
+            {
+              "query": "Here is the SQL query to find the part brand for the part with key 3:\n\n```sql\SELECT sql as ideal, input as input from tpch_nsql limit 5;\n```"
+            }
+          </sql_tool>
+        </example>
+
+views:
+  - name: tpch_judge
+    sql: |
+      SELECT sql as ideal, input as input from tpch_nsql limit 5;
+
+evals:
+  - name: tpch_nsql
+    dataset: tpch_judge
+    scorers:
+      - sql-explain
+      - answers-question
+      - match
+
+tpch_acceleration: &tpch_acceleration
+  enabled: true
+  mode: file
+  engine: duckdb
+
+datasets:
+  - name: tpch_nsql
+    from: file:./data/tpch_nsql.jsonl
+
+  - from: s3://spiceai-demo-datasets/tpch/customer/
+    name: customer
+    params:
+      file_format: parquet
+      client_timeout: 60s
+    acceleration: *tpch_acceleration
+
+  - from: s3://spiceai-demo-datasets/tpch/lineitem/
+    name: lineitem
+    params:
+      file_format: parquet
+      client_timeout: 80s
+    acceleration: *tpch_acceleration
+
+  - from: s3://spiceai-demo-datasets/tpch/nation/
+    name: nation
+    params:
+      file_format: parquet
+      client_timeout: 60s
+    acceleration: *tpch_acceleration
+
+  - from: s3://spiceai-demo-datasets/tpch/orders/
+    name: orders
+    params:
+      file_format: parquet
+      client_timeout: 60s
+    acceleration: *tpch_acceleration
+
+  - from: s3://spiceai-demo-datasets/tpch/part/
+    name: part
+    params:
+      file_format: parquet
+      client_timeout: 60s
+    acceleration: *tpch_acceleration
+
+  - from: s3://spiceai-demo-datasets/tpch/partsupp/
+    name: partsupp
+    params:
+      file_format: parquet
+      client_timeout: 60s
+    acceleration: *tpch_acceleration
+
+  - from: s3://spiceai-demo-datasets/tpch/region/
+    name: region
+    params:
+      file_format: parquet
+      client_timeout: 60s
+    acceleration: *tpch_acceleration
+
+  - from: s3://spiceai-demo-datasets/tpch/supplier/
+    name: supplier
+    params:
+      file_format: parquet
+      client_timeout: 60s
+    acceleration: *tpch_acceleration

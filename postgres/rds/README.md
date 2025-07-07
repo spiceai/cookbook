@@ -34,3 +34,7 @@ Follow the [getting started guide](https://docs.spiceai.org/getting-started) to 
 For more information on using `spice sql`, see the [CLI reference](https://docs.spiceai.org/cli/reference/sql).
 
 **Step 7.** Execute the query `select * from [local_table_name];` to see the AWS RDS table accelerated locally.
+
+## Learn more
+- [Postgres Data Connector](https://spiceai.org/docs/components/data-connectors/postgres).
+- [AWS Secrets Manager Secret Store](https://spiceai.org/docs/components/secret-stores/aws-secrets-manager).
