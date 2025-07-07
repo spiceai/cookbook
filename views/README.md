@@ -248,6 +248,44 @@ SELECT * FROM supplier_order_waits WHERE nation = 'SAUDI ARABIA' LIMIT 10;
 Time: 0.005394292 seconds. 10 rows.
 ```
 
+## Step 5 (optional): Refresh on a defined schedule
+
+Accelerated views support refreshing on a cron schedule.
+
+Stop the Spice Runtime, then update the spicepod to remove the `acceleration.refresh_check_interval` from the view.
+
+Define a new `acceleration.refresh_cron` for the view with a value of `* * * * *` to refresh every minute.
+
+Example view spicepod:
+
+```yaml
+views:
+  - name: supplier_order_waits
+    acceleration: 
+      enabled: true
+      refresh_cron: "* * * * *"
+      engine: duckdb
+
+    sql: |
+    ...
+```
+
+Start the Spice Runtime, and observe scheduled refreshes:
+
+```bash
+spice run
+```
+
+Example output:
+
+```bash
+2025-05-18T20:20:11.150665Z  INFO runtime::datafusion: View supplier_order_waits registered, acceleration (duckdb, 3600s refresh).
+2025-05-18T20:20:11.151971Z  INFO runtime::accelerated_table::refresh_task: Loading data for view supplier_order_waits
+2025-05-18T20:20:12.414223Z  INFO runtime::accelerated_table::refresh_task: Loaded 10,000 rows (481.43 kiB) for view supplier_order_waits in 1s 262ms.
+2025-05-18T20:21:00.151971Z  INFO runtime::accelerated_table::refresh_task: Loading data for view supplier_order_waits
+2025-05-18T20:21:01.414223Z  INFO runtime::accelerated_table::refresh_task: Loaded 10,000 rows (481.43 kiB) for view supplier_order_waits in 1s 262ms.
+```
+
 ## Additional Resources
 
 - [Views Documentation](https://spiceai.org/docs/components/views)
