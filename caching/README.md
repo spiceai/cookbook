@@ -70,11 +70,12 @@ kind: Spicepod
 name: cache-recipe
 
 runtime:
-  results_cache:
-    enabled: true
-    cache_max_size: 128MiB
-    eviction_policy: lru
-    item_ttl: 5m
+  caching:
+    sql_results:
+      enabled: true
+      max_size: 128MiB
+      item_ttl: 5m
+      eviction_policy: lru
 
 dependencies:
   - spiceai/tpch
@@ -176,8 +177,12 @@ Stop the Spice Runtime using `Ctrl-C`. Update the `spicepod.yaml` to specify the
 
 ```yaml
 runtime:
-  results_cache:
-    hashing_algorithm: ahash
+  caching:
+    sql_results:
+      enabled: true
+      max_size: 128MiB
+      item_ttl: 5m
+      hashing_algorithm: ahash
 ```
 
 Restart the Spice Runtime:
