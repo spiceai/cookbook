@@ -1,6 +1,6 @@
 version: v1
 kind: Spicepod
-name: oracle-tpch-demo
+name: oracle-tpch
 
 connection: &params
   oracle_host: localhost
