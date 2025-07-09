@@ -1,3 +1,12 @@
+# /// script
+# requires-python = ">=3.9"
+# dependencies = [
+#     "spicepy",
+# ]
+#
+# [tool.uv.sources]
+# spicepy = { git = "https://github.com/spiceai/spicepy", rev = "v3.0.0" }
+# ///
 from spicepy import Client
 
 client = Client()

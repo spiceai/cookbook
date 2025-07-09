@@ -14,7 +14,7 @@ Ensure the following before starting:
   git clone https://github.com/spiceai/cookbook.git
   cd cookbook/llm-memory
   ```
-- The following environment variables set:
+- The following environment variables set in `.env`:
   - `SPICE_OPENAI_API_KEY`
 
 ## Using LLM Memory

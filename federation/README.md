@@ -67,21 +67,87 @@ spice sql
 ```sql
 -- Query the federated S3 source
 select * from s3_source;
+```
 
+```output
++--------------+------------------+------------+-------------------+---------+---------------------+---------+---------+-------+------+--------------+------+--------------+--------------------+------------------+-------------------------------+---------------+-------+-------+-------------+---------+-----------+-------------------+--------------------+-----------+
+| order_number | quantity_ordered | price_each | order_line_number | sales   | order_date          | status  | quarter | month | year | product_line | msrp | product_code | customer_name      | phone            | address_line1                 | address_line2 | city  | state | postal_code | country | territory | contact_last_name | contact_first_name | deal_size |
++--------------+------------------+------------+-------------------+---------+---------------------+---------+---------+-------+------+--------------+------+--------------+--------------------+------------------+-------------------------------+---------------+-------+-------+-------------+---------+-----------+-------------------+--------------------+-----------+
+| 10107        | 30               | 95.7       | 2                 | 2871.0  | 2003-02-24T00:00:00 | Shipped | 1       | 2     | 2003 | Motorcycles  | 95   | S10_1678     | Land of Toys Inc.  | 2125557818       | 897 Long Airport Avenue       |               | NYC   | NY    | 10022       | USA     |           | Yu                | Kwai               | Small     |
+| 10121        | 34               | 81.35      | 5                 | 2765.9  | 2003-05-07T00:00:00 | Shipped | 2       | 5     | 2003 | Motorcycles  | 95   | S10_1678     | Reims Collectables | 26.47.1555       | 59 rue de l'Abbaye            |               | Reims |       | 51100       | France  | EMEA      | Henriot           | Paul               | Small     |
+| 10134        | 41               | 94.74      | 2                 | 3884.34 | 2003-07-01T00:00:00 | Shipped | 3       | 7     | 2003 | Motorcycles  | 95   | S10_1678     | Lyon Souveniers    | +33 1 46 62 7555 | 27 rue du Colonel Pierre Avia |               | Paris |       | 75508       | France  | EMEA      | Da Cunha          | Daniel             | Medium    |
+...
++--------------+------------------+------------+-------------------+---------+---------------------+---------+---------+-------+------+--------------+------+--------------+--------------------+------------------+-------------------------------+---------------+-------+-------+-------------+---------+-----------+-------------------+--------------------+-----------+
+
+Time: 0.876282458 seconds. 500/2823 rows displayed.
+```
+
+```sql
 -- Query the accelerated S3 source
 select * from s3_source_accelerated;
+```
 
+Output:
+
+```shell
++--------------+------------------+------------+-------------------+---------+---------------------+---------+---------+-------+------+--------------+------+--------------+--------------------+------------------+-------------------------------+---------------+-------+-------+-------------+---------+-----------+-------------------+--------------------+-----------+
+| order_number | quantity_ordered | price_each | order_line_number | sales   | order_date          | status  | quarter | month | year | product_line | msrp | product_code | customer_name      | phone            | address_line1                 | address_line2 | city  | state | postal_code | country | territory | contact_last_name | contact_first_name | deal_size |
++--------------+------------------+------------+-------------------+---------+---------------------+---------+---------+-------+------+--------------+------+--------------+--------------------+------------------+-------------------------------+---------------+-------+-------+-------------+---------+-----------+-------------------+--------------------+-----------+
+| 10107        | 30               | 95.7       | 2                 | 2871.0  | 2003-02-24T00:00:00 | Shipped | 1       | 2     | 2003 | Motorcycles  | 95   | S10_1678     | Land of Toys Inc.  | 2125557818       | 897 Long Airport Avenue       |               | NYC   | NY    | 10022       | USA     |           | Yu                | Kwai               | Small     |
+| 10121        | 34               | 81.35      | 5                 | 2765.9  | 2003-05-07T00:00:00 | Shipped | 2       | 5     | 2003 | Motorcycles  | 95   | S10_1678     | Reims Collectables | 26.47.1555       | 59 rue de l'Abbaye            |               | Reims |       | 51100       | France  | EMEA      | Henriot           | Paul               | Small     |
+| 10134        | 41               | 94.74      | 2                 | 3884.34 | 2003-07-01T00:00:00 | Shipped | 3       | 7     | 2003 | Motorcycles  | 95   | S10_1678     | Lyon Souveniers    | +33 1 46 62 7555 | 27 rue du Colonel Pierre Avia |               | Paris |       | 75508       | France  | EMEA      | Da Cunha          | Daniel             | Medium    |
+...
++--------------+------------------+------------+-------------------+---------+---------------------+---------+---------+-------+------+--------------+------+--------------+--------------------+------------------+-------------------------------+---------------+-------+-------+-------------+---------+-----------+-------------------+--------------------+-----------+
+
+Time: 0.024679208 seconds. 500/2823 rows displayed.
+```
+
+```sql
 -- Query the federated Dremio source
 select * from dremio_source;
+```
 
+Output:
+
+```shell
++---------------------+-----------------+------------------+-------------+------------+--------------+
+| pickup_datetime     | passenger_count | trip_distance_mi | fare_amount | tip_amount | total_amount |
++---------------------+-----------------+------------------+-------------+------------+--------------+
+| 2013-08-22T08:24:12 | 1               | 1.1              | 7.5         | 0.0        | 8.0          |
+| 2013-08-21T12:40:46 | 1               | 6.1              | 23.0        | 0.0        | 23.5         |
+| 2013-08-24T00:40:17 | 2               | 0.6              | 4.5         | 0.0        | 5.5          |
+...
++---------------------+-----------------+------------------+-------------+------------+--------------+
+
+Time: 2.671361917 seconds. 500/100000 rows displayed.
+```
+
+```sql
 -- Query the accelerated Dremio source
 select * from dremio_source_accelerated;
+```
 
+Output:
+
+```shell
++---------------------+-----------------+------------------+-------------+------------+--------------+
+| pickup_datetime     | passenger_count | trip_distance_mi | fare_amount | tip_amount | total_amount |
++---------------------+-----------------+------------------+-------------+------------+--------------+
+| 2013-08-22T08:24:12 | 1               | 1.1              | 7.5         | 0.0        | 8.0          |
+| 2013-08-21T12:40:46 | 1               | 6.1              | 23.0        | 0.0        | 23.5         |
+| 2013-08-24T00:40:17 | 2               | 0.6              | 4.5         | 0.0        | 5.5          |
+...
++---------------------+-----------------+------------------+-------------+------------+--------------+
+
+Time: 0.015666208 seconds. 500/100000 rows displayed.
+```
+
+```sql
 -- Perform an aggregation query that combines data from S3 and Dremio
 WITH all_sales AS (
-  SELECT sales FROM s3_source_accelerated
-  UNION ALL
-  select fare_amount+tip_amount as sales from dremio_source_accelerated
+    SELECT sales FROM s3_source_accelerated
+    UNION ALL
+    select fare_amount+tip_amount as sales from dremio_source_accelerated
 )
 
 SELECT SUM(sales) as total_sales,
@@ -89,4 +155,16 @@ SELECT SUM(sales) as total_sales,
        MAX(sales) AS max_sale,
        AVG(sales) AS avg_sale
 FROM all_sales;
+```
+
+Output:
+
+```shell
++--------------------+--------------------+----------+--------------------+
+| total_sales        | total_transactions | max_sale | avg_sale           |
++--------------------+--------------------+----------+--------------------+
+| 11501140.079999998 | 102823             | 14082.8  | 111.85376890384445 |
++--------------------+--------------------+----------+--------------------+
+
+Time: 0.009526666 seconds. 1 rows.
 ```

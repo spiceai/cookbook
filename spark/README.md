@@ -17,7 +17,9 @@ git clone https://github.com/spiceai/cookbook.git
 cd cookbook/spark
 ```
 
-1. Start the Docker Compose stack, which includes a Spark instance and init notebook to load the NYC taxi trip parquet data:
+### Spark 3.5
+
+1. Navigate to `spark-3.5` folder and start the Docker Compose stack, which includes a Spark 3.5.6 instance and init notebook to load the NYC taxi trip parquet data:
 
   ```shell
   docker compose up -d
@@ -187,6 +189,78 @@ cd cookbook/spark
   ```
 
 9. Stop the Spark instance and cleanup
+
+  ```shell
+  docker compose down --volumes --rmi local
+  ```
+
+### Spark 4
+
+1. Navigate to `spark-4` folder and start the Docker Compose stack, which includes a Spark 4.0.0 instance and init notebook to load the NYC taxi trip parquet data:
+
+  ```shell
+  docker compose up -d
+  ```
+
+  It will take about about 30 seconds to start the Spark instance and load the sample dataset.
+  Check service logs to see when the Spark instance is ready:
+
+  ```shell
+  docker compose logs -f spark
+  ```
+
+  ```shell
+  ...
+  Spark services started! ✅
+  ```
+
+2. Restart spice runtime in spark_demo app
+
+  ```shell
+  spice run
+  ```
+
+  ```console
+  Spice.ai OSS CLI v1.4.0-unstable-build.8eee8ad4b
+  2025/06/10 10:46:32 INFO Checking for latest Spice runtime release...
+  2025/06/10 10:46:32 INFO Spice.ai runtime starting...
+  2025-06-10T01:46:32.725076Z  INFO spiced: Starting runtime v1.4.0-unstable-build.8eee8ad4b+models
+  2025-06-10T01:46:32.742491Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+  2025-06-10T01:46:32.744098Z  INFO runtime::init::caching: Initialized search results cache;
+  2025-06-10T01:46:33.592583Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
+  2025-06-10T01:46:33.592555Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+  2025-06-10T01:46:33.599924Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+  2025-06-10T01:46:33.602360Z  INFO runtime::init::dataset: Initializing dataset nyc_taxis
+  2025-06-10T01:46:36.494592Z  INFO runtime::init::dataset: Dataset nyc_taxis registered (spark:nyc_taxis), results cache enabled.
+  2025-06-10T01:46:36.596578Z  INFO runtime: All components are loaded. Spice runtime is ready!
+  ```
+
+3. Query against the Spark table.
+
+  ```sql
+  SELECT * FROM nyc_taxis LIMIT 10;
+  ```
+
+  ```
+  +----------+----------------------+-----------------------+-----------------+---------------+------------+--------------------+--------------+--------------+--------------+-------------+-------+---------+------------+--------------+-----------------------+--------------+----------------------+-------------+
+  | VendorID | tpep_pickup_datetime | tpep_dropoff_datetime | passenger_count | trip_distance | RatecodeID | store_and_fwd_flag | PULocationID | DOLocationID | payment_type | fare_amount | extra | mta_tax | tip_amount | tolls_amount | improvement_surcharge | total_amount | congestion_surcharge | airport_fee |
+  +----------+----------------------+-----------------------+-----------------+---------------+------------+--------------------+--------------+--------------+--------------+-------------+-------+---------+------------+--------------+-----------------------+--------------+----------------------+-------------+
+  | 1        | 2022-03-01T00:13:08Z | 2022-03-01T00:24:35Z  | 1.0             | 2.4           | 1.0        | N                  | 90           | 209          | 2            | 10.0        | 3.0   | 0.5     | 0.0        | 0.0          | 0.3                   | 13.8         | 2.5                  | 0.0         |
+  | 1        | 2022-03-01T00:47:52Z | 2022-03-01T01:00:08Z  | 1.0             | 2.2           | 1.0        | N                  | 148          | 234          | 2            | 10.5        | 3.0   | 0.5     | 0.0        | 0.0          | 0.3                   | 14.3         | 2.5                  | 0.0         |
+  | 2        | 2022-03-01T00:02:46Z | 2022-03-01T00:46:43Z  | 1.0             | 19.78         | 2.0        | N                  | 132          | 249          | 1            | 52.0        | 0.0   | 0.5     | 11.06      | 0.0          | 0.3                   | 67.61        | 2.5                  | 1.25        |
+  | 2        | 2022-03-01T00:52:43Z | 2022-03-01T01:03:40Z  | 2.0             | 2.94          | 1.0        | N                  | 211          | 66           | 1            | 11.0        | 0.5   | 0.5     | 4.44       | 0.0          | 0.3                   | 19.24        | 2.5                  | 0.0         |
+  | 2        | 2022-03-01T00:15:35Z | 2022-03-01T00:34:13Z  | 1.0             | 8.57          | 1.0        | N                  | 138          | 197          | 1            | 25.0        | 0.5   | 0.5     | 5.51       | 0.0          | 0.3                   | 33.06        | 0.0                  | 1.25        |
+  | 1        | 2022-03-01T00:11:57Z | 2022-03-01T00:53:05Z  | 2.0             | 14.0          | 1.0        | N                  | 132          | 33           | 1            | 43.5        | 1.75  | 0.5     | 9.2        | 0.0          | 0.3                   | 55.25        | 0.0                  | 1.25        |
+  | 2        | 2022-03-01T00:05:11Z | 2022-03-01T00:08:22Z  | 1.0             | 0.61          | 1.0        | N                  | 166          | 151          | 1            | 4.5         | 0.5   | 0.5     | 1.0        | 0.0          | 0.3                   | 6.8          | 0.0                  | 0.0         |
+  | 2        | 2022-03-01T00:30:56Z | 2022-03-01T00:46:21Z  | 1.0             | 2.83          | 1.0        | N                  | 74           | 238          | 1            | 13.0        | 0.5   | 0.5     | 3.7        | 0.0          | 0.3                   | 18.0         | 0.0                  | 0.0         |
+  | 2        | 2022-03-01T00:30:28Z | 2022-03-01T00:30:36Z  | 1.0             | 0.1           | 1.0        | N                  | 145          | 145          | 3            | -2.5        | -0.5  | -0.5    | 0.0        | 0.0          | -0.3                  | -3.8         | 0.0                  | 0.0         |
+  | 2        | 2022-03-01T00:30:28Z | 2022-03-01T00:30:36Z  | 1.0             | 0.1           | 1.0        | N                  | 145          | 145          | 2            | 2.5         | 0.5   | 0.5     | 0.0        | 0.0          | 0.3                   | 3.8          | 0.0                  | 0.0         |
+  +----------+----------------------+-----------------------+-----------------+---------------+------------+--------------------+--------------+--------------+--------------+-------------+-------+---------+------------+--------------+-----------------------+--------------+----------------------+-------------+
+
+  Time: 0.658063792 seconds. 10 rows.
+  ```
+
+4. Stop the Spark instance and cleanup
 
   ```shell
   docker compose down --volumes --rmi local

@@ -34,7 +34,9 @@ spice run
 ### 4. Run the Java client
 
 ```bash
-mvn exec:java -Dexec.mainClass="MessagingServiceApp"
+MAVEN_OPTS="--add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED" \
+mvn exec:java \
+  -Dexec.mainClass="MessagingServiceApp"
 ```
 
 Expected output:

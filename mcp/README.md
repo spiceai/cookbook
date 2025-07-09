@@ -77,7 +77,7 @@ spice chat
 Spice.ai OSS CLI v1.1.0
 Using model: openai-with-spice
 
-chat> Summarise the README.md
+chat> Summarize the README.md
 The README.md for the Spice.ai OSS Cookbook serves as a comprehensive guide to creating and deploying data and AI applications using Spice.ai. It is structured into various sections, each offering recipes for different use cases and features. Here’s a summary of its contents:
 
 ### Overview
@@ -220,7 +220,7 @@ spice chat --http-endpoint http://127.0.0.1:8091
 ```
 ```bash
 Using model: openai-with-spice
-chat> Summarise the README.md
+chat> Summarize the README.md
 
 The README.md for the Spice.ai Model Context Protocol (MCP) details a comprehensive setup guide for using Spice with MCP servers. Here's a summary of its contents:
 

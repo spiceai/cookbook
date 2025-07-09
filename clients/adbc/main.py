@@ -3,6 +3,7 @@ from adbc_driver_flightsql.dbapi import connect
 
 with connect(
     "grpc://127.0.0.1:50051",
+     autocommit=True,
 ) as conn:
     with conn.cursor() as cur:
         cur.execute("""

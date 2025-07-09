@@ -4,7 +4,7 @@ Data refresh for accelerated datasets can be configured and tuned for specific s
 
 Follow this recipe to dynamically refresh specific data at runtime by programmatically updating `refresh_sql` and triggering data refreshes.
 
-_Tip: Open and refer to the [Refresh Data](https://docs.spiceai.org/components/data-accelerators/data-refresh) documentation while completing this recipe._
+_Tip: Open and refer to the [Data Refresh](https://spiceai.org/docs/features/data-acceleration/data-refresh) documentation while completing this recipe._
 
 ## Step 1. Initialize the Spice app
 

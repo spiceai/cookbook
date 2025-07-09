@@ -1,0 +1,29 @@
+version: v1
+kind: Spicepod
+name: oracle-tpch
+
+connection: &params
+  oracle_host: localhost
+  oracle_port: 15211
+  oracle_username: scott
+  oracle_password: tiger
+  oracle_service_name: FREEPDB1
+
+datasets:
+  - from: oracle:"LINEITEM"
+    name: lineitem
+    params: *params
+    acceleration:
+      enabled: true
+
+  - from: oracle:"ORDERS"
+    name: orders
+    params: *params
+    acceleration:
+      enabled: true
+
+  - from: oracle:"CUSTOMER"
+    name: customer
+    params: *params
+    acceleration:
+      enabled: true

@@ -49,7 +49,7 @@ These steps only need to be done once. Use a Python `virtualenv` to keep project
 
 1. Create the virtual environment: `python -m venv .venv`
 2. Activate the virtual environment: `source .venv/bin/activate`
-3. Install the required packages: `pip install -r requirements.txt`
+3. Install the required packages: `pip install openai python-dotenv`
 
 Run the client: `python spice_openai_sdk.py` and observe the model's response to the `What datasets do I have access to?` question:
 
@@ -63,7 +63,7 @@ You have access to the following dataset:
 
 1. Use `uv venv` to create the virtual environment
 2. Activate the virtual environment: `source .venv/bin/activate`
-3. Ensure the packages are installed: `uv sync`
+3. Ensure the packages are installed: `uv pip install openai python-dotenv`
 
 Run the client: `uv run spice_openai_sdk.py` and observe the model's response to the `What datasets do I have access to?` question:
 

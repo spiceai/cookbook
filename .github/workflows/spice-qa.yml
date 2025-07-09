@@ -21,6 +21,7 @@ jobs:
         recipe_name:
           - 'File Data Connector'
           - 'Dremio Data Connector'
+          - 'Federated SQL Query'
 
     steps:
       - name: Checkout code
@@ -68,3 +69,22 @@ jobs:
         with:
           name: api-response-${{ env.RECIPE_FILE_PATH }}
           path: api_responses/${{ env.RECIPE_FILE_PATH }}.log
+
+      - name: Check the spice-qa passing status
+        shell: bash
+        env:
+          SPICE_SPICEAI_API_KEY: ${{ secrets.SPICE_API_KEY }}
+        run: |
+          read -r qa_stat qa_score < <(
+            grep -oE '✅ QA passed \([0-9]+% confidence\)|❌ QA failed \([0-9]+% confidence\)' \
+              "api_responses/${{ env.RECIPE_FILE_PATH }}.log" \
+            | sed -E \
+                -e 's/✅ QA passed \(([0-9]+)% confidence\)/passed \1/' \
+                -e 's/❌ QA failed \(([0-9]+)% confidence\)/failed \1/'
+          )
+          echo "QA Status: $qa_stat"
+          echo "QA Score: $qa_score"
+
+          if [[ "$qa_stat" != "passed" ]]; then
+            exit 1
+          fi

@@ -53,106 +53,58 @@ Result:
 3. Inspect the tools used.
 
 ```shell
-curl -X POST "http://localhost:8090/v1/sql" \
-  --data "
-    SELECT input
-    FROM runtime.task_history
-    WHERE trace_id = (
-      SELECT trace_id
-      FROM runtime.task_history
-      WHERE task = 'nsql'
-      LIMIT 1
-    )
-    AND task = 'ai_completion';
-  " \
-  | jq -cr '.[0].input' | jq '.'
+spice trace nsql --include-input --truncate=40
 ```
 
 Result:
 
-```json
-{
-  "messages": [
-    {
-      "role": "system",
-      "content": "Task: Write a SQL query to answer this question: _\\\"Which vendors have made the most trips this year?\\\"_. Instruction: Return only valid SQL code, nothing additional. Columns with capitals must be quoted. For tables with schemas and catalogs '\"catalog\".\"schema\".\"table\"' not '\"catalog.schema.table\"'."
-    },
-    {
-      "role": "assistant",
-      "tool_calls": [
-        {
-          "id": "schemas-nsql",
-          "type": "function",
-          "function": {
-            "name": "table_schema",
-            "arguments": "{\"tables\":[\"spice.public.taxi_trips\"]}"
-          }
-        }
-      ]
-    },
-    {
-      "role": "tool",
-      "content": "[{\"schema\":{\"fields\":[{\"data_type\":\"Int32\",\"dict_id\":0,\"dict_is_ordered\":false,\"metadata\":{},\"name\":\"VendorID\",\"nullable\":true},{\"data_type\":{\"Timestamp\":[\"Microsecond\",null]},\"dict_id\":0,\"dict_is_ordered\":false,\"metadata\":{},\"name\":\"tpep_pickup_datetime\",\"nullable\":true},{\"data_type\":{\"Timestamp\":[\"Microsecond\",null]},\"dict_id\":0,\"dict_is_ordered\":false,\"metadata\":{},\"name\":\"tpep_dropoff_datetime\",\"nullable\":true},{\"data_type\":\"Int64\",\"dict_id\":0,\"dict_is_ordered\":false,\"metadata\":{},\"name\":\"passenger_count\",\"nullable\":true},{\"data_type\":\"Float64\",\"dict_id\":0,\"dict_is_ordered\":false,\"metadata\":{},\"name\":\"trip_distance\",\"nullable\":true},{\"data_type\":\"Int64\",\"dict_id\":0,\"dict_is_ordered\":false,\"metadata\":{},\"name\":\"RatecodeID\",\"nullable\":true},{\"data_type\":\"Utf8\",\"dict_id\":0,\"dict_is_ordered\":false,\"metadata\":{},\"name\":\"store_and_fwd_flag\",\"nullable\":true},{\"data_type\":\"Int32\",\"dict_id\":0,\"dict_is_ordered\":false,\"metadata\":{},\"name\":\"PULocationID\",\"nullable\":true},{\"data_type\":\"Int32\",\"dict_id\":0,\"dict_is_ordered\":false,\"metadata\":{},\"name\":\"DOLocationID\",\"nullable\":true},{\"data_type\":\"Int64\",\"dict_id\":0,\"dict_is_ordered\":false,\"metadata\":{},\"name\":\"payment_type\",\"nullable\":true},{\"data_type\":\"Float64\",\"dict_id\":0,\"dict_is_ordered\":false,\"metadata\":{},\"name\":\"fare_amount\",\"nullable\":true},{\"data_type\":\"Float64\",\"dict_id\":0,\"dict_is_ordered\":false,\"metadata\":{},\"name\":\"extra\",\"nullable\":true},{\"data_type\":\"Float64\",\"dict_id\":0,\"dict_is_ordered\":false,\"metadata\":{},\"name\":\"mta_tax\",\"nullable\":true},{\"data_type\":\"Float64\",\"dict_id\":0,\"dict_is_ordered\":false,\"metadata\":{},\"name\":\"tip_amount\",\"nullable\":true},{\"data_type\":\"Float64\",\"dict_id\":0,\"dict_is_ordered\":false,\"metadata\":{},\"name\":\"tolls_amount\",\"nullable\":true},{\"data_type\":\"Float64\",\"dict_id\":0,\"dict_is_ordered\":false,\"metadata\":{},\"name\":\"improvement_surcharge\",\"nullable\":true},{\"data_type\":\"Float64\",\"dict_id\":0,\"dict_is_ordered\":false,\"metadata\":{},\"name\":\"total_amount\",\"nullable\":true},{\"data_type\":\"Float64\",\"dict_id\":0,\"dict_is_ordered\":false,\"metadata\":{},\"name\":\"congestion_surcharge\",\"nullable\":true},{\"data_type\":\"Float64\",\"dict_id\":0,\"dict_is_ordered\":false,\"metadata\":{},\"name\":\"Airport_fee\",\"nullable\":true}],\"metadata\":{}},\"table\":\"spice.public.taxi_trips\"}]",
-      "tool_call_id": "schemas-nsql"
-    },
-    {
-      "role": "assistant",
-      "tool_calls": [
-        {
-          "id": "distinct-spice.public.taxi_trips-nsql",
-          "type": "function",
-          "function": {
-            "name": "sample_data",
-            "arguments": "{\"dataset\":\"spice.public.taxi_trips\",\"limit\":3,\"cols\":null}"
-          }
-        }
-      ]
-    },
-    {
-      "role": "tool",
-      "content": "\"+----------+----------------------+-----------------------+-----------------+---------------+------------+--------------------+--------------+--------------+--------------+-------------+-------+---------+------------+--------------+-----------------------+--------------+----------------------+-------------+\\n| VendorID | tpep_pickup_datetime | tpep_dropoff_datetime | passenger_count | trip_distance | RatecodeID | store_and_fwd_flag | PULocationID | DOLocationID | payment_type | fare_amount | extra | mta_tax | tip_amount | tolls_amount | improvement_surcharge | total_amount | congestion_surcharge | Airport_fee |\\n+----------+----------------------+-----------------------+-----------------+---------------+------------+--------------------+--------------+--------------+--------------+-------------+-------+---------+------------+--------------+-----------------------+--------------+----------------------+-------------+\\n| 1        | 2002-12-31T22:59:39  | 2002-12-31T23:05:41   | 0               | 0.0           | 1          | N                  | 1            | 1            | 0            | -899.0      | -7.5  | -0.5    | -80.0      | -80.0        | -1.0                  | -900.0       | -2.5                 | -1.75       |\\n| 2        | 2009-01-01T00:24:09  | 2009-01-01T01:13:00   | 1               | 0.01          | 2          | Y                  | 2            | 2            | 1            | -800.0      | -6.0  | 0.0     | -66.02     | -60.0        | -0.3                  | -801.0       | -0.75                | 0.0         |\\n| 6        | 2009-01-01T23:30:39  | 2009-01-02T00:01:39   | 2               | 0.02          | 3          |                    | 3            | 3            | 2            | -744.3      | -5.0  | 0.5     | -65.1      | -56.64       | 0.0                   | -753.74      | 0.0                  | 1.75        |\\n+----------+----------------------+-----------------------+-----------------+---------------+------------+--------------------+--------------+--------------+--------------+-------------+-------+---------+------------+--------------+-----------------------+--------------+----------------------+-------------+\"",
-      "tool_call_id": "distinct-spice.public.taxi_trips-nsql"
-    },
-    {
-      "role": "assistant",
-      "tool_calls": [
-        {
-          "id": "distinct-spice.public.taxi_trips-nsql",
-          "type": "function",
-          "function": {
-            "name": "sample_data",
-            "arguments": "{\"dataset\":\"spice.public.taxi_trips\",\"limit\":3}"
-          }
-        }
-      ]
-    },
-    {
-      "role": "tool",
-      "content": "\"+----------+----------------------+-----------------------+-----------------+---------------+------------+--------------------+--------------+--------------+--------------+-------------+-------+---------+------------+--------------+-----------------------+--------------+----------------------+-------------+\\n| VendorID | tpep_pickup_datetime | tpep_dropoff_datetime | passenger_count | trip_distance | RatecodeID | store_and_fwd_flag | PULocationID | DOLocationID | payment_type | fare_amount | extra | mta_tax | tip_amount | tolls_amount | improvement_surcharge | total_amount | congestion_surcharge | Airport_fee |\\n+----------+----------------------+-----------------------+-----------------+---------------+------------+--------------------+--------------+--------------+--------------+-------------+-------+---------+------------+--------------+-----------------------+--------------+----------------------+-------------+\\n| 2        | 2024-01-23T15:35:31  | 2024-01-23T16:26:51   | 2               | 21.06         | 2          | N                  | 132          | 87           | 1            | 70.0        | 0.0   | 0.5     | 20.23      | 6.94         | 1.0                   | 102.92       | 2.5                  | 1.75        |\\n| 2        | 2024-01-23T15:23:18  | 2024-01-23T15:46:22   | 2               | 1.57          | 1          | N                  | 142          | 186          | 2            | 19.8        | 0.0   | 0.5     | 0.0        | 0.0          | 1.0                   | 23.8         | 2.5                  | 0.0         |\\n| 2        | 2024-01-23T15:52:48  | 2024-01-23T15:56:39   | 2               | 0.66          | 1          | N                  | 142          | 239          | 2            | 5.8         | 0.0   | 0.5     | 0.0        | 0.0          | 1.0                   | 9.8          | 2.5                  | 0.0         |\\n+----------+----------------------+-----------------------+-----------------+---------------+------------+--------------------+--------------+--------------+--------------+-------------+-------+---------+------------+--------------+-----------------------+--------------+----------------------+-------------+\"",
-      "tool_call_id": "distinct-spice.public.taxi_trips-nsql"
-    }
-  ],
-  "model": "nql",
-  "response_format": {
-    "type": "json_schema",
-    "json_schema": {
-      "name": "sql_mode",
-      "schema": {
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "additionalProperties": false,
-        "properties": {
-          "sql": {
-            "type": "string"
-          }
-        },
-        "required": ["sql"],
-        "title": "StructuredNsqlOutput",
-        "type": "object"
-      },
-      "strict": true
-    }
-  }
-}
+```shell
+TREE                         STATUS DURATION   SPANID           INPUT
+nsql                         ✅      7236.41ms 8d3a62d86a6c79ee Which vendors have made the most trips i... (7 characters omitted)
+  ├── tool_use::table_schema ✅         0.30ms 8a015258bd98bf03 {"tables":["spice.public.taxi_trips"],"o... (14 characters omitted)
+  ├── tool_use::sample_data  ✅      3960.64ms 88bcd4507f3427dd DistinctColumns({"dataset":"spice.public... (36 characters omitted)
+  │ ├── sql_query            ✅       849.41ms 8139fd9e40f24729 SELECT "VendorID" FROM (
+                                                                               ... (317 characters omitted)
+  │ ├── sql_query            ✅      1288.92ms 66a1c6b44bdce707 SELECT tpep_pickup_datetime FROM (
+                                                                     ... (367 characters omitted)
+  │ ├── sql_query            ✅      1564.23ms 17cbcc14da32e043 SELECT tpep_dropoff_datetime FROM (
+                                                                    ... (372 characters omitted)
+  │ ├── sql_query            ✅       923.23ms 3129844549f75e7d SELECT passenger_count FROM (
+                                                                          ... (342 characters omitted)
+  │ ├── sql_query            ✅      1250.90ms 9592a73b9088d47a SELECT trip_distance FROM (
+                                                                            ... (332 characters omitted)
+  │ ├── sql_query            ✅       911.91ms 447041cb46bf327b SELECT "RatecodeID" FROM (
+                                                                             ... (327 characters omitted)
+  │ ├── sql_query            ✅      1124.15ms 50e542d209866a43 SELECT store_and_fwd_flag FROM (
+                                                                       ... (357 characters omitted)
+  │ ├── sql_query            ✅       974.30ms 9b5ebaf36b8eac90 SELECT "PULocationID" FROM (
+                                                                           ... (337 characters omitted)
+  │ ├── sql_query            ✅       925.27ms 224caf0373318acb SELECT "DOLocationID" FROM (
+                                                                           ... (337 characters omitted)
+  │ ├── sql_query            ✅       986.47ms de9cc0bc38f9c0f7 SELECT payment_type FROM (
+                                                                             ... (327 characters omitted)
+  │ ├── sql_query            ✅       937.38ms ddc3e36fa200f7c8 SELECT fare_amount FROM (
+                                                                              ... (322 characters omitted)
+  │ ├── sql_query            ✅       953.33ms 02743fa12d7b7cf0 SELECT extra FROM (
+                                                                                SELE... (292 characters omitted)
+  │ ├── sql_query            ✅       783.41ms 077e32f25486eb55 SELECT mta_tax FROM (
+                                                                                SE... (302 characters omitted)
+  │ ├── sql_query            ✅       815.82ms 2603f86cb8baaf39 SELECT tip_amount FROM (
+                                                                               ... (317 characters omitted)
+  │ ├── sql_query            ✅       751.80ms 1959a901c5d318de SELECT tolls_amount FROM (
+                                                                             ... (327 characters omitted)
+  │ ├── sql_query            ✅       910.21ms 01cf3e43a71848b9 SELECT improvement_surcharge FROM (
+                                                                    ... (372 characters omitted)
+  │ ├── sql_query            ✅       477.02ms 9f6a60c5c3bb93a3 SELECT total_amount FROM (
+                                                                             ... (327 characters omitted)
+  │ ├── sql_query            ✅       543.88ms 6f5cd85935ef1e68 SELECT congestion_surcharge FROM (
+                                                                     ... (367 characters omitted)
+  │ └── sql_query            ✅       547.74ms 91c7107bc1cc5762 SELECT "Airport_fee" FROM (
+                                                                            ... (332 characters omitted)
+  ├── tool_use::sample_data  ✅        44.97ms 4beb25b66b972a86 RandomSample({"dataset":"spice.public.ta... (21 characters omitted)
+  │ └── sql_query            ✅        43.29ms 9ca3f50fb665263d SELECT * FROM spice.public.taxi_trips LI... (5 characters omitted)
+  ├── ai_completion          ✅      3095.67ms c8006f436478083b {"messages":[{"role":"system","content":... (8362 characters omitted)
+  └── sql_query              ✅       177.09ms 19b611a8e9cffb83 SELECT "VendorID", COUNT(*) AS "trip_cou... (140 characters omitted)
 ```
 
 From this, you can see that `spice` runs the following [tools](https://spiceai.org/docs/components/tools) to help the model write contextual, correct SQL:
