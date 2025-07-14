@@ -37,6 +37,7 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 ### Data Acceleration - Materializing & accelerating data locally with Data Accelerators
 
 - [DuckDB Data Accelerator](./duckdb/accelerator/README.md)
+- [Hashed Partitioning with DuckDB](./hashed_partitioning/README.md)
 - [PostgreSQL Data Accelerator](./postgres/accelerator/README.md)
 - [SQLite Data Accelerator](./sqlite/accelerator/README.md)
 - [Apache Arrow Data Accelerator](./arrow/README.md)
@@ -72,6 +73,7 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 - [GraphQL Data Connector](./graphql/README.md)
 - [MSSQL (Microsoft SQL Server) Data Connector](./mssql/README.md)
 - [ODBC Data Connector](./odbc/README.md)
+- [Oracle Data Connector](./oracle/README.md)
 - [S3 Data Connector](./s3/README.md)
 - [SharePoint/OneDrive for Business Data Connector](./sharepoint/README.md)
 - [Snowflake Data Connector](./snowflake/README.md)

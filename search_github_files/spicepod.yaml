@@ -7,7 +7,7 @@ datasets:
     name: spiceai.files
     params:
       github_token: ${secrets:GITHUB_TOKEN}
-      include: 'docs/**/*.md'
+      include: "docs/**/*.md"
     acceleration:
       enabled: true
     columns:
@@ -20,6 +20,22 @@ datasets:
       #        target_chunk_size: 256
       #        overlap_size: 64
       #        file_format: md
+
+  # - from: github:github.com/spiceai/docs/pulls
+  #   name: doc.pulls
+  #   params:
+  #     github_token: ${secrets:GITHUB_TOKEN}
+  #   acceleration:
+  #     enabled: true
+  #   columns:
+  #     - name: title
+  #       full_text_search:
+  #         enabled: true
+  #         row_id:
+  #           - id
+  #     - name: body
+  #       full_text_search:
+  #         enabled: true
 
 embeddings:
   - name: local_embedding_model

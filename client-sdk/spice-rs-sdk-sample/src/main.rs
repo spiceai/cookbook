@@ -2,7 +2,7 @@ use spiceai::{ClientBuilder, StreamExt};
 
 #[tokio::main]
 async fn main() {
-    let mut client = ClientBuilder::new().build().await.unwrap();
+    let client = ClientBuilder::new().build().await.unwrap();
 
     let mut flight_data_stream = client
         .query("SELECT \"VendorID\", \"tpep_pickup_datetime\", \"fare_amount\" FROM taxi_trips LIMIT 10")
