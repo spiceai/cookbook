@@ -1,6 +1,6 @@
 # Hashed Partitioning with DuckDB
 
-This cookbook demonstrates how to use the Spice OSS runtime to accelerate a dataset into multiple partitioned DuckDB files.
+Hashed partitioning divides data across partitions using a hash function for even distribution. It can reduce query latency for large datasets by reducing the volume of data required for processing a query. This cookbook demonstrates accelerating and querying data with Spice OSS using hashed partitioning.
 
 ## Step 1. Clone the repository and navigate to the Hashed Partitioning cookbook
 
