@@ -31,13 +31,13 @@ Output:
 ## Run sample application
 
 ```shell
-go run .
+go run main.go
 ```
 
 Results:
 
 ```shell
-go run .
+go run main.go
 VendorID: 2
 tpep_pickup_datetime: 1705115889000000
 fare_amount: 11.4
