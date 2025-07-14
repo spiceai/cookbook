@@ -1,6 +1,10 @@
 # Hashed Partitioning with DuckDB
 
-Hashed partitioning divides data across partitions using a hash function for even distribution. It can reduce query latency for large datasets by reducing the volume of data required for processing a query. This cookbook demonstrates accelerating and querying data with Spice OSS using hashed partitioning.
+Accelerate queries on terabyte and petabyte-scale datasets using hashed partitioning, which prunes irrelevant data during filters on categorical columns like IDs.
+
+Hashed partitioning divides data into fixed buckets using a hash expression for even distribution. It can significantly improve query performance for large datasets by reducing the volume of data required when processing a query. It works well for unpredictable categorical data, such as location IDs in geospatial workloads, distinct from range partitioning suited to sequential fields like dates.
+
+This cookbook demonstrates accelerating and querying NYC taxi trip Parquet files from S3 using hashed partitioning with the `bucket` function and DuckDB acceleration.
 
 ## Step 1. Clone the repository and navigate to the Hashed Partitioning cookbook
 
