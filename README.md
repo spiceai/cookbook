@@ -37,6 +37,7 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 ### Data Acceleration - Materializing & accelerating data locally with Data Accelerators
 
 - [DuckDB Data Accelerator](./duckdb/accelerator/README.md)
+- [Hashed Partitioning with DuckDB](./hashed_partitioning/README.md)
 - [PostgreSQL Data Accelerator](./postgres/accelerator/README.md)
 - [SQLite Data Accelerator](./sqlite/accelerator/README.md)
 - [Apache Arrow Data Accelerator](./arrow/README.md)
