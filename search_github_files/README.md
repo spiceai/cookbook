@@ -72,31 +72,35 @@ Result:
 
 ```json
 {
-  "matches": [
+  "results": [
     {
-      "value": "# Criteria Definitions\n\n## RC\n\nAcronym for \"Release Candidate\". Identifies a version that is eligible for general/stable release.\n\n## Major Bug\n\nA major bug...",
-      "score": 0.8142404969373118,
-      "dataset": "spiceai.files",
-      "primary_key": {
-        "path": "docs/criteria/definitions.md"
+      "matches": {
+        "content": "\n| Component           | Description                                                                                                                                                                                  | Definition Link                                            |"
       },
-      "metadata": {
-        "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/criteria/definitions.md"
-      }
+      "data": {
+        "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/EXTENSIBILITY.md"
+      },
+      "primary_key": {
+        "path": "docs/EXTENSIBILITY.md"
+      },
+      "score": 0.9217255119459336,
+      "dataset": "spiceai.files"
     },
     {
-      "value": "# Spice.ai Project Docs\n\nThe project docs for contributors and community. For user documentation of the Spice.ai...",
-      "score": 0.8001740819999499,
-      "dataset": "spiceai.files",
-      "primary_key": {
-        "path": "docs/README.md"
+      "matches": {
+        "content": ".\n\n**API Guidelines**: The [Rust API Guidelines](https://rust-lang.github.io/api-guidelines/about.html) are followed for all public interfaces."
       },
-      "metadata": {
-        "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/README.md"
-      }
+      "data": {
+        "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/dev/style_guide.md"
+      },
+      "primary_key": {
+        "path": "docs/dev/style_guide.md"
+      },
+      "score": 0.8344974606243043,
+      "dataset": "spiceai.files"
     }
   ],
-  "duration_ms": 48
+  "duration_ms": 86
 }
 ```
 
@@ -116,37 +120,41 @@ curl -XPOST http://localhost:8090/v1/search \
 
 Result:
 
-````json
+```json
 {
-  "matches": [
+  "results": [
     {
-      "value": "# Guidelines for error handlling\n\n## Rust Error Traits\n\nIn Rust, the Error trait implements both the Debug and Display traits. All user-facing errors should use the Display trait, not the Debug trait.\n\ni.e.\n\nGood (uses Display trait)\n```rust\nif let Err(user_facing_err) = upload_data(datasource) {\n    tracing::error!(\"Unable to upload data to {datasource}: {user_facing_err}\");\n}\n``",
-      "score": 0.8009972672322939,
-      "dataset": "spiceai.files",
-      "primary_key": {
-        "path": "docs/dev/error_handling.md"
+      "matches": {
+        "content": "\n| Component           | Description                                                                                                                                                                                  | Definition Link                                            |"
       },
-      "metadata": {
-        "content": "# Guidelines for error handlling\n\n## Rust Error Traits\n\nIn Rust, the Error trait implements both the Debug and Display traits. All user-facing errors should use the Display trait, not the Debug trait.\n\ni.e.\n\nGood (uses Display trait)\n```rust\nif let Err(user_facing_err) = upload_data(datasource) {\n    tracing::error!(\"Unable to upload data to {datasource}: {user_facing_err}\");\n}\n```\n\nBad (uses Debug trait `:?`)\n```rust\nif let Err(user_facing_err) = upload_data(datasource) {\n    tracing::error!(\"Unable to upload data to {datasource}: {user_facing_err:?}\");\n}\n```\n\n## Displaying errors to the user\n\n1. **Specific and Actionable**: The error message should be specific enough to help the user understand what went wrong and how to fix it.\n\n> Example:\n> `Cannot connect to postgres. Authentication failed. Ensure that the username and password are correctly configured in the spicepod.` is better than `Error connecting to postgres`.\n\n1. **Avoid Debugging Information**: The error message should not contain any debugging information. This includes stack traces, Rust debug representations, or any other technical information that the user cannot act on.\n  - It can be helpful for developers to access this, but it should be gated behind a debug mode/log level/log file, etc and not shown by default.\n1. **Internal/Unknown Errors**: If the error is internal to the application or unknown, the error message should be generic and not expose any internal details. The error message should indicate how to report the error to the developers.\n  - Strive to have as few of these as possible.\n\n## Data Connector Errors\n\n`dataconnector` module provides common bucket of errors with predefined messages. Each data connector implementation should use these to provide consistent error messages to the user.\n\nhttps://github.com/spiceai/spiceai/blob/2a9fab7905737e1af182e17f40aecc5c4b5dd236/crates/runtime/src/dataconnector.rs#L113-L169\n\nExample: postgres connector catches erros from underlying postgres crate and maps them to `DataConnectorError::...`.\n\nhttps://github.com/spiceai/spiceai/blob/2a9fab7905737e1af182e17f40aecc5c4b5dd236/crates/runtime/src/dataconnector/postgres.rs#L54-L76\n\nIf a new error is needed, it should be added to the `DataConnectorError` enum and the error message should be specific and actionable.\n\nIf it is not possible to provide a specific error message, use common  `DataConnectorError::InvalidConfiguration` to wrap the error.\n",
-        "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/dev/error_handling.md"
-      }
-    },
-    {
-      "value": "# Spice.ai Extensibility\n\nThis document is an overview of all the interfaces and extension points in Spice.ai.\n\n| Component       | Description                                                                                                                                | Definition Link                                            |\n| --------------- | -----------------------------",
-      "score": 0.7811596783985292,
-      "dataset": "spiceai.files",
+      "data": {
+        "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/EXTENSIBILITY.md",
+        "content": "# Spice.ai Extensibility\n\nThis document is an overview of all the interfaces and extension points in Spice.ai.\n\n| Component           | Description                                                                                                                                                                                  | Definition Link                                            |\n| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |\n| [Data Connector]    | Represents the source of data to the Spice.ai runtime. Specifies how to retrieve data, stream data updates, and write data back.                                                             | [dataconnector.rs](../crates/runtime/src/dataconnector.rs) |\n| [Data Accelerator]  | Used by the runtime to store accelerated data locally. Specify which data accelerator to use via `engine` & `mode` fields.                                                                   | [dataaccelerator.rs](../crates/runtime/src/databackend.rs) |\n| [Catalog Connector] | Catalog Connectors connect to external catalog providers and make their tables available for federated SQL query in Spice. Implemented as an optional function on the `DataConnector` trait. | [dataconnector.rs](../crates/runtime/src/dataconnector.rs) |\n| [Secret Stores]     | A Secret Store is a location where secrets are stored and can be used to store sensitive data, like passwords, tokens, and secret keys.                                                      | [secrets.rs](../crates/runtime/src/secrets.rs)             |\n| [Models]            | A machine-learning (ML) or language model (LLM) to load for inferencing.                                                                                                                     | [modelsource.rs](../crates/model_components/src/model.rs)  |\n| Embeddings          | Embeddings map high-dimensional data to a lower-dimensional vector space.                                                                                                                    | [embeddings.rs](../crates/llms/src/embeddings/mod.rs)      |\n\n[Data Connector]: https://spiceai.org/docs/components/data-connectors\n[Data Accelerator]: https://spiceai.org/docs/components/data-accelerators\n[Catalog Connector]: https://spiceai.org/docs/components/catalogs\n[Secret Stores]: https://spiceai.org/docs/components/secret-stores\n[Models]: https://spiceai.org/docs/components/models\n"
+      },
       "primary_key": {
         "path": "docs/EXTENSIBILITY.md"
       },
-      "metadata": {
-        "content": "# Spice.ai Extensibility\n\nThis document is an overview of all the interfaces and extension points in Spice.ai.\n\n| Component       | Description                                                                                                                                | Definition Link                                            |\n| --------------- | ------------------------------------------------------------------------------------------------------------------------------------       | ------------------------------------------------------     |\n| [Data Connector]   | Represents the source of data to the Spice.ai runtime. Specifies how to retrieve data, stream data updates, and write data back.           | [dataconnector.rs](../crates/runtime/src/dataconnector.rs) |\n| [Data Accelerator]     | Used by the runtime to store accelerated data locally. Specify which data accelerator to use via `engine` & `mode` fields.                   | [dataaccelerator.rs](../crates/runtime/src/databackend.rs)     |\n| [Catalog Connector]     | Catalog Connectors connect to external catalog providers and make their tables available for federated SQL query in Spice. Implemented as an optional function on the `DataConnector` trait.                                                                                                  | [dataconnector.rs](../crates/runtime/src/dataconnector.rs)     |\n| [Secret Stores]    | A Secret Store is a location where secrets are stored and can be used to store sensitive data, like passwords, tokens, and secret keys.                               | [secrets.rs](../crates/runtime/src/secrets.rs)   |\n| [Models]     | A machine-learning (ML) or language model (LLM) to load for inferencing.          | [modelsource.rs](../crates/model_components/src/model.rs)     |\n| Embeddings    | Embeddings map high-dimensional data to a lower-dimensional vector space.         | [embeddings.rs](../crates/llms/src/embeddings/mod.rs)     |\n\n[Data Connector]: https://docs.spiceai.org/components/data-connectors\n[Data Accelerator]: https://docs.spiceai.org/components/data-accelerators\n[Catalog Connector]: https://docs.spiceai.org/components/catalogs\n[Secret Stores]: https://docs.spiceai.org/components/secret-stores\n[Models]: https://docs.spiceai.org/components/models",
-        "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/EXTENSIBILITY.md"
-      }
+      "score": 0.9320302128251334,
+      "dataset": "spiceai.files"
+    },
+    {
+      "matches": {
+        "content": " ] All of the model's error messages follow the [error handling guidelines](../../dev/error_handling.md)\n\n### Documentation\n\n- [ ] All documentation meets alpha criteria.\n- [ ] Documentation includes any exceptions made for Beta quality.\n"
+      },
+      "data": {
+        "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/criteria/models/beta.md",
+        "content": "# Spice.ai OSS Models - Beta Release Criteria\n\nThis document defines the set of criteria that is required before a model is considered to be of Beta quality.\n\nAll criteria must be met for the model to be considered Beta, with exceptions permitted only in some cases.\n\n## Beta Quality Models\n\n|     Model Type          | Beta Quality | DRI Sign-off |\n| ----------------------- | ------------ | ------------ |\n| File                    | ✅           | @Jeadie      |\n| Hugging Face            | ✅           | @Jeadie      |\n| Spice.ai Cloud Platform | ➖           |              |\n| OpenAI                  | ✅            | @ewgenius   |\n| Azure Openai            | ➖           |              |\n| Anthropic               | ➖           |              |\n| xAI (Grok)              | ➖           |              |\n\n## Beta Release Criteria\n\n- [ ] All [Alpha release criteria](./alpha.md) pass.\n- [ ] Supports `v1/chat/completion` with `\"roles\"=\"tool\"` or `.messages[*].tool_calls` for `\"roles\"=\"assistant\"` and `stream=true`.\n- [ ] Loads and runs `params.tools: auto` tools.\n- [ ] Completion requests emit runtime metrics\n- [ ] Completion requests emit runtime tracing, including linkage to parent tasks when used internally.\n- [ ] For both synchronous and streaming APIs, usage numbers are reported.\n- [ ] Can handle consistent requests from several clients without an adverse impact on latency. Resource efficiency (memory, CPU, and I/O usage) is measured.\n  - 8 clients consistently sending requests (i.e. sending another request upon receipt of prior request)\n  - A duration of 5 minutes.\n  - The body must have at least 128 tokens (number of prompt tokens in the templated input string).\n  - An increase in latency is defined as a 10% increase in both the 50th & 95th percentile between the first and last minute.\n\n### UX\n\n- [ ] All of the model's error messages follow the [error handling guidelines](../../dev/error_handling.md)\n\n### Documentation\n\n- [ ] All documentation meets alpha criteria.\n- [ ] Documentation includes any exceptions made for Beta quality.\n"
+      },
+      "primary_key": {
+        "path": "docs/criteria/models/beta.md"
+      },
+      "score": 0.8549700824464589,
+      "dataset": "spiceai.files"
     }
   ],
-  "duration_ms": 45
+  "duration_ms": 50
 }
-````
+```
 
 ## Pre-existing embeddings
 
@@ -175,32 +183,36 @@ curl -XPOST http://localhost:8091/v1/search \
 
 Result:
 
-````json
+```json
 {
-  "matches": [
+  "results": [
     {
-      "value": "# Spice.ai Extensibility\n\nThis document is an overview of all the interfaces and extension points in Spice.ai.\n\n| Component       | Description                                                                                                                                | Definition Link                                            |\n| --------------- | -----------------------------",
-      "score": 0.7811596783985292,
-      "dataset": "spiceai.files",
+      "matches": {
+        "content": "\n| Component           | Description                                                                                                                                                                                  | Definition Link                                            |"
+      },
+      "data": {
+        "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/EXTENSIBILITY.md"
+      },
       "primary_key": {
         "path": "docs/EXTENSIBILITY.md"
       },
-      "metadata": {
-        "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/EXTENSIBILITY.md"
-      }
+      "score": 0.9320302128251334,
+      "dataset": "spiceai.files"
     },
     {
-      "value": "# Guidelines for error handlling\n\n## Rust Error Traits\n\nIn Rust, the Error trait implements both the Debug and Display traits. All user-facing errors should use the Display trait, not the Debug trait.\n\ni.e.\n\nGood (uses Display trait)\n```rust\nif let Err(user_facing_err) = upload_data(datasource) {\n    tracing::error!(\"Unable to upload data to {datasource}: {user_facing_err}\");\n}\n``",
-      "score": 0.8009972672322939,
-      "dataset": "spiceai.files",
-      "primary_key": {
-        "path": "docs/dev/error_handling.md"
+      "matches": {
+        "content": " ] All of the model's error messages follow the [error handling guidelines](../../dev/error_handling.md)\n\n### Documentation\n\n- [ ] All documentation meets alpha criteria.\n- [ ] Documentation includes any exceptions made for Beta quality.\n"
       },
-      "metadata": {
-        "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/dev/error_handling.md"
-      }
+      "data": {
+        "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/criteria/models/beta.md"
+      },
+      "primary_key": {
+        "path": "docs/criteria/models/beta.md"
+      },
+      "score": 0.8549700824464589,
+      "dataset": "spiceai.files"
     }
   ],
-  "duration_ms": 48
+  "duration_ms": 45
 }
-````
+```
