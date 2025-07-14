@@ -7,7 +7,8 @@ datasets:
     name: users
     time_column: updated_at
     params:
-      pg_host: postgres
+      pg_host: localhost
+      pg_port: 15432
       pg_db: postgres
       pg_user: postgres
       pg_pass: postgres
@@ -18,5 +19,7 @@ datasets:
       refresh_mode: append
       refresh_check_interval: 5s
       primary_key: email
+      indexes:
+        username: enabled
       on_conflict:
         email: upsert

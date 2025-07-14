@@ -27,17 +27,24 @@ Start the Docker Compose stack:
 
 `make`
 
-Then observe the logs of the Spice runtime and the worker service.
-
-`docker logs -f spiceai-constraint-demo`
+Then observe the logs of the worker service.
 
 `docker logs -f spiceai-constraint-demo-worker`
 
+## Spice Runtime
+
+Start the Spice runtime in the same directory as the `spicepod.yaml` file:
+
+```bash
+cd cookbook/acceleration/constraints
+spice run
+```
+
 ## Spice SQL REPL
 
-In addition to viewing the logs, run queries using the Spice SQL REPL to explore the data and ensure the constraints are being kept.
+Run queries using the Spice SQL REPL to explore the data and ensure the constraints are being kept.
 
-`docker exec -it spiceai-constraint-demo spiced --repl`
+`spice sql`
 
 ```bash
 Welcome to the interactive Spice.ai SQL Query Utility! Type 'help' for help.
