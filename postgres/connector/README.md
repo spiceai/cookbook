@@ -92,12 +92,6 @@ CALL sample_data_gen();
 Query OK, 1 row affected (1.92 sec)
 ```
 
-Drop the stored procedure.
-
-```SQL
-DROP PROCEDURE sample_data_gen();
-```
-
 Check the sample data generated in the `sample_data` table.
 
 ```SQL
@@ -119,6 +113,13 @@ SELECT * FROM sample_data LIMIT 10;
  10 | 2024-02-29 03:27:14 | Name12 | 555-2194 | user47@example.com | Street47 Avenue | 35029    | Region1 |   6.813841 |   52.001473
 (10 rows)
 ```
+
+Drop the stored procedure.
+
+```SQL
+DROP PROCEDURE sample_data_gen();
+```
+
 
 **Step 2.** Initialize a Spice app.
 
@@ -179,7 +180,9 @@ spice sql
 List available datasets in spice runtime.
 
 ```sql
-sql> show tables;
+show tables;
+```
+```
 +---------------+--------------+--------------+------------+
 | table_catalog | table_schema | table_name   | table_type |
 +---------------+--------------+--------------+------------+
@@ -194,7 +197,9 @@ Time: 0.004413208 seconds. 3 rows.
 You can now now query `sample_data` in the runtime.
 
 ```sql
-sql> select * from sample_data limit 10;
+select * from sample_data limit 10;
+```
+```
 +----+---------------------+--------+----------+--------------------+-----------------+----------+---------+------------+-------------+
 | id | datetime            | name   | phone    | email              | street_address  | zip_code | region  | latitude   | longitude   |
 +----+---------------------+--------+----------+--------------------+-----------------+----------+---------+------------+-------------+
