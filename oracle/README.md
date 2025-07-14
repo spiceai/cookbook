@@ -43,7 +43,7 @@ Password: tiger
 ## Step 3. Start Spice
 
 ```bash
-make spice
+spice run
 ```
 
 This will start the Spice runtime, which will connect to Oracle and load the TPC-H tables:
