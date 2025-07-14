@@ -9,7 +9,7 @@ git clone https://github.com/spiceai/cookbook.git
 cd cookbook/hashed_partitioning
 ```
 
-## Step 2. Run Spice
+## Step 2. Spicepod configuration
 The `spicepod.yaml` configuration will accelerate and partition the `taxi_trips` dataset by hashing the `PULocationID` column and placing the data into one of 10 buckets using the `partition_by` parameter.
 
 ```yaml
@@ -33,15 +33,24 @@ datasets:
 
 If you know you will be writing queries that filter on the `PULocationID` often, this can improve query times for very large tables by pruning the amount of data required to be read in order to execute the query.
 
-You can see by inspecting the physical plan, that querying without a filter involves scanning all the partitioned files.
+## Step 3: Run Spice
 
-Using `spice sql`, run:
+In a terminal window, execute the command:
+
+```bash
+spice run
+```
+
+## Step 4: Verify partition pruning
+You can see, by inspecting the physical plan, that querying without a filter involves scanning all the partitioned files.
+
+In another terminal window, execute `spice sql`. Then at the `sql>` prompt, type:
 
 ```sql
 EXPLAIN SELECT * FROM taxi_trips;
 ```
 
-and you'll see the 10 `DuckSqlExec` plans for each partition scan.
+and you'll see the 10 `DuckSqlExec` plans, one for each partition scan.
 
 ```shell
 +---------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -67,13 +76,13 @@ and you'll see the 10 `DuckSqlExec` plans for each partition scan.
 +---------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 ```
 
-If you add a filter on the partitioned column,
+If you add a filter on the partitioned column to the query,
 
 ```sql
 EXPLAIN SELECT * FROM taxi_trips WHERE PULocationID = 221;
 ```
 
-In this case, only one partitioned file is relevant for scanning and remains in the scan plan while all other partitions were pruned from the plan.
+In this case, only one partitioned file is relevant for scanning and remains in the scan plan while all other partitions are pruned from the plan.
 
 ```shell
 +---------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
