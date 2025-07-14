@@ -70,7 +70,7 @@ and you'll see the 10 `DuckSqlExec` plans for each partition scan.
 If you add a filter on the partitioned column,
 
 ```sql
-EXPLAIN SELECT * FROM taxi_trips WHERE PULocationId = 221;
+EXPLAIN SELECT * FROM taxi_trips WHERE PULocationID = 221;
 ```
 
 In this case, only one partitioned file is relevant for scanning and remains in the scan plan while all other partitions were pruned from the plan.
