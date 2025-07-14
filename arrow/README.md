@@ -49,6 +49,7 @@ Confirm in the terminal output the `taxi_trips` dataset has been loaded:
 2025-07-14T15:50:16.608896Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled.
 2025-07-14T15:50:16.610030Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
 2025-07-14T15:50:29.423673Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (399.41 MiB) for dataset taxi_trips in 12s 813ms.
+2025-07-14T15:50:29.494757Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
 **Step 4.** Run queries against the dataset using the Spice SQL REPL.
