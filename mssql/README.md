@@ -123,6 +123,8 @@ Output:
 +------------+-----------------+-------------------+---------------------+
 ```
 
+Exit the Spice SQL REPL with `exit`
+
 ### Clean up
 
 Stop the MSSQL instance and cleanup:
