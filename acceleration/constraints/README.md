@@ -73,6 +73,8 @@ sql> select email, username, items_bought, last_login from users;
 Time: 0.045052253 seconds. 5 rows.
 ```
 
+Exit the Spice SQL REPL with `exit`
+
 ## Clean up
 
 To stop and remove the Docker containers/volumes that were created, run:
