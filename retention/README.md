@@ -85,7 +85,9 @@ sql> select email, username, created_at from users;
 Time: 0.00946948 seconds. 6 rows.
 ```
 
-##  Clean up
+## Clean up
+
+In another terminal, execute the following command to clean up the containers.
 
 ```bash
 make clean
