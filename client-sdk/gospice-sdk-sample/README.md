@@ -2,6 +2,13 @@
 
 This recipe demonstrates how to use the gospice SDK to connect to a Spice runtime and query data.
 
+Clone this cookbook repo locally and navigate to the `gospice-sdk-sample` directory:
+
+```shell
+git clone https://github.com/spiceai/cookbook.git
+cd cookbook/client-sdk/gospice-sdk-sample/
+```
+
 ## Prerequisites
 
 This recipe requires [Go](https://go.dev/) to be installed.
