@@ -3,8 +3,8 @@ kind: Spicepod
 name: github_issues
 
 datasets:
-  - from: github:github.com/spiceai/spiceai/issues
-    name: issues
+  - from: github:github.com/spiceai/spiceai/pulls
+    name: pulls
     params:
       github_query_mode: search
       github_token: ${secrets:GITHUB_TOKEN}
@@ -13,7 +13,7 @@ datasets:
       enabled: true
       refresh_data_window: 7d
     vectors:
-      enabled: false
+      enabled: true
       engine: s3_vectors
       params:
         s3_vectors_bucket: spiceai-cookbook
@@ -23,22 +23,21 @@ datasets:
 
         ## If needed, uncomment out.
         s3_vectors_aws_session_token: ${secrets:S3_VECTORS_AWS_SESSION_TOKEN}
-
     columns:
       - name: body
         embeddings:
           - from: my_embedding_model
             row_id:
               - id
-      - name: title
-        metadata:
-          vectors: filterable
-      - name: url
-        metadata:
-          vectors: non-filterable
-      - name: state
-        metadata:
-          vectors: filterable
+      # - name: title
+      #   metadata:
+      #     vectors: filterable
+      # - name: url
+      #   metadata:
+      #     vectors: non-filterable
+      # - name: state
+      #   metadata:
+      #     vectors: filterable
 
 embeddings:
   - name: my_embedding_model
