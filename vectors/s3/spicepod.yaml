@@ -1,0 +1,47 @@
+version: v1
+kind: Spicepod
+name: github_issues
+
+datasets:
+  - from: github:github.com/spiceai/spiceai/issues
+    name: issues
+    params:
+      github_query_mode: search
+      github_token: ${secrets:GITHUB_TOKEN}
+    time_column: updated_at
+    acceleration:
+      enabled: true
+      refresh_data_window: 7d
+    vectors:
+      enabled: false
+      engine: s3_vectors
+      params:
+        s3_vectors_bucket: spiceai-cookbook
+        s3_vectors_aws_region: us-east-2
+        s3_vectors_aws_access_key_id: ${secrets:S3_VECTORS_AWS_ACCESS_KEY_ID}
+        s3_vectors_aws_secret_access_key: ${secrets:S3_VECTORS_AWS_SECRET_ACCESS_KEY}
+
+        ## If needed, uncomment out.
+        s3_vectors_aws_session_token: ${secrets:S3_VECTORS_AWS_SESSION_TOKEN}
+
+    columns:
+      - name: body
+        embeddings:
+          - from: my_embedding_model
+            row_id:
+              - id
+      - name: title
+        metadata:
+          vectors: filterable
+      - name: url
+        metadata:
+          vectors: non-filterable
+      - name: state
+        metadata:
+          vectors: filterable
+
+embeddings:
+  - name: my_embedding_model
+    from: openai
+    params:
+      openai_api_key: ${ secrets:SPICE_OPENAI_API_KEY }
