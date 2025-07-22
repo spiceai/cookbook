@@ -21,33 +21,40 @@ spice run
 ```
 
 ```console
-Checking for latest Spice runtime release...
-Spice.ai runtime starting...
-2024-09-16T03:58:04.013601Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
-2024-09-16T03:58:04.013775Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2024-09-16T03:58:04.014420Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2024-09-16T03:58:04.025747Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2024-09-16T03:58:04.213793Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2024-09-16T03:58:04.514613Z  INFO runtime: Dataset spiceai.files registered (github:github.com/spiceai/spiceai/files/trunk), acceleration (arrow), results cache enabled.
-2024-09-16T03:58:04.516007Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset spiceai.files
-2024-09-16T03:58:04.697364Z  INFO runtime: Dataset spiceai.commits registered (github:github.com/spiceai/spiceai/commits), acceleration (arrow), results cache enabled.
-2024-09-16T03:58:04.698871Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset spiceai.commits
-2024-09-16T03:58:04.871658Z  INFO runtime::accelerated_table::refresh_task: Loaded 69 rows (380.35 kiB) for dataset spiceai.files in 355ms.
-2024-09-16T03:58:05.178247Z  INFO runtime: Dataset spiceai.stargazers registered (github:github.com/spiceai/spiceai/stargazers), acceleration (arrow), results cache enabled.
-2024-09-16T03:58:05.179671Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset spiceai.stargazers
-2024-09-16T03:58:05.504365Z  INFO runtime: Dataset spiceai.issues registered (github:github.com/spiceai/spiceai/issues), acceleration (arrow), results cache enabled.
-2024-09-16T03:58:05.505534Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset spiceai.issues
-2024-09-16T03:58:06.563660Z  INFO runtime: Dataset spiceai.pulls registered (github:github.com/spiceai/spiceai/pulls), acceleration (arrow), results cache enabled.
-2024-09-16T03:58:06.564929Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset spiceai.pulls
+2025/07/16 08:17:09 INFO Checking for latest Spice runtime release...
+2025/07/16 08:17:13 INFO Spice.ai runtime starting...
+2025-07-16T15:17:13.713677Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2025-07-16T15:17:13.713846Z  INFO runtime::init::caching: Initialized search results cache;
+2025-07-16T15:17:14.160058Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
+2025-07-16T15:17:14.160281Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2025-07-16T15:17:14.162142Z  INFO runtime::init::dataset: Initializing dataset spiceai.issues
+2025-07-16T15:17:14.162164Z  INFO runtime::init::dataset: Initializing dataset spiceai.pulls
+2025-07-16T15:17:14.162231Z  INFO runtime::init::dataset: Initializing dataset spiceai.commits
+2025-07-16T15:17:14.162161Z  INFO runtime::init::dataset: Initializing dataset apache.members
+2025-07-16T15:17:14.162218Z  INFO runtime::init::dataset: Initializing dataset spiceai.stargazers
+2025-07-16T15:17:14.162515Z  INFO runtime::init::dataset: Initializing dataset spiceai.files
+2025-07-16T15:17:14.166935Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2025-07-16T15:17:15.311687Z  INFO runtime::init::dataset: Dataset spiceai.commits registered (github:github.com/spiceai/spiceai/commits), acceleration (arrow), results cache enabled.
+2025-07-16T15:17:15.313347Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset spiceai.commits
+2025-07-16T15:17:15.507378Z  INFO runtime::init::dataset: Dataset spiceai.stargazers registered (github:github.com/spiceai/spiceai/stargazers), acceleration (arrow), results cache enabled.
+2025-07-16T15:17:15.508684Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset spiceai.stargazers
+2025-07-16T15:17:16.406635Z  INFO runtime::init::dataset: Dataset spiceai.files registered (github:github.com/spiceai/spiceai/files/trunk), acceleration (arrow), results cache enabled.
+2025-07-16T15:17:16.407961Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset spiceai.files
+2025-07-16T15:17:16.772995Z  INFO runtime::init::dataset: Dataset spiceai.issues registered (github:github.com/spiceai/spiceai/issues), acceleration (arrow), results cache enabled.
+2025-07-16T15:17:16.774218Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset spiceai.issues
+2025-07-16T15:17:17.447103Z  INFO runtime::init::dataset: Dataset apache.members registered (github:github.com/apache/members), acceleration (arrow), results cache enabled.
+2025-07-16T15:17:17.448839Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset apache.members
 ```
 
 Wait until all datasets are loaded:
 
 ```console
-2024-09-16T03:58:18.641091Z  INFO runtime::accelerated_table::refresh_task: Loaded 300 rows (641.44 kiB) for dataset spiceai.issues in 13s 135ms.
-2024-09-16T03:58:20.553513Z  INFO runtime::accelerated_table::refresh_task: Loaded 300 rows (59.55 kiB) for dataset spiceai.stargazers in 15s 373ms.
-2024-09-16T03:58:24.953706Z  INFO runtime::accelerated_table::refresh_task: Loaded 300 rows (204.38 kiB) for dataset spiceai.commits in 20s 254ms.
-2024-09-16T03:58:48.900296Z  INFO runtime::accelerated_table::refresh_task: Loaded 300 rows (948.54 kiB) for dataset spiceai.pulls in 42s 335ms.
+2025-07-16T15:17:18.240151Z  INFO runtime::accelerated_table::refresh_task: Loaded 52 rows (184.75 kiB) for dataset spiceai.issues in 1s 465ms.
+2025-07-16T15:17:19.861151Z  INFO runtime::accelerated_table::refresh_task: Loaded 300 rows (617.12 kiB) for dataset spiceai.stargazers in 4s 352ms.
+2025-07-16T15:17:19.965102Z  INFO runtime::accelerated_table::refresh_task: Loaded 300 rows (618.50 kiB) for dataset apache.members in 2s 516ms.
+2025-07-16T15:17:23.204760Z  INFO runtime::accelerated_table::refresh_task: Loaded 140 rows (1.20 MiB) for dataset spiceai.files in 6s 796ms.
+2025-07-16T15:17:26.329481Z  INFO runtime::accelerated_table::refresh_task: Loaded 49 rows (149.97 kiB) for dataset spiceai.pulls in 3s 203ms.
+2025-07-16T15:17:26.419725Z  INFO runtime::accelerated_table::refresh_task: Loaded 300 rows (908.66 kiB) for dataset spiceai.commits in 11s 106ms.
 ```
 
 **Step 3.** Run `spice sql` in a new terminal to start an interactive SQL query session against the Spice runtime.
@@ -151,6 +158,32 @@ select starred_at, login from spiceai.stargazers order by starred_at DESC limit 
 
 Time: 0.0088075 seconds. 10 rows.
 ```
+
+List 10 members of the Apache GitHub Organization
+
+```sql
+select created_at, username from apache.members limit 10;
+```
+
+```console
++---------------------+----------+
+| created_at          | username |
++---------------------+----------+
+| 2008-02-17T05:48:58 | vic      |
+| 2008-02-21T16:56:47 | amoeba   |
+| 2008-02-27T23:16:48 | brianm   |
+| 2008-03-03T16:49:29 | ruphy    |
+| 2008-03-05T18:57:18 | infil00p |
+| 2008-03-05T20:21:24 | jthomas  |
+| 2008-03-05T23:10:37 | mjwall   |
+| 2008-03-27T12:56:22 | mrkn     |
+| 2008-04-02T18:39:35 | ryw      |
+| 2008-04-03T23:53:41 | rubys    |
++---------------------+----------+
+
+Time: 0.027337792 seconds. 10 rows.
+```
+
 
 List beta release notes files:
 

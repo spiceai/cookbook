@@ -215,7 +215,7 @@ nsql> What’s the highest tip any passenger gave?
 Time: 9.141290 seconds. 1 rows.
 ```
 
-Step 5.\*\* (Optional) Check the underlying query
+**Step 5.** (Optional) Check the underlying query
 
 Run `spice sql` in a separate terminal to check the underlying query
 

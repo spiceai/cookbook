@@ -48,3 +48,12 @@ datasets:
       enabled: true
       refresh_sql: |
         SELECT * FROM spiceai.stargazers LIMIT 300
+      
+  - from: github:github.com/apache/members
+    name: apache.members
+    params:
+      github_token: ${secrets:GITHUB_TOKEN}
+    acceleration:
+      enabled: true
+      refresh_sql: |
+        SELECT * FROM apache.members LIMIT 300
