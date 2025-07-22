@@ -65,7 +65,6 @@ RUN cd ${SPARK_HOME} && \
     wget https://repo1.maven.org/maven2/io/netty/netty-handler-proxy/4.1.77.Final/netty-handler-proxy-4.1.77.Final.jar -P jars/
 
 RUN mkdir -p /home/spark/data \
-    && curl https://data.cityofnewyork.us/resource/tg4x-b46p.json > /home/spark/data/nyc_film_permits.json \
     && curl https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2022-04.parquet -o /home/spark/data/yellow_tripdata_2022-04.parquet \
     && curl https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2022-03.parquet -o /home/spark/data/yellow_tripdata_2022-03.parquet \
     && curl https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2022-02.parquet -o /home/spark/data/yellow_tripdata_2022-02.parquet \
@@ -97,4 +96,4 @@ COPY entrypoint.sh .
 RUN chmod +x entrypoint.sh
 
 ENTRYPOINT ["./entrypoint.sh"]
-CMD ["notebook"]
+CMD ["notebook", "--ip='0.0.0.0'"]

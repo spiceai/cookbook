@@ -20,10 +20,8 @@ services:
     container_name: spark
     build: spark/
     ports:
-      - 8888:8888
-      - 7077:7077
-      - 8080:8080
       - 4040:4040
+      - 8888:8888
       - 15002:15002
     volumes:
       - ./notebooks:/home/spark/notebooks/notebooks
