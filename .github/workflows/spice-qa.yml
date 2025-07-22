@@ -22,6 +22,11 @@ jobs:
           - 'File Data Connector'
           - 'Dremio Data Connector'
           - 'Federated SQL Query'
+          - 'DuckDB connector'
+          - 'FTP connector'
+          - 'MSSQL (Microsoft SQL Server) Connector'
+          - 'Accelerated Dataset Retention Policy'
+          - 'Accelerated table data quality with constraint enforcement'
 
     steps:
       - name: Checkout code
