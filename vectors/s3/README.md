@@ -2,7 +2,7 @@
 
 Spice can use vector engines to store embeddings for datasets and provide efficient search functionality to the runtime.
 
-In this cookbook, Spice will create a simple vector search system over Github issues.
+In this cookbook, Spice will create a simple vector search system over Github pull requests.
 
 ## Prerequisites
 
@@ -20,7 +20,7 @@ In this cookbook, Spice will create a simple vector search system over Github is
 SELECT
     url,
     title,
-    score -- this is a computed value (i.e. not in `describe issues;`).
+    score -- this is a computed value (i.e. not in `describe pulls;`).
 FROM vector_search(pulls, 'bugs in DuckDB')
 ORDER BY score DESC
 LIMIT 4;
