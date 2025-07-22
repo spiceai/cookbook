@@ -1,6 +1,6 @@
 version: v1
 kind: Spicepod
-name: github_issues
+name: github_pull_requests
 
 datasets:
   - from: github:github.com/spiceai/spiceai/pulls
