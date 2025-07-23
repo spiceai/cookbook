@@ -6,5 +6,5 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-spiceai = "2.0.0"
+spiceai = "3.0.0"
 tokio = "1.45.1"
