@@ -109,6 +109,66 @@ select number, title, state, merged_at from spiceai.pulls where state = 'MERGED'
 Time: 0.010307125 seconds. 10 rows.
 ```
 
+Query the review comments on a pull request:
+```console
+sql> WITH review_comments AS (
+  SELECT
+    number,
+    UNNEST(review_comments) AS comment
+  FROM
+    spiceai.pulls
+  WHERE
+    number = 6540
+)
+SELECT
+  comment.author,
+  comment.created_at,
+  comment.body
+FROM
+  review_comments
+WHERE comment.author='Advayp';
++---------------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------------+
+| review_comments.comment[author] | review_comments.comment[created_at] | review_comments.comment[body]                                                                             |
++---------------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------------+
+| Advayp                          | 2025-07-22T04:52:23                 | Not yet. I didn't wanna make a large PR, so I decided to separate this functionality out into its own PR. |
+| Advayp                          | 2025-07-22T16:24:26                 | Will rename to `unnest_json_object_to_depth`                                                              |
++---------------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------------+
+```
+
+Query the discussion on a pull request:
+```console
+sql> WITH discussion AS (
+  SELECT
+    number,
+    UNNEST(discussion) AS comment
+  FROM
+    spiceai.pulls
+  WHERE
+    number = 6526
+)
+SELECT
+  comment.author,
+  comment.created_at,
+  comment.body
+FROM
+  discussion
+LIMIT 1;
++----------------------------+--------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| discussion.comment[author] | discussion.comment[created_at] | discussion.comment[body]                                                                                                                                                      |
++----------------------------+--------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| github-actions             | 2025-07-22T01:18:14            | ## ✅ Pull with Spice Passed                                                                                                                                                  |
+|                            |                                |                                                                                                                                                                               |
+|                            |                                | ### Passing checks:                                                                                                                                                           |
+|                            |                                |                                                                                                                                                                               |
+|                            |                                | - ✅ Title meets minimum length requirement (10 characters)                                                                                                                   |
+|                            |                                | - ✅ Has at least one of the required labels: `kind/refactor`, `kind/bug`, `kind/enhancement`, `kind/documentation`, `kind/optimization`, `kind/dependencies`, `kind/endgame` |
+|                            |                                | - ✅ No banned labels detected                                                                                                                                                |
+|                            |                                | - ✅ Has at least one assignee: `peasee`                                                                                                                                      |
+|                            |                                |                                                                                                                                                                               |
+|                            |                                |                                                                                                                                                                               |
++----------------------------+--------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+```
+
 Get the 10 most recent commits:
 
 ```sql
