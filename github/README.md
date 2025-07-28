@@ -110,8 +110,8 @@ Time: 0.010307125 seconds. 10 rows.
 ```
 
 Query the review comments on a pull request:
-```console
-sql> WITH review_comments AS (
+```sql
+WITH review_comments AS (
   SELECT
     number,
     UNNEST(review_comments) AS comment
@@ -127,6 +127,8 @@ SELECT
 FROM
   review_comments
 WHERE comment.author='Advayp';
+```
+```console
 +---------------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------------+
 | review_comments.comment[author] | review_comments.comment[created_at] | review_comments.comment[body]                                                                             |
 +---------------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------------+
@@ -136,8 +138,8 @@ WHERE comment.author='Advayp';
 ```
 
 Query the discussion on a pull request:
-```console
-sql> WITH discussion AS (
+```sql
+WITH discussion AS (
   SELECT
     number,
     UNNEST(discussion) AS comment
@@ -153,6 +155,8 @@ SELECT
 FROM
   discussion
 LIMIT 1;
+```
+```console
 +----------------------------+--------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | discussion.comment[author] | discussion.comment[created_at] | discussion.comment[body]                                                                                                                                                      |
 +----------------------------+--------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
