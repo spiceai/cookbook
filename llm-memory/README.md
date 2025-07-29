@@ -2,7 +2,7 @@
 
 Spice provides persistent memory capabilities for language models, enabling them to retain key information from conversations across sessions. This feature supports building more context-aware and intelligent applications by maintaining memory continuity.
 
-[![Watch the Spice.ai LLM memory demo](https://img.youtube.com/vi/uc8TCAPu1IM/hqdefault.jpg)](https://www.youtube.com/embed/uc8TCAPu1IM)
+[![Watch the Spice.ai LLM memory demo](https://img.youtube.com/vi/NikPkLZJy7w/hqdefault.jpg)](https://www.youtube.com/embed/NikPkLZJy7w)
 
 ## Prerequisites
 
