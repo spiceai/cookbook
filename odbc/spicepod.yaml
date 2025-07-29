@@ -1,0 +1,8 @@
+version: v1
+kind: Spicepod
+name: sqlite_odbc
+datasets:
+  - from: odbc:taxi_trips
+    name: taxi_trips
+    params: &odbc_params
+      odbc_connection_string: "Driver={SQLite3};Database=data.sqlite;"

@@ -1,89 +1,117 @@
 # ODBC Data Connector
 
-Follow these steps to get started with ODBC as a Data Connector.
-
-This recipe will use a demo instance of Postgres. Follow the recipe to create a Postgres instance and get started with Postgres as an ODBC Data Connector.
+Follow these steps to get started with ODBC as a Data Connector. This recipe will create an SQLite database, install the SQLite ODBC driver, and connect to SQLite via ODBC with the Spice Runtime.
 
 ## Preparation
 
-- A running Postgres server with a table loaded with data is installed.
 - Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation).
-- Install the [Postgres ODBC driver](https://odbc.postgresql.org/) for your operating system.
 
 ## Steps
 
-**Step 1.** Configure ODBC connection.
+### Step 1: Install the SQLite ODBC Driver
 
-On Unix systems, ODBC creates a configuration file in `/etc/odbcinst.ini` identifying the available ODBC installations.
+Install the [SQLite ODBC driver](https://github.com/softace/sqliteodbc) for your operating system.
 
-If your Postgres ODBC driver is installed correctly, the following config should appear in the file:
-
-```ini
-[PostgreSQL Unicode]
-Description=PostgreSQL ODBC driver (Unicode version)
-Driver=psqlodbcw.so
-Setup=libodbcpsqlS.so
-Debug=0
-CommLog=1
-UsageCount=1
-```
-
-If this config does not appear in the file, confirm your Postgres ODBC driver is installed and create the config manually if required.
-
-**Step 5.** Initialize a Spice app.
+On Unix, this requires cloning and compiling the SQLite ODBC driver project. First, install build dependencies:
 
 ```bash
-spice init odbc-demo
-cd odbc-demo
+sudo apt-get install unixodbc odbcinst sqlite3 libsqlite3-dev
 ```
 
-In the new `spicepod.yml`, configure your ODBC connection like the following spicepod definition:
+Then, clone and compile the SQLite ODBC driver:
 
-```yaml
-version: v1
-kind: Spicepod
-name: odbc-demo
-datasets:
-  - from: odbc:taxi_trips
-    name: taxi_trips
-    params:
-      odbc_connection_string: Driver={PostgreSQL Unicode};Server=localhost;Port=5432;Database=spice_demo;Uid=postgres
+```bash
+git clone https://github.com/softace/sqliteodbc
+cd sqliteodbc
+./configure && make
+sudo make install
 ```
 
-**Step 6.** Start the Spice Runtime
+Once the driver is installed, configure the ODBC driver profile by editing the `/etc/odbcinst.ini` and adding the SQLite driver:
+
+```ini
+[SQLite3]
+Driver = /usr/local/lib/libsqlite3odbc.so
+```
+
+### Step 2: Setup Data
+
+Setup an SQLite database with some sample data. Use the SQLite CLI to create a database, and run the provided SQL:
+
+```bash
+sqlite3 data.sqlite
+```
+
+```sql
+CREATE TABLE taxi_trips (
+  vendorid INT,
+  tpep_pickup_datetime DATETIME,
+  tpep_dropoff_datetime DATETIME,
+  passenger_count INT,
+  trip_distance FLOAT,
+  ratecodeid INT,
+  store_and_fwd_flag CHAR(1),
+  pulocationid INT,
+  dolocationid INT,
+  payment_type INT,
+  fare_amount FLOAT,
+  extra FLOAT,
+  mta_tax FLOAT,
+  tip_amount FLOAT,
+  tolls_amount FLOAT,
+  improvement_surcharge FLOAT,
+  total_amount FLOAT,
+  congestion_surcharge FLOAT,
+  airport_fee FLOAT
+);
+
+INSERT INTO taxi_trips VALUES
+(2, '2024-01-01 00:57:55', '2024-01-01 01:17:43', 1, 1.72, 1, 'N', 186, 79, 2, 17.7, 1, 0.5, 0, 0, 1, 22.7, 2.5, 0),
+(1, '2024-01-01 00:03:00', '2024-01-01 00:09:36', 1, 1.8, 1, 'N', 140, 236, 1, 10.0, 3.5, 0.5, 3.75, 0, 1, 18.75, 2.5, 0),
+(1, '2024-01-01 00:17:06', '2024-01-01 00:35:01', 1, 4.7, 1, 'N', 236, 79, 1, 23.3, 3.5, 0.5, 3, 0, 1, 31.3, 2.5, 0);
+```
+
+### Step 3: Run Spice
+
+Start Spice inside the cookbook directory, which contains a Spicepod pre-configured to connect to the newly created `taxi_trips` table via ODBC:
 
 ```bash
 spice run
 ```
 
-**Step 7.** Query the `taxi_trips` data
+The Spice Runtime should start and become ready:
 
-Run the Spice REPL.
-
-```bash
-spice sql
+```console
+Spice.ai OSS CLI v1.5.1-build.af574cb4e
+2025/07/29 12:02:26 INFO Checking for latest Spice runtime release...
+2025/07/29 12:02:26 INFO Spice.ai runtime starting...
+2025-07-29T02:02:26.714448Z  INFO spiced: Starting runtime v1.5.1-build.af574cb4e
+2025-07-29T02:02:26.714895Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2025-07-29T02:02:26.714952Z  INFO runtime::init::caching: Initialized search results cache;
+2025-07-29T02:02:27.601396Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2025-07-29T02:02:27.601397Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
+2025-07-29T02:02:27.601542Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2025-07-29T02:02:27.601629Z  INFO runtime::init::dataset: Dataset taxi_trips initializing...
+2025-07-29T02:02:27.602927Z  INFO runtime::init::dataset: Dataset taxi_trips registered (odbc:taxi_trips), results cache enabled.
+2025-07-29T02:02:27.704384Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
-Execute a query to retrieve the `taxi_trips` data.
+### Step 4: Run a query
+
+In a new terminal, use `spice sql` to run a query:
 
 ```sql
-select * from taxi_trips limit 10;
+SELECT * FROM taxi_trips;
 ```
 
-```bash
-sql> select * from taxi_trips limit 10;
+Example output:
+
+```console
 +----------+----------------------+-----------------------+-----------------+---------------+------------+--------------------+--------------+--------------+--------------+-------------+-------+---------+------------+--------------+-----------------------+--------------+----------------------+-------------+
 | vendorid | tpep_pickup_datetime | tpep_dropoff_datetime | passenger_count | trip_distance | ratecodeid | store_and_fwd_flag | pulocationid | dolocationid | payment_type | fare_amount | extra | mta_tax | tip_amount | tolls_amount | improvement_surcharge | total_amount | congestion_surcharge | airport_fee |
 +----------+----------------------+-----------------------+-----------------+---------------+------------+--------------------+--------------+--------------+--------------+-------------+-------+---------+------------+--------------+-----------------------+--------------+----------------------+-------------+
-| 2        | 2024-01-01T00:57:55  | 2024-01-01T01:17:43   | 1.0             | 1.72          | 1.0        | N                  | 186          | 79           | 2            | 17.7        | 1.0   | 0.5     | 0.0        | 0.0          | 1.0                   | 22.7         | 2.5                  | 0.0         |
-| 1        | 2024-01-01T00:03:00  | 2024-01-01T00:09:36   | 1.0             | 1.8           | 1.0        | N                  | 140          | 236          | 1            | 10.0        | 3.5   | 0.5     | 3.75       | 0.0          | 1.0                   | 18.75        | 2.5                  | 0.0         |
-| 1        | 2024-01-01T00:17:06  | 2024-01-01T00:35:01   | 1.0             | 4.7           | 1.0        | N                  | 236          | 79           | 1            | 23.3        | 3.5   | 0.5     | 3.0        | 0.0          | 1.0                   | 31.3         | 2.5                  | 0.0         |
-| 1        | 2024-01-01T00:36:38  | 2024-01-01T00:44:56   | 1.0             | 1.4           | 1.0        | N                  | 79           | 211          | 1            | 10.0        | 3.5   | 0.5     | 2.0        | 0.0          | 1.0                   | 17.0         | 2.5                  | 0.0         |
-| 1        | 2024-01-01T00:46:51  | 2024-01-01T00:52:57   | 1.0             | 0.8           | 1.0        | N                  | 211          | 148          | 1            | 7.9         | 3.5   | 0.5     | 3.2        | 0.0          | 1.0                   | 16.1         | 2.5                  | 0.0         |
-| 1        | 2024-01-01T00:54:08  | 2024-01-01T01:26:31   | 1.0             | 4.7           | 1.0        | N                  | 148          | 141          | 1            | 29.6        | 3.5   | 0.5     | 6.9        | 0.0          | 1.0                   | 41.5         | 2.5                  | 0.0         |
-| 2        | 2024-01-01T00:49:44  | 2024-01-01T01:15:47   | 2.0             | 10.82         | 1.0        | N                  | 138          | 181          | 1            | 45.7        | 6.0   | 0.5     | 10.0       | 0.0          | 1.0                   | 64.95        | 0.0                  | 1.75        |
-| 1        | 2024-01-01T00:30:40  | 2024-01-01T00:58:40   | 0.0             | 3.0           | 1.0        | N                  | 246          | 231          | 2            | 25.4        | 3.5   | 0.5     | 0.0        | 0.0          | 1.0                   | 30.4         | 2.5                  | 0.0         |
-| 2        | 2024-01-01T00:26:01  | 2024-01-01T00:54:12   | 1.0             | 5.44          | 1.0        | N                  | 161          | 261          | 2            | 31.0        | 1.0   | 0.5     | 0.0        | 0.0          | 1.0                   | 36.0         | 2.5                  | 0.0         |
-| 2        | 2024-01-01T00:28:08  | 2024-01-01T00:29:16   | 1.0             | 0.04          | 1.0        | N                  | 113          | 113          | 2            | 3.0         | 1.0   | 0.5     | 0.0        | 0.0          | 1.0                   | 8.0          | 2.5                  | 0.0         |
+| 2        | 2024-01-01T00:57:55  | 2024-01-01T01:17:43   | 1               | 1.72          | 1          | N                  | 186          | 79           | 2            | 17.7        | 1.0   | 0.5     | 0.0        | 0.0          | 1.0                   | 22.7         | 2.5                  | 0.0         |
+| 1        | 2024-01-01T00:03:00  | 2024-01-01T00:09:36   | 1               | 1.8           | 1          | N                  | 140          | 236          | 1            | 10.0        | 3.5   | 0.5     | 3.75       | 0.0          | 1.0                   | 18.75        | 2.5                  | 0.0         |
+| 1        | 2024-01-01T00:17:06  | 2024-01-01T00:35:01   | 1               | 4.7           | 1          | N                  | 236          | 79           | 1            | 23.3        | 3.5   | 0.5     | 3.0        | 0.0          | 1.0                   | 31.3         | 2.5                  | 0.0         |
 +----------+----------------------+-----------------------+-----------------+---------------+------------+--------------------+--------------+--------------+--------------+-------------+-------+---------+------------+--------------+-----------------------+--------------+----------------------+-------------+
 ```
