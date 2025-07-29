@@ -2,6 +2,8 @@
 
 This recipe will walkthrough how to accelerate a local copy of the taxi trips dataset stored in S3 using DuckDB as the data accelerator engine.
 
+[![Watch the Spice.ai local Llama demo](https://img.youtube.com/vi/e1PtA3Hr8x8/hqdefault.jpg)](https://www.youtube.com/embed/e1PtA3Hr8x8)
+
 ## Requirements
 
 - Spice CLI installed (see [Getting Started](https://docs.spiceai.org/getting-started)).
