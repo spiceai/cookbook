@@ -1,0 +1,198 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Single-node Redshift cluster'
+
+Parameters:
+  MasterUsername:
+    Type: String
+    Default: 'admin'
+    Description: 'Master username for Redshift cluster'
+    MinLength: 1
+    MaxLength: 128
+    AllowedPattern: '^[a-z][a-z0-9_]*$'
+  
+  MasterUserPassword:
+    Type: String
+    NoEcho: true
+    Description: 'Master password for Redshift cluster (8-64 chars, must contain uppercase, lowercase, and number)'
+    MinLength: 8
+    MaxLength: 64
+    AllowedPattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]*$'
+
+  DatabaseName:
+    Type: String
+    Default: 'dev'
+    Description: 'Initial database name'
+    MinLength: 1
+    MaxLength: 64
+    AllowedPattern: '^[a-z][a-z0-9_]*$'
+
+Resources:
+  RedshiftVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: '10.0.0.0/16'
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: 'redshift-vpc'
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: 'redshift-igw'
+
+  InternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref RedshiftVPC
+
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref RedshiftVPC
+      AvailabilityZone: !Select [0, !GetAZs '']
+      CidrBlock: '10.0.1.0/24'
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: 'redshift-public-subnet-1'
+
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref RedshiftVPC
+      AvailabilityZone: !Select [1, !GetAZs '']
+      CidrBlock: '10.0.2.0/24'
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: 'redshift-public-subnet-2'
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref RedshiftVPC
+      Tags:
+        - Key: Name
+          Value: 'redshift-public-route-table'
+
+  DefaultPublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: '0.0.0.0/0'
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet1
+
+  PublicSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet2
+
+  RedshiftSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: 'redshift-security-group'
+      GroupDescription: 'Security group for Redshift cluster with public access'
+      VpcId: !Ref RedshiftVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 5439
+          ToPort: 5439
+          CidrIp: '0.0.0.0/0'
+          Description: 'Allow Redshift access from anywhere'
+      Tags:
+        - Key: Name
+          Value: 'redshift-security-group'
+
+  RedshiftSubnetGroup:
+    Type: AWS::Redshift::ClusterSubnetGroup
+    Properties:
+      Description: 'Subnet group for Redshift cluster'
+      SubnetIds:
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
+      Tags:
+        - Key: Name
+          Value: 'redshift-subnet-group'
+
+  RedshiftParameterGroup:
+    Type: AWS::Redshift::ClusterParameterGroup
+    Properties:
+      Description: 'Parameter group for cost-optimized Redshift cluster'
+      ParameterGroupFamily: 'redshift-1.0'
+      Parameters:
+        - ParameterName: 'enable_user_activity_logging'
+          ParameterValue: 'false'
+        - ParameterName: 'max_concurrency_scaling_clusters'
+          ParameterValue: '0'
+
+  RedshiftCluster:
+    Type: AWS::Redshift::Cluster
+    Properties:
+      ClusterType: 'single-node'
+      NodeType: 'ra3.large'
+      MasterUsername: !Ref MasterUsername
+      MasterUserPassword: !Ref MasterUserPassword
+      DBName: !Ref DatabaseName
+      ClusterIdentifier: !Sub '${AWS::StackName}-redshift-cluster'
+      VpcSecurityGroupIds:
+        - !Ref RedshiftSecurityGroup
+      ClusterSubnetGroupName: !Ref RedshiftSubnetGroup
+      ClusterParameterGroupName: !Ref RedshiftParameterGroup
+      PubliclyAccessible: true
+      Port: 5439
+      AutomatedSnapshotRetentionPeriod: 1
+      PreferredMaintenanceWindow: 'sun:05:00-sun:06:00'
+      AllowVersionUpgrade: true
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-redshift-cluster'
+        - Key: Environment
+          Value: 'development'
+
+Outputs:
+  VPCId:
+    Description: 'VPC ID'
+    Value: !Ref RedshiftVPC
+    Export:
+      Name: !Sub '${AWS::StackName}-VPC-ID'
+
+  RedshiftClusterEndpoint:
+    Description: 'Redshift cluster endpoint'
+    Value: !GetAtt RedshiftCluster.Endpoint.Address
+    Export:
+      Name: !Sub '${AWS::StackName}-Redshift-Endpoint'
+
+  RedshiftClusterPort:
+    Description: 'Redshift cluster port'
+    Value: !GetAtt RedshiftCluster.Endpoint.Port
+    Export:
+      Name: !Sub '${AWS::StackName}-Redshift-Port'
+
+  RedshiftJDBCURL:
+    Description: 'JDBC connection URL for Redshift cluster'
+    Value: !Sub 'jdbc:redshift://${RedshiftCluster.Endpoint.Address}:${RedshiftCluster.Endpoint.Port}/${DatabaseName}'
+
+  RedshiftClusterIdentifier:
+    Description: 'Redshift cluster identifier'
+    Value: !Ref RedshiftCluster
+    Export:
+      Name: !Sub '${AWS::StackName}-Redshift-Cluster-ID'
+
+  SecurityGroupId:
+    Description: 'Security Group ID for Redshift cluster'
+    Value: !Ref RedshiftSecurityGroup
+    Export:
+      Name: !Sub '${AWS::StackName}-Security-Group-ID'
