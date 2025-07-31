@@ -1,0 +1,99 @@
+version: v1beta1
+kind: Spicepod
+name: tpch-read
+datasets:
+  - from: postgres:public.customer
+    name: customer
+    params:
+      pg_host: ${secrets:PG_HOST}
+      pg_port: 5439
+      pg_sslmode: prefer
+      pg_db: dev
+      pg_user: ${secrets:PG_USER}
+      pg_pass: ${secrets:PG_PASS}
+    acceleration:
+      enabled: true
+
+  - from: postgres:public.lineitem
+    name: lineitem
+    params:
+      pg_host: ${secrets:PG_HOST}
+      pg_port: 5439
+      pg_sslmode: prefer
+      pg_db: dev
+      pg_user: ${secrets:PG_USER}
+      pg_pass: ${secrets:PG_PASS}
+    acceleration:
+      enabled: true
+
+  - from: postgres:public.nation
+    name: nation
+    params:
+      pg_host: ${secrets:PG_HOST}
+      pg_port: 5439
+      pg_sslmode: prefer
+      pg_db: dev
+      pg_user: ${secrets:PG_USER}
+      pg_pass: ${secrets:PG_PASS}
+    acceleration:
+      enabled: true
+
+  - from: postgres:public.orders
+    name: orders
+    params:
+      pg_host: ${secrets:PG_HOST}
+      pg_port: 5439
+      pg_sslmode: prefer
+      pg_db: dev
+      pg_user: ${secrets:PG_USER}
+      pg_pass: ${secrets:PG_PASS}
+    acceleration:
+      enabled: true
+
+  - from: postgres:public.part
+    name: part
+    params:
+      pg_host: ${secrets:PG_HOST}
+      pg_port: 5439
+      pg_sslmode: prefer
+      pg_db: dev
+      pg_user: ${secrets:PG_USER}
+      pg_pass: ${secrets:PG_PASS}
+    acceleration:
+      enabled: true
+
+  - from: postgres:public.partsupp
+    name: partsupp
+    params:
+      pg_host: ${secrets:PG_HOST}
+      pg_port: 5439
+      pg_sslmode: prefer
+      pg_db: dev
+      pg_user: ${secrets:PG_USER}
+      pg_pass: ${secrets:PG_PASS}
+    acceleration:
+      enabled: true
+
+  - from: postgres:public.region
+    name: region
+    params:
+      pg_host: ${secrets:PG_HOST}
+      pg_port: 5439
+      pg_sslmode: prefer
+      pg_db: dev
+      pg_user: ${secrets:PG_USER}
+      pg_pass: ${secrets:PG_PASS}
+    acceleration:
+      enabled: true
+
+  - from: postgres:public.supplier
+    name: supplier
+    params:
+      pg_host: ${secrets:PG_HOST}
+      pg_port: 5439
+      pg_sslmode: prefer
+      pg_db: dev
+      pg_user: ${secrets:PG_USER}
+      pg_pass: ${secrets:PG_PASS}
+    acceleration:
+      enabled: true

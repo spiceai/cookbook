@@ -1,15 +1,15 @@
 version: v1beta1
 kind: Spicepod
-name: tpch
+name: tpch-write
 datasets:
   - from: s3://spiceai-demo-datasets/tpch/customer/
-    name: tpch.customer
+    name: customer
     params:
       file_format: parquet
     acceleration:
       enabled: true
       engine: postgresql
-      refresh_sql: select * from tpch.customer limit 1000
+      refresh_sql: select * from customer limit 1000
       params:
         pg_host: ${secrets:PG_HOST}
         pg_port: 5439
@@ -19,13 +19,13 @@ datasets:
         pg_pass: ${secrets:PG_PASS}
 
   - from: s3://spiceai-demo-datasets/tpch/lineitem/
-    name: tpch.lineitem
+    name: lineitem
     params:
       file_format: parquet
     acceleration:
       enabled: true
       engine: postgresql
-      refresh_sql: select * from tpch.lineitem limit 1000
+      refresh_sql: select * from lineitem limit 1000
       params:
         pg_host: ${secrets:PG_HOST}
         pg_port: 5439
@@ -35,13 +35,13 @@ datasets:
         pg_pass: ${secrets:PG_PASS}
 
   - from: s3://spiceai-demo-datasets/tpch/nation/
-    name: tpch.nation
+    name: nation
     params:
       file_format: parquet
     acceleration:
       enabled: true
       engine: postgresql
-      refresh_sql: select * from tpch.nation limit 1000
+      refresh_sql: select * from nation limit 1000
       params:
         pg_host: ${secrets:PG_HOST}
         pg_port: 5439
@@ -51,13 +51,13 @@ datasets:
         pg_pass: ${secrets:PG_PASS}
 
   - from: s3://spiceai-demo-datasets/tpch/orders/
-    name: tpch.orders
+    name: orders
     params:
       file_format: parquet
     acceleration:
       enabled: true
       engine: postgresql
-      refresh_sql: select * from tpch.orders limit 1000
+      refresh_sql: select * from orders limit 1000
       params:
         pg_host: ${secrets:PG_HOST}
         pg_port: 5439
@@ -67,13 +67,13 @@ datasets:
         pg_pass: ${secrets:PG_PASS}
 
   - from: s3://spiceai-demo-datasets/tpch/part/
-    name: tpch.part
+    name: part
     params:
       file_format: parquet
     acceleration:
       enabled: true
       engine: postgresql
-      refresh_sql: select * from tpch.part limit 1000
+      refresh_sql: select * from part limit 1000
       params:
         pg_host: ${secrets:PG_HOST}
         pg_port: 5439
@@ -83,13 +83,13 @@ datasets:
         pg_pass: ${secrets:PG_PASS}
 
   - from: s3://spiceai-demo-datasets/tpch/partsupp/
-    name: tpch.partsupp
+    name: partsupp
     params:
       file_format: parquet
     acceleration:
       enabled: true
       engine: postgresql
-      refresh_sql: select * from tpch.partsupp limit 1000
+      refresh_sql: select * from partsupp limit 1000
       params:
         pg_host: ${secrets:PG_HOST}
         pg_port: 5439
@@ -99,13 +99,13 @@ datasets:
         pg_pass: ${secrets:PG_PASS}
 
   - from: s3://spiceai-demo-datasets/tpch/region/
-    name: tpch.region
+    name: region
     params:
       file_format: parquet
     acceleration:
       enabled: true
       engine: postgresql
-      refresh_sql: select * from tpch.region limit 1000
+      refresh_sql: select * from region limit 1000
       params:
         pg_host: ${secrets:PG_HOST}
         pg_port: 5439
@@ -115,13 +115,13 @@ datasets:
         pg_pass: ${secrets:PG_PASS}
 
   - from: s3://spiceai-demo-datasets/tpch/supplier/
-    name: tpch.supplier
+    name: supplier
     params:
       file_format: parquet
     acceleration:
       enabled: true
       engine: postgresql
-      refresh_sql: select * from tpch.supplier limit 1000
+      refresh_sql: select * from supplier limit 1000
       params:
         pg_host: ${secrets:PG_HOST}
         pg_port: 5439
