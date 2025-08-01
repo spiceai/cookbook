@@ -118,13 +118,10 @@ dev=# \d+ "lineitem"
 Has OIDs: yes
 ```
 
-Finally, run a TPCH query:
+Run *Pricing Summary Report Query (Q1)*. More information about TPC-H and all the queries involved can be found in the official [TPC Benchmark H Standard Specification](https://www.tpc.org/tpc_documents_current_versions/pdf/tpc-h_v2.17.1.pdf).
 
-```
-dev=# \x
-Expanded display is on.
-
-dev=# select
+```sql
+select
         l_returnflag,
         l_linestatus,
         sum(l_quantity) as sum_qty,
@@ -147,7 +144,9 @@ order by
         l_linestatus
 limit 2
 ;
+```
 
+```
 -[ RECORD 1 ]--+---------------
 l_returnflag   | A
 l_linestatus   | F
@@ -268,10 +267,10 @@ sql> describe lineitem;
 +-----------------+-------------------+-------------+
 ```
 
-Run a TPCH query:
-```
-Time: 0.010364958 seconds. 16 rows.
-sql> select
+Run *Pricing Summary Report Query (Q1)*. More information about TPC-H and all the queries involved can be found in the official [TPC Benchmark H Standard Specification](https://www.tpc.org/tpc_documents_current_versions/pdf/tpc-h_v2.17.1.pdf).
+
+```sql
+select
         l_returnflag,
         l_linestatus,
         sum(l_quantity) as sum_qty,
@@ -294,6 +293,9 @@ order by
         l_linestatus
 limit 2
 ;
+```
+
+```
 +--------------+--------------+---------+----------------+----------------+----------------+-----------+--------------+----------+-------------+
 | l_returnflag | l_linestatus | sum_qty | sum_base_price | sum_disc_price | sum_charge     | avg_qty   | avg_price    | avg_disc | count_order |
 +--------------+--------------+---------+----------------+----------------+----------------+-----------+--------------+----------+-------------+
@@ -302,7 +304,7 @@ limit 2
 +--------------+--------------+---------+----------------+----------------+----------------+-----------+--------------+----------+-------------+
 ```
 
-#### Tear down Amazon infrastructure
+**Step 4.** Tear down Amazon infrastructure
 
 Using the same stack name from earlier, delete the Redshift instance you set up.
 
