@@ -16,6 +16,7 @@ GITHUB_TOKEN=<your_github_token>
 **Setp 2.** Run the Spice runtime with `spice run` from the directory with the `spicepod.yaml` file.
 
 ```bash
+git clone https://github.com/spiceai/cookbook # Skip if already cloned
 cd cookbook/github
 spice run
 ```
