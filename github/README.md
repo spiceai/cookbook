@@ -7,6 +7,13 @@ This recipe will use the [spiceai/spiceai](https://github.com/spiceai/spiceai) r
 - Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation).
 - GitHub personal access token, [Learn more](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic) how to create one.
 
+**Step 0.** Clone the repository if not already cloned.
+
+```bash
+git clone https://github.com/spiceai/cookbook # Skip if already cloned
+cd cookbook
+```
+
 **Step 1.** Copy the `.env` file into a new `.env.local` file in this directory, and set the `GITHUB_TOKEN` environment variable to your personal access token.
 
 ```env
@@ -16,7 +23,6 @@ GITHUB_TOKEN=<your_github_token>
 **Setp 2.** Run the Spice runtime with `spice run` from the directory with the `spicepod.yaml` file.
 
 ```bash
-git clone https://github.com/spiceai/cookbook # Skip if already cloned
 cd cookbook/github
 spice run
 ```
