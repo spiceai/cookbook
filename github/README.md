@@ -7,6 +7,13 @@ This recipe will use the [spiceai/spiceai](https://github.com/spiceai/spiceai) r
 - Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation).
 - GitHub personal access token, [Learn more](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic) how to create one.
 
+**Step 0.** Clone the repository if not already cloned.
+
+```bash
+git clone https://github.com/spiceai/cookbook # Skip if already cloned
+cd cookbook
+```
+
 **Step 1.** Copy the `.env` file into a new `.env.local` file in this directory, and set the `GITHUB_TOKEN` environment variable to your personal access token.
 
 ```env
@@ -117,24 +124,24 @@ WITH review_comments AS (
     UNNEST(review_comments) AS comment
   FROM
     spiceai.pulls
-  WHERE
-    number = 6540
 )
+
 SELECT
   comment.author,
   comment.created_at,
   comment.body
 FROM
   review_comments
-WHERE comment.author='Advayp';
+LIMIT 1;
 ```
 ```console
-+---------------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------------+
-| review_comments.comment[author] | review_comments.comment[created_at] | review_comments.comment[body]                                                                             |
-+---------------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------------+
-| Advayp                          | 2025-07-22T04:52:23                 | Not yet. I didn't wanna make a large PR, so I decided to separate this functionality out into its own PR. |
-| Advayp                          | 2025-07-22T16:24:26                 | Will rename to `unnest_json_object_to_depth`                                                              |
-+---------------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------------+
++---------------------------------+-------------------------------------+---------------------------------+
+| review_comments.comment[author] | review_comments.comment[created_at] | review_comments.comment[body]   |
++---------------------------------+-------------------------------------+---------------------------------+
+| sgrebnov                        | 2025-07-31T05:51:11                 | This is case insensitive regexp |
++---------------------------------+-------------------------------------+---------------------------------+
+
+Time: 0.046107542 seconds. 1 rows.
 ```
 
 Query the discussion on a pull request:
@@ -145,9 +152,8 @@ WITH discussion AS (
     UNNEST(discussion) AS comment
   FROM
     spiceai.pulls
-  WHERE
-    number = 6526
 )
+
 SELECT
   comment.author,
   comment.created_at,
