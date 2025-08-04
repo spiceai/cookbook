@@ -413,5 +413,3 @@ Create a Databricks service principal by following the [Databricks documentation
    | 1         | Customer#000000001 | j5JsirBM9PsCy0O1m | 15          | 25-989-741-2988 | 711.56    | BUILDING     | y final requests wake slyly quickly special accounts. blithely |
    +-----------+--------------------+-------------------+-------------+-----------------+-----------+--------------+----------------------------------------------------------------+
    ```
-
-## Databricks Service Principal auth
