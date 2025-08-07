@@ -6,7 +6,7 @@ mc anonymous set public minio/hadoop
 
 wget https://github.com/duckdb/duckdb/releases/download/v1.3.2/duckdb_cli-linux-amd64.zip
 unzip duckdb_cli-linux-amd64.zip
-./duckdb -s <<EOF
+./duckdb <<EOF
 INSTALL tpch;
 LOAD tpch;
 CALL dbgen(sf=1);
