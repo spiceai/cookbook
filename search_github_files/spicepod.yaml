@@ -27,6 +27,7 @@ datasets:
   #     github_token: ${secrets:GITHUB_TOKEN}
   #   acceleration:
   #     enabled: true
+  #     refresh_sql: SELECT * FROM doc.pulls LIMIT 300
   #   columns:
   #     - name: title
   #       full_text_search:
