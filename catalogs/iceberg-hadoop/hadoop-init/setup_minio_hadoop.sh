@@ -4,8 +4,26 @@ mc alias set minio http://minio:9000 admin password
 mc mb minio/hadoop
 mc anonymous set public minio/hadoop
 
-wget https://github.com/duckdb/duckdb/releases/download/v1.3.2/duckdb_cli-linux-amd64.zip
-unzip duckdb_cli-linux-amd64.zip
+ARCH=$(uname -m)
+VERSION="v1.3.2"
+
+echo "I'm running on $ARCH."
+
+if [[ "$ARCH" == "x86_64" ]]; then
+  ARCH_NAME="amd64"
+elif [[ "$ARCH" == "aarch64" ]]; then
+  ARCH_NAME="arm64"
+elif [[ "$ARCH" == "arm64" ]]; then
+  ARCH_NAME="arm64"
+else
+  echo "Unsupported architecture: $ARCH"
+  exit 1
+fi
+
+echo "I'm downloading: 'wget https://github.com/duckdb/duckdb/releases/download/${VERSION}/duckdb_cli-linux-${ARCH_NAME}.zip'"
+wget "https://github.com/duckdb/duckdb/releases/download/${VERSION}/duckdb_cli-linux-${ARCH_NAME}.zip"
+unzip duckdb_cli-linux-${ARCH_NAME}.zip
+
 ./duckdb <<EOF
 INSTALL tpch;
 LOAD tpch;

@@ -6,7 +6,7 @@ catalogs:
     - from: iceberg:s3://hadoop/
       name: hadoop
       include:
-          - "tpch.*"
+         - "tpch.*"
       params:
           iceberg_s3_endpoint: http://localhost:9000
           iceberg_s3_access_key_id: admin
