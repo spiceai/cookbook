@@ -48,7 +48,7 @@ curl -H "x-api-key: foobar" -XPOST -i http://localhost:8090/v1/sql -d 'SELECT 1'
 Output:
 
 ```shell
-curl -H "x-api-key: foobar" -XPOST -i http://localhost:8090/v1/sql -d 'SELECT 1'
+curl -H "x-api-key: foobar" -H 'Content-Type: text/plain' -XPOST -i http://localhost:8090/v1/sql -d 'SELECT 1'
 HTTP/1.1 200 OK
 content-type: text/plain; charset=utf-8
 x-cache: Miss from spiceai

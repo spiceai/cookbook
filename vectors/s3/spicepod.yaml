@@ -3,7 +3,7 @@ kind: Spicepod
 name: github_pull_requests
 
 datasets:
-  - from: github:github.com/spiceai/spiceai/pulls
+  - from: github:github.com/spiceai/cookbook/pulls
     name: pulls
     params:
       github_query_mode: search
@@ -18,26 +18,24 @@ datasets:
       params:
         s3_vectors_bucket: spiceai-cookbook
         s3_vectors_aws_region: us-east-2
-        s3_vectors_aws_access_key_id: ${secrets:S3_VECTORS_AWS_ACCESS_KEY_ID}
-        s3_vectors_aws_secret_access_key: ${secrets:S3_VECTORS_AWS_SECRET_ACCESS_KEY}
-
-        ## If needed, uncomment out.
-        s3_vectors_aws_session_token: ${secrets:S3_VECTORS_AWS_SESSION_TOKEN}
+        s3_vectors_aws_access_key_id: ${secrets:AWS_ACCESS_KEY_ID}
+        s3_vectors_aws_secret_access_key: ${secrets:AWS_SECRET_ACCESS_KEY}
+        s3_vectors_aws_session_token: ${secrets:AWS_SESSION_TOKEN} ## If not needed, comment out.
     columns:
       - name: body
         embeddings:
           - from: my_embedding_model
             row_id:
               - id
-      # - name: title
-      #   metadata:
-      #     vectors: filterable
-      # - name: url
-      #   metadata:
-      #     vectors: non-filterable
-      # - name: state
-      #   metadata:
-      #     vectors: filterable
+      - name: title
+        metadata:
+          vectors: filterable
+      - name: url
+        metadata:
+          vectors: non-filterable
+      - name: state
+        metadata:
+          vectors: filterable
 
 embeddings:
   - name: my_embedding_model

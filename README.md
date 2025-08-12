@@ -1,6 +1,6 @@
 # Spice.ai OSS Cookbook
 
-The Spice.ai OSS Cookbook is a collection of recipes for building and deploying data & AI applications using Spice.ai. Each recipe is a self-contained example that demonstrates a specific use case or feature of Spice.ai.
+Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for building and deploying data & AI applications using Spice.ai. Each recipe is a self-contained example that demonstrates a specific use case, integration, or feature of Spice.ai, helping you accelerate your data and AI projects.
 
 ## Recipes
 
@@ -89,6 +89,10 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 - [Unity Catalog Connector](./catalogs/unity_catalog/README.md)
 - [Iceberg Catalog Connector](./catalogs/iceberg/README.md)
 - [Glue Catalog Connector](./catalogs/glue/README.md)
+
+### Using Vector Engines
+
+- [Amazon S3 Vectors](./vectors/s3-vectors/README.md) - Use Amazon S3 as a vector engine for embeddings and similarity search.
 
 ### Deployment and Installation
 
