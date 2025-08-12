@@ -1,14 +1,14 @@
-# redshift-tpch-roundtrip
+# Amazon Redshift
+
+This guide demonstrates how to use Spice to read and write TPC-H data with Amazon Redshift, a PostgreSQL-compatible columnar OLAP database.
 
 > TPC-H is a decision support benchmark. It consists of a suite of business-oriented ad hoc queries and concurrent data modifications. The queries and the data populating the database have been chosen to have broad industry-wide relevance. This benchmark illustrates decision support systems that examine large volumes of data, execute queries with a high degree of complexity, and give answers to critical business questions.
 >
 > - [TPC Benchmark™ H (TPC-H)](https://www.tpc.org/tpch/)
 
-This cookbook is meant to demonstrate Spice's ability to read and write to Redshift, a PostgreSQL-line compatible columnar OLAP database. 
+## **Step 1.** Create a Redshift cluster
 
-**Step 1.** Create a Redshift cluster
-
-Use either the AWS console or the CLI to deploy Redshift:
+A Redshift cluster can be deployed using the AWS console or CLI. The following example demonstrates deployment using the AWS CLI:
 
 ```bash
 aws cloudformation create-stack \
@@ -20,9 +20,9 @@ aws cloudformation create-stack \
                ParameterKey=DatabaseName,ParameterValue=dev
 ```
 
-**Step 2.** Write data into Redshift as an accelerator target
+## Step 2: Writing Data into Redshift
 
-Start Spice:
+To write data into Redshift, navigate to the `write` directory and start Spice using the following command:
 
 ```bash
 cd write
@@ -31,7 +31,7 @@ spice run
 
 You should see this output in your terminal window:
 
-```
+```bash
 2025-08-01T01:15:06.019931Z  INFO spiced: Starting runtime v1.6.0-unstable-build.184ebb772
 2025-08-01T01:15:06.022725Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
 2025-08-01T01:15:06.022949Z  INFO runtime::init::caching: Initialized search results cache;
@@ -75,7 +75,7 @@ You should see this output in your terminal window:
 
 Validate that the correct tables have been made in PostgreSQL using the `psql` command-line utility:
 
-```
+```sql
 $ psql -h host -p5439 -Uadmin dev
 dev=# \d
                    List of relations
@@ -92,9 +92,9 @@ dev=# \d
  public | supplier                | table | admin
 ```
 
-Validate the schema of a table:
+To validate the schema of a table, use the `\d+` command. For example:
 
-```
+```sql
 dev=# \d+ "lineitem"
                                            Table "public.lineitem"
      Column      |          Type          | Collation | Nullable | Default | Storage  | Stats target | Description
@@ -118,7 +118,7 @@ dev=# \d+ "lineitem"
 Has OIDs: yes
 ```
 
-Run *Pricing Summary Report Query (Q1)*. More information about TPC-H and all the queries involved can be found in the official [TPC Benchmark H Standard Specification](https://www.tpc.org/tpc_documents_current_versions/pdf/tpc-h_v2.17.1.pdf).
+Run the _Pricing Summary Report Query (Q1)_ to validate data. The query and its expected output are detailed in the [TPC Benchmark H Standard Specification](https://www.tpc.org/tpc_documents_current_versions/pdf/tpc-h_v2.17.1.pdf):
 
 ```sql
 select
@@ -146,7 +146,7 @@ limit 2
 ;
 ```
 
-```
+```sql
 -[ RECORD 1 ]--+---------------
 l_returnflag   | A
 l_linestatus   | F
@@ -171,9 +171,9 @@ avg_disc       | 0.03
 count_order    | 10
 ```
 
-**Step 3.** Read data from Redshift via PostgreSQL connector
+## Step 3: Reading Data from Redshift
 
-Start Spice:
+To read data from Redshift, navigate to the `read` directory and start Spice:
 
 ```bash
 cd read
@@ -181,18 +181,19 @@ spice run
 ```
 
 You should see this output in your terminal window:
-```
+
+```bash
 2025-08-01T01:15:40.066625Z  INFO spiced: Starting runtime v1.6.0-unstable-build.184ebb772
 2025-08-01T01:15:40.069247Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
 2025-08-01T01:15:40.069468Z  INFO runtime::init::caching: Initialized search results cache;
-2025-08-01T01:15:40.306607Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052                           
+2025-08-01T01:15:40.306607Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2025-08-01T01:15:40.306719Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2025-08-01T01:15:40.308188Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-08-01T01:15:40.308507Z  INFO runtime::init::dataset: Dataset orders initializing...
-2025-08-01T01:15:40.308511Z  INFO runtime::init::dataset: Dataset region initializing...                                                     
+2025-08-01T01:15:40.308511Z  INFO runtime::init::dataset: Dataset region initializing...
 2025-08-01T01:15:40.308587Z  INFO runtime::init::dataset: Dataset part initializing...
 2025-08-01T01:15:40.308563Z  INFO runtime::init::dataset: Dataset nation initializing...
-2025-08-01T01:15:40.308584Z  INFO runtime::init::dataset: Dataset customer initializing...                                                   
+2025-08-01T01:15:40.308584Z  INFO runtime::init::dataset: Dataset customer initializing...
 2025-08-01T01:15:40.308603Z  INFO runtime::init::dataset: Dataset supplier initializing...
 2025-08-01T01:15:40.308684Z  INFO runtime::init::dataset: Dataset partsupp initializing...
 2025-08-01T01:15:40.308770Z  INFO runtime::init::dataset: Dataset lineitem initializing...
@@ -224,7 +225,8 @@ You should see this output in your terminal window:
 ```
 
 Validate that the correct tables have been made:
-```
+
+```sql
 spice sql
 sql> show tables;
 +---------------+--------------+--------------+------------+
@@ -242,8 +244,9 @@ sql> show tables;
 +---------------+--------------+--------------+------------+
 ```
 
-Validate the schema of `lineitem`:
-```
+To validate the schema of `lineitem`, use the `describe` command:
+
+```sql
 sql> describe lineitem;
 +-----------------+-------------------+-------------+
 | column_name     | data_type         | is_nullable |
@@ -267,7 +270,7 @@ sql> describe lineitem;
 +-----------------+-------------------+-------------+
 ```
 
-Run *Pricing Summary Report Query (Q1)*. More information about TPC-H and all the queries involved can be found in the official [TPC Benchmark H Standard Specification](https://www.tpc.org/tpc_documents_current_versions/pdf/tpc-h_v2.17.1.pdf).
+Run the _Pricing Summary Report Query (Q1)_ to validate data. The query and its expected output are detailed in the [TPC Benchmark H Standard Specification](https://www.tpc.org/tpc_documents_current_versions/pdf/tpc-h_v2.17.1.pdf):
 
 ```sql
 select
@@ -295,7 +298,7 @@ limit 2
 ;
 ```
 
-```
+```sql
 +--------------+--------------+---------+----------------+----------------+----------------+-----------+--------------+----------+-------------+
 | l_returnflag | l_linestatus | sum_qty | sum_base_price | sum_disc_price | sum_charge     | avg_qty   | avg_price    | avg_disc | count_order |
 +--------------+--------------+---------+----------------+----------------+----------------+-----------+--------------+----------+-------------+
@@ -304,9 +307,9 @@ limit 2
 +--------------+--------------+---------+----------------+----------------+----------------+-----------+--------------+----------+-------------+
 ```
 
-**Step 4.** Tear down Amazon infrastructure
+## Step 4: Tearing Down Infrastructure
 
-Using the same stack name from earlier, delete the Redshift instance you set up.
+To delete the Redshift instance, use the same stack name provided during setup:
 
 ```bash
 aws cloudformation delete-stack --stack-name redshift-tpc

@@ -73,6 +73,7 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 - [GraphQL Data Connector](./graphql/README.md)
 - [MSSQL (Microsoft SQL Server) Data Connector](./mssql/README.md)
 - [ODBC Data Connector](./odbc/README.md)
+- [Amazon Redshift](./redshift/README.md) - Read and write TPC-H data with Amazon Redshift.
 - [Oracle Data Connector](./oracle/README.md)
 - [S3 Data Connector](./s3/README.md)
 - [SharePoint/OneDrive for Business Data Connector](./sharepoint/README.md)
