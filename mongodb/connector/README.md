@@ -1,6 +1,6 @@
 # MongoDB Data Connector
 
-This recipe will use a demo instance of MongoDB with a dataset generated using SQL stored procedure. Follow the recipe to create MongoDB instance and get started with MongoDB as a Data Connector.
+This recipe will use a demo instance of MongoDB with a generated dataset. Follow the recipe to create MongoDB instance and get started with MongoDB as a Data Connector.
 
 ## Prerequisites
 
