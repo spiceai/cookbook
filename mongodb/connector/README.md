@@ -9,7 +9,7 @@ This recipe will use a demo instance of MongoDB with a generated dataset. Follow
 
 ## Steps
 
-**Step 1.** Optional. Start a MongoDB instance using Docker, if MongoDB is not installed.
+**Step 1.** Optional. Start a MongoDB instance using Docker
 
 ```bash
 docker run --name mongodb-cookbook -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=password -e MONGO_INITDB_DATABASE=mongo_db -p 27018:27017 -d mongo:7.0
