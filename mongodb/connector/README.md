@@ -4,19 +4,18 @@ This recipe will use a demo instance of MongoDB with a generated dataset. Follow
 
 ## Prerequisites
 
-- Install [MongoDB](https://www.mongodb.com/docs/manual/installation/).
-  - Alternatively, you can use [Docker](https://docs.docker.com/get-docker/) to run a MongoDB instance.
+- [Docker](https://docs.docker.com/get-docker/)is installed
 - Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation).
 
 ## Steps
 
-**Step 0.** Optional. Start a MongoDB instance using Docker, if MongoDB is not installed.
+**Step 1.** Optional. Start a MongoDB instance using Docker, if MongoDB is not installed.
 
 ```bash
-docker run --name mongodb-cookbook -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=password -e MONGO_INITDB_DATABASE=mongo_db -p 27017:27017 -d mongo:7.0
+docker run --name mongodb-cookbook -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=password -e MONGO_INITDB_DATABASE=mongo_db -p 27018:27017 -d mongo:7.0
 ```
 
-**Step 1.** Create a sample MongoDB database and generate a testing collection
+**Step 2.** Create a sample MongoDB database and generate a testing collection
 
 Invoke MongoDB in the prompt.
 
@@ -79,14 +78,14 @@ docker exec -i mongodb-cookbook mongosh -u root -p password --authenticationData
 }
 ```
 
-**Step 2.** Initialize a Spice app.
+**Step 3.** Initialize a Spice app.
 
 ```bash
 spice init mongodb-demo
 cd mongodb-demo
 ```
 
-**Step 3.** Configure the dataset to connect to MongoDB. Copy and paste the configuration below to `spicepod.yaml` in the Spice app.
+**Step 4.** Configure the dataset to connect to MongoDB. Copy and paste the configuration below to `spicepod.yaml` in the Spice app.
 
 ```yaml
 version: v1
@@ -97,7 +96,7 @@ datasets:
     name: sample_data
     params:
       mongodb_host: localhost
-      mongodb_port: 27017
+      mongodb_port: 27018
       mongodb_db: spice_demo
       mongodb_sslmode: disabled
       mongodb_user: root
@@ -113,7 +112,7 @@ echo "MONGODB_PASS=<password>" > .env
 # i.e. echo "MONGODB_PASS=123" > .env
 ```
 
-**Step 4.** Start the Spice runtime
+**Step 5.** Start the Spice runtime
 
 ```bash
 spice run
@@ -136,7 +135,7 @@ Follow the [getting started guide](https://docs.spiceai.org/getting-started) to 
 
 See the [datasets reference](https://docs.spiceai.org/reference/spicepod/datasets) for more dataset configuration options.
 
-**Step 5.** Run queries against the dataset using the Spice SQL REPL.
+**Step 6.** Run queries against the dataset using the Spice SQL REPL.
 
 In a new terminal, start the Spice SQL REPL
 
@@ -170,3 +169,9 @@ Time: 0.011687958 seconds. 10 rows.
 ```
 
 For more information on using `spice sql`, see the [CLI reference](https://docs.spiceai.org/cli/reference/sql).
+
+**Step 6.** Cleanup
+
+```bash
+docker rm -f mongodb-cookbook 
+```
