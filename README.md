@@ -80,6 +80,7 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 - [Snowflake Data Connector](./snowflake/README.md)
 - [Spice.ai Cloud Platform Data Connector](./spiceai/README.md)
 - [Apache Spark Data Connector](./spark/README.md)
+- [Kafka Data Connector](./kafka/README.md)
 - [IMAP Data Connector](./imap/README.md)
   - [Connecting to an Outlook mailbox](./imap/outlook.md)
 

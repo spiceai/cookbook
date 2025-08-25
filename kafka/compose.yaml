@@ -1,0 +1,70 @@
+services:
+  broker:
+    image: apache/kafka:latest
+    container_name: broker
+    hostname: broker
+    ports:
+      - '9092:9092'
+    environment:
+      # ---- KRaft single-node broker/controller ----
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_NODE_ID: 1
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@broker:29093
+      KAFKA_LISTENERS: PLAINTEXT://broker:29092,CONTROLLER://broker:29093,PLAINTEXT_HOST://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
+
+      # ---- Required for KRaft format-on-first-boot (must be 22 char base64) ----
+      CLUSTER_ID: 4L6g3nShT-eMCtKqQiItQg
+
+      # ---- Single-broker friendly defaults ----
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+    healthcheck:
+      test: ["CMD", "/opt/kafka/bin/kafka-topics.sh", "--list", "--bootstrap-server", "broker:29092"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+     
+
+  topic-setup:
+    image: apache/kafka:latest
+    depends_on:
+      broker:
+        condition: service_healthy
+    entrypoint: >
+      sh -c "/opt/kafka/bin/kafka-topics.sh --create --if-not-exists --topic orders_events --bootstrap-server broker:29092 --replication-factor 1 --partitions 10 && echo 'orders_events topic created'; sleep 2"
+
+  producer:
+    image: python:3.11-slim
+    depends_on:
+      broker:
+        condition: service_healthy
+      topic-setup:
+        condition: service_started
+    environment:
+      BOOTSTRAP_SERVERS: "broker:29092"
+      TOPIC: "orders_events"
+      MPS: "1" # messages per second
+    volumes:
+      - ./producer.py:/app/producer.py:ro
+      - ./data_generator.py:/app/data_generator.py:ro
+    entrypoint: >
+      sh -c "pip install -q confluent-kafka && python -u /app/producer.py"
+  
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - "8080:8080"
+    depends_on:
+      broker:
+        condition: service_healthy
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: broker:29092
