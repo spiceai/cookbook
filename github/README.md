@@ -7,6 +7,8 @@ This recipe will use the [spiceai/spiceai](https://github.com/spiceai/spiceai) r
 - Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation).
 - GitHub personal access token, [Learn more](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic) how to create one.
 
+  [![Watch the Spice.ai local GitHub connector demo](https://img.youtube.com/vi/mxwt0HEF1VQ/hqdefault.jpg)](https://www.youtube.com/embed/mxwt0HEF1VQ)
+
 **Step 0.** Clone the repository if not already cloned.
 
 ```bash
