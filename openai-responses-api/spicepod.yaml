@@ -4,13 +4,13 @@ name: github_pull_requests
 
 # Dataset to use Spice tools on
 datasets:
-    - from: github:github.com/spiceai/spiceai/pulls
-      name: pulls
+    - from: s3://spiceai-demo-datasets/taxi_trips/2024/
+      name: taxi_trips
+      description: taxi trips in s3
       params:
-          github_token: ${secrets:GITHUB_TOKEN}
+          file_format: parquet
       acceleration:
           enabled: true
-          refresh_sql: select * from pulls limit 100;
 
 models:
     # Model that can invoke OpenAI's Chat Completions API and OpenAI's Responses API

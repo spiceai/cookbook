@@ -5,8 +5,7 @@ This recipe shows how Spice integrates with [OpenAI's Responses API](https://pla
 ## Prerequisites
 
 -   Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation)
--   `GITHUB_TOKEN` is set in `.env`. To acquire a GitHub token, see [GitHub's Guide](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens?utm_cta=website-homepage-industry-card-public-sector%3Fwtime).
--   `SPICE_OPENAI_API_KEY` is set in `.env`. To acquire an OpenAI API Key, see [OpenAI's Guide](https://platform.openai.com/account/api-keys).
+-   `OPENAI_API_KEY` is set in `.env`. To acquire an OpenAI API Key, see [OpenAI's Guide](https://platform.openai.com/account/api-keys).
 -   Python >= 3.10
 -   Python package manager (`pip` or `uv`)
 
@@ -26,19 +25,20 @@ spice run
 ```
 
 ```
-2025-08-25T21:07:56.310687Z  INFO spiced: Starting runtime v1.6.0-unstable-build.54c06a350-dev+models
-2025-08-25T21:07:56.312044Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2025-08-25T21:07:56.312203Z  INFO runtime::init::caching: Initialized search results cache;
-2025-08-25T21:07:56.713547Z  INFO runtime::init::dataset: Dataset pulls initializing...
-2025-08-25T21:07:56.713539Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-08-25T21:07:56.713746Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2025-08-25T21:07:56.714782Z  INFO runtime::init::model: Loading model [gpt-4o-responses] from openai:gpt-4o...
-2025-08-25T21:07:56.719827Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2025-08-25T21:08:02.040909Z  INFO runtime::init::dataset: Dataset pulls registered (github:github.com/spiceai/spiceai/pulls), acceleration (arrow), results cache enabled.
-2025-08-25T21:08:02.042245Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset pulls
-2025-08-25T21:08:03.209625Z  INFO runtime::init::model: Model [gpt-4o-responses] deployed, ready for inferencing
-2025-08-25T21:08:06.452241Z  INFO runtime::accelerated_table::refresh_task: Loaded 100 rows (491.41 kiB) for dataset pulls in 4s 409ms.
-2025-08-25T21:08:06.470565Z  INFO runtime: All components are loaded. Spice runtime is ready!
+2025-08-25T23:34:30.324620Z  INFO spiced: Starting runtime v1.6.0-unstable-build.54c06a350-dev+models
+2025-08-25T23:34:30.325913Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2025-08-25T23:34:30.326072Z  INFO runtime::init::caching: Initialized search results cache;
+2025-08-25T23:34:31.163684Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2025-08-25T23:34:31.164965Z  INFO runtime::init::dataset: Dataset taxi_trips initializing...
+2025-08-25T23:34:31.165957Z  INFO runtime::init::model: Loading model [gpt-4o-responses] from openai:gpt-4o...
+2025-08-25T23:34:31.163684Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
+2025-08-25T23:34:31.177013Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2025-08-25T23:34:31.992304Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow, 10s refresh), results cache enabled.
+2025-08-25T23:34:31.993720Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
+2025-08-25T23:34:34.491656Z  INFO runtime::init::model: Model [gpt-4o-responses] deployed, ready for inferencing
+2025-08-25T23:34:42.538074Z  INFO runtime::accelerated_table::refresh_task: Dataset taxi_trips received 2,358,416 records
+2025-08-25T23:34:46.359978Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (399.41 MiB) for dataset taxi_trips in 14s 366ms.
+2025-08-25T23:34:46.453673Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
 ## Using OpenAI-hosted tools
@@ -125,25 +125,49 @@ What datasets do you have access to?
 ```
 
 ```
-Arrr, I’ve got me hands on a dataset named **pulls**. What would ye like to do with it, matey? ⚓️
+Arrr, I be havin' access to a dataset of taxi voyages, aye! It be called "taxi_trips" in the public spice database. What be yer next command, matey?
 ```
 
-Ask the model to query the dataset for the 5 most recently created PRs, functionality provided by another one of Spice's tools.
+Ask the model to query the dataset for the 5 most expensive taxi trips, functionality provided by Spice's `sql` tool.
 
 ```
-In the pulls dataset, what are the titles of the 5 most recently created PRs?
+In the taxi trips dataset, what are the 5 most expensive taxi trips by fare?
 ```
 
 ```
-Arrr, matey! Here be the titles of the five most recent pull requests:
+Arrr matey, here be the five most expensive taxi voyages by fare:
 
-1. **README updates** - [Link](https://github.com/spiceai/spiceai/pull/161)
-2. **Update support for arm64** - [Link](https://github.com/spiceai/spiceai/pull/160)
-3. **Make versions compile time constants** - [Link](https://github.com/spiceai/spiceai/pull/158)
-4. **Fix acknowledgements not being served** - [Link](https://github.com/spiceai/spiceai/pull/157)
-5. **Update version to v0.1.0-alpha-rc** - [Link](https://github.com/spiceai/spiceai/pull/155)
+1. **Fare:** 5000.0 doubloons
+   - **Pickup:** 2024-01-20T11:19:33
+   - **Dropoff:** Same as pickup
+   - **Passenger Count:** 0
+   - **VendorID:** 1
 
-If ye be needin' more details, just let me know, and I'll haul 'em up for ye! ⚓️
+2. **Fare:** 5000.0 doubloons
+   - **Pickup:** 2024-01-20T11:18:47
+   - **Dropoff:** Same as pickup
+   - **Passenger Count:** 0
+   - **VendorID:** 1
+
+3. **Fare:** 2500.0 doubloons
+   - **Pickup:** 2024-01-20T11:20:15
+   - **Dropoff:** Same as pickup
+   - **Passenger Count:** 0
+   - **VendorID:** 1
+
+4. **Fare:** 2500.0 doubloons
+   - **Pickup:** 2024-01-24T13:44:43
+   - **Dropoff:** Same as pickup
+   - **Passenger Count:** 0
+   - **VendorID:** 1
+
+5. **Fare:** 2500.0 doubloons
+   - **Pickup:** 2024-01-20T11:27:48
+   - **Dropoff:** Same as pickup
+   - **Passenger Count:** 0
+   - **VendorID:** 1
+
+These voyages be costin' a pretty penny, aye!
 ```
 
 Verify this output by, in a separate terminal, starting an interactive SQL query session against the Spice runtime
@@ -152,24 +176,24 @@ Verify this output by, in a separate terminal, starting an interactive SQL query
 spice sql
 ```
 
-Then, query using SQL the `pulls` dataset for the titles of the five most recently created PRs.
+Then, query using SQL the `taxi_trips` dataset for the titles of the five most recently created PRs.
 
 ```sql
-SELECT title FROM pulls ORDER BY created_at DESC LIMIT 5;
+SELECT fare_amount, tpep_pickup_datetime, tpep_dropoff_datetime, passenger_count, VendorID FROM taxi_trips ORDER BY fare_amount DESC LIMIT 5;
 ```
 
 ```
-+---------------------------------------+
-| title                                 |
-+---------------------------------------+
-| README updates                        |
-| Update support for arm64              |
-| Make versions compile time constants  |
-| Fix acknowledgements not being served |
-| Update version to v0.1.0-alpha-rc     |
-+---------------------------------------+
++-------------+----------------------+-----------------------+-----------------+----------+
+| fare_amount | tpep_pickup_datetime | tpep_dropoff_datetime | passenger_count | VendorID |
++-------------+----------------------+-----------------------+-----------------+----------+
+| 5000.0      | 2024-01-20T11:19:33  | 2024-01-20T11:19:33   | 0               | 1        |
+| 5000.0      | 2024-01-20T11:18:47  | 2024-01-20T11:18:47   | 0               | 1        |
+| 2500.0      | 2024-01-20T11:20:15  | 2024-01-20T11:20:15   | 0               | 1        |
+| 2500.0      | 2024-01-24T13:44:43  | 2024-01-24T13:44:43   | 0               | 1        |
+| 2500.0      | 2024-01-20T11:27:48  | 2024-01-20T11:27:48   | 0               | 1        |
++-------------+----------------------+-----------------------+-----------------+----------+
 
-Time: 0.025712291 seconds. 5 rows.
+Time: 0.115921584 seconds. 5 rows.
 ```
 
 ## Client prerequisites
@@ -205,7 +229,7 @@ python openai_responses_api_with_spice.py
 Observe the model's response to the `What datasets do you have access to?` question:
 
 ```console
-Arrr, matey! I be havin' access to a dataset called "pulls." But it seems I can't run a document search on it. Yarrr! What be ye wishin' to do with it?
+Arrr, matey! I've got me hands on the "taxi trips" dataset from yonder S3 seas. Would ye like to explore it, or be there more treasures ye seek?
 ```
 
 ### Using uv
@@ -237,7 +261,7 @@ python openai_responses_api_with_spice.py
 Observe the model's response to the `What datasets do you have access to?` question:
 
 ```console
-Arrr, matey! I be havin' access to a dataset called "pulls." But it seems I can't run a document search on it. Yarrr! What be ye wishin' to do with it?
+Arrr, matey! I've got me hands on the "taxi trips" dataset from yonder S3 seas. Would ye like to explore it, or be there more treasures ye seek?
 ```
 
 ## Learn More
