@@ -1,6 +1,6 @@
 version: v1
 kind: Spicepod
-name: github_pull_requests
+name: openai_responses_api
 
 # Dataset to use Spice tools on
 datasets:

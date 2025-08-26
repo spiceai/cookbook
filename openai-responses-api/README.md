@@ -24,7 +24,7 @@ Start the Spice runtime and ensure each component is initialized:
 spice run
 ```
 
-```
+```console
 2025-08-25T23:34:30.324620Z  INFO spiced: Starting runtime v1.6.0-unstable-build.54c06a350-dev+models
 2025-08-25T23:34:30.325913Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
 2025-08-25T23:34:30.326072Z  INFO runtime::init::caching: Initialized search results cache;
