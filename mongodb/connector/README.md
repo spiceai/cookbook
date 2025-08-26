@@ -108,8 +108,13 @@ datasets:
 Ensure the `MONGODB_PASS` environment variable is set to the password for your MongoDB instance. Environment variables can be specified on the command line when running the Spice runtime or in a `.env` file in the same directory as `spicepod.yaml`.
 
 ```bash
-echo "MONGODB_PASS=<password>" > .env
-# i.e. echo "MONGODB_PASS=123" > .env
+echo "MONGODB_PASS=<some-password>" > .env
+```
+
+For example, to connect to the `mongodb-cookbook` test instance (Docker):
+
+```bash
+echo "MONGODB_PASS=password" > .env
 ```
 
 **Step 5.** Start the Spice runtime
