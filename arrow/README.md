@@ -82,7 +82,7 @@ select "VendorID", tpep_pickup_datetime, tpep_dropoff_datetime, passenger_count 
 | 1        | 2024-01-29T19:53:55  | 2024-01-29T20:06:56   | 2               |
 +----------+----------------------+-----------------------+-----------------+
 
-Time: 4.291336125 seconds. 10 rows.
+Time: 1.081530375 seconds. 10 rows.
 ```
 
 **Step 5.** Update the `spicepod.yaml` to enable In-Memory Arrow acceleration.
