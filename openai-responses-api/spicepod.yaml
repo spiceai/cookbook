@@ -1,0 +1,24 @@
+version: v1
+kind: Spicepod
+name: openai_responses_api
+
+# Dataset to use Spice tools on
+datasets:
+    - from: s3://spiceai-demo-datasets/taxi_trips/2024/
+      name: taxi_trips
+      description: taxi trips in s3
+      params:
+          file_format: parquet
+      acceleration:
+          enabled: true
+
+models:
+    # Model that can invoke OpenAI's Chat Completions API and OpenAI's Responses API
+    - from: openai:gpt-4o
+      name: gpt-4o-responses
+      params:
+          openai_api_key: ${secrets:OPENAI_API_KEY}
+          responses_api: enabled
+          openai_responses_tools: web_search, code_interpreter
+          tools: auto
+          system_prompt: Talk like a pirate

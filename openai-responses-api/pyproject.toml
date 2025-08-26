@@ -1,0 +1,7 @@
+[project]
+name = "openai-responses-api-with-spice"
+version = "0.1.0"
+description = "Recipe for using the OpenAI SDK's support for the Responses API with Spice"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = ["openai>=1.52.0"]

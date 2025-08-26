@@ -33,6 +33,7 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 - [Web Search Tools using Perplexity](./websearch/README.md) - Provide LLMs with web search access for more informed answers.
 - [Language Model Evaluations](./evals/README.md) - Use Spice to evaluate language models.
 - [LLM as a Judge](./llm-judge/README.md) - Define LLM judge models to evaluate the performance of other language models.
+- [OpenAI Responses API](./openai-responses-api/README.md) - Use OpenAI's Responses API with Spice
 
 ### Data Acceleration - Materializing & accelerating data locally with Data Accelerators
 
