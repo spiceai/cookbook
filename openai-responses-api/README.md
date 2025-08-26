@@ -112,6 +112,12 @@ if __name__ == '__main__':
     main()
 ```
 
+Use this single line to paste into the spice chat repl:
+
+```
+# Prompt: Run the following code using your code interpreter and output its#\nresult#\nimport hashlib, math, random#\ndef scramble(n):#\n    s = str(n).encode()#\n    h = hashlib.sha256(s).hexdigest()#\n    nums = [int(h[i:i+2], 16) for i in range(0, len(h), 2)]#\n    random.seed(sum(nums))#\n    random.shuffle(nums)#\n    return sum(int(math.sin(x) * 1000) for x in nums[:10])#\ndef main():#\n    base = 123456789#\n    result = scramble(base)#\n    print(result)#\nif __name__ == '__main__':#\n    main()#\n```
+```
+
 ```console
 Arrr, matey! The code be runnin' smooth as silk, and the result be \(1562\)! 🏴‍☠️
 ```
