@@ -73,6 +73,9 @@ datasets:
     params:
       snowflake_role: accountadmin
       snowflake_warehouse: COMPUTE_WH
+      snowflake_username: ${secrets:SPICE_SNOWFLAKE_USERNAME}
+      snowflake_account: ${secrets:SPICE_SNOWFLAKE_ACCOUNT}
+      snowflake_password: ${secrets:SPICE_SNOWFLAKE_PASSWORD}
 ```
 
 The following output is shown in the Spice runtime terminal:
