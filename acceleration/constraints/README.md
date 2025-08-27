@@ -6,9 +6,7 @@ By specifying a `time_column` on the dataset with `refresh_mode: append` on the 
 
 This sample will have a local Postgres database with a table `users` and a Spice runtime that accelerates the data from the `users` table. A Spicepod will enforce a constraint that the `email` column must be unique. The Spicepod will also specify a `time_column` of `updated_at` to ensure that the Spice runtime only pulls in changes from the datasource that have occurred after the max `updated_at` timestamp in the accelerated dataset. A worker service will update the `users` table in the Postgres database with changes to the `users` table every 5 seconds. This will cause the Spice runtime to pull in the changes and enforce the constraint.
 
-Once you've verified that the constraints are being enforced, try modifying the Spicepod to remove the `on_conflict` clause and observe the behavior. An error should now be given by DuckDB that the constraint is being violated and the data update is rejected.
-
-Another thing to try is to remove the `primary_key` constraint from the Spicepod and observe the behavior. Instead of the rows being updated in place, new rows will be added every time Spice refreshes the data.
+Once you've verified that the constraints are being enforced, try modifying the Spicepod to remove the `on_conflict` clause and observe the behavior. An error should now be given by DuckDB that the constraint is being violated and the data update is rejected. After making this change, another thing to try is to remove the `primary_key` constraint from the Spicepod and observe the behavior. Instead of the rows being updated in place, new rows will be added every time Spice refreshes the data.
 
 ## Prerequisites
 
