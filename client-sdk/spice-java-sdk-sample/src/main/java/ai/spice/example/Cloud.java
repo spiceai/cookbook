@@ -5,7 +5,7 @@ import org.apache.arrow.vector.VectorSchemaRoot;
 
 import ai.spice.SpiceClient;
 
-public class CloudApp {
+public class Cloud {
     public static void main(String[] args) {
         try (
             SpiceClient client = SpiceClient.builder()
