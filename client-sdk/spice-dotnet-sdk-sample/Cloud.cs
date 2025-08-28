@@ -10,6 +10,5 @@ public class Cloud
             .WithSpiceCloud()
 			.Build();
 		var data = await client.Query("show tables;");
-        // Process data
 	}
 }
