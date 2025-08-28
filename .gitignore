@@ -4,3 +4,5 @@ acceleration/indexes/spicepod.yaml
 .env.local
 *-demo/
 *-qs/
+bin/
+obj/
