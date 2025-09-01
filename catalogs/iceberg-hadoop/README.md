@@ -75,5 +75,5 @@ Example output:
 ## Step 4: Cleanup.
 
 ```bash
-docker-compose down
+docker compose down --volumes --rmi local
 ```
