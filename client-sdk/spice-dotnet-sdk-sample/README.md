@@ -11,7 +11,7 @@ This recipe shows how to interact with Spice using the [Dotnet SDK](https://gith
 
 ```shell
 git clone https://github.com/spiceai/cookbook.git
-cd cookbook/client-sdk/spice-java-sdk-sample
+cd cookbook/client-sdk/spice-dotnet-sdk-sample
 ```
 
 ## Start the Spice runtime
