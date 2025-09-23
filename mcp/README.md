@@ -50,7 +50,7 @@ curl http://127.0.0.1:8090/v1/tools | jq '.[].name'
 "fs/list_allowed_directories"
 "list_datasets"
 "table_schema"
-"document_similarity"
+"search"
 "get_readiness"
 "sample_distinct_columns"
 ```
@@ -164,7 +164,7 @@ curl http://127.0.0.1:8091/v1/tools | jq '.[].name'
 ```
 ```bash
 "top_n_sample"
-"document_similarity"
+"search"
 "store_memory"
 "spice_mcp/store_memory"
 "spice_mcp/get_readiness"
@@ -185,7 +185,7 @@ curl http://127.0.0.1:8091/v1/tools | jq '.[].name'
 "spice_mcp/random_sample"
 "spice_mcp/load_memory"
 "spice_mcp/list_datasets"
-"spice_mcp/document_similarity"
+"spice_mcp/search"
 "spice_mcp/table_schema"
 "table_schema"
 "sql"

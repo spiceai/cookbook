@@ -46,7 +46,7 @@ $ spice run
 2024-10-30T01:31:38.913247Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2024-10-30T01:31:38.921580Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2024-10-30T01:31:39.112883Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2024-10-30T01:31:39.123137Z  INFO runtime: Tool [document_similarity] ready to use
+2024-10-30T01:31:39.123137Z  INFO runtime: Tool [search] ready to use
 2024-10-30T01:31:39.123166Z  INFO runtime: Tool [table_schema] ready to use
 2024-10-30T01:31:39.123172Z  INFO runtime: Tool [sql] ready to use
 2024-10-30T01:31:39.123180Z  INFO runtime: Tool [list_datasets] ready to use
