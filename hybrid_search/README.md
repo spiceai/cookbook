@@ -205,7 +205,7 @@ from rrf(
 
 ## Step 4. Enable agentic support
 
-Stop Spice, and go to `spicepod.yml` and uncomment `# Break glass for agent`. Update the `.env` file with your OpenAI key. Then start Spice again.
+Stop Spice, and go to `spicepod.yml` and uncomment the `models` block. Update the `.env` file with your OpenAI key. Then start Spice again.
 
 ```
 spice run
