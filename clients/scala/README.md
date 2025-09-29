@@ -14,7 +14,7 @@ This guide demonstrates how to use Scala to query Spice via the Apache Arrow Fli
 
 ```bash
 git clone https://github.com/spiceai/cookbook.git
-cd clients/scala
+cd cookbook/clients/scala
 ```
 
 ### 2. Install dependencies
