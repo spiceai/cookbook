@@ -13,7 +13,7 @@ This recipe will use the [spiceai/spiceai](https://github.com/spiceai/spiceai) r
 
 ```bash
 git clone https://github.com/spiceai/cookbook # Skip if already cloned
-cd cookbook
+cd cookbook/github
 ```
 
 **Step 1.** Copy the `.env` file into a new `.env.local` file in this directory, and set the `GITHUB_TOKEN` environment variable to your personal access token.
@@ -25,7 +25,6 @@ GITHUB_TOKEN=<your_github_token>
 **Setp 2.** Run the Spice runtime with `spice run` from the directory with the `spicepod.yaml` file.
 
 ```bash
-cd cookbook/github
 spice run
 ```
 
