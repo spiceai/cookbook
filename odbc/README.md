@@ -10,6 +10,8 @@ Follow these steps to get started with ODBC as a Data Connector. This recipe wil
 
 ### Step 1: Install the SQLite ODBC Driver
 
+#### Generic *nix Instructions
+
 Install the [SQLite ODBC driver](https://github.com/softace/sqliteodbc) for your operating system.
 
 On Unix, this requires cloning and compiling the SQLite ODBC driver project. First, install build dependencies:
@@ -33,6 +35,23 @@ Once the driver is installed, configure the ODBC driver profile by editing the `
 [SQLite3]
 Driver = /usr/local/lib/libsqlite3odbc.so
 ```
+
+#### macOS
+
+Install via brew:
+
+```bash
+brew install unixodbc sqliteodbc
+```
+
+Configure the SQLite driver:
+```bash
+cat <<EOF >> /opt/homebrew/etc/odbcinst.ini
+[SQLite3]
+Driver = /opt/homebrew/lib/libsqlite3odbc.so
+EOF
+```
+
 
 ### Step 2: Setup Data
 
