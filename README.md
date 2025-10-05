@@ -126,7 +126,7 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 - [Rust SDK](client-sdk/spice-rs-sdk-sample/README.md)
 - [Python SDK](client-sdk/spicepy-sdk-sample/README.md)
 - [Go SDK](client-sdk/gospice-sdk-sample/README.md)
-- [JavaScript SDK](client-sdk/spice.js-sdk-sample/README.md)
+- [JavaScript SDK (Node.js)](client-sdk/spice.js-sdk-sample/README.md) - Query NYC taxi trips data using the [`@spiceai/spice`](https://www.npmjs.com/package/@spiceai/spice) npm package.
 - [Java SDK](client-sdk/spice-java-sdk-sample/README.md)
 
 ### Security
