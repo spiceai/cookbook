@@ -5,6 +5,7 @@ name: iceberg-catalog-recipe
 catalogs:
   - from: iceberg:http://localhost:8181/v1/namespaces
     name: ice
+    # access: read_write
     params:
       iceberg_s3_endpoint: http://localhost:9000
       iceberg_s3_access_key_id: admin

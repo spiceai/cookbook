@@ -1,6 +1,6 @@
 # Iceberg Catalog Connector
 
-The Iceberg Catalog Connector enables Spice to query Iceberg tables in an Iceberg catalog.
+The Iceberg Catalog Connector enables Spice to query and write to Iceberg tables in an Iceberg catalog.
 
 [![Watch the Spice.ai OSS Iceberg Catalog connector demo](https://img.youtube.com/vi/Akq39ml8LO0/hqdefault.jpg)](https://www.youtube.com/embed/Akq39ml8LO0)
 
@@ -34,6 +34,7 @@ docker compose up -d
 ```yaml
 catalogs:
   - from: iceberg:http://localhost:8181/v1/namespaces
+    # access: read_write
     name: ice
     params:
       iceberg_s3_endpoint: http://localhost:9000
@@ -124,11 +125,84 @@ Output:
 Time: 0.186233833 seconds. 10 rows.
 ```
 
-## Step 6. View the Iceberg tables in MinIO
+## Step 6. Write to Iceberg tables
+
+To enable write operations to Iceberg tables, uncomment the `access: read_write` configuration and restart Spice
+
+### 6.1. Update the Spicepod configuration
+
+Edit the `spicepod.yaml` file to uncomment the access line:
+
+```yaml
+catalogs:
+  - from: iceberg:http://localhost:8181/v1/namespaces
+    access: read_write  # Uncomment this line
+    name: ice
+    params:
+      iceberg_s3_endpoint: http://localhost:9000
+      iceberg_s3_access_key_id: admin
+      iceberg_s3_secret_access_key: password
+      iceberg_s3_region: us-east-1
+```
+
+### 6.2. Restart Spice
+
+Stop the current Spice instance (Ctrl+C) and restart it:
+
+```bash
+spice run
+```
+
+### 6.3. Insert data into Iceberg tables
+
+Now you can write data to the Iceberg tables using SQL [INSERT statements](https://spiceai.org/docs/reference/sql/dml#insert):
+
+```bash
+spice sql
+```
+
+Example: Insert a new region into the region table:
+
+```sql
+INSERT INTO ice.tpch_sf1.region (r_regionkey, r_name, r_comment) 
+VALUES (5, 'ANTARCTICA', 'A cold and remote region');
+```
+
+```bash
++-------+
+| count |
++-------+
+| 1     |
++-------+
+```
+
+Example: Insert a new nation into the nation table:
+
+```sql
+INSERT INTO ice.tpch_sf1.nation (n_nationkey, n_name, n_regionkey, n_comment) 
+VALUES (25, 'PENGUINIA', 5, 'A vibrant home for brave penguins in Antarctica');
+```
+
+```bash
++-------+
+| count |
++-------+
+| 1     |
++-------+
+```
+
+Verify the inserts by querying the tables:
+
+```sql
+SELECT * FROM ice.tpch_sf1.region WHERE r_regionkey = 5;
+SELECT * FROM ice.tpch_sf1.nation WHERE n_nationkey = 25;
+```
+
+## Step 7. View the Iceberg tables in MinIO
 
 Navigate to [http://localhost:9001](http://localhost:9001) and login with `admin` and `password`. View the `iceberg` bucket to see the created Iceberg tables.
 
-## Step 7. Clean up
+## Step 8. Clean up
 
 ```bash
 docker compose down --volumes --rmi local
