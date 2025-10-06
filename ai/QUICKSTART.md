@@ -32,23 +32,24 @@ SELECT ai('Hello! Introduce yourself in one sentence.', 'gpt-4o-mini') as respon
 
 ## Try Something Useful (1 minute)
 
-Analyze customer sentiment:
-
-```sql
-SELECT
-  feedback,
-  ai('Classify as positive, negative, or neutral: ' || feedback, 'gpt-4o-mini') as sentiment
-FROM customer_feedback;
-```
-
-Categorize locations:
+Categorize NYC taxi zones:
 
 ```sql
 SELECT
   Zone,
-  ai('Categorize in one word: ' || Zone, 'gpt-4o-mini') as category
+  ai('Categorize this NYC location in one word: ' || Zone, 'gpt-4o-mini') as category
 FROM taxi_zones
 LIMIT 5;
+```
+
+Translate zone names:
+
+```sql
+SELECT
+  Zone,
+  ai(concat_ws(' ', 'Translate to Spanish:', Zone), 'gpt-4o-mini') as spanish_name
+FROM taxi_zones
+LIMIT 3;
 ```
 
 ## What's Next?
