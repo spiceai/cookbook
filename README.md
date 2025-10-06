@@ -18,6 +18,7 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 
 ### Models & AI - Connect data to hosted or local AI models
 
+- [AI SQL Function](./ai/README.md) - Use the `ai()` SQL function to invoke LLMs directly in SQL queries for text generation, sentiment analysis, and data enrichment.
 - [Azure OpenAI Models](./azure_openai/README.md)
 - [Running Llama3 Locally](./llama/README.md) - Use the Llama family of models locally from HuggingFace using Spice.
 - [OpenAI Models](./models/openai/README.md) - Use OpenAI LLM and embedding models.

@@ -1,0 +1,30 @@
+version: v1
+kind: Spicepod
+name: ai
+
+models:
+  - name: gpt-4o-mini
+    from: openai:gpt-4o-mini
+    params:
+      openai_api_key: ${secrets:SPICE_OPENAI_API_KEY}
+
+datasets:
+  - from: s3://spiceai-demo-datasets/taxi_trips/taxi_zones.csv
+    name: taxi_zones
+    description: NYC Taxi Zones with location IDs, names, and boroughs
+    params:
+      file_format: csv
+    acceleration:
+      enabled: true
+
+  - from: inline:csv
+    name: customer_feedback
+    params:
+      csv: |
+        id,feedback
+        1,"Great service, very helpful!"
+        2,"The product broke after one day"
+        3,"It's okay, nothing special"
+        4,"Absolutely love it! Best purchase ever!"
+        5,"Terrible experience, would not recommend"
+        6,"Good quality for the price"
