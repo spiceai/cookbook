@@ -12,14 +12,15 @@ Clone this repository:
 
 ```bash
 git clone https://github.com/spiceai/cookbook.git
-cd cookbook/hybrid_search
+cd cookbook/search
 ```
 
 Install `websocat` and set up Python:
 
 ```bash
 brew install websocat
-mise use python
+python -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
@@ -66,7 +67,7 @@ websocat wss://jetstream2.us-east.bsky.network/subscribe\?wantedCollections=app.
 
 ## Step 3. Start Spice and Search!
 
-In another shell pane, start Spice. It will embed, full-text index, and ingest the latest data. Additionally, the `file` connector is using fsnotify to watch it for updates, to eagerly ingest data.
+_In a new terminal_, start Spice. It will embed, full-text index, and ingest the latest data. Additionally, the `file` connector is using fsnotify to watch it for updates, to eagerly ingest data.
 
 ```bash
 spice run
@@ -74,7 +75,7 @@ spice run
 
 You should see this output:
 
-```
+```bash
 2025-09-26T15:21:38.154354Z  INFO spiced: Starting runtime v1.8.0-unstable-build.71ac09ff2+models.metal
 2025-09-26T15:21:38.225135Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
 2025-09-26T15:21:38.229824Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s
@@ -92,6 +93,12 @@ You should see this output:
 2025-09-26T15:21:58.550191Z  INFO runtime: All components are loaded. Spice runtime is ready!
 2025-09-26T15:22:20.335633Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset bluesky_posts
 2025-09-26T15:22:21.960722Z  INFO runtime::accelerated_table::refresh_task: Loaded 251 rows (339.49 kiB) for dataset bluesky_posts in 1s 656ms.
+```
+
+_In a new terminal_, start the Spice SQL REPL:
+
+```bash
+spcie sql
 ```
 
 ### Basic Hybrid Search
@@ -208,19 +215,19 @@ from rrf(
 
 Stop Spice, and go to `spicepod.yml` and uncomment the `models` block. Update the `.env` file with your OpenAI key. Then start Spice again.
 
-```
+```bash
 spice run
 ```
 
 Afterwards, begin a chat session:
 
-```
+```bash
 spice chat
 ```
 
 Try to query for insights using natural language:
 
-```
+```bash
 chat> Can you see how many posts there are in the last day about photography?
 There were 676 posts about photography in the last day on the Bluesky platform. If you have any further questions or need additional insights, feel free to ask!
 
