@@ -3,7 +3,7 @@ kind: Spicepod
 name: sales-bi
 
 datasets:
-  - from: s3://spiceai-demo-datasets/cleaned_sales_data.parquet
+  - from: s3://spiceai-public-datasets/sales-bi/big_sales_data.parquet
     name: cleaned_sales_data_accelerated
     params:
       file_format: parquet
@@ -12,7 +12,7 @@ datasets:
       refresh_check_interval: 10s
       refresh_mode: full
 
-  - from: s3://spiceai-demo-datasets/cleaned_sales_data.parquet
+  - from: s3://spiceai-public-datasets/sales-bi/big_sales_data.parquet
     name: cleaned_sales_data
     params:
       file_format: parquet
