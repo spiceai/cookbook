@@ -2,7 +2,36 @@ version: v1
 kind: Spicepod
 name: github_pull_requests
 
+s3_vectors_param: &s3_vectors_param
+  s3_vectors_bucket: spiceai-cookbook
+  s3_vectors_aws_region: us-east-2
+  s3_vectors_aws_access_key_id: ${secrets:AWS_ACCESS_KEY_ID}
+  s3_vectors_aws_secret_access_key: ${secrets:AWS_SECRET_ACCESS_KEY}
+  s3_vectors_aws_session_token: ${secrets:AWS_SESSION_TOKEN} ## If not needed, comment out.
+
 datasets:
+  - from: github:github.com/spiceai/cookbook/files/trunk
+    name: spiceai.cookbook_readme
+    params:
+      github_token: ${secrets:GITHUB_TOKEN}
+      include: "**/README.md"
+    acceleration:
+      enabled: true
+    vectors:
+      enabled: true
+      engine: s3_vectors
+      params: *s3_vectors_param
+    columns:
+      - name: content
+        embeddings:
+          - from: my_embedding_model
+            row_id:
+              - path
+            chunking:
+              enabled: true
+              target_chunk_size: 512
+              trim_whitespace: true
+
   - from: github:github.com/spiceai/cookbook/pulls
     name: pulls
     params:
@@ -15,12 +44,7 @@ datasets:
     vectors:
       enabled: true
       engine: s3_vectors
-      params:
-        s3_vectors_bucket: spiceai-cookbook
-        s3_vectors_aws_region: us-east-2
-        s3_vectors_aws_access_key_id: ${secrets:AWS_ACCESS_KEY_ID}
-        s3_vectors_aws_secret_access_key: ${secrets:AWS_SECRET_ACCESS_KEY}
-        s3_vectors_aws_session_token: ${secrets:AWS_SESSION_TOKEN} ## If not needed, comment out.
+      params: *s3_vectors_param
     columns:
       - name: body
         embeddings:
