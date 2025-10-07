@@ -131,5 +131,5 @@ Navigate to [http://localhost:9001](http://localhost:9001) and login with `admin
 ## Step 7. Clean up
 
 ```bash
-docker compose down
+docker compose down --volumes --rmi local
 ```

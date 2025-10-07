@@ -1,14 +1,22 @@
 {
   "name": "spice.js-sdk-sample",
   "version": "1.0.0",
-  "description": "## Start spice runtime",
+  "description": "Sample Node.js app demonstrating @spiceai/spice package with NYC taxi trips data",
   "main": "index.js",
   "scripts": {
-    "start": "node index.mjs"
+    "start": "node index.js"
   },
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "spiceai",
+    "test"
+  ],
+  "author": "Spice AI, Inc.",
+  "license": "MIT",
   "dependencies": {
-    "@spiceai/spice": "^2.0.1"
+    "@spiceai/spice": "^3.0.2",
+    "dotenv": "^16.4.5"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   }
 }

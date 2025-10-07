@@ -1,0 +1,18 @@
+version: v1
+kind: Spicepod
+name: ai
+
+models:
+  - name: gpt-4o-mini
+    from: openai:gpt-4o-mini
+    params:
+      openai_api_key: ${secrets:SPICE_OPENAI_API_KEY}
+
+datasets:
+  - from: file:../data/taxi_zone_lookup.csv
+    name: taxi_zones
+    description: NYC Taxi Zones with location IDs, names, and boroughs
+    params:
+      file_format: csv
+    acceleration:
+      enabled: true

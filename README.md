@@ -18,6 +18,7 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 
 ### Models & AI - Connect data to hosted or local AI models
 
+- [AI SQL Function](./ai/README.md) - Use the `ai()` SQL function to invoke LLMs directly in SQL queries for text generation, sentiment analysis, and data enrichment.
 - [Azure OpenAI Models](./azure_openai/README.md)
 - [Running Llama3 Locally](./llama/README.md) - Use the Llama family of models locally from HuggingFace using Spice.
 - [OpenAI Models](./models/openai/README.md) - Use OpenAI LLM and embedding models.
@@ -97,6 +98,10 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 
 - [Amazon S3 Vectors](./vectors/s3-vectors/README.md) - Use Amazon S3 as a vector engine for embeddings and similarity search.
 
+## Search
+
+- [Hybrid-Search](./search/README.md) - Combine keyword and vector search for improved retrieval.
+
 ### Deployment and Installation
 
 - [Deploying to Kubernetes](./kubernetes/README.md)
@@ -122,7 +127,7 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 - [Rust SDK](client-sdk/spice-rs-sdk-sample/README.md)
 - [Python SDK](client-sdk/spicepy-sdk-sample/README.md)
 - [Go SDK](client-sdk/gospice-sdk-sample/README.md)
-- [JavaScript SDK](client-sdk/spice.js-sdk-sample/README.md)
+- [JavaScript SDK (Node.js)](client-sdk/spice.js-sdk-sample/README.md) - Query NYC taxi trips data using the [`@spiceai/spice`](https://www.npmjs.com/package/@spiceai/spice) npm package.
 - [Java SDK](client-sdk/spice-java-sdk-sample/README.md)
 
 ### Security
