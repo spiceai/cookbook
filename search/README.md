@@ -98,7 +98,7 @@ You should see this output:
 _In a new terminal_, start the Spice SQL REPL:
 
 ```bash
-spcie sql
+spice sql
 ```
 
 ### Basic Hybrid Search
