@@ -9,10 +9,8 @@ _Tip: Keep the [Snapshots documentation](https://spiceai.org/docs/features/data-
 Install the Spice CLI if needed, then create a new project and initialize a fresh pod:
 
 ```bash
-mkdir spice-db-snapshots
+spice init spice-db-snapshots
 cd spice-db-snapshots
-
-spice init
 ```
 
 The `spice init` command creates a top-level `spicepod.yaml` that we will customize in later steps.
