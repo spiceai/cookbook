@@ -42,6 +42,7 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 - [Hashed Partitioning with DuckDB](./hashed_partitioning/README.md)
 - [PostgreSQL Data Accelerator](./postgres/accelerator/README.md)
 - [SQLite Data Accelerator](./sqlite/accelerator/README.md)
+- [Database Snapshots](./acceleration/snapshots/README.md) - Bootstrap DuckDB accelerations from object storage to skip cold starts.
 - [Apache Arrow Data Accelerator](./arrow/README.md)
 - [Accelerated Views](./views/README.md)
 
