@@ -157,31 +157,6 @@ Time: 0.336182833 seconds. 40 rows.
 
 ## Advanced Usage
 
-### Incremental Data Loading
-
-For APIs that support filtering by timestamp, you can configure incremental loading to fetch only new data since the last refresh:
-
-```yaml
-datasets:
-  - from: https://api.tvmaze.com
-    name: tvmaze_updates
-    params:
-      file_format: json
-    acceleration:
-      enabled: true
-      refresh_mode: append
-      refresh_sql: |
-        SELECT * FROM tvmaze_updates
-        WHERE request_path = '/updates/shows'
-          AND request_query = CONCAT('since=', (SELECT MAX(updated) FROM tvmaze_updates))
-```
-
-This configuration:
-
-- Uses `refresh_mode: append` to add only new records
-- Dynamically constructs the `request_query` parameter using the latest timestamp from existing data
-- On each refresh, fetches only shows updated since the last refresh
-
 ### Processing JSON Responses
 
 TVMaze API responses contain nested JSON. Use [JSON functions](/docs/reference/sql/json) to extract specific fields:
@@ -350,6 +325,5 @@ Always use [secret stores](https://docs.spiceai.org/components/secret-stores) to
 ## Learn More
 
 - [HTTP(s) Data Connector Documentation](https://docs.spiceai.org/components/data-connectors/https)
-- [Data Acceleration](https://docs.spiceai.org/components/data-accelerators)
 - [Secret Stores](https://docs.spiceai.org/components/secret-stores)
 - [TVMaze API Documentation](https://www.tvmaze.com/api)
