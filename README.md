@@ -74,6 +74,7 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 - [Glue Data Connector](./glue/README.md)
 - [GitHub Data Connector](./github/README.md)
 - [GraphQL Data Connector](./graphql/README.md)
+- [HTTP Data Connector](./http/README.md) - Query data from HTTP(s) endpoints like REST APIs.
 - [MSSQL (Microsoft SQL Server) Data Connector](./mssql/README.md)
 - [ODBC Data Connector](./odbc/README.md)
 - [Amazon Redshift](./redshift/README.md) - Read and write TPC-H data with Amazon Redshift.

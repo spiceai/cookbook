@@ -1,0 +1,10 @@
+version: v1
+kind: Spicepod
+name: http_tvmaze
+
+datasets:
+  - from: https://api.tvmaze.com
+    name: tvmaze
+    params:
+      file_format: json
+      client_timeout: 30s
