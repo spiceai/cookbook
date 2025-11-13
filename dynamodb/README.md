@@ -11,7 +11,14 @@ This recipe demonstrates how to configure a Spice dataset to connect to an AWS-h
 
 ---
 
-## Step 1. Create a DynamoDB Table and Load Sample Data
+## Step 1. Clone this cookbook repo locally
+
+```bash
+git clone https://github.com/spiceai/cookbook.git
+cd cookbook/dynamodb
+```
+
+## Step 2. Create a DynamoDB Table and Load Sample Data
 
 You can create a table and load a few demo items via the AWS CLI:
 
@@ -40,7 +47,7 @@ aws dynamodb put-item --table-name sample_data --item \
 
 ---
 
-## Step 2. Configure Spice to Use DynamoDB Credentials
+## Step 3. Configure Spice to Use DynamoDB Credentials
 
 Update `.env` file to use your AWS credentials
 
@@ -51,13 +58,13 @@ SPICE_DYNAMODB_SECRET=<aws_secret_access_key>
 
 ---
 
-## Step 3. Configure the DynamoDB Dataset
+## Step 4. Configure the DynamoDB Dataset
 
 Edit the `spicepod.yaml` file in this working directory and replace `<your-region>` with the region you created the table in.
 
 ---
 
-## Step 4. Start the Spice Runtime (if not already running)
+## Step 5. Start the Spice Runtime (if not already running)
 
 ```bash
 spice run
@@ -74,7 +81,7 @@ INFO runtime::accelerated_table::refresh_task: Loaded 2 rows (3.25 kiB) for data
 
 ---
 
-## Step 5. Query the DynamoDB Table with the Spice SQL REPL
+## Step 6. Query the DynamoDB Table with the Spice SQL REPL
 
 ```bash
 spice sql
@@ -105,13 +112,10 @@ Sample output:
 
 ---
 
-## Step 6. Cleanup
+## Step 7. Cleanup
 
 To delete the DynamoDB table:
 
 ```bash
 aws dynamodb delete-table --table-name sample_data --region <your-region>
 ```
-
----
-
