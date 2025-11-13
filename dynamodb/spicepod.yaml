@@ -1,0 +1,15 @@
+version: v1
+kind: Spicepod
+name: dynamodb-demo
+
+datasets:
+  - from: dynamodb:sample_data
+    name: sample_data
+    description: Demo sample data from DynamoDB
+    params:
+      dynamodb_aws_region: <your-region>
+      dynamodb_aws_access_key_id: ${secrets:SPICE_DYNAMODB_KEY}
+      dynamodb_aws_secret_access_key: ${secrets:SPICE_DYNAMODB_SECRET}
+    acceleration:
+      enabled: true
+      refresh_mode: full
