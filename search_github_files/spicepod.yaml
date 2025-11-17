@@ -37,6 +37,8 @@ datasets:
   #     - name: body
   #       full_text_search:
   #         enabled: true
+  #         row_id:
+  #           - id
 
 embeddings:
   - name: local_embedding_model
