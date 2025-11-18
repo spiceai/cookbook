@@ -42,7 +42,7 @@ Unauthorized
 1. Test with the API key:
 
 ```shell
-curl -H "x-api-key: foobar" -XPOST -i http://localhost:8090/v1/sql -d 'SELECT 1'
+curl -H "Content-Type: text/plain" -H "x-api-key: foobar" -XPOST -i http://localhost:8090/v1/sql -d 'SELECT 1'
 ```
 
 Output:
