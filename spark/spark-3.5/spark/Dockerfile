@@ -38,7 +38,7 @@ ENV PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.9.7-src.zip:$
 
 WORKDIR ${SPARK_HOME}
 
-ENV SPARK_VERSION=3.5.6
+ENV SPARK_VERSION=3.5.7
 
 RUN mkdir -p /home/spark/data \
     /home/spark/notebooks \
