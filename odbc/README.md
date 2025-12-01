@@ -4,7 +4,7 @@ Follow these steps to get started with ODBC as a Data Connector. This recipe wil
 
 ## Preparation
 
-- Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation).
+- **Spice with ODBC support**: ODBC support is not included in the released binaries. See [Building Spice with ODBC](https://spiceai.org/docs/components/data-connectors/odbc#building-spice-with-odbc) for instructions on how to build Spice with ODBC support.
 
 ## Steps
 
