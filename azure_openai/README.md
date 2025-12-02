@@ -137,26 +137,32 @@ Result:
   "results": [
     {
       "matches": {
-        "content": "value": "# Metrics Naming\n\n## TL;DR\n\n**Metric Naming Guide**: Prioritize Developer Experience (DX) with intuitive, readable names that ..."
+        "content": ".\n\n## Definitions\n\n- Metric: is a measurement used to track the state and behavior of a system component. Metrics represent the current status ..."
       },
-      "score": 0.7572349075959143,
-      "dataset": "spiceai.files",
       "data": {
         "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/dev/metrics.md"
-      }
+      },
+      "primary_key": {
+        "path": "docs/dev/metrics.md"
+      },
+      "score": 0.7269563689871208,
+      "dataset": "spiceai.files"
     },
     {
       "matches": {
-        "content": "value": "# Criteria Definitions\n\n## RC\n\nAcronym for \"Release Candidate\". Identifies a version that is eligible for general/stable release ...."
+        "content": "6\n\n## Core Connector Data Types\n\nCore Connector Data Types depend on the specific connector, but in general can be abstracted as (non-exhaustive) types like: ..."
       },
-      "score": 0.6719117129814338,
-      "dataset": "spiceai.files",
       "data": {
         "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/criteria/definitions.md"
-      }
+      },
+      "primary_key": {
+        "path": "docs/criteria/definitions.md"
+      },
+      "score": 0.6737559856782607,
+      "dataset": "spiceai.files"
     }
   ],
-  "duration_ms": 535
+  "duration_ms": 1043
 }
 ```
 
