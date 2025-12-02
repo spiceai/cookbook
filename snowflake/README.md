@@ -162,7 +162,7 @@ version: v1
 kind: Spicepod
 name: snowflake-app
 datasets:
-  - from: snowflake:snowflake_sample_data.tpch_sf1.lineitem
+  - from: snowflake:SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.LINEITEM
     name: lineitem
     params:
       snowflake_role: accountadmin
