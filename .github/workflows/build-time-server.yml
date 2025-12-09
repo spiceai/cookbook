@@ -4,13 +4,14 @@ on:
   push:
     branches:
       - trunk
+      - phillip/251209-add-caching-accelerator-cookbook # TODO: Remove
     paths:
       - 'caching/accelerator/time_server/**'
       - '.github/workflows/build-time-server.yml'
-  pull_request:
-    paths:
-      - 'caching/accelerator/time_server/**'
-      - '.github/workflows/build-time-server.yml'
+  # pull_request:
+  #   paths:
+  #     - 'caching/accelerator/time_server/**'
+  #     - '.github/workflows/build-time-server.yml'
   workflow_dispatch:
 
 env:
