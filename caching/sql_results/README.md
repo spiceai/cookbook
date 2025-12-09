@@ -208,6 +208,94 @@ Observe the Spice runtime terminal for cache initialization. Example output:
 
 For more information about selecting an appropriate hashing algorithm, refer to the [Results Caching Documentation](https://docs.spiceai.org/features/caching)
 
+## (Optional) Step 6: Use stale-while-revalidate caching
+
+Spice supports [Stale-While-Revalidate](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control) caching behaviours by setting the [`stale_while_revalidate_ttl` property](https://spiceai.org/docs/features/caching#stale-while-revalidate) to a duration. By default, stale-while-revalidate behaviour is disabled.
+
+Stop the Spice Runtime using `Ctrl-C`. Update the `spicepod.yaml` to specify the `stale_while_revalidate_ttl` property and update the `item_ttl` in the results cache settings:
+
+```yaml
+runtime:
+  caching:
+    sql_results:
+      enabled: true
+      max_size: 128MiB
+      item_ttl: 10s
+      hashing_algorithm: ahash
+      stale_while_revalidate_ttl: 10s
+```
+
+Restart the Spice Runtime with verbose logging to view the background refreshes:
+
+```bash
+spice run -v
+```
+
+Wait until the Spice Runtime is ready, then start the Spice SQL REPL:
+
+```bash
+spice sql
+```
+
+Perform a simple query, which populates the cache for the first time:
+
+```sql
+SELECT COUNT(1) FROM tpch.nation;
+```
+
+```console
+sql> SELECT COUNT(1) FROM tpch.nation;
++-----------------+
+| count(Int64(1)) |
++-----------------+
+| 25              |
++-----------------+
+
+Time: 0.010650365 seconds. 1 rows.
+```
+
+Perform the query again before 10 seconds pass, and the result will be returned from cache without a refresh:
+
+```console
+sql> SELECT COUNT(1) FROM tpch.nation;
++-----------------+
+| count(Int64(1)) |
++-----------------+
+| 25              |
++-----------------+
+
+Time: 0.002846184 seconds. 1 rows (cached).
+```
+
+After 10 seconds, but before 20 seconds, the result will still return from cache but the Spice Runtime will produce a debug log that a background refresh occurred:
+
+```console
+sql> SELECT COUNT(1) FROM tpch.nation;
++-----------------+
+| count(Int64(1)) |
++-----------------+
+| 25              |
++-----------------+
+
+Time: 0.002767147 seconds. 1 rows (cached).
+```
+
+```console
+2025-12-09T04:15:33.356304Z DEBUG runtime::datafusion::query::cache: Cache entry is stale (beyond TTL), triggering background revalidation for stale-while-revalidate
+2025-12-09T04:15:33.356535Z DEBUG runtime::datafusion::query::cache: Starting background revalidation task cache_key=4682376472860759847
+2025-12-09T04:15:33.356546Z DEBUG runtime::datafusion::query::cache: Background revalidation: re-executing query with existing plan
+2025-12-09T04:15:33.356946Z DEBUG datafusion_optimizer::analyzer: Analyzer took 0 ms
+2025-12-09T04:15:33.356978Z DEBUG datafusion_optimizer::analyzer: Analyzer took 0 ms
+2025-12-09T04:15:33.357554Z DEBUG datafusion_table_providers::sql::db_connection_pool::duckdbpool: DuckDB connection setup: SET order_by_non_integer_literal = true
+2025-12-09T04:15:33.357941Z DEBUG datafusion_table_providers::sql::db_connection_pool::duckdbpool: DuckDB connection setup: SET TimeZone = UTC
+2025-12-09T04:15:33.359580Z DEBUG runtime::datafusion::query::cache: Background query execution succeeded, collecting batches cache_key=4682376472860759847
+2025-12-09T04:15:33.365280Z DEBUG runtime::datafusion::query::cache: Collected batches, now caching cache_key=4682376472860759847 num_batches=1
+2025-12-09T04:15:33.365303Z DEBUG runtime::datafusion::query::cache: Background revalidation completed successfully and cached cache_key=4682376472860759847
+2025-12-09T04:15:33.365310Z DEBUG runtime::datafusion::query::cache: Background revalidation task completed cache_key=4682376472860759847
+```
+
+For more information about stale-while-revalidate caching, refer to the [Results Caching Documentation](https://spiceai.org/docs/features/caching)
+
 ## Additional Resources
 
 - [Results Caching Documentation](https://docs.spiceai.org/features/caching)
