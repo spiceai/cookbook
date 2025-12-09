@@ -240,11 +240,11 @@ spice sql
 Perform a simple query, which populates the cache for the first time:
 
 ```sql
-SELECT COUNT(1) FROM nation;
+SELECT COUNT(1) FROM tpch.nation;
 ```
 
 ```console
-sql> SELECT COUNT(1) FROM nation;
+sql> SELECT COUNT(1) FROM tpch.nation;
 +-----------------+
 | count(Int64(1)) |
 +-----------------+
@@ -257,7 +257,7 @@ Time: 0.010650365 seconds. 1 rows.
 Perform the query again before 10 seconds pass, and the result will be returned from cache without a refresh:
 
 ```console
-sql> SELECT COUNT(1) FROM nation;
+sql> SELECT COUNT(1) FROM tpch.nation;
 +-----------------+
 | count(Int64(1)) |
 +-----------------+
@@ -270,7 +270,7 @@ Time: 0.002846184 seconds. 1 rows (cached).
 After 10 seconds, but before 20 seconds, the result will still return from cache but the Spice Runtime will produce a debug log that a background refresh occurred:
 
 ```console
-sql> SELECT COUNT(1) FROM nation;
+sql> SELECT COUNT(1) FROM tpch.nation;
 +-----------------+
 | count(Int64(1)) |
 +-----------------+
@@ -294,7 +294,7 @@ Time: 0.002767147 seconds. 1 rows (cached).
 2025-12-09T04:15:33.365310Z DEBUG runtime::datafusion::query::cache: Background revalidation task completed cache_key=4682376472860759847
 ```
 
-For more information about stale-while-revalidate caching, refer to the [Results Caching Documentation](https://docs.spiceai.org/features/caching)
+For more information about stale-while-revalidate caching, refer to the [Results Caching Documentation](https://spiceai.org/docs/features/caching)
 
 ## Additional Resources
 
