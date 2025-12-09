@@ -1,0 +1,26 @@
+version: v1
+kind: Spicepod
+name: time_server
+
+runtime:
+  caching:
+    sql_results:
+      enabled: false
+
+datasets:
+  - from: http://localhost:7400
+    name: time
+    params:
+      request_query_filters: enabled
+      request_body_filters: enabled
+      allowed_request_paths: /**/**
+    acceleration:
+      enabled: true
+      engine: duckdb
+      refresh_mode: caching
+      #refresh_check_interval: 10s
+      params:
+        caching_ttl: 10s
+        caching_stale_while_revalidate_ttl: 10s
+        caching_stale_if_error: enabled
+

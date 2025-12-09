@@ -114,7 +114,8 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 ### Performance
 
 - [TPC-H Benchmarking](./tpc-h/README.md)
-- [Results Caching](./caching/README.md)
+- [SQL Results Caching](./caching/sql_results/README.md)
+- [Caching Accelerator](./caching/accelerator/README.md) - Intelligent HTTP response caching with Stale-While-Revalidate (SWR) support.
 - [Indexes on Accelerated Data](./acceleration/indexes/README.md)
 
 ### Acceleration Data Configuration
