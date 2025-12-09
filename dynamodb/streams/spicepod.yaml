@@ -1,15 +1,19 @@
-version: v1
+version: v1beta1
 kind: Spicepod
-name: dynamodb-demo
+name: dynamodb-streams-demo
 
 datasets:
-  - from: dynamodb:sample_data
-    name: sample_data
-    description: Demo sample data from DynamoDB
+  - from: dynamodb:orders
+    name: orders_stream
     params:
       dynamodb_aws_region: ${env:AWS_REGION}
       dynamodb_aws_access_key_id: ${secrets:SPICE_DYNAMODB_KEY}
       dynamodb_aws_secret_access_key: ${secrets:SPICE_DYNAMODB_SECRET}
+      ready_lag: 1h
     acceleration:
       enabled: true
-      refresh_mode: full
+      engine: duckdb
+      mode: file
+      refresh_mode: changes
+      on_conflict:
+        id: upsert

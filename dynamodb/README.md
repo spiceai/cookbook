@@ -18,7 +18,14 @@ git clone https://github.com/spiceai/cookbook.git
 cd cookbook/dynamodb
 ```
 
-## Step 2. Create a DynamoDB Table and Load Sample Data
+## Step 2. Define AWS_REGION
+```bash
+export AWS_REGION=<your-region>
+```
+
+---
+
+## Step 3. Create a DynamoDB Table and Load Sample Data
 
 You can create a table and load a few demo items via the AWS CLI:
 
@@ -28,7 +35,7 @@ aws dynamodb create-table \
   --attribute-definitions AttributeName=id,AttributeType=S \
   --key-schema AttributeName=id,KeyType=HASH \
   --billing-mode PAY_PER_REQUEST \
-  --region <your-region>
+  --region $AWS_REGION
 ```
 
 Add demo items using `put-item`:
@@ -36,18 +43,15 @@ Add demo items using `put-item`:
 ```bash
 aws dynamodb put-item --table-name sample_data --item \
   '{"id": {"S": "1"}, "name": {"S": "Name1"}, "phone": {"S": "555-0001"}, "email": {"S": "user1@example.com"}, "region": {"S": "Region1"}, "location": {"M": {"lat": {"N": "12.345"}, "lon": {"N": "-34.567"}}}}' \
-  --region <your-region>
+  --region $AWS_REGION
 
 aws dynamodb put-item --table-name sample_data --item \
   '{"id": {"S": "2"}, "name": {"S": "Name2"}, "phone": {"S": "555-0002"}, "email": {"S": "user2@example.com"}, "region": {"S": "Region2"}, "location": {"M": {"lat": {"N": "-41.789"}, "lon": {"N": "77.123"}}}}' \
-  --region <your-region>
-```
-
-(Replace `<your-region>` with e.g., `us-west-2`)
+  --region $AWS_REGION
 
 ---
 
-## Step 3. Configure Spice to Use DynamoDB Credentials
+## Step 4. Configure Spice to Use DynamoDB Credentials
 
 Update `.env` file to use your AWS credentials
 
@@ -55,12 +59,6 @@ Update `.env` file to use your AWS credentials
 SPICE_DYNAMODB_KEY=<aws_access_key_id>
 SPICE_DYNAMODB_SECRET=<aws_secret_access_key>
 ```
-
----
-
-## Step 4. Configure the DynamoDB Dataset
-
-Edit the `spicepod.yaml` file in this working directory and replace `<your-region>` with the region you created the table in.
 
 ---
 
@@ -102,12 +100,12 @@ select * from sample_data limit 10;
 Sample output:
 
 ```console
-+----+-------+----------+---------+----------+--------------+--------------+
-| id | name  | phone    | region  | email    | location.lat | location.lon |
-+----+-------+----------+---------+----------+--------------+--------------+
-| 1  | Name1 | 555-0001 | Region1 | user1@example.com | 12.345   | -34.567 |
-| 2  | Name2 | 555-0002 | Region2 | user2@example.com | -41.789  | 77.123  |
-+----+-------+----------+---------+----------+--------------+--------------+
++----+-------+----------+---------+-------------------+--------------+--------------+
+| id | name  | phone    | region  | email             | location.lat | location.lon |
++----+-------+----------+---------+-------------------+--------------+--------------+
+| 1  | Name1 | 555-0001 | Region1 | user1@example.com | 12.345       | -34.567      |
+| 2  | Name2 | 555-0002 | Region2 | user2@example.com | -41.789      | 77.123       |
++----+-------+----------+---------+-------------------+--------------+--------------+
 ```
 
 ---
@@ -117,5 +115,9 @@ Sample output:
 To delete the DynamoDB table:
 
 ```bash
-aws dynamodb delete-table --table-name sample_data --region <your-region>
+aws dynamodb delete-table --table-name sample_data --region $AWS_REGION
 ```
+
+## Additional Resources
+
+For more information, see the [DynamoDB Connector documentation](https://spiceai.org/docs/components/data-connectors/dynamodb).
