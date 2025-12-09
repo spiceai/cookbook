@@ -228,7 +228,7 @@ runtime:
 Restart the Spice Runtime with verbose logging to view the background refreshes:
 
 ```bash
-spice run
+spice run -v
 ```
 
 Wait until the Spice Runtime is ready, then start the Spice SQL REPL:
