@@ -31,7 +31,7 @@ Observe the Spice runtime terminal for cache initialization. Example output:
 
 ```bash
 2024-08-05T05:25:10.627005Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
-2024-08-05T05:25:10.628875Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: Siphash, encoding: none
+2024-08-05T05:25:10.628875Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2024-08-05T05:26:50.262092Z  INFO runtime: Dataset customer registered (s3://spiceai-demo-datasets/tpch/customer/), results cache enabled.
 2024-08-05T05:26:51.569841Z  INFO runtime: Dataset lineitem registered (s3://spiceai-demo-datasets/tpch/lineitem/), results cache enabled.
 2024-08-05T05:26:52.871013Z  INFO runtime: Dataset nation registered (s3://spiceai-demo-datasets/tpch/nation/), results cache enabled.
@@ -45,7 +45,7 @@ Observe the Spice runtime terminal for cache initialization. Example output:
 Notice the following line confirming the default cache configuration with cached items expiration time of 1 second is loaded.
 
 ```bash
-2024-08-05T05:25:10.628875Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: Siphash, encoding: none
+2024-08-05T05:25:10.628875Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 ```
 
 ## Step 3: Update Cache Configuration
@@ -91,7 +91,7 @@ Verify the following output is shown in the Spice runtime terminal, confirming t
 
 ```bash
 2024-08-05T05:29:06.876281Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
-2024-08-05T05:29:06.876579Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 300s, hashing algorithm: Siphash, encoding: none
+2024-08-05T05:29:06.876579Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 300s, hashing algorithm: XXH3, encoding: none
 2024-08-05T05:29:08.395163Z  INFO runtime: Dataset region registered (s3://spiceai-demo-datasets/tpch/region/), results cache enabled.
 2024-08-05T05:29:08.399137Z  INFO runtime: Dataset nation registered (s3://spiceai-demo-datasets/tpch/nation/), results cache enabled.
 2024-08-05T05:29:08.399887Z  INFO runtime: Dataset supplier registered (s3://spiceai-demo-datasets/tpch/supplier/), results cache enabled.
@@ -171,7 +171,7 @@ The cached result will expire 5 minutes after the initial query execution.
 
 ## (Optional) Step 5: Update the hashing algorithm
 
-The hashing algorithm determines how cache keys are hashed before being stored, impacting both lookup speed and protection against potential DOS attacks. The Runtime supports a hashing algorithm of either `siphash` or `ahash`.
+The hashing algorithm determines how cache keys are hashed before being stored, impacting both lookup speed and protection against potential DOS attacks. The Runtime supports a hashing algorithm of `xxh3` (default), `ahash`, `siphash`, `blake3`, `xxh32`, `xxh64`, or `xxh128`.
 
 Stop the Spice Runtime using `Ctrl-C`. Update the `spicepod.yaml` to specify the `ahash` hashing algorithm in the results cache settings:
 
