@@ -15,11 +15,11 @@ This recipe includes a small Rust-based time server that helps illustrate and ex
 ## Prerequisites
 
 - [Spice CLI](https://docs.spiceai.org/getting-started) installed
-- Rust toolchain (for running the time server)
+- Docker (for running the time server)
 
 ## Time Server
 
-The included time server (`src/main.rs`) serves the current UTC time on `http://localhost:7400/time` and provides interactive controls to simulate various caching scenarios:
+The included time server (`time_server/`) serves the current UTC time on `http://localhost:7400/time` and provides interactive controls to simulate various caching scenarios. A pre-built Docker image is available at `ghcr.io/spiceai/cookbook-time-server:latest`.
 
 | Key | Action |
 |-----|--------|
@@ -44,11 +44,10 @@ The server supports any path under `/time`, enabling testing of multiple cache k
 
 ### Step 1: Start the Time Server
 
-Build and run the time server:
+Run the time server using Docker:
 
 ```bash
-cd caching/accelerator
-cargo run
+docker run -it --rm -p 7400:7400 ghcr.io/spiceai/cookbook-time-server:latest
 ```
 
 The server will start and display an interactive control panel.
