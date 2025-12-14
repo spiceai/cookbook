@@ -20,6 +20,12 @@ On Unix, this requires cloning and compiling the SQLite ODBC driver project. Fir
 sudo apt-get install unixodbc odbcinst sqlite3 libsqlite3-dev
 ```
 
+On Fedora, install the equivalent dependencies:
+
+```bash
+sudo dnf install unixODBC unixODBC-devel sqlite sqlite-devel
+```
+
 Then, clone and compile the SQLite ODBC driver:
 
 ```bash

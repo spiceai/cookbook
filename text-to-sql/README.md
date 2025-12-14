@@ -37,7 +37,8 @@ SPICE_OPENAI_API_KEY=your_openai_api_key_here
 
 - **Install `jq`** (for pretty-printing JSON):
   - macOS: `brew install jq`
-  - Linux: `sudo apt-get install jq`
+  - Ubuntu/Debian: `sudo apt-get install jq`
+  - Fedora: `sudo dnf install jq`
   - Other platforms: [jqlang.github.io/jq/download](https://jqlang.github.io/jq/download/)
 
 ## Background
