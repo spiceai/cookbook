@@ -1,0 +1,21 @@
+feedback_id,feedback,customer_id,date,product_category
+1,"Great service, very helpful!",C001,2024-01-15,Support
+2,"The product broke after one day",C002,2024-01-16,Electronics
+3,"It's okay, nothing special",C003,2024-01-17,Clothing
+4,"Absolutely love this! Best purchase ever!",C004,2024-01-18,Electronics
+5,"Terrible experience, will never buy again",C005,2024-01-19,Appliances
+6,"Fast shipping, product as described",C006,2024-01-20,Home & Garden
+7,"Customer support was rude and unhelpful",C007,2024-01-21,Support
+8,"Exceeded my expectations, highly recommend!",C008,2024-01-22,Electronics
+9,"Average quality for the price",C009,2024-01-23,Clothing
+10,"The item arrived damaged, very disappointed",C010,2024-01-24,Furniture
+11,"Perfect fit, exactly what I needed",C011,2024-01-25,Clothing
+12,"Waste of money, doesn't work as advertised",C012,2024-01-26,Electronics
+13,"Good value, would purchase again",C013,2024-01-27,Home & Garden
+14,"Meh, could be better",C014,2024-01-28,Appliances
+15,"Outstanding quality and fast delivery!",C015,2024-01-29,Furniture
+16,"Not worth the price, very cheaply made",C016,2024-01-30,Clothing
+17,"Works fine, no complaints",C017,2024-01-31,Electronics
+18,"The worst product I've ever bought",C018,2024-02-01,Appliances
+19,"Amazing! My whole family loves it",C019,2024-02-02,Home & Garden
+20,"Took forever to arrive but product is decent",C020,2024-02-03,Electronics
