@@ -46,7 +46,7 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 - [Database Snapshots](./acceleration/snapshots/README.md) - Bootstrap DuckDB accelerations from object storage to skip cold starts.
 - [Apache Arrow Data Accelerator](./arrow/README.md)
 - [Accelerated Views](./views/README.md)
-- [Partitioning](./acceleration/partitioning/README.md) - Partition accelerated datasets to improve query performance.
+- [Dataset Partitioning](./acceleration/partitioning/README.md) - Partition accelerated datasets to improve query performance.
 
 ### Consuming and visualizing data with clients
 
