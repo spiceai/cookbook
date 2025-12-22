@@ -43,6 +43,8 @@ datasets:
     params:
       file_format: json
       client_timeout: 30s
+      allowed_request_paths: '/shows/**,/search/people'
+      request_query_filters: enabled
 ```
 
 - **`from`**: The base URL for the TVMaze API. The connector will append paths and query parameters to this base.
