@@ -10,7 +10,8 @@ public class Cloud {
         try (
             SpiceClient client = SpiceClient.builder()
                 .withApiKey("API_KEY")
-                .withSpiceCloud()
+                .withHttpAddress("https://data.spiceai.io")
+                .withFlightAddress("flight.spiceai.io:443")
                 .build()
         ) {
             FlightStream stream = client.query(
