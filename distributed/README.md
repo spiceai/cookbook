@@ -1,6 +1,10 @@
 # Distributed Query
 
-<recipe intro>
+This recipe demonstrates how to run Spice.ai OSS in a distributed mode, for maximum performance in queries on large datasets across multiple nodes. It shows how to:
+
+- Generate mTLS certificates for development environments
+- Setup Spice.ai OSS schedulers and executors
+- Run distributed Spice.ai queries
 
 ## Prerequisites
 
@@ -36,7 +40,7 @@ spice cluster tls add executor1
 Start the Spice scheduler by providing the cluster certificates and cluster mode:
 
 ```bash
-spiced --cluster-mode scheduler --cluster-address 0.0.0.0:50052 --cluster-ca-certificate-file ~/.spice/pki/ca.crt --cluster-certificate-file ~/.spice/pki/scheduler1.crt --cluster-key-file ~/.spice/pki/scheduler1.key --cluster-advertise-address localhost:50052
+spiced --role scheduler --scheduler-address 0.0.0.0:50052 --node-mtls-ca-certificate-file ~/.spice/pki/ca.crt --node-mtls-certificate-file ~/.spice/pki/scheduler1.crt --node-mtls-key-file ~/.spice/pki/scheduler1.key --node-advertise-address localhost:50052
 ```
 
 The prepared `spicepod.yaml` serves a hive-partitioned dataset from the scheduler to make available for query by all executors:
@@ -82,7 +86,7 @@ A scheduler requires at least one executor to perform queries. In a new terminal
 A Spice executor does not require a `spicepod.yaml`, as the scheduler will sync dataset information with executors when executing queries:
 
 ```bash
-spiced --cluster-mode executor --cluster-address 0.0.0.0:50053 --cluster-ca-certificate-file ~/.spice/pki/ca.crt --cluster-certificate-file ~/.spice/pki/executor1.crt --cluster-key-file ~/.spice/pki/executor1.key --cluster-scheduler-url https://localhost:50052 --cluster-advertise-address localhost:50053
+spiced --role executor --scheduler-address 0.0.0.0:50053 --node-mtls-ca-certificate-file ~/.spice/pki/ca.crt --node-mtls-certificate-file ~/.spice/pki/executor1.crt --node-mtls-key-file ~/.spice/pki/executor1.key --node-mtls-scheduler-url https://localhost:50052 --node-advertise-address localhost:50053
 ```
 
 The Spice executor will now start:

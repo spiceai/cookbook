@@ -143,3 +143,4 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 ### Advanced Topics
 
 - [Local dataset replication](./localpod/README.md) - Link datasets in a parent/child relationship within the current Spicepod
+- [Distributed Query](./distributed/README.md) - Run queries distributed across multiple nodes for maximum performance across large datasets
