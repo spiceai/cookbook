@@ -16,3 +16,11 @@ datasets:
       file_format: csv
     acceleration:
       enabled: true
+
+  - from: file:../data/customer_feedback.csv
+    name: customer_feedback
+    description: Customer feedback data for sentiment analysis examples
+    params:
+      file_format: csv
+    acceleration:
+      enabled: true
