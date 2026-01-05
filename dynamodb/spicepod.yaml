@@ -10,6 +10,7 @@ datasets:
       dynamodb_aws_region: ${env:AWS_REGION}
       dynamodb_aws_access_key_id: ${secrets:SPICE_DYNAMODB_KEY}
       dynamodb_aws_secret_access_key: ${secrets:SPICE_DYNAMODB_SECRET}
+      unnest_depth: 1
     acceleration:
       enabled: true
       refresh_mode: full
