@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/apache/arrow/go/v17/arrow/array"
-	"github.com/spiceai/gospice/v7"
+	"github.com/apache/arrow-go/v18/arrow/array"
+	"github.com/spiceai/gospice/v8"
 )
 
 func main() {
@@ -14,7 +14,7 @@ func main() {
 
 	spice.Init()
 
-	reader, err := spice.Query(
+	reader, err := spice.Sql(
 		context.Background(),
 		"SELECT \"VendorID\", \"tpep_pickup_datetime\", \"fare_amount\" FROM taxi_trips LIMIT 10",
 	)

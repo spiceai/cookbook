@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/spiceai/gospice/v7"
+	"github.com/spiceai/gospice/v8"
 )
 
 func main() {
@@ -20,7 +20,7 @@ func main() {
 		panic(fmt.Errorf("Error initializing client: %s", err))
 	}
 
-	reader, err := spice.Query(context.Background(), "show tables;")
+	reader, err := spice.Sql(context.Background(), "show tables;")
 	if err != nil {
 		panic(fmt.Errorf("error querying: %w", err))
 	}
