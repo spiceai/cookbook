@@ -7,6 +7,7 @@ datasets:
     name: orders_stream
     params:
       dynamodb_aws_region: ${env:AWS_REGION}
+      dynamodb_aws_auth: key
       dynamodb_aws_access_key_id: ${secrets:SPICE_DYNAMODB_KEY}
       dynamodb_aws_secret_access_key: ${secrets:SPICE_DYNAMODB_SECRET}
       ready_lag: 1h
