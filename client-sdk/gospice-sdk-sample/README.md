@@ -44,35 +44,22 @@ go run main.go
 Results:
 
 ```shell
-go run main.go
-VendorID: 2
-tpep_pickup_datetime: 1705115889000000
-fare_amount: 11.4
-VendorID: 2
-tpep_pickup_datetime: 1705117978000000
-fare_amount: 13.5
-VendorID: 2
-tpep_pickup_datetime: 1705116362000000
-fare_amount: 11.4
-VendorID: 2
-tpep_pickup_datetime: 1705118024000000
-fare_amount: 27.5
-VendorID: 2
-tpep_pickup_datetime: 1705114708000000
-fare_amount: 18.4
-VendorID: 2
-tpep_pickup_datetime: 1705118064000000
-fare_amount: 14.2
-VendorID: 2
-tpep_pickup_datetime: 1705115215000000
-fare_amount: 88.1
-VendorID: 2
-tpep_pickup_datetime: 1705116146000000
-fare_amount: 10
-VendorID: 2
-tpep_pickup_datetime: 1705116079000000
-fare_amount: 28.9
-VendorID: 1
-tpep_pickup_datetime: 1705115615000000
-fare_amount: 35.2
+=== Using Sql ===
+VendorID: 2, tpep_pickup_datetime: 1706465757000000, fare_amount: 15.6
+VendorID: 2, tpep_pickup_datetime: 1706466833000000, fare_amount: 14.2
+VendorID: 2, tpep_pickup_datetime: 1706465786000000, fare_amount: 7.9
+VendorID: 1, tpep_pickup_datetime: 1706464867000000, fare_amount: 14.2
+VendorID: 1, tpep_pickup_datetime: 1706466244000000, fare_amount: 15.6
+VendorID: 1, tpep_pickup_datetime: 1706467652000000, fare_amount: 33.1
+VendorID: 1, tpep_pickup_datetime: 1706465767000000, fare_amount: 7.2
+VendorID: 1, tpep_pickup_datetime: 1706466975000000, fare_amount: 46.4
+VendorID: 1, tpep_pickup_datetime: 1706464846000000, fare_amount: 17
+VendorID: 1, tpep_pickup_datetime: 1706467147000000, fare_amount: 9.3
+
+=== Using SqlWithParams ===
+VendorID: 2, tpep_pickup_datetime: 1706252166000000, fare_amount: 19.1
+VendorID: 2, tpep_pickup_datetime: 1706251687000000, fare_amount: 70
+VendorID: 1, tpep_pickup_datetime: 1706250595000000, fare_amount: 20.5
+VendorID: 1, tpep_pickup_datetime: 1706250222000000, fare_amount: 10.7
+VendorID: 2, tpep_pickup_datetime: 1706249286000000, fare_amount: 70
 ```
