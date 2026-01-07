@@ -2041,6 +2041,8 @@ dependencies = [
 name = "spice-rs-sdk-sample"
 version = "0.1.0"
 dependencies = [
+ "arrow",
+ "chrono",
  "spiceai",
  "tokio",
 ]
