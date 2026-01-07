@@ -6,7 +6,7 @@ toolchain go1.24.2
 
 require (
 	github.com/apache/arrow-go/v18 v18.4.1
-	github.com/spiceai/gospice/v8 v8.0.0
+	github.com/spiceai/gospice/v8 v8.0.1
 )
 
 require (

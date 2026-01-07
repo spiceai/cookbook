@@ -59,8 +59,8 @@ github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 h1:Jamvg5psRI
 github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec h1:W09IVJc94icq4NjY3clb7Lk8O1qJ8BdBEF8z0ibU0rE=
 github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec/go.mod h1:qqbHyh8v60DhA7CoWK5oRCqLrMHRGoxYCSS9EjAz6Eo=
-github.com/spiceai/gospice/v8 v8.0.0 h1:aKUfdEvvzZ6yVXxCOlQA774QhiPcjY3VnOAAXXAANRI=
-github.com/spiceai/gospice/v8 v8.0.0/go.mod h1:OAEO1UpEk4BLyyz8q8/HKi90Rn6O1/oRx1Yaf4bPWBc=
+github.com/spiceai/gospice/v8 v8.0.1 h1:baLvjfs7hoTiYqHCT+bMfWPcD5DsWiCwt5nRJhRlRKA=
+github.com/spiceai/gospice/v8 v8.0.1/go.mod h1:OAEO1UpEk4BLyyz8q8/HKi90Rn6O1/oRx1Yaf4bPWBc=
 github.com/stretchr/objx v0.5.2 h1:xuMeJ0Sdp5ZMRXx/aWO6RZxdr3beISkG5/G/aIRr3pY=
 github.com/stretchr/objx v0.5.2/go.mod h1:FRsXN1f5AsAjCGJKqEizvkpNtU+EGNCLh3NxZ/8L+MA=
 github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
