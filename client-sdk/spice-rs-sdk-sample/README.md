@@ -1,6 +1,6 @@
 # Spice with Rust SDK
 
-This recipe demonstrates how to use the Spice Rust SDK to connect to a Spice runtime and query data.
+This recipe demonstrates how to use the Spice Rust SDK to connect to a Spice runtime and query data, including parameterized queries.
 
 ## Prerequisites
 
@@ -47,45 +47,23 @@ cargo run
 
 Results:
 
-```shell
-cargo run
-    Finished dev [unoptimized + debuginfo] target(s) in 0.23s
-     Running `target/debug/spice-rs-sdk-sample`
-RecordBatch { schema: Schema { fields: [Field { name: "VendorID", data_type: Int32, nullable: true, dict_id: 0, dict_is_ordered: false, metadata: {} }, Field { name: "tpep_pickup_datetime", data_type: Timestamp(Microsecond, None), nullable: true, dict_id: 0, dict_is_ordered: false, metadata: {} }, Field { name: "fare_amount", data_type: Float64, nullable: true, dict_id: 0, dict_is_ordered: false, metadata: {} }], metadata: {} }, columns: [PrimitiveArray<Int32>
-[
-  2,
-  2,
-  2,
-  2,
-  2,
-  1,
-  2,
-  2,
-  2,
-  1,
-], PrimitiveArray<Timestamp(Microsecond, None)>
-[
-  2024-01-24T15:17:12,
-  2024-01-24T15:52:24,
-  2024-01-24T15:08:55,
-  2024-01-24T15:42:55,
-  2024-01-24T15:52:23,
-  2024-01-24T15:30:55,
-  2024-01-24T15:21:48,
-  2024-01-24T15:47:59,
-  2024-01-24T15:55:32,
-  2024-01-24T15:02:22,
-], PrimitiveArray<Float64>
-[
-  20.5,
-  10.7,
-  25.4,
-  9.3,
-  18.4,
-  70.0,
-  40.8,
-  35.2,
-  36.6,
-  11.4,
-]], row_count: 10 }
+```console
+=== Using query ===
+VendorID: 2, tpep_pickup_datetime: 2024-01-06 14:41:17, fare_amount: 8.60
+VendorID: 2, tpep_pickup_datetime: 2024-01-06 14:56:46, fare_amount: 7.20
+VendorID: 2, tpep_pickup_datetime: 2024-01-06 14:28:42, fare_amount: 14.20
+VendorID: 2, tpep_pickup_datetime: 2024-01-06 14:28:26, fare_amount: 37.30
+VendorID: 2, tpep_pickup_datetime: 2024-01-06 14:35:06, fare_amount: 70.00
+VendorID: 2, tpep_pickup_datetime: 2024-01-06 14:18:57, fare_amount: 19.10
+VendorID: 2, tpep_pickup_datetime: 2024-01-06 14:40:11, fare_amount: 5.80
+VendorID: 1, tpep_pickup_datetime: 2024-01-06 14:38:04, fare_amount: 12.10
+VendorID: 2, tpep_pickup_datetime: 2024-01-06 14:14:22, fare_amount: 7.20
+VendorID: 2, tpep_pickup_datetime: 2024-01-06 14:38:31, fare_amount: 7.90
+
+=== Using query_with_params ===
+VendorID: 2, tpep_pickup_datetime: 2024-01-26 06:56:06, fare_amount: 19.10
+VendorID: 2, tpep_pickup_datetime: 2024-01-26 06:48:07, fare_amount: 70.00
+VendorID: 1, tpep_pickup_datetime: 2024-01-26 06:29:55, fare_amount: 20.50
+VendorID: 1, tpep_pickup_datetime: 2024-01-26 06:23:42, fare_amount: 10.70
+VendorID: 2, tpep_pickup_datetime: 2024-01-26 06:08:06, fare_amount: 70.00
 ```
