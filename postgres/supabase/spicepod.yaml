@@ -3,13 +3,13 @@ kind: Spicepod
 name: supabase
 
 datasets:
-  - from: postgres:[remote_table_path]
-    name: [local_table_name]
+  - from: postgres:spice_test
+    name: spice_test
     params:
-      pg_host: [Host]
-      pg_db: [Database name]
-      pg_port: [Port]
-      pg_user: [User]
+      pg_host: aws-0-ap-northeast-2.pooler.supabase.com
+      pg_db: postgres
+      pg_port: 5432
+      pg_user: postgres.gmipyuxjmtlqfqrjndon
       pg_pass: ${env:PG_PASS}
       pg_sslmode: require # "verify-full" is default
     acceleration:

@@ -1,0 +1,31 @@
+name: Codex Test - DuckDB Accelerator
+on:
+  workflow_call:
+    inputs:
+      spice_version:
+        description: 'Spice.ai version to test'
+        required: false
+        type: string
+        default: 'latest'
+    secrets:
+      OPENAI_API_KEY:
+        required: false
+  workflow_dispatch:
+    inputs:
+      spice_version:
+        description: 'Spice.ai version to test'
+        required: false
+        type: string
+        default: 'latest'
+jobs:
+  test:
+    uses: ./.github/workflows/codex-test-reusable.yml
+    with:
+      recipe_name: duckdb-accelerator
+      recipe_path: duckdb/accelerator
+      spice_version: ${{ inputs.spice_version }}
+      requires_secrets: false
+      additional_instructions: |
+        This recipe demonstrates using DuckDB as an acceleration engine.
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

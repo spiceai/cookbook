@@ -10,14 +10,21 @@ Use the SharePoint Data Connector to query documents stored in SharePoint from S
 
 ## Follow these steps
 
-**Step 1.** Login in Sharepoint via Spice CLI.
+**Step 1.** Clone this sample
+
+```shell
+git clone https://github.com/spiceai/cookbook.git
+cd cookbook/sharepoint
+```
+
+**Step 2.** Login in Sharepoint via Spice CLI.
 
 ```bash
 export TENANT_ID=<YOUR_TENANT_ID>
 spice login sharepoint --tenant-id $TENANT_ID --client-id f2b3116e-b4c4-464f-80ec-73cd9d9886b4
 ```
 
-**Step 2.** Start the Spice runtime.
+**Step 3.** Start the Spice runtime.
 
 ```bash
 spice run
@@ -31,7 +38,7 @@ Spice.ai runtime starting...
 2024-09-16T12:34:56.789012Z  INFO runtime: Loaded dataset: important_documents
 ```
 
-**Step 3.** Run queries against the dataset using the Spice SQL REPL.
+**Step 4.** Run queries against the dataset using the Spice SQL REPL.
 
 _In a new terminal_, start the Spice SQL REPL:
 

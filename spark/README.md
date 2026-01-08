@@ -66,7 +66,7 @@ cd cookbook/spark
   spark  | Spark services started! ✅
   ```
 
-2. Initialise a Spice app
+2. Initialize a Spice app
 
   ```shell
   spice init spark_demo

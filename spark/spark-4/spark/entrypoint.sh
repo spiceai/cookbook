@@ -31,28 +31,14 @@ fi
 
 # Start Spark services
 start-master.sh -p 7077
-sleep 5  # Give master time to start
-
-start-worker.sh spark://spark:7077
-sleep 15  # Give worker time to start
 
 # Start Spark Connect server first
-$SPARK_HOME/bin/spark-submit \
-    --master spark://spark:7077 \
-    --class org.apache.spark.sql.connect.service.SparkConnectServer \
-    --packages org.apache.spark:spark-connect_2.13:${SPARK_VERSION} \
-    --conf "spark.sql.catalogImplementation=hive" \
-    --conf "spark.sql.warehouse.dir=/home/spark/warehouse" \
-    --conf "spark.hadoop.javax.jdo.option.ConnectionURL=jdbc:derby:;databaseName=/home/spark/metastore/metastore_db;create=true" \
-    --conf "spark.hadoop.javax.jdo.option.ConnectionDriverName=org.apache.derby.jdbc.EmbeddedDriver" \
-    --name "Spark Connect Server" &
-
-sleep 5  # Wait for Spark Connect to start
+$SPARK_HOME/sbin/start-connect-server.sh
 
 # Run the NYC data loading script using spark-submit
 if [ -f "/root/.ipython/profile_default/startup/01-load-nyc.py" ]; then
     $SPARK_HOME/bin/spark-submit \
-        --master spark://spark:7077 \
+        --master 'local[*]' \
         "/root/.ipython/profile_default/startup/01-load-nyc.py"
 fi
 

@@ -1,0 +1,12 @@
+[package]
+name = "time_server"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+
+[dependencies]
+axum = "0.7"
+tokio = { version = "1", features = ["full"] }
+chrono = { version = "0.4", features = ["clock", "std"] }
+anyhow = "1"
+crossterm = "0.27"

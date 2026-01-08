@@ -1,0 +1,32 @@
+name: Codex Test - Vectors
+on:
+  workflow_call:
+    inputs:
+      spice_version:
+        description: 'Spice.ai version to test'
+        required: false
+        type: string
+        default: 'latest'
+    secrets:
+      OPENAI_API_KEY:
+        required: false
+  workflow_dispatch:
+    inputs:
+      spice_version:
+        description: 'Spice.ai version to test'
+        required: false
+        type: string
+        default: 'latest'
+jobs:
+  test:
+    uses: ./.github/workflows/codex-test-reusable.yml
+    with:
+      recipe_name: vectors
+      recipe_path: vectors
+      spice_version: ${{ inputs.spice_version }}
+      requires_secrets: false
+      additional_instructions: |
+        This recipe demonstrates vector embeddings and similarity search.
+        May use public data or local embeddings.
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

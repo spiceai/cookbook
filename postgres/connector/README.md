@@ -4,18 +4,10 @@ This recipe will use a demo instance of Postgres with a dataset generated using 
 
 ## Pre-requisites
 
-- Install [PostgresSQL](https://www.postgresql.org/download/). Once downloaded and installed, run the following commands:
-
-```bash
-createdb --help
-psql --help
-```
-
+- [Docker](https://docs.docker.com/get-docker/) is installed
 - Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation).
 
-## Steps
-
-**Step 1.** Create a sample Postgres database and generate a testing table using stored procedure.
+## Step 1: Create a sample Postgres database and generate a testing table using stored procedure.
 
 - Start postgres server (note: this is an insecure postgres, only use for testing).
 
@@ -92,12 +84,6 @@ CALL sample_data_gen();
 Query OK, 1 row affected (1.92 sec)
 ```
 
-Drop the stored procedure.
-
-```SQL
-DROP PROCEDURE sample_data_gen();
-```
-
 Check the sample data generated in the `sample_data` table.
 
 ```SQL
@@ -120,14 +106,23 @@ SELECT * FROM sample_data LIMIT 10;
 (10 rows)
 ```
 
-**Step 2.** Initialize a Spice app.
+Drop the stored procedure.
+
+```SQL
+DROP PROCEDURE sample_data_gen();
+```
+
+
+## Step 2: Initialize a Spice app.
 
 ```bash
 spice init postgres-connector-demo
 cd postgres-connector-demo
 ```
 
-**Step 3.** Configure the dataset to connect to Postgres. Copy and paste the configuration below to `spicepod.yaml` in the Spice app.
+## Step 3: Configure the dataset to connect to Postgres. 
+
+Copy and paste the configuration below to `spicepod.yaml` in the Spice app.
 
 ```yaml
 version: v1
@@ -144,9 +139,9 @@ datasets:
       pg_user: postgres
 ```
 
-Ensure that the `pg_pass` connctor parameter is only set when `pg_user` used in spicepod requires a password.
+Ensure that the `pg_pass` connector parameter is only set when `pg_user` used in spicepod requires a password.
 
-**Step 4.** Start the Spice runtime
+## Step 4: Start the Spice runtime.
 
 ```bash
 spice run
@@ -168,7 +163,7 @@ Follow the [getting started guide](https://docs.spiceai.org/getting-started) to 
 
 See the [datasets reference](https://docs.spiceai.org/reference/spicepod/datasets) for more dataset configuration options.
 
-**Step 5.** Run queries against the dataset using the Spice SQL REPL.
+# Step 5: Run queries against the dataset using the Spice SQL REPL.
 
 In a new terminal, start the Spice SQL REPL
 
@@ -179,12 +174,13 @@ spice sql
 List available datasets in spice runtime.
 
 ```sql
-sql> show tables;
+show tables;
+```
+```
 +---------------+--------------+--------------+------------+
 | table_catalog | table_schema | table_name   | table_type |
 +---------------+--------------+--------------+------------+
 | spice         | runtime      | task_history | BASE TABLE |
-| spice         | runtime      | metrics      | BASE TABLE |
 | spice         | public       | sample_data  | BASE TABLE |
 +---------------+--------------+--------------+------------+
 
@@ -194,7 +190,9 @@ Time: 0.004413208 seconds. 3 rows.
 You can now now query `sample_data` in the runtime.
 
 ```sql
-sql> select * from sample_data limit 10;
+select * from sample_data limit 10;
+```
+```
 +----+---------------------+--------+----------+--------------------+-----------------+----------+---------+------------+-------------+
 | id | datetime            | name   | phone    | email              | street_address  | zip_code | region  | latitude   | longitude   |
 +----+---------------------+--------+----------+--------------------+-----------------+----------+---------+------------+-------------+
@@ -214,3 +212,9 @@ Time: 0.017579583 seconds. 10 rows.
 ```
 
 For more information on using `spice sql`, see the [CLI reference](https://docs.spiceai.org/cli/reference/sql).
+
+## Step 6: Cleanup
+
+```bash
+docker rm -f postgres
+```

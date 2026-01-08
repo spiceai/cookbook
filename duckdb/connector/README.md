@@ -33,7 +33,7 @@ CALL dbgen(sf = 1);
 Output:
 
 ```SQL
-100% ▕████████████████████████████████████████████████████████████▏ 
+100% ▕████████████████████████████████████████████████████████████▏
 ┌─────────┐
 │ Success │
 │ boolean │
@@ -66,9 +66,9 @@ Output:
 └──────────┘
 ```
 
-Quit the DuckDB CLI (ctrl-c, ctrl-c).
+Quit the DuckDB CLI by excuting `.exit`.
 
-**Step 3.** Configure the dataset to use the DuckDB database file. Copy and paste the YAML below to `spicepod.yaml` in the Spice app.
+**Step 3.** Configure the dataset to use the DuckDB database file. Copy and paste the YAML below to `duckdb-qs/spicepod.yaml`.
 
 ```yaml
 version: v1

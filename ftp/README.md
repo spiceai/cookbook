@@ -74,7 +74,7 @@ Output:
 Time: 0.011731833 seconds. 5 rows.
 ```
 
-**Step 4.** Clean up the demo environment:
+**Step 4.** Exit Spice SQL REPL by running `exit`, and clean up the demo environment:
 
 ```bash
 make clean

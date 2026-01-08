@@ -176,4 +176,4 @@ rm *.md
 
 ## Additional Resources
 
-For more information, see the [File Data Connector documentation](https://docs.spiceai.org/data-connectors/file).
+For more information, see the [File Data Connector documentation](https://spiceai.org/docs/components/data-connectors/file).

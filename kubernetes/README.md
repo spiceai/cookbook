@@ -3,7 +3,7 @@
 **Step 1.** (Optional) Start a local [`kind`](https://kind.sigs.k8s.io/) cluster:
 
 ```bash
-go install sigs.k8s.io/kind@v0.22.0
+go install sigs.k8s.io/kind@v0.30.0
 kind create cluster
 ```
 

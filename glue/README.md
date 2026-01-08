@@ -38,9 +38,9 @@ datasets:
   - from: glue:tpch.lineitem
     name: lineitem
     params:
-      glue_region: ${env:AWS_REGION}
-      glue_key: ${env:AWS_ACCESS_KEY_ID}
-      glue_secret: ${env:AWS_SECRET_ACCESS_KEY}
+      glue_region: ${secrets:AWS_REGION}
+      glue_key: ${secrets:AWS_ACCESS_KEY_ID}
+      glue_secret: ${secrets:AWS_SECRET_ACCESS_KEY}
 ```
 Here, `tpch` is the name of the database and `lineitem` is the name of the table within the database. The database and table names are separated by a `.`.
 

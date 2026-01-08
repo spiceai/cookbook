@@ -2,8 +2,8 @@ version: v1
 kind: Spicepod
 name: clickhouse
 datasets:
-  - from: clickhouse:clickhouse_table_name
-    name: my_table_name
+  - from: clickhouse:my_first_table
+    name: my_first_table
     params:
       clickhouse_host: localhost
       clickhouse_db: default

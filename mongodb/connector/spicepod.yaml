@@ -1,0 +1,15 @@
+version: v1
+kind: Spicepod
+name: mongodb-demo
+datasets:
+  - from: mongodb:sample_data
+    name: sample_data
+    params:
+      mongodb_host: localhost
+      mongodb_port: 27018
+      mongodb_db: spice_demo
+      mongodb_sslmode: disabled
+      mongodb_user: root
+      mongodb_auth_source: admin
+      mongodb_unnest_depth: 1
+      mongodb_pass: ${env:MONGODB_PASS}

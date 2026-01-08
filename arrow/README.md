@@ -38,21 +38,18 @@ spice run
 Confirm in the terminal output the `taxi_trips` dataset has been loaded:
 
 ```bash
-2024/10/22 12:27:07 INFO Checking for latest Spice runtime release...
-2024/10/22 12:27:07 INFO Spice.ai runtime starting...
-2024-10-22T19:27:08.372600Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2024-10-22T19:27:08.372667Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
-2024-10-22T19:27:08.372790Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2024-10-22T19:27:08.373723Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2024-10-22T19:27:08.572674Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2024-10-22T19:27:08.582201Z  INFO runtime: Tool [document_similarity] ready to use
-2024-10-22T19:27:08.582226Z  INFO runtime: Tool [table_schema] ready to use
-2024-10-22T19:27:08.582231Z  INFO runtime: Tool [sql] ready to use
-2024-10-22T19:27:08.582236Z  INFO runtime: Tool [list_datasets] ready to use
-2024-10-22T19:27:08.582242Z  INFO runtime: Tool [random_sample] ready to use
-2024-10-22T19:27:08.582245Z  INFO runtime: Tool [sample_distinct_columns] ready to use
-2024-10-22T19:27:08.582251Z  INFO runtime: Tool [top_n_sample] ready to use
-2024-10-22T19:27:09.991363Z  INFO runtime: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), results cache enabled.
+2025/07/14 08:50:13 INFO Checking for latest Spice runtime release...
+2025/07/14 08:50:15 INFO Spice.ai runtime starting...
+2025-07-14T15:50:15.370061Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2025-07-14T15:50:15.370199Z  INFO runtime::init::caching: Initialized search results cache;
+2025-07-14T15:50:15.732242Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2025-07-14T15:50:15.732235Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
+2025-07-14T15:50:15.734062Z  INFO runtime::init::dataset: Initializing dataset taxi_trips
+2025-07-14T15:50:15.738931Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2025-07-14T15:50:16.608896Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled.
+2025-07-14T15:50:16.610030Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
+2025-07-14T15:50:29.423673Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (399.41 MiB) for dataset taxi_trips in 12s 813ms.
+2025-07-14T15:50:29.494757Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
 **Step 4.** Run queries against the dataset using the Spice SQL REPL.
@@ -85,7 +82,7 @@ select "VendorID", tpep_pickup_datetime, tpep_dropoff_datetime, passenger_count 
 | 1        | 2024-01-29T19:53:55  | 2024-01-29T20:06:56   | 2               |
 +----------+----------------------+-----------------------+-----------------+
 
-Time: 4.291336125 seconds. 10 rows.
+Time: 1.081530375 seconds. 10 rows.
 ```
 
 **Step 5.** Update the `spicepod.yaml` to enable In-Memory Arrow acceleration.
@@ -135,7 +132,7 @@ select "VendorID", tpep_pickup_datetime, tpep_dropoff_datetime, passenger_count 
 | 2        | 2024-01-12T19:54:06  | 2024-01-12T20:07:29   | 2               |
 +----------+----------------------+-----------------------+-----------------+
 
-Time: 0.013083584 seconds. 10 rows.
+Time: 0.004575584 seconds. 10 rows.
 ```
 
 ## Learn more

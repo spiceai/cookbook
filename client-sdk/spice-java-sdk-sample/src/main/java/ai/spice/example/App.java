@@ -22,25 +22,25 @@ SOFTWARE.
 
 package ai.spice.example;
 
-import org.apache.arrow.flight.FlightStream;
 import org.apache.arrow.vector.VectorSchemaRoot;
+import org.apache.arrow.vector.ipc.ArrowReader;
 
+import ai.spice.Param;
 import ai.spice.SpiceClient;
 
 // _JAVA_OPTIONS="--add-opens=java.base/java.nio=ALL-UNNAMED" mvn exec:java -Dexec.mainClass="ai.spice.example.App"
 public class App {
     public static void main(String[] args) {
-        try (SpiceClient client = SpiceClient.builder()
-                .build()) {
+        try (SpiceClient client = SpiceClient.builder().build();
+                ArrowReader reader = client.queryWithParams(
+                        "SELECT VendorID, tpep_pickup_datetime, fare_amount FROM taxi_trips LIMIT ?",
+                        Param.int32(10))) {
 
-            FlightStream stream = client
-                    .query("SELECT \"VendorID\", \"tpep_pickup_datetime\", \"fare_amount\" FROM taxi_trips LIMIT 10");
-
-            while (stream.next()) {
-                try (VectorSchemaRoot batches = stream.getRoot()) {
-                    System.out.println(batches.contentToTSVString());
-                }
+            while (reader.loadNextBatch()) {
+                VectorSchemaRoot root = reader.getVectorSchemaRoot();
+                System.out.println(root.contentToTSVString());
             }
+
         } catch (Exception e) {
             System.err.println("An unexpected error occurred: " + e.getMessage());
         }

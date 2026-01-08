@@ -1,6 +1,6 @@
 # Spice.ai OSS Cookbook
 
-The Spice.ai OSS Cookbook is a collection of recipes for building and deploying data & AI applications using Spice.ai. Each recipe is a self-contained example that demonstrates a specific use case or feature of Spice.ai.
+Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for building and deploying data & AI applications using Spice.ai. Each recipe is a self-contained example that demonstrates a specific use case, integration, or feature of Spice.ai, helping you accelerate your data and AI projects.
 
 ## Recipes
 
@@ -18,6 +18,7 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 
 ### Models & AI - Connect data to hosted or local AI models
 
+- [AI SQL Function](./ai/README.md) - Use the `ai()` SQL function to invoke LLMs directly in SQL queries for text generation, sentiment analysis, and data enrichment.
 - [Azure OpenAI Models](./azure_openai/README.md)
 - [Running Llama3 Locally](./llama/README.md) - Use the Llama family of models locally from HuggingFace using Spice.
 - [OpenAI Models](./models/openai/README.md) - Use OpenAI LLM and embedding models.
@@ -33,14 +34,19 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 - [Web Search Tools using Perplexity](./websearch/README.md) - Provide LLMs with web search access for more informed answers.
 - [Language Model Evaluations](./evals/README.md) - Use Spice to evaluate language models.
 - [LLM as a Judge](./llm-judge/README.md) - Define LLM judge models to evaluate the performance of other language models.
+- [OpenAI Responses API](./openai-responses-api/README.md) - Use OpenAI's Responses API with Spice
 
 ### Data Acceleration - Materializing & accelerating data locally with Data Accelerators
 
+- [Cayenne Data Accelerator](./cayenne/README.md)
 - [DuckDB Data Accelerator](./duckdb/accelerator/README.md)
+- [Hashed Partitioning with DuckDB](./hashed_partitioning/README.md)
 - [PostgreSQL Data Accelerator](./postgres/accelerator/README.md)
 - [SQLite Data Accelerator](./sqlite/accelerator/README.md)
+- [Database Snapshots](./acceleration/snapshots/README.md) - Bootstrap DuckDB accelerations from object storage to skip cold starts.
 - [Apache Arrow Data Accelerator](./arrow/README.md)
 - [Accelerated Views](./views/README.md)
+- [Dataset Partitioning](./acceleration/partitioning/README.md) - Partition accelerated datasets to improve query performance.
 
 ### Consuming and visualizing data with clients
 
@@ -70,13 +76,17 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 - [Glue Data Connector](./glue/README.md)
 - [GitHub Data Connector](./github/README.md)
 - [GraphQL Data Connector](./graphql/README.md)
+- [HTTP Data Connector](./http/README.md) - Query data from HTTP(s) endpoints like REST APIs.
 - [MSSQL (Microsoft SQL Server) Data Connector](./mssql/README.md)
 - [ODBC Data Connector](./odbc/README.md)
+- [Amazon Redshift](./redshift/README.md) - Read and write TPC-H data with Amazon Redshift.
+- [Oracle Data Connector](./oracle/README.md)
 - [S3 Data Connector](./s3/README.md)
 - [SharePoint/OneDrive for Business Data Connector](./sharepoint/README.md)
 - [Snowflake Data Connector](./snowflake/README.md)
 - [Spice.ai Cloud Platform Data Connector](./spiceai/README.md)
 - [Apache Spark Data Connector](./spark/README.md)
+- [Apache Kafka Data Connector](./kafka/README.md)
 - [IMAP Data Connector](./imap/README.md)
   - [Connecting to an Outlook mailbox](./imap/outlook.md)
 
@@ -88,6 +98,14 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 - [Iceberg Catalog Connector](./catalogs/iceberg/README.md)
 - [Glue Catalog Connector](./catalogs/glue/README.md)
 
+### Using Vector Engines
+
+- [Amazon S3 Vectors](./vectors/s3-vectors/README.md) - Use Amazon S3 as a vector engine for embeddings and similarity search.
+
+## Search
+
+- [Hybrid-Search](./search/README.md) - Combine keyword and vector search for improved retrieval.
+
 ### Deployment and Installation
 
 - [Deploying to Kubernetes](./kubernetes/README.md)
@@ -98,7 +116,8 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 ### Performance
 
 - [TPC-H Benchmarking](./tpc-h/README.md)
-- [Results Caching](./caching/README.md)
+- [SQL Results Caching](./caching/sql_results/README.md)
+- [Caching Accelerator](./caching/accelerator/README.md) - Intelligent HTTP response caching with Stale-While-Revalidate (SWR) support.
 - [Indexes on Accelerated Data](./acceleration/indexes/README.md)
 
 ### Acceleration Data Configuration
@@ -113,7 +132,7 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 - [Rust SDK](client-sdk/spice-rs-sdk-sample/README.md)
 - [Python SDK](client-sdk/spicepy-sdk-sample/README.md)
 - [Go SDK](client-sdk/gospice-sdk-sample/README.md)
-- [JavaScript SDK](client-sdk/spice.js-sdk-sample/README.md)
+- [JavaScript SDK (Node.js)](client-sdk/spice.js-sdk-sample/README.md) - Query NYC taxi trips data using the [`@spiceai/spice`](https://www.npmjs.com/package/@spiceai/spice) npm package.
 - [Java SDK](client-sdk/spice-java-sdk-sample/README.md)
 
 ### Security
@@ -124,3 +143,4 @@ The Spice.ai OSS Cookbook is a collection of recipes for building and deploying 
 ### Advanced Topics
 
 - [Local dataset replication](./localpod/README.md) - Link datasets in a parent/child relationship within the current Spicepod
+- [Distributed Query](./distributed/README.md) - Run queries distributed across multiple nodes for maximum performance across large datasets

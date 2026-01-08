@@ -1,0 +1,32 @@
+name: Codex Test - GraphQL Connector
+on:
+  workflow_call:
+    inputs:
+      spice_version:
+        description: 'Spice.ai version to test'
+        required: false
+        type: string
+        default: 'latest'
+    secrets:
+      OPENAI_API_KEY:
+        required: false
+  workflow_dispatch:
+    inputs:
+      spice_version:
+        description: 'Spice.ai version to test'
+        required: false
+        type: string
+        default: 'latest'
+jobs:
+  test:
+    uses: ./.github/workflows/codex-test-reusable.yml
+    with:
+      recipe_name: graphql
+      recipe_path: graphql
+      spice_version: ${{ inputs.spice_version }}
+      requires_secrets: true
+      additional_instructions: |
+        This recipe demonstrates the GraphQL data connector.
+        Often uses GitHub GraphQL API which requires a token.
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

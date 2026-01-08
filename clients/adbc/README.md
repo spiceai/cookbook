@@ -35,9 +35,10 @@ spice run
 
 ### 4. Execute the ADBC client script
 
-In a new terminal (with the virtual environment activated):
+In a new terminal within the `cookbook/clients/adbc` directory, re-activate the virtual environment and run the sample ADBC script:
 
 ```bash
+source .venv/bin/activate
 python3 main.py
 ```
 

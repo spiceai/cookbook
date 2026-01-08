@@ -9,6 +9,7 @@ First a CA (Certificate Authority) will be created with OpenSSL. Then, certifica
 - OpenSSL
   - macOS: `brew install openssl`
   - Ubuntu: `sudo apt-get install openssl`
+  - Fedora: `sudo dnf install openssl`
   - Windows: [Download OpenSSL](https://slproweb.com/products/Win32OpenSSL.html)
 - Spice.ai runtime
   - [Install Spice.ai](https://docs.spiceai.org/installation)
@@ -86,6 +87,16 @@ Set the owner to the UID `999` and GID `999`, which [match the UID and GID of th
 ```bash
 sudo chown 999:999 postgres.key
 sudo chmod 600 postgres.key
+```
+
+## Fedora: Change key file owner, permissions, and SELinux context
+
+On Fedora, update permissions and SELinux context so the `postgres` Docker instance can read the key.
+
+```bash
+sudo chown 999:999 postgres.key
+sudo chmod 600 postgres.key
+sudo chcon -Rt svirt_sandbox_file_t postgres.key
 ```
 
 ### Start `postgres`

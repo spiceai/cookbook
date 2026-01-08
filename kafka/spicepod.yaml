@@ -1,0 +1,36 @@
+version: v1
+kind: Spicepod
+name: kafka-demo
+
+datasets:
+  - from: kafka:orders_events
+    name: orders
+    params:
+      kafka_bootstrap_servers: localhost:9092
+      kafka_security_protocol: PLAINTEXT
+    acceleration:
+      enabled: true
+      engine: duckdb
+      mode: file
+      refresh_mode: append
+
+  - from: s3://spiceai-demo-datasets/tpch/customer/
+    name: customer
+    params:
+      file_format: parquet
+    acceleration: &acceleration_defaults
+      enabled: true
+      engine: duckdb
+      mode: file
+
+  - from: s3://spiceai-demo-datasets/tpch/nation/
+    name: nation
+    params:
+      file_format: parquet
+    acceleration: *acceleration_defaults
+
+  - from: s3://spiceai-demo-datasets/tpch/supplier/
+    name: supplier
+    params:
+      file_format: parquet
+    acceleration: *acceleration_defaults

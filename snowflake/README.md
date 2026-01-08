@@ -73,6 +73,9 @@ datasets:
     params:
       snowflake_role: accountadmin
       snowflake_warehouse: COMPUTE_WH
+      snowflake_username: ${secrets:SPICE_SNOWFLAKE_USERNAME}
+      snowflake_account: ${secrets:SPICE_SNOWFLAKE_ACCOUNT}
+      snowflake_password: ${secrets:SPICE_SNOWFLAKE_PASSWORD}
 ```
 
 The following output is shown in the Spice runtime terminal:
@@ -159,7 +162,7 @@ version: v1
 kind: Spicepod
 name: snowflake-app
 datasets:
-  - from: snowflake:snowflake_sample_data.tpch_sf1.lineitem
+  - from: snowflake:SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.LINEITEM
     name: lineitem
     params:
       snowflake_role: accountadmin

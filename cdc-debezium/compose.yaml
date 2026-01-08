@@ -49,6 +49,10 @@ services:
       # Tells Seastar (the framework Redpanda uses under the hood) to use 1 core on the system.
       - --smp 1
       - --default-log-level=info
+      # Enable SASL authentication
+      - --set redpanda.enable_sasl=true
+      # Create a superuser
+      - --set redpanda.superusers=['admin']
     image: docker.redpanda.com/redpandadata/redpanda:v24.1.8
     container_name: redpanda-kafka-0
     ports:
@@ -62,6 +66,22 @@ services:
       timeout: 3s
       retries: 5
       start_period: 5s
+
+  redpanda-init:
+    image: docker.redpanda.com/redpandadata/redpanda:v24.1.8
+    container_name: redpanda-init
+    depends_on:
+      redpanda-kafka-0:
+        condition: service_healthy
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        # Create admin user with password
+        rpk acl user create admin -p admin123 --api-urls redpanda-kafka-0:9644
+        echo "Admin user created successfully"
+    restart: on-failure
+
   redpanda-kafka-console:
     container_name: redpanda-kafka-console
     image: docker.redpanda.com/redpandadata/console:v2.6.0
@@ -72,6 +92,11 @@ services:
       CONSOLE_CONFIG_FILE: |
         kafka:
           brokers: ["redpanda-kafka-0:9092"]
+          sasl:
+            enabled: true
+            mechanism: SCRAM-SHA-256
+            username: admin
+            password: admin123
           schemaRegistry:
             enabled: true
             urls: ["http://redpanda-kafka-0:8081"]
@@ -79,10 +104,16 @@ services:
           adminApi:
             enabled: true
             urls: ["http://redpanda-kafka-0:9644"]
+            username: admin
+            password: admin123
     ports:
       - 8080:8080
     depends_on:
-      - redpanda-kafka-0
+      redpanda-kafka-0:
+        condition: service_healthy
+      redpanda-init:
+        condition: service_completed_successfully
+
   debezium:
     image: debezium/connect:2.7.3.Final
     container_name: debezium
@@ -91,6 +122,24 @@ services:
       GROUP_ID: 1
       CONFIG_STORAGE_TOPIC: connect_configs
       OFFSET_STORAGE_TOPIC: connect_offsets
-    depends_on: [postgres, redpanda-kafka-0]
+      # SASL configuration
+      CONNECT_SECURITY_PROTOCOL: SASL_PLAINTEXT
+      CONNECT_SASL_MECHANISM: SCRAM-SHA-256
+      CONNECT_SASL_JAAS_CONFIG: 'org.apache.kafka.common.security.scram.ScramLoginModule required username="admin" password="admin123";'
+      # Producer SASL configuration
+      CONNECT_PRODUCER_SECURITY_PROTOCOL: SASL_PLAINTEXT
+      CONNECT_PRODUCER_SASL_MECHANISM: SCRAM-SHA-256
+      CONNECT_PRODUCER_SASL_JAAS_CONFIG: 'org.apache.kafka.common.security.scram.ScramLoginModule required username="admin" password="admin123";'
+      # Consumer SASL configuration
+      CONNECT_CONSUMER_SECURITY_PROTOCOL: SASL_PLAINTEXT
+      CONNECT_CONSUMER_SASL_MECHANISM: SCRAM-SHA-256
+      CONNECT_CONSUMER_SASL_JAAS_CONFIG: 'org.apache.kafka.common.security.scram.ScramLoginModule required username="admin" password="admin123";'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redpanda-kafka-0:
+        condition: service_healthy
+      redpanda-init:
+        condition: service_completed_successfully
     ports:
       - 8083:8083

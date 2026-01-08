@@ -38,7 +38,7 @@ EXPOSE 8090
 EXPOSE 9090
 EXPOSE 50051
 
-# Start the Spicepod                                                                  
+# Start the Spicepod
 
 ```
 
@@ -55,8 +55,8 @@ Output
 
 ...
 
- ✔ Container spiceai-mysql-sakila  Created                                        0.0s 
- ✔ Container spiced-container      Created                                        0.0s 
+ ✔ Container spiceai-mysql-sakila  Created                                        0.0s
+ ✔ Container spiced-container      Created                                        0.0s
 Attaching to spiceai-mysql-sakila, spiced-container
 spiceai-mysql-sakila  | 2024-12-19 01:36:24+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.1.0-1.el8 started.
 spiceai-mysql-sakila  | '/var/lib/mysql/mysql.sock' -> '/var/run/mysqld/mysqld.sock'
@@ -86,11 +86,11 @@ Dataset films registered (mysql:film), acceleration (arrow), results cache enabl
 You now have Spice running as a Docker container with Flight and HTTP ports exposed on ports `50051` and `8090`. Run `spice status` to access Spice.ai runtime information.
 
 ```shell
-NAME          ENDPOINT        STATUS 
-http          0.0.0.0:8090    Ready  
-flight        0.0.0.0:50051   Ready  
-metrics       0.0.0.0:9090    Ready  
-opentelemetry 127.0.0.1:50052 Ready 
+NAME          ENDPOINT        STATUS
+http          0.0.0.0:8090    Ready
+flight        0.0.0.0:50051   Ready
+metrics       0.0.0.0:9090    Ready
+opentelemetry 127.0.0.1:50052 Ready
 ```
 
 ### SQL Search
@@ -98,8 +98,8 @@ opentelemetry 127.0.0.1:50052 Ready
 Run `spice sql` and execute the following query to select the top 5 films with the highest average rental score.
 
 ```sql
-SELECT 
-  title, 
+SELECT
+  title,
   AVG(rental_rate) AS avg_rental_rate
 FROM films
 GROUP BY title
@@ -172,39 +172,45 @@ curl -X POST http://localhost:8090/v1/search \
   }'
 ```
 
-```shell
+```json
 {
-  "matches": [
-  {
-    "value": "A Beautiful Story of a Dog And a Technical Writer who must Outgun a Student in A Balloon",
-    "score": 0.8974827855112448,
-    "dataset": "spice.public.films",
-    "metadata": {
-    "rental_rate": 2.99,
-    "release_year": 2006,
-    "title": "POTLUCK MIXED"
+  "results": [
+    {
+      "matches": {
+        "description": "A Beautiful Story of a Dog And a Technical Writer who must Outgun a Student in A Balloon"
+      },
+      "score": 0.8974827855112448,
+      "dataset": "spice.public.films",
+      "data": {
+        "rental_rate": 2.99,
+        "release_year": 2006,
+        "title": "POTLUCK MIXED"
+      }
+    },
+    {
+      "matches": {
+        "description": "A Epic Documentary of a Hunter And a Dog who must Outgun a Dog in A Balloon Factory"
+      },
+      "score": 0.8941260610769606,
+      "dataset": "spice.public.films",
+      "data": {
+        "title": "IGBY MAKER",
+        "rental_rate": 4.99,
+        "release_year": 2006
+      }
+    },
+    {
+      "matches": {
+        "description": "A Boring Display of a Man And a Dog who must Redeem a Girl in A U-Boat"
+      },
+      "score": 0.8896955774714774,
+      "dataset": "spice.public.films",
+      "data": {
+        "rental_rate": 0.99,
+        "title": "TIMBERLAND SKY",
+        "release_year": 2006
+      }
     }
-  },
-  {
-    "value": "A Epic Documentary of a Hunter And a Dog who must Outgun a Dog in A Balloon Factory",
-    "score": 0.8941260610769606,
-    "dataset": "spice.public.films",
-    "metadata": {
-    "title": "IGBY MAKER",
-    "rental_rate": 4.99,
-    "release_year": 2006
-    }
-  },
-  {
-    "value": "A Boring Display of a Man And a Dog who must Redeem a Girl in A U-Boat",
-    "score": 0.8896955774714774,
-    "dataset": "spice.public.films",
-    "metadata": {
-    "rental_rate": 0.99,
-    "title": "TIMBERLAND SKY",
-    "release_year": 2006
-    }
-  }
   ],
   "duration_ms": 30
 }

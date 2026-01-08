@@ -1,0 +1,32 @@
+name: Codex Test - Text to SQL
+on:
+  workflow_call:
+    inputs:
+      spice_version:
+        description: 'Spice.ai version to test'
+        required: false
+        type: string
+        default: 'latest'
+    secrets:
+      OPENAI_API_KEY:
+        required: false
+  workflow_dispatch:
+    inputs:
+      spice_version:
+        description: 'Spice.ai version to test'
+        required: false
+        type: string
+        default: 'latest'
+jobs:
+  test:
+    uses: ./.github/workflows/codex-test-reusable.yml
+    with:
+      recipe_name: text-to-sql
+      recipe_path: text-to-sql
+      spice_version: ${{ inputs.spice_version }}
+      requires_secrets: true
+      additional_instructions: |
+        This recipe demonstrates text-to-SQL capabilities with LLM tools.
+        Requires SPICE_OPENAI_API_KEY.
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

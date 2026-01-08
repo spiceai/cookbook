@@ -1,0 +1,34 @@
+name: Codex Test - Federation
+on:
+  workflow_call:
+    inputs:
+      spice_version:
+        description: 'Spice.ai version to test'
+        required: false
+        type: string
+        default: 'latest'
+    secrets:
+      OPENAI_API_KEY:
+        required: false
+  workflow_dispatch:
+    inputs:
+      spice_version:
+        description: 'Spice.ai version to test'
+        required: false
+        type: string
+        default: 'latest'
+jobs:
+  test:
+    uses: ./.github/workflows/codex-test-reusable.yml
+    with:
+      recipe_name: federation
+      recipe_path: federation
+      spice_version: ${{ inputs.spice_version }}
+      requires_secrets: false
+      additional_instructions: |
+        This recipe demonstrates federated SQL queries across data sources.
+        Uses demo Dremio instance and public S3 data.
+        Login to Dremio with: spice login dremio -u demo -p demo1234
+        Add the spicepod from spicerack: spice add spiceai/fed-demo
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

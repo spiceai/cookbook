@@ -50,7 +50,7 @@ curl http://127.0.0.1:8090/v1/tools | jq '.[].name'
 "fs/list_allowed_directories"
 "list_datasets"
 "table_schema"
-"document_similarity"
+"search"
 "get_readiness"
 "sample_distinct_columns"
 ```
@@ -91,14 +91,23 @@ The README.md for the Spice.ai OSS Cookbook serves as a comprehensive guide to c
 7. Make sure the LLM called the MCP tool (and didn't hallucinate)
 ```bash
 >>> spice trace ai_chat
+Spice.ai OSS CLI v1.5.0-build.2cfdba8f2
 
-TREE                   STATUS DURATION   TASK
-d2aea75693c13de3       ✅      8577.00ms ai_chat
-  ├── 6b7d17547c4822ab ✅      8575.48ms ai_completion
-  ├── 7d669dfe8152ccb4 ✅         2.17ms tool_use::fs/list_allowed_directories
-  ├── 234e619826c618f0 ✅      7475.86ms ai_completion
-  ├── fdce46ad22f9051e ✅        11.41ms tool_use::fs/read_file
-  └── 4f0a4e941f4d0efe ✅      6337.73ms ai_completion
+TREE                                        STATUS DURATION   SPANID
+ai_chat                                     ✅     15417.63ms 8cda3b72ccc32496
+  ├── ai_completion                         ✅     15417.17ms bc1394533a450527
+  ├── tool_use::fs/list_allowed_directories ✅         0.96ms 9d35bf23821b5424
+  ├── ai_completion                         ✅     14358.63ms aefd3b7427c754b4
+  ├── tool_use::fs/list_directory           ✅         1.92ms 7ffc1df4306a0cfa
+  ├── ai_completion                         ✅     13449.41ms f35ee6853530564b
+  ├── tool_use::fs/read_file                ✅         2.93ms 18ecb464a8d9ccfd
+  ├── ai_completion                         ✅     11879.71ms 9947f2e57c714ffc
+  ├── tool_use::fs/read_file                ✅         5.54ms bbb43a3db56c960e
+  ├── ai_completion                         ✅      8724.63ms 2ef5f01ed9381fc4
+  ├── tool_use::fs/read_file                ✅         2.01ms d88a5b80a52c06ef
+  ├── ai_completion                         ✅      7404.46ms 553e03a7d10adab1
+  ├── tool_use::fs/read_file                ✅         2.81ms f5e0d68dfc21a268
+  └── ai_completion                         ✅      6002.60ms f8e85290f31bb581
 ```
 
 ## Connect to Spice over MCP
@@ -146,7 +155,7 @@ tools:
 
 6. Run the second Spice instance on separate ports.
 ```bash
-spice run --http-endpoint 127.0.0.1:8091 --flight-endpoint 127.0.0.1:50061 --metrics-endpoint 127.0.0.1:9091 -- --open_telemetry 127.0.0.1:50062
+spice run --http-endpoint 127.0.0.1:8091 --flight-endpoint 127.0.0.1:50061 --metrics-endpoint 127.0.0.1:9091
 ```
 
 7.  Show the tools available in the second Spice instance (note the different port).
@@ -155,7 +164,7 @@ curl http://127.0.0.1:8091/v1/tools | jq '.[].name'
 ```
 ```bash
 "top_n_sample"
-"document_similarity"
+"search"
 "store_memory"
 "spice_mcp/store_memory"
 "spice_mcp/get_readiness"
@@ -176,7 +185,7 @@ curl http://127.0.0.1:8091/v1/tools | jq '.[].name'
 "spice_mcp/random_sample"
 "spice_mcp/load_memory"
 "spice_mcp/list_datasets"
-"spice_mcp/document_similarity"
+"spice_mcp/search"
 "spice_mcp/table_schema"
 "table_schema"
 "sql"

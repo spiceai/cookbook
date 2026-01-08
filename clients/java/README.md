@@ -14,7 +14,7 @@ This guide demonstrates how to use Java to query Spice via the Apache Arrow Flig
 
 ```bash
 git clone https://github.com/spiceai/cookbook.git
-cd clients/java
+cd cookbook/clients/java
 ```
 
 ### 2. Build the project
