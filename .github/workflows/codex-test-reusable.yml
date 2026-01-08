@@ -30,12 +30,106 @@ on:
         required: false
         type: string
         default: ''
+      use_docker:
+        description: 'Whether to use Docker container (for tests requiring Docker)'
+        required: false
+        type: boolean
+        default: false
     secrets:
       OPENAI_API_KEY:
         required: false
 jobs:
-  test:
+  test-macos:
     name: Test ${{ inputs.recipe_name }}
+    if: ${{ !inputs.use_docker }}
+    runs-on: spiceai-macos
+    timeout-minutes: ${{ inputs.timeout_minutes }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install Codex CLI
+        run: |
+          npm install -g @openai/codex
+      - name: Install Spice CLI
+        env:
+          SPICE_VERSION: ${{ inputs.spice_version }}
+        run: |
+          curl https://install.spiceai.org | /bin/bash
+          echo "$HOME/.spice/bin" >> $GITHUB_PATH
+          export PATH="$HOME/.spice/bin:$PATH"
+          if [ "$SPICE_VERSION" != "latest" ] && [ -n "$SPICE_VERSION" ]; then
+            spice install "$SPICE_VERSION"
+          fi
+          spice version
+      - name: Create output directory
+        run: mkdir -p test_results
+      - name: Setup environment file
+        if: ${{ inputs.requires_secrets }}
+        working-directory: ${{ inputs.recipe_path }}
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          # Create .env file with available secrets
+          if [ -n "$OPENAI_API_KEY" ]; then
+            echo "SPICE_OPENAI_API_KEY=$OPENAI_API_KEY" >> .env
+            echo "OPENAI_API_KEY=$OPENAI_API_KEY" >> .env
+          fi
+          if [ -n "$GITHUB_TOKEN" ]; then
+            echo "GITHUB_TOKEN=$GITHUB_TOKEN" >> .env
+            echo "GH_TOKEN=$GITHUB_TOKEN" >> .env
+          fi
+      - name: Run Codex CLI test
+        id: codex_test
+        working-directory: ${{ inputs.recipe_path }}
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          PATH: '$HOME/.spice/bin:$PATH'
+        run: |
+          output_file="${GITHUB_WORKSPACE}/test_results/${{ inputs.recipe_name }}.log"
+          # Build the test prompt
+          test_prompt="You are testing the '${{ inputs.recipe_name }}' cookbook recipe.
+          Your task:
+          1. Read the README.md in the current directory to understand the recipe
+          2. Follow the setup and testing instructions in the README
+          3. Start Spice with 'spice run' (run it in the background if needed)
+          4. Execute any SQL queries or tests mentioned in the README using 'spice sql'
+          5. Verify that the expected outputs match what is documented
+          6. Report SUCCESS if all steps complete correctly, or FAILURE with details if any step fails
+          ${{ inputs.additional_instructions }}
+          Important:
+          - If a step requires external credentials or services not available, skip that step and note it
+          - Timeout is ${{ inputs.timeout_minutes }} minutes
+          - Be thorough but efficient
+          - End your response with either '✅ TEST PASSED' or '❌ TEST FAILED: <reason>'"
+          # Run Codex CLI with gpt-5.2-codex model
+          codex --model gpt-5.2-codex --approval-mode full-auto "$test_prompt" 2>&1 | tee "$output_file" || true
+          # Check results
+          if grep -q "✅ TEST PASSED" "$output_file"; then
+            echo "test_result=passed" >> $GITHUB_OUTPUT
+          else
+            echo "test_result=failed" >> $GITHUB_OUTPUT
+          fi
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-result-${{ inputs.recipe_name }}
+          path: test_results/
+      - name: Check test status
+        if: steps.codex_test.outputs.test_result != 'passed'
+        run: |
+          echo "Test failed for ${{ inputs.recipe_name }}"
+          cat "test_results/${{ inputs.recipe_name }}.log"
+          exit 1
+
+  test-docker:
+    name: Test ${{ inputs.recipe_name }}
+    if: ${{ inputs.use_docker }}
     runs-on: spiceai-dev-runners
     container:
       image: ubuntu:22.04
@@ -118,7 +212,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: test-result-${{ inputs.recipe_name }}
+          name: test-result-${{ inputs.recipe_name }}-docker
           path: test_results/
       - name: Check test status
         if: steps.codex_test.outputs.test_result != 'passed'
