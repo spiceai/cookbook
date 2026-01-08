@@ -1,95 +1,274 @@
 name: SpiceQA
-
 on:
   workflow_dispatch:
     inputs:
       spice_version:
-        description: 'Spice.ai version to test'
-        required: true
-        default: 'v1.0.6'
+        description: 'Spice.ai version to test (e.g. v1.0.6 or latest)'
+        required: false
         type: string
-
+        default: 'latest'
+      include_secrets_recipes:
+        description: 'Include recipes that require API keys/secrets'
+        required: false
+        type: boolean
+        default: false
+  # Run weekly on Mondays at 9am UTC
+  schedule:
+    - cron: '0 9 * * 1'
+# This workflow dispatches all individual recipe tests
+# Docker-dependent recipes are excluded as they cannot run docker-in-docker
+# Skipped recipes: cdc-debezium, cqrs, docker, ftp, grafana-datasource, kafka,
+#                  oracle, retention, tls, sales-bi, spark, catalogs/iceberg,
+#                  catalogs/iceberg-hadoop, acceleration/constraints
 jobs:
-  test:
-    name: Test ${{ matrix.recipe_name }} Recipe
+  # ============================================
+  # Simple Recipes (No external dependencies)
+  # ============================================
+  test-file:
+    uses: ./.github/workflows/codex-test-file.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-duckdb-connector:
+    uses: ./.github/workflows/codex-test-duckdb-connector.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-duckdb-accelerator:
+    uses: ./.github/workflows/codex-test-duckdb-accelerator.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-sqlite-accelerator:
+    uses: ./.github/workflows/codex-test-sqlite-accelerator.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-arrow:
+    uses: ./.github/workflows/codex-test-arrow.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-cayenne:
+    uses: ./.github/workflows/codex-test-cayenne.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-http:
+    uses: ./.github/workflows/codex-test-http.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-json-strings:
+    uses: ./.github/workflows/codex-test-json-strings.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-hashed-partitioning:
+    uses: ./.github/workflows/codex-test-hashed-partitioning.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-localpod:
+    uses: ./.github/workflows/codex-test-localpod.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-views:
+    uses: ./.github/workflows/codex-test-views.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-vectors:
+    uses: ./.github/workflows/codex-test-vectors.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-federation:
+    uses: ./.github/workflows/codex-test-federation.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-mcp:
+    uses: ./.github/workflows/codex-test-mcp.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-search:
+    uses: ./.github/workflows/codex-test-search.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  # ============================================
+  # Recipes Requiring Secrets (API Keys)
+  # ============================================
+  test-ai:
+    if: ${{ inputs.include_secrets_recipes }}
+    uses: ./.github/workflows/codex-test-ai.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-deepseek:
+    if: ${{ inputs.include_secrets_recipes }}
+    uses: ./.github/workflows/codex-test-deepseek.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-llm-memory:
+    if: ${{ inputs.include_secrets_recipes }}
+    uses: ./.github/workflows/codex-test-llm-memory.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-llm-judge:
+    if: ${{ inputs.include_secrets_recipes }}
+    uses: ./.github/workflows/codex-test-llm-judge.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-evals:
+    if: ${{ inputs.include_secrets_recipes }}
+    uses: ./.github/workflows/codex-test-evals.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-text-to-sql:
+    if: ${{ inputs.include_secrets_recipes }}
+    uses: ./.github/workflows/codex-test-text-to-sql.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-websearch:
+    if: ${{ inputs.include_secrets_recipes }}
+    uses: ./.github/workflows/codex-test-websearch.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-github:
+    if: ${{ inputs.include_secrets_recipes }}
+    uses: ./.github/workflows/codex-test-github.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-graphql:
+    if: ${{ inputs.include_secrets_recipes }}
+    uses: ./.github/workflows/codex-test-graphql.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-search-github-files:
+    if: ${{ inputs.include_secrets_recipes }}
+    uses: ./.github/workflows/codex-test-search-github-files.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-models-openai:
+    if: ${{ inputs.include_secrets_recipes }}
+    uses: ./.github/workflows/codex-test-models-openai.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-openai-sdk:
+    if: ${{ inputs.include_secrets_recipes }}
+    uses: ./.github/workflows/codex-test-openai-sdk.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-openai-responses-api:
+    if: ${{ inputs.include_secrets_recipes }}
+    uses: ./.github/workflows/codex-test-openai-responses-api.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  # ============================================
+  # Summary Job
+  # ============================================
+  summary:
+    needs:
+      - test-file
+      - test-duckdb-connector
+      - test-duckdb-accelerator
+      - test-sqlite-accelerator
+      - test-arrow
+      - test-cayenne
+      - test-http
+      - test-json-strings
+      - test-hashed-partitioning
+      - test-localpod
+      - test-views
+      - test-vectors
+      - test-federation
+      - test-mcp
+      - test-search
+    if: always()
     runs-on: ubuntu-latest
-    environment: Production
-    strategy:
-      fail-fast: false
-      max-parallel: 1
-      matrix:
-        recipe_name:
-          - 'File Data Connector'
-          - 'Dremio Data Connector'
-          - 'Federated SQL Query'
-          - 'DuckDB connector'
-          - 'FTP connector'
-          - 'MSSQL (Microsoft SQL Server) Connector'
-          - 'Accelerated Dataset Retention Policy'
-          - 'Accelerated table data quality with constraint enforcement'
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Create output directory
-        run: mkdir -p api_responses
-
-      - name: Install Spice
-        shell: bash
+      - name: Generate summary
         run: |
-          curl https://install.spiceai.org | /bin/bash
-          echo "~/.spice/bin" >> $GITHUB_PATH
-
-      - name: Verify Spice Installation
-        shell: bash
-        run: |
-          spice version
-
-      - name: Call Spice AI Completion API
-        shell: bash
-        env:
-          SPICE_SPICEAI_API_KEY: ${{ secrets.SPICE_API_KEY }}
-        run: |
-          recipe_file_path="$(echo "${{ matrix.recipe_name }}" | tr '[:upper:]' '[:lower:]' | tr ' ' '_')"
-          echo "RECIPE_FILE_PATH=$recipe_file_path" >> $GITHUB_ENV
-          output_file="api_responses/${recipe_file_path}.log"
-
-          chat_input="Install Spice.ai OSS using the spiceai docs. Add it to the PATH. Verify installation of version '${{ github.event.inputs.spice_version }}' by running the CLI command spice version. Use the '${{ matrix.recipe_name }}' Recipe to conduct testing. Ensure you execute all instructions in the recipe. Ensure you report on the spice sql query or spice chat results if the recipe includes them."
-
-          spice chat --cloud --http-endpoint https://data.spiceai.io --model timmy "$chat_input" > "$output_file" 2>&1
-
-          # Output response for debugging
-          echo "API Response saved to $output_file"
-
-          # Check for errors
-          if echo "$response" | grep -q "\"error\""; then
-            echo "Error detected in API response"
-            echo "$response"
-            exit 1
-          fi
-
-      - name: Upload response file
-        uses: actions/upload-artifact@v4
-        with:
-          name: api-response-${{ env.RECIPE_FILE_PATH }}
-          path: api_responses/${{ env.RECIPE_FILE_PATH }}.log
-
-      - name: Check the spice-qa passing status
-        shell: bash
-        env:
-          SPICE_SPICEAI_API_KEY: ${{ secrets.SPICE_API_KEY }}
-        run: |
-          read -r qa_stat qa_score < <(
-            grep -oE '✅ QA passed \([0-9]+% confidence\)|❌ QA failed \([0-9]+% confidence\)' \
-              "api_responses/${{ env.RECIPE_FILE_PATH }}.log" \
-            | sed -E \
-                -e 's/✅ QA passed \(([0-9]+)% confidence\)/passed \1/' \
-                -e 's/❌ QA failed \(([0-9]+)% confidence\)/failed \1/'
-          )
-          echo "QA Status: $qa_stat"
-          echo "QA Score: $qa_score"
-
-          if [[ "$qa_stat" != "passed" ]]; then
-            exit 1
-          fi
+          echo "## Codex Cookbook Test Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Simple Recipes (No External Dependencies)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Recipe | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| file | ${{ needs.test-file.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| duckdb-connector | ${{ needs.test-duckdb-connector.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| duckdb-accelerator | ${{ needs.test-duckdb-accelerator.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| sqlite-accelerator | ${{ needs.test-sqlite-accelerator.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| arrow | ${{ needs.test-arrow.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| cayenne | ${{ needs.test-cayenne.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| http | ${{ needs.test-http.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| json-strings | ${{ needs.test-json-strings.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| hashed-partitioning | ${{ needs.test-hashed-partitioning.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| localpod | ${{ needs.test-localpod.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| views | ${{ needs.test-views.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| vectors | ${{ needs.test-vectors.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| federation | ${{ needs.test-federation.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| mcp | ${{ needs.test-mcp.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| search | ${{ needs.test-search.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Skipped Recipes (Docker-in-Docker Not Supported)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The following recipes require Docker Compose and are skipped:" >> $GITHUB_STEP_SUMMARY
+          echo "- cdc-debezium" >> $GITHUB_STEP_SUMMARY
+          echo "- cqrs" >> $GITHUB_STEP_SUMMARY
+          echo "- docker" >> $GITHUB_STEP_SUMMARY
+          echo "- ftp" >> $GITHUB_STEP_SUMMARY
+          echo "- grafana-datasource" >> $GITHUB_STEP_SUMMARY
+          echo "- kafka" >> $GITHUB_STEP_SUMMARY
+          echo "- oracle" >> $GITHUB_STEP_SUMMARY
+          echo "- retention" >> $GITHUB_STEP_SUMMARY
+          echo "- tls" >> $GITHUB_STEP_SUMMARY
+          echo "- sales-bi" >> $GITHUB_STEP_SUMMARY
+          echo "- spark" >> $GITHUB_STEP_SUMMARY
+          echo "- catalogs/iceberg" >> $GITHUB_STEP_SUMMARY
+          echo "- catalogs/iceberg-hadoop" >> $GITHUB_STEP_SUMMARY
+          echo "- acceleration/constraints" >> $GITHUB_STEP_SUMMARY
