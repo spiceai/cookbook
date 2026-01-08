@@ -55,10 +55,15 @@ jobs:
         run: |
           npm install -g @openai/codex
       - name: Install Spice CLI
+        env:
+          SPICE_VERSION: ${{ inputs.spice_version }}
         run: |
           curl https://install.spiceai.org | /bin/bash
           echo "$HOME/.spice/bin" >> $GITHUB_PATH
           export PATH="$HOME/.spice/bin:$PATH"
+          if [ "$SPICE_VERSION" != "latest" ] && [ -n "$SPICE_VERSION" ]; then
+            spice install "$SPICE_VERSION"
+          fi
           spice version
       - name: Create output directory
         run: mkdir -p test_results
