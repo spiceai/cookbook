@@ -58,7 +58,7 @@ env:
 
 jobs:
   test-macos:
-    name: Test ${{ inputs.recipe_name }}
+    name: Test ${{ inputs.recipe_name }} (macOS)
     if: ${{ !inputs.use_docker }}
     runs-on: spiceai-macos
     timeout-minutes: ${{ inputs.timeout_minutes }}
@@ -116,25 +116,21 @@ jobs:
         working-directory: ${{ inputs.recipe_path }}
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        continue-on-error: true
         run: |
           codex exec \
                 --model gpt-5.2-codex \
                 --full-auto \
+                --no-mcp \
                 "${{ steps.prompt.outputs.value }}" \
                 2>&1 | tee "${{ env.OUTPUT_FILE }}"
 
-      - name: Create fallback output
-        if: ${{ hashFiles(env.OUTPUT_FILE) == '' }}
-        run: echo "Codex CLI failed to produce output" > "${{ env.OUTPUT_FILE }}"
-
-      - name: Check test results
-        id: check_results
-        run: |
+          # Check if codex produced valid output with a test result
           if grep -q "✅ TEST PASSED" "${{ env.OUTPUT_FILE }}"; then
             echo "result=passed" >> $GITHUB_OUTPUT
-          else
+          elif grep -q "❌ TEST FAILED" "${{ env.OUTPUT_FILE }}"; then
             echo "result=failed" >> $GITHUB_OUTPUT
+          else
+            echo "result=error" >> $GITHUB_OUTPUT
           fi
 
       - name: Upload test results
@@ -146,17 +142,17 @@ jobs:
           if-no-files-found: warn
 
       - name: Display test output on failure
-        if: ${{ steps.check_results.outputs.result != 'passed' }}
+        if: ${{ steps.codex_test.outputs.result != 'passed' }}
         run: |
           echo "::error::Test failed for ${{ inputs.recipe_name }}"
           cat "${{ env.OUTPUT_FILE }}" || echo "No log file found"
 
       - name: Fail workflow if test failed
-        if: ${{ steps.check_results.outputs.result != 'passed' }}
+        if: ${{ steps.codex_test.outputs.result != 'passed' }}
         run: exit 1
 
   test-docker:
-    name: Test ${{ inputs.recipe_name }}
+    name: Test ${{ inputs.recipe_name }} (Docker)
     if: ${{ inputs.use_docker }}
     runs-on: spiceai-dev-runners
     container:
@@ -226,26 +222,22 @@ jobs:
         working-directory: ${{ inputs.recipe_path }}
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        continue-on-error: true
         run: |
           export PATH="$HOME/.spice/bin:$PATH"
           codex exec \
                 --model gpt-5.2-codex \
                 --full-auto \
+                --no-mcp \
                 "${{ steps.prompt.outputs.value }}" \
                 2>&1 | tee "${{ env.OUTPUT_FILE }}"
 
-      - name: Create fallback output
-        if: ${{ hashFiles(env.OUTPUT_FILE) == '' }}
-        run: echo "Codex CLI failed to produce output" > "${{ env.OUTPUT_FILE }}"
-
-      - name: Check test results
-        id: check_results
-        run: |
+          # Check if codex produced valid output with a test result
           if grep -q "✅ TEST PASSED" "${{ env.OUTPUT_FILE }}"; then
             echo "result=passed" >> $GITHUB_OUTPUT
-          else
+          elif grep -q "❌ TEST FAILED" "${{ env.OUTPUT_FILE }}"; then
             echo "result=failed" >> $GITHUB_OUTPUT
+          else
+            echo "result=error" >> $GITHUB_OUTPUT
           fi
 
       - name: Upload test results
@@ -257,11 +249,11 @@ jobs:
           if-no-files-found: warn
 
       - name: Display test output on failure
-        if: ${{ steps.check_results.outputs.result != 'passed' }}
+        if: ${{ steps.codex_test.outputs.result != 'passed' }}
         run: |
           echo "::error::Test failed for ${{ inputs.recipe_name }}"
           cat "${{ env.OUTPUT_FILE }}" || echo "No log file found"
 
       - name: Fail workflow if test failed
-        if: ${{ steps.check_results.outputs.result != 'passed' }}
+        if: ${{ steps.codex_test.outputs.result != 'passed' }}
         run: exit 1
