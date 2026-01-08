@@ -77,6 +77,8 @@ jobs:
         run: npm install -g @openai/codex
 
       - name: Install Spice CLI
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           curl https://install.spiceai.org | /bin/bash
           echo "$HOME/.spice/bin" >> $GITHUB_PATH
@@ -179,6 +181,8 @@ jobs:
         run: npm install -g @openai/codex
 
       - name: Install Spice CLI
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           curl https://install.spiceai.org | /bin/bash
           echo "$HOME/.spice/bin" >> $GITHUB_PATH
