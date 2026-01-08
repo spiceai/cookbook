@@ -20,6 +20,7 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 
 - [AI SQL Function](./ai/README.md) - Use the `ai()` SQL function to invoke LLMs directly in SQL queries for text generation, sentiment analysis, and data enrichment.
 - [Azure OpenAI Models](./azure_openai/README.md)
+- [Generative Visualizations](./generative-visualisations/README.md) - Generate SQL queries and Chart.js visualizations from natural language using AI.
 - [Running Llama3 Locally](./llama/README.md) - Use the Llama family of models locally from HuggingFace using Spice.
 - [OpenAI Models](./models/openai/README.md) - Use OpenAI LLM and embedding models.
 - [OpenAI SDK](./openai_sdk/README.md) - Use the OpenAI SDK to connect to models hosted on Spice.
