@@ -122,7 +122,6 @@ jobs:
           codex exec \
                 --model gpt-5.2-codex \
                 --full-auto \
-                --no-mcp \
                 "${{ steps.prompt.outputs.value }}" \
                 2>&1 | tee "${{ env.OUTPUT_FILE }}"
 
@@ -231,7 +230,6 @@ jobs:
           codex exec \
                 --model gpt-5.2-codex \
                 --full-auto \
-                --no-mcp \
                 "${{ steps.prompt.outputs.value }}" \
                 2>&1 | tee "${{ env.OUTPUT_FILE }}"
 
