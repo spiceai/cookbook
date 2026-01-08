@@ -1,0 +1,143 @@
+name: Dispatch Simple Codex Tests
+on:
+  workflow_dispatch:
+    inputs:
+      spice_version:
+        description: 'Spice.ai version to test'
+        required: false
+        type: string
+        default: 'latest'
+# This workflow dispatches only simple recipe tests that don't require
+# external services, API keys, or Docker Compose
+jobs:
+  test-file:
+    uses: ./.github/workflows/codex-test-file.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-duckdb-connector:
+    uses: ./.github/workflows/codex-test-duckdb-connector.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-duckdb-accelerator:
+    uses: ./.github/workflows/codex-test-duckdb-accelerator.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-sqlite-accelerator:
+    uses: ./.github/workflows/codex-test-sqlite-accelerator.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-arrow:
+    uses: ./.github/workflows/codex-test-arrow.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-cayenne:
+    uses: ./.github/workflows/codex-test-cayenne.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-http:
+    uses: ./.github/workflows/codex-test-http.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-json-strings:
+    uses: ./.github/workflows/codex-test-json-strings.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-hashed-partitioning:
+    uses: ./.github/workflows/codex-test-hashed-partitioning.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-localpod:
+    uses: ./.github/workflows/codex-test-localpod.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-views:
+    uses: ./.github/workflows/codex-test-views.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-vectors:
+    uses: ./.github/workflows/codex-test-vectors.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-federation:
+    uses: ./.github/workflows/codex-test-federation.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-mcp:
+    uses: ./.github/workflows/codex-test-mcp.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  test-search:
+    uses: ./.github/workflows/codex-test-search.yml
+    with:
+      spice_version: ${{ inputs.spice_version }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  summary:
+    needs:
+      - test-file
+      - test-duckdb-connector
+      - test-duckdb-accelerator
+      - test-sqlite-accelerator
+      - test-arrow
+      - test-cayenne
+      - test-http
+      - test-json-strings
+      - test-hashed-partitioning
+      - test-localpod
+      - test-views
+      - test-vectors
+      - test-federation
+      - test-mcp
+      - test-search
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate summary
+        run: |
+          echo "## Simple Codex Tests Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Recipe | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| file | ${{ needs.test-file.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| duckdb-connector | ${{ needs.test-duckdb-connector.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| duckdb-accelerator | ${{ needs.test-duckdb-accelerator.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| sqlite-accelerator | ${{ needs.test-sqlite-accelerator.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| arrow | ${{ needs.test-arrow.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| cayenne | ${{ needs.test-cayenne.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| http | ${{ needs.test-http.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| json-strings | ${{ needs.test-json-strings.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| hashed-partitioning | ${{ needs.test-hashed-partitioning.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| localpod | ${{ needs.test-localpod.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| views | ${{ needs.test-views.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| vectors | ${{ needs.test-vectors.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| federation | ${{ needs.test-federation.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| mcp | ${{ needs.test-mcp.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| search | ${{ needs.test-search.result }} |" >> $GITHUB_STEP_SUMMARY

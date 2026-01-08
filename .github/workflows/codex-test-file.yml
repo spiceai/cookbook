@@ -1,0 +1,33 @@
+name: Codex Test - File Data Connector
+on:
+  workflow_call:
+    inputs:
+      spice_version:
+        description: 'Spice.ai version to test'
+        required: false
+        type: string
+        default: 'latest'
+    secrets:
+      OPENAI_API_KEY:
+        required: false
+  workflow_dispatch:
+    inputs:
+      spice_version:
+        description: 'Spice.ai version to test'
+        required: false
+        type: string
+        default: 'latest'
+jobs:
+  test:
+    uses: ./.github/workflows/codex-test-reusable.yml
+    with:
+      recipe_name: file
+      recipe_path: file
+      spice_version: ${{ inputs.spice_version }}
+      requires_secrets: false
+      additional_instructions: |
+        This recipe demonstrates using local files (Parquet, CSV, Markdown) as data sources.
+        You may need to download sample data files as shown in the README.
+        Test the Parquet file example first as it's the simplest.
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
