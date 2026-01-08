@@ -83,7 +83,7 @@ jobs:
         working-directory: ${{ inputs.recipe_path }}
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          PATH: "$HOME/.spice/bin:$PATH"
+          PATH: '$HOME/.spice/bin:$PATH'
         run: |
           output_file="${GITHUB_WORKSPACE}/test_results/${{ inputs.recipe_name }}.log"
           # Build the test prompt
