@@ -1,4 +1,4 @@
-git+https://github.com/spiceai/spicepy@v3.0.0
-openai==1.65.4
-dotenv
-dataclasses-json
+git+https://github.com/spiceai/spicepy@3.1.0
+openai>=1.65.4
+python-dotenv>=1.0.0
+dataclasses-json>=0.6.0

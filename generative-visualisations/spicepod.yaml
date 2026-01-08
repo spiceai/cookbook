@@ -1,18 +1,23 @@
 version: v1
 kind: Spicepod
-name: visualisation-generator
+name: generative-visualizations
 
 runtime:
   task_history:
     captured_output: truncated
 
 datasets:
-  - from: file:/Users/jeadie/Github/spiceai/cleaned_sales_data.parquet
+  - from: s3://spiceai-demo-datasets/cleaned_sales_data.parquet
     name: sales
+    description: Sample sales data including order details, product information, and customer data
+    params:
+      file_format: parquet
+    acceleration:
+      enabled: true
 
 models:
   - name: visualisation_and_sql
-    from: openai:gpt-4o
+    from: openai:gpt-5.2
     params:
       openai_api_key: ${ secrets:SPICE_OPENAI_API_KEY }
       tools: sql, list_datasets, table_schema
@@ -36,7 +41,7 @@ models:
         strict: true
 
   - name: summary_maker
-    from: openai:o3-mini
+    from: openai:gpt-5.2
     params:
       openai_api_key: ${ secrets:SPICE_OPENAI_API_KEY }
       system_prompt: |
