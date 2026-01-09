@@ -47,15 +47,22 @@ Results:
 
 ```shell
 ➜ uv run sample.py 
-   trip_distance  total_amount
-0      312722.30         22.15
-1       97793.92         36.31
-2       82015.45         21.56
-3       72975.97         20.04
-4       71752.26         49.57
-5       59282.45         33.52
-6       59076.43         23.17
-7       58298.51         18.63
-8       51619.36         24.20
-9       44018.64         52.43
+=== Using query ===
+VendorID: 1, tpep_pickup_datetime: 2024-01-11 09:37:05, fare_amount: 7.9
+VendorID: 1, tpep_pickup_datetime: 2024-01-11 09:50:21, fare_amount: 8.6
+VendorID: 1, tpep_pickup_datetime: 2024-01-11 09:59:34, fare_amount: 5.1
+VendorID: 2, tpep_pickup_datetime: 2024-01-11 09:05:47, fare_amount: 23.3
+VendorID: 1, tpep_pickup_datetime: 2024-01-11 09:52:47, fare_amount: 6.5
+VendorID: 2, tpep_pickup_datetime: 2024-01-11 09:37:26, fare_amount: 24.0
+VendorID: 2, tpep_pickup_datetime: 2024-01-11 09:10:05, fare_amount: 33.8
+VendorID: 2, tpep_pickup_datetime: 2024-01-11 09:03:54, fare_amount: 6.5
+VendorID: 1, tpep_pickup_datetime: 2024-01-11 09:14:08, fare_amount: 20.5
+VendorID: 1, tpep_pickup_datetime: 2024-01-11 09:58:26, fare_amount: 19.5
+
+=== Using query with params ===
+VendorID: 2, tpep_pickup_datetime: 2024-01-25 22:33:48, fare_amount: 19.8
+VendorID: 2, tpep_pickup_datetime: 2024-01-25 22:55:27, fare_amount: 17.0
+VendorID: 2, tpep_pickup_datetime: 2024-01-25 22:14:50, fare_amount: 31.0
+VendorID: 2, tpep_pickup_datetime: 2024-01-25 22:52:11, fare_amount: 21.9
+VendorID: 1, tpep_pickup_datetime: 2024-01-25 22:06:02, fare_amount: 13.5
 ```
