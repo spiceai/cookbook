@@ -1,52 +1,70 @@
-﻿using Spice;
-using System.Linq;
+#pragma warning disable CS8321 // Local function is declared but never used
+
+using Spice;
 using Apache.Arrow;
-using System.Text;
+using System.Globalization;
 
 // Top-level statements
-var client = new SpiceClientBuilder()
-            .Build();
+var client = new SpiceClientBuilder().Build();
 
-var result = await client.Query("show tables;");
-var enumerator = result.GetAsyncEnumerator();
-while (await enumerator.MoveNextAsync())
+Console.WriteLine("=== Using Query ===");
+await Query(client);
+
+Console.WriteLine("\n=== Using Query with Parameters ===");
+await QueryWithParams(client, 5);
+
+async Task Query(SpiceClient client)
 {
-    var batch = enumerator.Current;
-    Console.WriteLine(batch.Dump());
+    var result = await client.Query(
+        "SELECT \"VendorID\", \"tpep_pickup_datetime\", \"fare_amount\" FROM taxi_trips LIMIT 10");
+
+    await foreach (var batch in result)
+    {
+        PrintBatch(batch);
+    }
 }
 
-// Extension method to dump RecordBatch to string
-public static class ArrowDebug
+async Task QueryWithParams(SpiceClient client, int limit)
 {
-    public static string Dump(this RecordBatch batch)
+    // Use positional parameters ($1, $2, etc.) with QueryWithParams
+    var result = await client.QueryWithParams(
+        "SELECT \"VendorID\", \"tpep_pickup_datetime\", \"fare_amount\" FROM taxi_trips LIMIT $1",
+        limit);
+
+    if (result == null)
     {
-        var sb = new StringBuilder();
+        Console.WriteLine("No results returned");
+        return;
+    }
 
-        // print header
-        sb.AppendLine(string.Join("\t", batch.Schema.FieldsList.Select(f => f.Name)));
+    while (await result.ReadNextRecordBatchAsync() is { } batch)
+    {
+        PrintBatch(batch);
+    }
+}
 
-        // print rows
-        for (int row = 0; row < batch.Length; row++)
+void PrintBatch(RecordBatch batch)
+{
+    var vendorId = batch.Column(0) as Int32Array;
+    var pickupDatetime = batch.Column(1) as TimestampArray;
+    var fareAmount = batch.Column(2) as DoubleArray;
+
+    for (int i = 0; i < batch.Length; i++)
+    {
+        var vendor = vendorId?.GetValue(i)?.ToString(CultureInfo.InvariantCulture) ?? "NULL";
+
+        var datetime = "NULL";
+        if (pickupDatetime != null && !pickupDatetime.IsNull(i))
         {
-            var values = new string[batch.ColumnCount];
-            for (int col = 0; col < batch.ColumnCount; col++)
+            var timestamp = pickupDatetime.GetTimestamp(i);
+            if (timestamp.HasValue)
             {
-                var arr = batch.Column(col);
-
-                values[col] = arr switch
-                {
-                    StringArray sa   => sa.GetString(row) ?? "null",
-                    Int32Array ia    => ia.GetValue(row)?.ToString() ?? "null",
-                    Int64Array la    => la.GetValue(row)?.ToString() ?? "null",
-                    DoubleArray da   => da.GetValue(row)?.ToString() ?? "null",
-                    FloatArray fa    => fa.GetValue(row)?.ToString() ?? "null",
-                    BooleanArray ba  => ba.GetValue(row)?.ToString() ?? "null",
-                    _                => "?"
-                };
+                datetime = timestamp.Value.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
             }
-            sb.AppendLine(string.Join("\t", values));
         }
 
-        return sb.ToString();
+        var fare = fareAmount?.GetValue(i)?.ToString("F2", CultureInfo.InvariantCulture) ?? "NULL";
+
+        Console.WriteLine($"VendorID: {vendor}, tpep_pickup_datetime: {datetime}, fare_amount: {fare}");
     }
 }

@@ -41,14 +41,22 @@ dotnet run
 ```
 
 ```shell
-table_catalog   table_schema    table_name      table_type
-spice   public  taxi_trips      BASE TABLE
-spice   runtime task_history    BASE TABLE
-spice   information_schema      tables  VIEW
-spice   information_schema      views   VIEW
-spice   information_schema      columns VIEW
-spice   information_schema      df_settings     VIEW
-spice   information_schema      schemata        VIEW
-spice   information_schema      routines        VIEW
-spice   information_schema      parameters      VIEW
+=== Using Query ===
+VendorID: 2, tpep_pickup_datetime: 2024-01-09 23:22:13, fare_amount: 7.20
+VendorID: 1, tpep_pickup_datetime: 2024-01-09 23:40:08, fare_amount: 18.40
+VendorID: 2, tpep_pickup_datetime: 2024-01-09 23:01:47, fare_amount: 15.60
+VendorID: 2, tpep_pickup_datetime: 2024-01-09 23:26:58, fare_amount: 10.00
+VendorID: 2, tpep_pickup_datetime: 2024-01-09 23:32:38, fare_amount: 70.00
+VendorID: 2, tpep_pickup_datetime: 2024-01-09 23:01:50, fare_amount: 14.20
+VendorID: 2, tpep_pickup_datetime: 2024-01-09 23:44:50, fare_amount: 7.20
+VendorID: 1, tpep_pickup_datetime: 2024-01-09 23:32:11, fare_amount: 16.30
+VendorID: 2, tpep_pickup_datetime: 2024-01-09 23:47:12, fare_amount: 10.70
+VendorID: 2, tpep_pickup_datetime: 2024-01-09 23:35:00, fare_amount: 14.20
+
+=== Using Query with Parameters ===
+VendorID: 2, tpep_pickup_datetime: 2024-01-31 09:54:36, fare_amount: 7.20
+VendorID: 2, tpep_pickup_datetime: 2024-01-31 09:04:39, fare_amount: 44.30
+VendorID: 2, tpep_pickup_datetime: 2024-01-31 09:12:53, fare_amount: 7.90
+VendorID: 2, tpep_pickup_datetime: 2024-01-31 09:24:15, fare_amount: 27.50
+VendorID: 2, tpep_pickup_datetime: 2024-01-31 09:42:13, fare_amount: 7.90
 ```

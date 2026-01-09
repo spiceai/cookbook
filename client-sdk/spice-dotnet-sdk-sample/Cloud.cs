@@ -9,6 +9,7 @@ public class Cloud
             .WithApiKey("API_KEY")
             .WithHttpAddress("https://data.spiceai.io")
             .WithFlightAddress("flight.spiceai.io:443")
+            .WithTls(true)
 			.Build();
 		var data = await client.Query("show tables;");
 	}
