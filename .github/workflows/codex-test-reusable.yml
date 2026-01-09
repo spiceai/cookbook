@@ -34,23 +34,6 @@ on:
       OPENAI_API_KEY:
         required: false
 
-env:
-  TEST_PROMPT_TEMPLATE: |
-    You are testing the '{recipe_name}' cookbook recipe.
-    Your task:
-    1. Read the README.md in the current directory to understand the recipe
-    2. Follow the setup and testing instructions in the README
-    3. Start Spice with 'spice run' (run it in the background if needed)
-    4. Execute any SQL queries or tests mentioned in the README using 'spice sql'
-    5. Verify that the expected outputs match what is documented
-    6. Report SUCCESS if all steps complete correctly, or FAILURE with details if any step fails
-    {additional_instructions}
-    Important:
-    - If a step requires external credentials or services not available, skip that step and note it
-    - Timeout is {timeout} minutes
-    - Be thorough but efficient
-    - End your response with either '✅ TEST PASSED' or '❌ TEST FAILED: <reason>'
-
 jobs:
   test:
     name: Test ${{ inputs.recipe_name }}
@@ -105,13 +88,36 @@ jobs:
       - name: Build test prompt
         id: prompt
         run: |
-          prompt="${{ env.TEST_PROMPT_TEMPLATE }}"
-          prompt="${prompt//\{recipe_name\}/${{ inputs.recipe_name }}}"
-          prompt="${prompt//\{timeout\}/${{ inputs.timeout_minutes }}}"
-          prompt="${prompt//\{additional_instructions\}/${{ inputs.additional_instructions }}}"
-          echo "value<<PROMPT_EOF" >> $GITHUB_OUTPUT
-          echo "$prompt" >> $GITHUB_OUTPUT
-          echo "PROMPT_EOF" >> $GITHUB_OUTPUT
+          cat > /tmp/prompt.txt << 'PROMPT_EOF'
+          You are a QA tester validating the '${{ inputs.recipe_name }}' cookbook recipe.
+
+          YOUR MISSION: Execute the README.md instructions EXACTLY as written and verify they work.
+          This is a documentation test - if the documented steps don't work, that's a bug we need to know about.
+
+          STRICT RULES:
+          - Follow EVERY command in the README.md exactly as documented, character for character
+          - Do NOT improvise, fix, or work around any issues
+          - Do NOT modify any files unless the README explicitly instructs you to
+          - Do NOT try alternative approaches if something fails
+          - If a command fails or output doesn't match, STOP and report FAILURE immediately
+          - The recipe must work exactly as documented or it's a test failure
+
+          STEPS:
+          1. Read the README.md to understand what commands to run
+          2. Execute each command exactly as shown in the README
+          3. Start Spice with 'spice run' when instructed (run in background with & if needed)
+          4. Run SQL queries exactly as documented using 'spice sql'
+          5. Compare actual output to expected output shown in README
+          6. If ANY step fails or differs from documentation, report FAILURE
+
+          ${{ inputs.additional_instructions }}
+
+          IMPORTANT:
+          - If external credentials/services are unavailable, note it and skip ONLY that specific step
+          - Timeout is ${{ inputs.timeout_minutes }} minutes
+          - End with exactly '✅ TEST PASSED' if ALL documented steps work, or '❌ TEST FAILED: <reason>' if ANY step fails
+          PROMPT_EOF
+          echo "file=/tmp/prompt.txt" >> $GITHUB_OUTPUT
 
       - name: Run Codex CLI test
         id: codex_test
@@ -122,7 +128,7 @@ jobs:
           codex exec \
                 --model gpt-5.2 \
                 --dangerously-bypass-approvals-and-sandbox \
-                "${{ steps.prompt.outputs.value }}" \
+                "$(cat ${{ steps.prompt.outputs.file }})" \
                 2>&1 | tee "${{ env.OUTPUT_FILE }}"
 
           # Check if codex produced valid output with a test result
