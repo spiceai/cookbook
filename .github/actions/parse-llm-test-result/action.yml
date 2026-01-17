@@ -1,0 +1,176 @@
+name: 'Parse LLM Test Result'
+description: 'Parses LLM output to determine test pass/fail status with robust pattern matching'
+
+inputs:
+  output_file:
+    description: 'Path to the file containing LLM output'
+    required: true
+  debug:
+    description: 'Enable debug output'
+    required: false
+    default: 'true'
+
+outputs:
+  result:
+    description: 'Test result: passed, failed, or error'
+    value: ${{ steps.parse.outputs.result }}
+  reason:
+    description: 'Reason for failure (if applicable)'
+    value: ${{ steps.parse.outputs.reason }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Parse test result
+      id: parse
+      shell: bash
+      env:
+        OUTPUT_FILE: ${{ inputs.output_file }}
+        DEBUG: ${{ inputs.debug }}
+      run: |
+        if [ ! -f "$OUTPUT_FILE" ]; then
+          echo "::error::Output file not found: $OUTPUT_FILE"
+          echo "result=error" >> $GITHUB_OUTPUT
+          echo "reason=Output file not found" >> $GITHUB_OUTPUT
+          exit 0
+        fi
+
+        # Get file size for sanity check
+        FILE_SIZE=$(wc -c < "$OUTPUT_FILE" | tr -d ' ')
+        if [ "$FILE_SIZE" -lt 10 ]; then
+          echo "::error::Output file is too small ($FILE_SIZE bytes) - likely empty or truncated"
+          echo "result=error" >> $GITHUB_OUTPUT
+          echo "reason=Output file too small or empty" >> $GITHUB_OUTPUT
+          exit 0
+        fi
+
+        # Normalize output for reliable matching (lowercase, remove extra whitespace)
+        NORMALIZED_OUTPUT=$(cat "$OUTPUT_FILE" | tr '[:upper:]' '[:lower:]' | tr -s '[:space:]' ' ')
+
+        # Also get just the last 50 lines for focused matching (LLM typically puts result at end)
+        TAIL_OUTPUT=$(tail -50 "$OUTPUT_FILE" | tr '[:upper:]' '[:lower:]' | tr -s '[:space:]' ' ')
+
+        # === FAIL PATTERNS (check first - fail takes priority) ===
+        # These patterns indicate test failure
+        FAIL_PATTERNS=(
+          "test failed"
+          "tests failed"
+          "test failure"
+          "test unsuccessful"
+          "failed test"
+          "failure:"
+          "❌"
+        )
+
+        # === PASS PATTERNS ===
+        # These patterns indicate test success
+        PASS_PATTERNS=(
+          "test passed"
+          "tests passed"
+          "test successful"
+          "test succeeded"
+          "all tests pass"
+          "passed test"
+          "✅"
+        )
+
+        # === ERROR/INCONCLUSIVE PATTERNS ===
+        # These indicate the test couldn't complete properly
+        ERROR_PATTERNS=(
+          "could not complete"
+          "unable to determine"
+          "test inconclusive"
+          "timed out"
+          "timeout"
+        )
+
+        RESULT=""
+        REASON=""
+
+        # Check for explicit fail patterns in the tail (most relevant)
+        for pattern in "${FAIL_PATTERNS[@]}"; do
+          if echo "$TAIL_OUTPUT" | grep -qi "$pattern"; then
+            RESULT="failed"
+            # Try to extract the reason after "failed:" or similar
+            REASON=$(echo "$TAIL_OUTPUT" | grep -oi "failed[: ]*[^.]*" | tail -1 || echo "Test failed")
+            break
+          fi
+        done
+
+        # If no fail found, check for error patterns
+        if [ -z "$RESULT" ]; then
+          for pattern in "${ERROR_PATTERNS[@]}"; do
+            if echo "$TAIL_OUTPUT" | grep -qi "$pattern"; then
+              RESULT="error"
+              REASON="Test inconclusive or timed out"
+              break
+            fi
+          done
+        fi
+
+        # If no fail/error found, check for pass patterns
+        if [ -z "$RESULT" ]; then
+          for pattern in "${PASS_PATTERNS[@]}"; do
+            if echo "$TAIL_OUTPUT" | grep -qi "$pattern"; then
+              RESULT="passed"
+              REASON=""
+              break
+            fi
+          done
+        fi
+
+        # If still no result, check the full output as fallback
+        if [ -z "$RESULT" ]; then
+          for pattern in "${FAIL_PATTERNS[@]}"; do
+            if echo "$NORMALIZED_OUTPUT" | grep -qi "$pattern"; then
+              RESULT="failed"
+              REASON="Test failed (detected in full output)"
+              break
+            fi
+          done
+        fi
+
+        if [ -z "$RESULT" ]; then
+          for pattern in "${PASS_PATTERNS[@]}"; do
+            if echo "$NORMALIZED_OUTPUT" | grep -qi "$pattern"; then
+              RESULT="passed"
+              REASON=""
+              break
+            fi
+          done
+        fi
+
+        # Default to error if we couldn't determine result
+        if [ -z "$RESULT" ]; then
+          RESULT="error"
+          REASON="Could not determine test result from LLM output"
+        fi
+
+        # Output results
+        echo "result=$RESULT" >> $GITHUB_OUTPUT
+        echo "reason=$REASON" >> $GITHUB_OUTPUT
+
+        # Debug output
+        if [ "$DEBUG" = "true" ]; then
+          echo "--- Parse LLM Test Result Debug ---"
+          echo "File size: $FILE_SIZE bytes"
+          echo "Result: $RESULT"
+          echo "Reason: $REASON"
+          echo ""
+          echo "--- Last 20 lines with pass/fail keywords ---"
+          tail -20 "$OUTPUT_FILE" | grep -iE "(pass|fail|success|error|test|complete)" || echo "(no keywords found)"
+          echo "-----------------------------------"
+        fi
+
+        # Set appropriate notice/warning
+        case "$RESULT" in
+          passed)
+            echo "::notice::Test result: PASSED"
+            ;;
+          failed)
+            echo "::error::Test result: FAILED - $REASON"
+            ;;
+          error)
+            echo "::warning::Test result: ERROR - $REASON"
+            ;;
+        esac

@@ -115,12 +115,18 @@ jobs:
           IMPORTANT:
           - If external credentials/services are unavailable, note it and skip ONLY that specific step
           - Timeout is ${{ inputs.timeout_minutes }} minutes
-          - End with exactly '✅ TEST PASSED' if ALL documented steps work, or '❌ TEST FAILED: <reason>' if ANY step fails
+
+          FINAL OUTPUT REQUIREMENT (CRITICAL):
+          At the very end of your response, you MUST output EXACTLY ONE of these two lines (copy verbatim):
+          - If all documented steps worked: TEST PASSED
+          - If any step failed: TEST FAILED: <describe what failed>
+          
+          This final line determines whether the CI pipeline passes or fails. Do not add extra formatting or emojis.
           PROMPT_EOF
           echo "file=/tmp/prompt.txt" >> $GITHUB_OUTPUT
 
       - name: Run Codex CLI test
-        id: codex_test
+        id: codex_run
         working-directory: ${{ inputs.recipe_path }}
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -131,14 +137,12 @@ jobs:
                 "$(cat ${{ steps.prompt.outputs.file }})" \
                 2>&1 | tee "${{ env.OUTPUT_FILE }}"
 
-          # Check if codex produced valid output with a test result
-          if grep -q "✅ TEST PASSED" "${{ env.OUTPUT_FILE }}"; then
-            echo "result=passed" >> $GITHUB_OUTPUT
-          elif grep -q "❌ TEST FAILED" "${{ env.OUTPUT_FILE }}"; then
-            echo "result=failed" >> $GITHUB_OUTPUT
-          else
-            echo "result=error" >> $GITHUB_OUTPUT
-          fi
+      - name: Parse test result
+        id: codex_test
+        uses: ./.github/actions/parse-llm-test-result
+        with:
+          output_file: ${{ env.OUTPUT_FILE }}
+          debug: 'true'
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
@@ -151,9 +155,14 @@ jobs:
       - name: Display test output on failure
         if: ${{ steps.codex_test.outputs.result != 'passed' }}
         run: |
-          echo "::error::Test failed for ${{ inputs.recipe_name }}"
+          echo "::error::Test failed for ${{ inputs.recipe_name }}: ${{ steps.codex_test.outputs.reason }}"
+          echo ""
+          echo "=== Full Test Output ==="
           cat "${{ env.OUTPUT_FILE }}" || echo "No log file found"
 
       - name: Fail workflow if test failed
         if: ${{ steps.codex_test.outputs.result != 'passed' }}
-        run: exit 1
+        run: |
+          echo "Test result: ${{ steps.codex_test.outputs.result }}"
+          echo "Reason: ${{ steps.codex_test.outputs.reason }}"
+          exit 1
