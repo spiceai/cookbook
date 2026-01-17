@@ -120,7 +120,7 @@ jobs:
           At the very end of your response, you MUST output EXACTLY ONE of these two lines (copy verbatim):
           - If all documented steps worked: TEST PASSED
           - If any step failed: TEST FAILED: <describe what failed>
-          
+
           This final line determines whether the CI pipeline passes or fails. Do not add extra formatting or emojis.
           PROMPT_EOF
           echo "file=/tmp/prompt.txt" >> $GITHUB_OUTPUT
