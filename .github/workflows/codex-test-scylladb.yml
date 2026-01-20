@@ -28,12 +28,12 @@ jobs:
       minimum_version: v1.11.0-rc.2
       additional_instructions: |
         This recipe demonstrates using ScyllaDB as a federated data source.
-        
+
         DOCKER SETUP (REQUIRED):
         1. Start the ScyllaDB container: docker run --name scylladb -d -p 9042:9042 scylladb/scylla
         2. Wait for ScyllaDB to be ready (check with: docker logs scylladb | grep "listening on")
         3. Create keyspace and sample data using cqlsh as documented in README
-        
+
         After Docker setup, proceed with the spicepod configuration and queries.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

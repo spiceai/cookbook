@@ -90,10 +90,10 @@ jobs:
         run: |
           INSTALLED="${{ steps.spice_version.outputs.installed_version }}"
           MINIMUM="${{ inputs.minimum_version }}"
-          
+
           echo "Installed version: $INSTALLED"
           echo "Minimum required: $MINIMUM"
-          
+
           # Function to normalize version for comparison
           # Converts v1.11.0-rc.2 to comparable format
           normalize_version() {
@@ -108,7 +108,7 @@ jobs:
             fi
             echo "$main_ver|$prerelease"
           }
-          
+
           compare_versions() {
             local v1="$1"
             local v2="$2"
@@ -122,10 +122,10 @@ jobs:
               echo "greater"
             fi
           }
-          
+
           # Compare versions
           RESULT=$(compare_versions "${INSTALLED#v}" "${MINIMUM#v}")
-          
+
           if [ "$RESULT" = "less" ]; then
             echo "::warning::Spice version $INSTALLED is below minimum required $MINIMUM"
             echo "skip=true" >> $GITHUB_OUTPUT
