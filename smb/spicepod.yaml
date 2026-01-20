@@ -1,0 +1,12 @@
+version: v1
+kind: Spicepod
+name: smb-demo
+
+datasets:
+  - from: smb://localhost/data/
+    name: sales
+    description: Demo data from SMB share
+    params:
+      file_format: parquet
+      smb_user: ${secrets:SMB_USER}
+      smb_pass: ${secrets:SMB_PASS}
