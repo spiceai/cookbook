@@ -39,6 +39,9 @@ on:
       OPENAI_API_KEY:
         required: false
 
+permissions:
+  contents: read
+
 jobs:
   test:
     name: Test ${{ inputs.recipe_name }}

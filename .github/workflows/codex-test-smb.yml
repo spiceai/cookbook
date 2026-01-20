@@ -17,6 +17,10 @@ on:
         required: false
         type: string
         default: 'latest'
+
+permissions:
+  contents: read
+
 jobs:
   test:
     uses: ./.github/workflows/codex-test-reusable.yml

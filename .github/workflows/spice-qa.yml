@@ -16,6 +16,10 @@ on:
   schedule:
     - cron: '0 9 * * 1'
 
+permissions:
+  contents: read
+  actions: write
+
 # This workflow triggers all individual recipe test workflows
 # Some Docker-dependent recipes are excluded (complex multi-container setups)
 # Skipped recipes: cdc-debezium, cqrs, docker, ftp, grafana-datasource, kafka,
