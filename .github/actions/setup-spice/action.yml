@@ -35,6 +35,32 @@ runs:
         echo "Installing Spice version: ${{ inputs.version }}"
         spice install ${{ inputs.version }}
 
+    - name: Install GitHub CLI
+      if: ${{ inputs.github-run-id != '' }}
+      shell: bash
+      run: |
+        if ! command -v gh &> /dev/null; then
+          echo "Installing GitHub CLI..."
+          OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+          if [ "$OS" == "linux" ]; then
+            # Install gh on Linux
+            curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+            sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+            echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+            sudo apt-get update
+            sudo apt-get install -y gh
+          elif [ "$OS" == "darwin" ]; then
+            # Install gh on macOS
+            brew install gh
+          else
+            echo "::error::Unsupported OS for GitHub CLI installation: $OS"
+            exit 1
+          fi
+        else
+          echo "GitHub CLI already installed"
+        fi
+        gh --version
+
     - name: Download Spice from GitHub run artifacts
       if: ${{ inputs.github-run-id != '' }}
       shell: bash
