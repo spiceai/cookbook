@@ -95,7 +95,6 @@ A Spice executor does not require a `spicepod.yaml`, as the scheduler will sync 
 ```bash
 ~/.spice/bin/spiced --role executor \
   --http 127.0.0.1:9090 \
-  --flight 127.0.0.1:50061 \
   --scheduler-address 127.0.0.1:50052 \
   --node-mtls-ca-certificate-file ~/.spice/pki/ca.crt \
   --node-mtls-certificate-file ~/.spice/pki/executor1.crt \
