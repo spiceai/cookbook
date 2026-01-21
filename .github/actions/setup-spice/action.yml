@@ -80,15 +80,27 @@ runs:
         case "$OS" in
           linux)
             case "$ARCH" in
-              x86_64) ARTIFACT_NAME="spice_linux_amd64" ;;
-              aarch64|arm64) ARTIFACT_NAME="spice_linux_arm64" ;;
+              x86_64) 
+                OS_ARCH="linux_amd64"
+                ALT_OS_ARCH="linux-x86_64"
+                ;;
+              aarch64|arm64) 
+                OS_ARCH="linux_arm64"
+                ALT_OS_ARCH="linux-aarch64"
+                ;;
               *) echo "::error::Unsupported architecture: $ARCH"; exit 1 ;;
             esac
             ;;
           darwin)
             case "$ARCH" in
-              x86_64) ARTIFACT_NAME="spice_darwin_amd64" ;;
-              arm64) ARTIFACT_NAME="spice_darwin_arm64" ;;
+              x86_64) 
+                OS_ARCH="darwin_amd64"
+                ALT_OS_ARCH="darwin-x86_64"
+                ;;
+              arm64) 
+                OS_ARCH="darwin_arm64"
+                ALT_OS_ARCH="darwin-aarch64"
+                ;;
               *) echo "::error::Unsupported architecture: $ARCH"; exit 1 ;;
             esac
             ;;
@@ -97,6 +109,42 @@ runs:
             exit 1
             ;;
         esac
+
+        # List available artifacts from the run
+        echo "Listing available artifacts from run ${{ inputs.github-run-id }}..."
+        AVAILABLE_ARTIFACTS=$(gh run view ${{ inputs.github-run-id }} --repo spiceai/spiceai --json artifacts -q '.artifacts[].name' 2>/dev/null || echo "")
+
+        if [ -z "$AVAILABLE_ARTIFACTS" ]; then
+          echo "::error::Could not list artifacts or no artifacts found for run ${{ inputs.github-run-id }}"
+          echo "This could mean:"
+          echo "  - The run ID is invalid"
+          echo "  - Artifacts have expired (GitHub retains artifacts for 90 days by default)"
+          echo "  - The token doesn't have permission to access artifacts"
+          exit 1
+        fi
+
+        echo "Available artifacts:"
+        echo "$AVAILABLE_ARTIFACTS"
+
+        # Try different artifact name patterns
+        ARTIFACT_NAME=""
+        for pattern in "spice_${OS_ARCH}" "spice-${OS_ARCH}" "spice_${ALT_OS_ARCH}" "spice-${ALT_OS_ARCH}" "build_${OS_ARCH}" "build-${OS_ARCH}"; do
+          if echo "$AVAILABLE_ARTIFACTS" | grep -q "^${pattern}$"; then
+            ARTIFACT_NAME="$pattern"
+            break
+          fi
+        done
+
+        # If no exact match, try partial match
+        if [ -z "$ARTIFACT_NAME" ]; then
+          ARTIFACT_NAME=$(echo "$AVAILABLE_ARTIFACTS" | grep -i "${OS_ARCH}\|${ALT_OS_ARCH}" | head -1)
+        fi
+
+        if [ -z "$ARTIFACT_NAME" ]; then
+          echo "::error::Could not find matching artifact for ${OS_ARCH}"
+          echo "Available artifacts: $AVAILABLE_ARTIFACTS"
+          exit 1
+        fi
 
         echo "Downloading artifact: $ARTIFACT_NAME"
 
