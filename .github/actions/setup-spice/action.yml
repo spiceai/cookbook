@@ -1,0 +1,119 @@
+name: 'Setup Spice'
+description: 'Install Spice CLI from a release or GitHub Actions run artifacts'
+inputs:
+  version:
+    description: 'Spice version to install (e.g. v1.0.6 or latest). Ignored if github-run-id is provided.'
+    required: false
+    default: 'latest'
+  github-run-id:
+    description: 'GitHub Actions run ID to download pre-release artifacts from spiceai/spiceai repo'
+    required: false
+    default: ''
+  github-token:
+    description: 'GitHub token for downloading artifacts (needs read access to spiceai/spiceai for pre-release builds)'
+    required: false
+    default: ${{ github.token }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install Spice from release
+      if: ${{ inputs.github-run-id == '' }}
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+      run: |
+        echo "Installing Spice CLI..."
+        curl -fsSL https://install.spiceai.org | /bin/bash
+        echo "$HOME/.spice/bin" >> $GITHUB_PATH
+
+    - name: Install specific Spice version
+      if: ${{ inputs.github-run-id == '' && inputs.version != 'latest' && inputs.version != '' }}
+      shell: bash
+      run: |
+        export PATH="$HOME/.spice/bin:$PATH"
+        echo "Installing Spice version: ${{ inputs.version }}"
+        spice install ${{ inputs.version }}
+
+    - name: Download Spice from GitHub run artifacts
+      if: ${{ inputs.github-run-id != '' }}
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+      run: |
+        echo "Downloading Spice artifacts from run: ${{ inputs.github-run-id }}"
+        
+        # Create temp directory for artifacts
+        mkdir -p /tmp/spice-artifacts
+        cd /tmp/spice-artifacts
+        
+        # Detect OS and architecture
+        OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+        ARCH=$(uname -m)
+        
+        case "$OS" in
+          linux)
+            case "$ARCH" in
+              x86_64) ARTIFACT_NAME="spice_linux_amd64" ;;
+              aarch64|arm64) ARTIFACT_NAME="spice_linux_arm64" ;;
+              *) echo "::error::Unsupported architecture: $ARCH"; exit 1 ;;
+            esac
+            ;;
+          darwin)
+            case "$ARCH" in
+              x86_64) ARTIFACT_NAME="spice_darwin_amd64" ;;
+              arm64) ARTIFACT_NAME="spice_darwin_arm64" ;;
+              *) echo "::error::Unsupported architecture: $ARCH"; exit 1 ;;
+            esac
+            ;;
+          *)
+            echo "::error::Unsupported OS: $OS"
+            exit 1
+            ;;
+        esac
+        
+        echo "Downloading artifact: $ARTIFACT_NAME"
+        
+        # Download the artifact from the spiceai/spiceai repo
+        gh run download ${{ inputs.github-run-id }} \
+          --repo spiceai/spiceai \
+          --name "$ARTIFACT_NAME" \
+          --dir .
+        
+        # Extract if tarball exists
+        TARBALL=$(find . -name "*.tar.gz" -type f | head -1)
+        if [ -n "$TARBALL" ]; then
+          echo "Extracting $TARBALL..."
+          tar -xzf "$TARBALL"
+        fi
+        
+        # Find the spice binary and spiced binary
+        SPICE_BIN=$(find . -name "spice" -type f ! -name "*.tar.gz" | head -1)
+        SPICED_BIN=$(find . -name "spiced" -type f | head -1)
+        
+        if [ -z "$SPICE_BIN" ]; then
+          echo "::error::Could not find spice binary in artifacts"
+          echo "Contents of artifact directory:"
+          ls -laR .
+          exit 1
+        fi
+        
+        # Install to ~/.spice/bin
+        mkdir -p $HOME/.spice/bin
+        cp "$SPICE_BIN" $HOME/.spice/bin/spice
+        chmod +x $HOME/.spice/bin/spice
+        
+        if [ -n "$SPICED_BIN" ]; then
+          cp "$SPICED_BIN" $HOME/.spice/bin/spiced
+          chmod +x $HOME/.spice/bin/spiced
+        fi
+        
+        echo "$HOME/.spice/bin" >> $GITHUB_PATH
+        echo "Installed Spice from GitHub run ${{ inputs.github-run-id }}"
+
+    - name: Verify Spice installation
+      shell: bash
+      run: |
+        export PATH="$HOME/.spice/bin:$PATH"
+        echo "Spice installation verified:"
+        spice version
