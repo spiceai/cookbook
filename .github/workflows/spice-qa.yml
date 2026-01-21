@@ -132,7 +132,7 @@ jobs:
           BUILD_SOURCE="${{ inputs.build_source || 'release' }}"
           SPICE_VERSION="${{ inputs.spice_version || 'latest' }}"
           GITHUB_RUN_URL="${{ inputs.github_run_url }}"
-          
+
           if [ "$BUILD_SOURCE" == "github-run" ]; then
             if [ -z "$GITHUB_RUN_URL" ]; then
               echo "::error::github_run_url is required when build_source is 'github-run'"
@@ -196,7 +196,7 @@ jobs:
             {"name": "vectors", "path": "vectors", "instructions": "This recipe demonstrates vector embeddings and similarity search. May use public data or local embeddings."},
             {"name": "views", "path": "views", "instructions": "This recipe demonstrates accelerated views in Spice."}
           ]'
-          
+
           SECRETS_RECIPES='[
             {"name": "ai", "path": "ai", "instructions": "This recipe demonstrates the ai() SQL function for LLM integration. Requires SPICE_OPENAI_API_KEY to be set in .env file. Test with simple ai() queries as shown in the README."},
             {"name": "azure-openai", "path": "azure_openai", "instructions": "This recipe demonstrates Azure OpenAI integration. Requires Azure OpenAI credentials."},
@@ -231,7 +231,7 @@ jobs:
             {"name": "text-to-sql", "path": "text-to-sql", "instructions": "This recipe demonstrates text-to-SQL capabilities with LLM tools. Requires SPICE_OPENAI_API_KEY."},
             {"name": "websearch", "path": "websearch", "instructions": "This recipe demonstrates web search tools using Perplexity/Tavily. Requires SPICE_PERPLEXITY_AUTH_TOKEN and/or SPICE_OPENAI_API_KEY."}
           ]'
-          
+
           # Filter recipes if a specific one is requested
           REQUESTED="${{ inputs.recipe || 'all' }}"
           if [ "$REQUESTED" != "all" ]; then
@@ -243,7 +243,7 @@ jobs:
               [.[] | select(.name == $recipe)]
             ')
           fi
-          
+
           echo "simple=$SIMPLE_RECIPES" >> $GITHUB_OUTPUT
           echo "secrets=$SECRETS_RECIPES" >> $GITHUB_OUTPUT
 
@@ -518,7 +518,7 @@ jobs:
         run: |
           echo "## SpiceQA Test Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           # Build source info
           GITHUB_RUN_ID="${{ needs.setup.outputs.github_run_id }}"
           if [ -n "$GITHUB_RUN_ID" ]; then
@@ -529,7 +529,7 @@ jobs:
             echo "- Version: ${{ needs.setup.outputs.spice_version || 'latest' }}" >> $GITHUB_STEP_SUMMARY
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           # Test results
           echo "### Test Results" >> $GITHUB_STEP_SUMMARY
           echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
@@ -537,6 +537,6 @@ jobs:
           echo "| Simple Recipes | ${{ needs.test-simple.result || 'skipped' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Secrets Recipes | ${{ needs.test-secrets.result || 'skipped' }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           echo "### Skipped Recipes (Docker-in-Docker Not Supported)" >> $GITHUB_STEP_SUMMARY
           echo "cdc-debezium, cqrs, docker, ftp, grafana-datasource, kafka, oracle, retention, tls, sales-bi, spark, catalogs/iceberg, catalogs/iceberg-hadoop, acceleration/constraints" >> $GITHUB_STEP_SUMMARY
