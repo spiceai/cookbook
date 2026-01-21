@@ -5,8 +5,12 @@ Full-text search uses BM25 scoring to retrieve records matching keywords in inde
 ## Prerequisites
 
 - Install Spice CLI: Follow [Getting Started](https://docs.spiceai.org/getting-started).
-- Create a `.env` file with:
+- Create a `.env` file in this directory with:
   - `GITHUB_TOKEN`: GitHub personal access token ([guide](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic)).
+
+```bash
+echo "GITHUB_TOKEN=your_token_here" > .env
+```
 
 ## Configuration
 
@@ -47,7 +51,8 @@ Wait for the dataset to load and index:
 
 ```shell
 2026-01-21T01:00:00.000000Z  INFO runtime::init::dataset: Dataset cookbook_files registered (github:github.com/spiceai/cookbook/files/trunk), acceleration (arrow), results cache enabled.
-2026-01-21T01:00:05.000000Z  INFO runtime::accelerated_table::refresh_task: Loaded 89 rows for dataset cookbook_files
+2026-01-21T01:00:05.000000Z  INFO runtime::accelerated_table::refresh_task: Loaded 104 rows (1.13 MiB) for dataset cookbook_files in 4s.
+2026-01-21T01:00:05.100000Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
 ## Search with SQL
@@ -56,6 +61,21 @@ Start the Spice SQL REPL:
 
 ```shell
 spice sql
+```
+
+Verify the dataset is loaded:
+
+```sql
+show tables;
+```
+
+```
++---------------+--------------+----------------+------------+
+| table_catalog | table_schema | table_name     | table_type |
++---------------+--------------+----------------+------------+
+| spice         | public       | cookbook_files | BASE TABLE |
+| spice         | runtime      | task_history   | BASE TABLE |
++---------------+--------------+----------------+------------+
 ```
 
 ### Basic Full-Text Search
@@ -69,16 +89,16 @@ ORDER BY score DESC
 LIMIT 5;
 ```
 
-Results:
+Results (scores may vary):
 
 ```
-+----------------------------------+---------------------+
-| path                             | score               |
-+----------------------------------+---------------------+
-| vectors/s3/README.md             | 0.8234              |
-| search/README.md                 | 0.7891              |
-| vectors/text-to-sql/README.md    | 0.7654              |
-+----------------------------------+---------------------+
++-------------------------------+--------------------+
+| path                          | score              |
++-------------------------------+--------------------+
+| vectors/README.md             | 6.82               |
+| search/README.md              | 6.51               |
+| search_github_files/README.md | 6.47               |
++-------------------------------+--------------------+
 ```
 
 ### Search for Specific Topics
@@ -134,22 +154,22 @@ curl -X POST http://localhost:8090/v1/search \
   }'
 ```
 
-Response:
+Response (truncated):
 
 ```json
 {
   "results": [
     {
       "matches": {
-        "content": "## Getting Started\n\nFollow these steps to..."
+        "content": "... Follow these steps to get started with ..."
       },
       "data": {
-        "path": "quickstart/README.md"
+        "path": "postgres/rds/README.md"
       },
       "primary_key": {
-        "path": "quickstart/README.md"
+        "path": "postgres/rds/README.md"
       },
-      "score": 0.8912,
+      "score": 1.41,
       "dataset": "cookbook_files"
     }
   ],
