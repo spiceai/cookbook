@@ -40,7 +40,14 @@ spice cluster tls add executor1
 Start the Spice scheduler by providing the cluster certificates and cluster mode:
 
 ```bash
-spiced --role scheduler --scheduler-address 0.0.0.0:50052 --node-mtls-ca-certificate-file ~/.spice/pki/ca.crt --node-mtls-certificate-file ~/.spice/pki/scheduler1.crt --node-mtls-key-file ~/.spice/pki/scheduler1.key --node-advertise-address localhost:50052
+~/.spice/bin/spiced  --role scheduler \
+  --node-bind-address 127.0.0.1:50052 \
+  --node-advertise-address 127.0.0.1 \
+  --http 127.0.0.1:8090 \
+  --flight 127.0.0.1:50051 \
+  --node-mtls-ca-certificate-file ~/.spice/pki/ca.crt  \
+  --node-mtls-certificate-file ~/.spice/pki/scheduler1.crt \
+  --node-mtls-key-file ~/.spice/pki/scheduler1.key
 ```
 
 The prepared `spicepod.yaml` serves a hive-partitioned dataset from the scheduler to make available for query by all executors:
@@ -86,7 +93,15 @@ A scheduler requires at least one executor to perform queries. In a new terminal
 A Spice executor does not require a `spicepod.yaml`, as the scheduler will sync dataset information with executors when executing queries:
 
 ```bash
-spiced --role executor --scheduler-address 0.0.0.0:50053 --node-mtls-ca-certificate-file ~/.spice/pki/ca.crt --node-mtls-certificate-file ~/.spice/pki/executor1.crt --node-mtls-key-file ~/.spice/pki/executor1.key --node-mtls-scheduler-url https://localhost:50052 --node-advertise-address localhost:50053
+~/.spice/bin/spiced --role executor \
+  --http 127.0.0.1:9090 \
+  --flight 127.0.0.1:50061 \
+  --scheduler-address 127.0.0.1:50052 \
+  --node-mtls-ca-certificate-file ~/.spice/pki/ca.crt \
+  --node-mtls-certificate-file ~/.spice/pki/executor1.crt \
+  --node-mtls-key-file ~/.spice/pki/executor1.key \
+  --node-bind-address 127.0.0.1:50062 \
+  --node-advertise-address 127.0.0.1
 ```
 
 The Spice executor will now start:
