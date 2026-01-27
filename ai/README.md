@@ -160,7 +160,7 @@ Compare responses from different models (requires multiple models configured):
 SELECT
   left(ai('Explain quantum computing in 10 words', 'gpt-4o-mini'), 50) as gpt4,
   left(ai('Explain quantum computing in 10 words', 'sonnet-3-5'), 50) as claude
-FROM (SELECT 1);  -- Dummy table for single row
+FROM (SELECT 1);  -- Dummy table for single row;
 ```
 
 ### Example 6: Translation
