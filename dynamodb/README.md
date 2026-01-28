@@ -48,6 +48,7 @@ aws dynamodb put-item --table-name sample_data --item \
 aws dynamodb put-item --table-name sample_data --item \
   '{"id": {"S": "2"}, "name": {"S": "Name2"}, "phone": {"S": "555-0002"}, "email": {"S": "user2@example.com"}, "region": {"S": "Region2"}, "location": {"M": {"lat": {"N": "-41.789"}, "lon": {"N": "77.123"}}}}' \
   --region $AWS_REGION
+```
 
 ---
 
