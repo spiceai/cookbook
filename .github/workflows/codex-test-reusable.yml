@@ -41,6 +41,11 @@ on:
       SPICEAI_GH_TOKEN:
         required: false
 
+# Limit GITHUB_TOKEN permissions for security
+permissions:
+  contents: read
+  actions: read
+
 jobs:
   test:
     name: Test ${{ inputs.recipe_name }}
@@ -154,15 +159,22 @@ jobs:
 
       - name: Display test output on failure
         if: ${{ steps.codex_test.outputs.result != 'passed' }}
+        env:
+          TEST_RESULT: ${{ steps.codex_test.outputs.result }}
+          TEST_REASON: ${{ steps.codex_test.outputs.reason }}
+          RECIPE_NAME: ${{ inputs.recipe_name }}
         run: |
-          echo "::error::Test failed for ${{ inputs.recipe_name }}: ${{ steps.codex_test.outputs.reason }}"
+          echo "::error::Test failed for ${RECIPE_NAME}: ${TEST_REASON}"
           echo ""
           echo "=== Full Test Output ==="
           cat "${{ env.OUTPUT_FILE }}" || echo "No log file found"
 
       - name: Fail workflow if test failed
         if: ${{ steps.codex_test.outputs.result != 'passed' }}
+        env:
+          TEST_RESULT: ${{ steps.codex_test.outputs.result }}
+          TEST_REASON: ${{ steps.codex_test.outputs.reason }}
         run: |
-          echo "Test result: ${{ steps.codex_test.outputs.result }}"
-          echo "Reason: ${{ steps.codex_test.outputs.reason }}"
+          echo "Test result: ${TEST_RESULT}"
+          echo "Reason: ${TEST_REASON}"
           exit 1
