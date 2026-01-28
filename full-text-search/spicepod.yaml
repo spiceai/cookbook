@@ -1,0 +1,18 @@
+version: v1
+kind: Spicepod
+name: full-text-search
+
+datasets:
+  - from: github:github.com/spiceai/cookbook/files/trunk
+    name: cookbook_files
+    params:
+      github_token: ${secrets:GITHUB_TOKEN}
+      include: "**/*.md"
+    acceleration:
+      enabled: true
+    columns:
+      - name: content
+        full_text_search:
+          enabled: true
+          row_id:
+            - path
