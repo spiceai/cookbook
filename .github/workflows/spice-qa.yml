@@ -16,8 +16,12 @@ on:
   schedule:
     - cron: '0 9 * * 1'
 
+permissions:
+  contents: read
+  actions: write
+
 # This workflow triggers all individual recipe test workflows
-# Docker-dependent recipes are excluded as they cannot run docker-in-docker
+# Some Docker-dependent recipes are excluded (complex multi-container setups)
 # Skipped recipes: cdc-debezium, cqrs, docker, ftp, grafana-datasource, kafka,
 #                  oracle, retention, tls, sales-bi, spark, catalogs/iceberg,
 #                  catalogs/iceberg-hadoop, acceleration/constraints
@@ -48,6 +52,8 @@ jobs:
           - federation
           - mcp
           - search
+          - scylladb
+          - smb
     steps:
       - name: Dispatch workflow
         uses: actions/github-script@v7
@@ -121,14 +127,14 @@ jobs:
           echo "All recipe test workflows have been triggered as separate runs." >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Triggered Workflows" >> $GITHUB_STEP_SUMMARY
-          echo "- Simple recipes: 15 workflows" >> $GITHUB_STEP_SUMMARY
+          echo "- Simple recipes: 17 workflows" >> $GITHUB_STEP_SUMMARY
           if [ "${{ inputs.include_secrets_recipes }}" == "true" ]; then
             echo "- Secrets recipes: 13 workflows" >> $GITHUB_STEP_SUMMARY
           else
             echo "- Secrets recipes: Skipped (set include_secrets_recipes to trigger)" >> $GITHUB_STEP_SUMMARY
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Skipped Recipes (Docker-in-Docker Not Supported)" >> $GITHUB_STEP_SUMMARY
+          echo "### Skipped Recipes (Complex Multi-Container Setups)" >> $GITHUB_STEP_SUMMARY
           echo "- cdc-debezium, cqrs, docker, ftp, grafana-datasource" >> $GITHUB_STEP_SUMMARY
           echo "- kafka, oracle, retention, tls, sales-bi, spark" >> $GITHUB_STEP_SUMMARY
           echo "- catalogs/iceberg, catalogs/iceberg-hadoop, acceleration/constraints" >> $GITHUB_STEP_SUMMARY
