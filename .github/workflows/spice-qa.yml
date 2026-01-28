@@ -1,492 +1,312 @@
 name: SpiceQA
+
 on:
   workflow_dispatch:
     inputs:
-      build_source:
-        description: 'Source for Spice build'
-        required: true
-        type: choice
-        options:
-          - release
-          - github-run
-        default: 'release'
       spice_version:
-        description: 'Spice.ai version to install (e.g. v1.0.6 or latest) - used when build_source is "release"'
+        description: 'Spice.ai version to test'
         required: false
-        type: string
         default: 'latest'
-      github_run_url:
-        description: 'GitHub Actions run URL (e.g. https://github.com/spiceai/spiceai/actions/runs/21192655885) - used when build_source is "github-run"'
+        type: string
+      recipes:
+        description: 'Comma-separated list of recipes to test (e.g., "ai,file"). Leave empty for all recipes.'
+        required: false
+        default: ''
+        type: string
+  workflow_call:
+    inputs:
+      github_run_id:
+        description: 'GitHub Actions run ID from spiceai/spiceai. If set, will install pre-release artifact. Otherwise installs the release version.'
         required: false
         type: string
         default: ''
-      include_secrets_recipes:
-        description: 'Include recipes that require API keys/secrets'
+      recipes:
+        description: 'Comma-separated list of recipes to test (e.g., "ai,file"). Leave empty for all recipes.'
         required: false
-        type: boolean
-        default: false
-      recipe:
-        description: 'Recipe to test (select a specific recipe or all)'
+        default: ''
+        type: string
+    secrets:
+      OPENAI_API_KEY:
+        required: true
+      SPICEAI_GH_TOKEN:
         required: false
-        type: choice
-        default: 'all'
-        options:
-          - all
-          # Simple recipes (no API keys required)
-          - acceleration-cron
-          - acceleration-data-refresh
-          - acceleration-indexes
-          - acceleration-partitioning
-          - api-key
-          - arrow
-          - caching-accelerator
-          - caching-sql-results
-          - cayenne
-          - client-sdk-gospice
-          - client-sdk-spicepy
-          - client-sdk-spicejs
-          - client-sdk-java
-          - client-sdk-dotnet
-          - client-sdk-rust
-          - clients-adbc
-          - clients-java
-          - clients-scala
-          - distributed
-          - dremio
-          - duckdb-accelerator
-          - duckdb-connector
-          - federation
-          - file
-          - hashed-partitioning
-          - http
-          - json-strings
-          - localpod
-          - mcp
-          - refresh-data-window
-          - s3
-          - search
-          - sqlite-accelerator
-          - tpc-h
-          - vectors
-          - views
-          # Secrets recipes (require API keys)
-          - ai
-          - azure-openai
-          - catalogs-databricks
-          - catalogs-glue
-          - catalogs-spiceai
-          - catalogs-unity-catalog
-          - databricks
-          - deepseek
-          - delta-lake
-          - dynamodb
-          - evals
-          - generative-visualisations
-          - github
-          - glue
-          - graphql
-          - imap
-          - llama
-          - llm-judge
-          - llm-memory
-          - models-openai
-          - models-xai
-          - mysql
-          - openai-responses-api
-          - openai-sdk
-          - postgres
-          - redshift
-          - search-github-files
-          - sharepoint
-          - snowflake
-          - spiceai
-          - text-to-sql
-          - websearch
-  # Run weekly on Mondays at 9am UTC
-  schedule:
-    - cron: '0 9 * * 1'
 
 # Limit GITHUB_TOKEN permissions for security
 permissions:
   contents: read
   actions: read
 
-# Skipped recipes (require Docker, Kubernetes, or external infrastructure):
-# acceleration/constraints, acceleration/snapshots, architectures/microservice,
-# architectures/sidecar, catalogs/iceberg, catalogs/iceberg-hadoop,
-# cdc-debezium, clickhouse, cqrs, docker, ftp, grafana-datasource, kafka,
-# kubernetes, mongodb, mssql, nvidia-nim, odbc, oracle, postgres (docker variant),
-# retention, sales-bi, spark, tls, vectors (bluesky variant)
-
 jobs:
-  # ============================================
-  # Setup - Validate inputs and prepare matrix
-  # ============================================
-  setup:
-    name: Setup
+  generate-matrix:
     runs-on: ubuntu-latest
     outputs:
-      spice_version: ${{ steps.config.outputs.spice_version }}
-      github_run_id: ${{ steps.config.outputs.github_run_id }}
-      simple_matrix: ${{ steps.matrix.outputs.simple }}
-      secrets_matrix: ${{ steps.matrix.outputs.secrets }}
+      simple_matrix: ${{ steps.set-matrix.outputs.simple_matrix }}
+      secrets_matrix: ${{ steps.set-matrix.outputs.secrets_matrix }}
     steps:
-      - name: Configure build source
-        id: config
+      - name: Generate test matrix
+        id: set-matrix
         run: |
-          BUILD_SOURCE="${{ inputs.build_source || 'release' }}"
-          SPICE_VERSION="${{ inputs.spice_version || 'latest' }}"
-          GITHUB_RUN_URL="${{ inputs.github_run_url }}"
+          # Create arrays of recipes that don't require secrets
+          # Format: name|path|timeout|minimum_version
+          declare -a SIMPLE_RECIPES=(
+            "clickhouse|clickhouse|10|"
+            "evals|evals|25|"
+            "file|file|10|"
+            "sqlite-connector|duckdb/connector|10|"
+            "duckdb-accelerator|duckdb/accelerator|10|"
+            "federation|federation|10|"
+            "full-text-search|full-text-search|10|"
+            "localpod|localpod|10|"
+            "mcp|mcp|15|"
+            "scylladb|scylladb|15|v1.11.0-rc.1"
+            "smb|smb|15|v1.11.0-rc.1"
+            "views|views|10|"
+          )
 
-          if [ "$BUILD_SOURCE" == "github-run" ]; then
-            if [ -z "$GITHUB_RUN_URL" ]; then
-              echo "::error::github_run_url is required when build_source is 'github-run'"
-              exit 1
+          # Recipes that require secrets
+          declare -a SECRETS_RECIPES=(
+            "ai|ai|15|"
+          )
+
+          # Filter recipes if a filter is specified
+          FILTER="${{ inputs.recipes }}"
+
+          filter_recipes() {
+            local -n recipes=$1
+            local filter="$2"
+            local -a filtered=()
+
+            if [ -z "$filter" ]; then
+              # No filter, return all
+              for r in "${recipes[@]}"; do
+                filtered+=("$r")
+              done
+            else
+              # Apply filter
+              IFS=',' read -ra FILTER_ARRAY <<< "$filter"
+              for r in "${recipes[@]}"; do
+                name="${r%%|*}"
+                for f in "${FILTER_ARRAY[@]}"; do
+                  f=$(echo "$f" | xargs) # trim whitespace
+                  if [ "$name" == "$f" ]; then
+                    filtered+=("$r")
+                    break
+                  fi
+                done
+              done
             fi
-            # Extract run ID from URL like https://github.com/spiceai/spiceai/actions/runs/21192655885
-            RUN_ID=$(echo "$GITHUB_RUN_URL" | grep -oE '[0-9]+$')
-            if [ -z "$RUN_ID" ]; then
-              echo "::error::Could not extract run ID from URL: $GITHUB_RUN_URL"
-              exit 1
-            fi
-            echo "github_run_id=$RUN_ID" >> $GITHUB_OUTPUT
-            echo "spice_version=" >> $GITHUB_OUTPUT
-            echo "Using pre-release build from GitHub run: $RUN_ID"
+
+            printf '%s\n' "${filtered[@]}"
+          }
+
+          # Generate filtered arrays
+          mapfile -t FILTERED_SIMPLE < <(filter_recipes SIMPLE_RECIPES "$FILTER")
+          mapfile -t FILTERED_SECRETS < <(filter_recipes SECRETS_RECIPES "$FILTER")
+
+          # Build JSON for simple matrix
+          build_json() {
+            local -a recipes=("$@")
+            local json='{"include":['
+            local first=true
+            for r in "${recipes[@]}"; do
+              IFS='|' read -r name path timeout min_ver <<< "$r"
+              if [ "$first" = true ]; then
+                first=false
+              else
+                json+=','
+              fi
+              json+="{\"name\":\"$name\",\"path\":\"$path\",\"timeout\":$timeout"
+              if [ -n "$min_ver" ]; then
+                json+=",\"min_ver\":\"$min_ver\""
+              fi
+              json+='}'
+            done
+            json+=']}'
+            echo "$json"
+          }
+
+          if [ ${#FILTERED_SIMPLE[@]} -gt 0 ]; then
+            SIMPLE_JSON=$(build_json "${FILTERED_SIMPLE[@]}")
+            echo "simple_matrix=$SIMPLE_JSON" >> $GITHUB_OUTPUT
           else
-            echo "github_run_id=" >> $GITHUB_OUTPUT
-            echo "spice_version=$SPICE_VERSION" >> $GITHUB_OUTPUT
-            echo "Using release version: $SPICE_VERSION"
+            echo 'simple_matrix={"include":[]}' >> $GITHUB_OUTPUT
           fi
 
-      - name: Build test matrix
-        id: matrix
-        run: |
-          # Define all recipes with their configurations
-          # Format: name, path, instructions
-          # Note: JSON is compacted to single lines for $GITHUB_OUTPUT compatibility
-          SIMPLE_RECIPES='[{"name":"acceleration-cron","path":"acceleration/cron","instructions":"This recipe demonstrates cron-based data refresh using public S3 data."},{"name":"acceleration-data-refresh","path":"acceleration/data-refresh","instructions":"This recipe demonstrates data refresh patterns using public S3 data."},{"name":"acceleration-indexes","path":"acceleration/indexes","instructions":"This recipe demonstrates index acceleration. May require downloading a local parquet file."},{"name":"acceleration-partitioning","path":"acceleration/partitioning","instructions":"This recipe demonstrates data partitioning using public S3 data."},{"name":"api-key","path":"api_key","instructions":"This recipe demonstrates Spice API key authentication."},{"name":"arrow","path":"arrow","instructions":"This recipe demonstrates using Apache Arrow as an in-memory acceleration engine."},{"name":"caching-accelerator","path":"caching/accelerator","instructions":"This recipe demonstrates accelerator caching."},{"name":"caching-sql-results","path":"caching/sql_results","instructions":"This recipe demonstrates SQL results caching using spiceai/tpch."},{"name":"cayenne","path":"cayenne","instructions":"This recipe demonstrates using Cayenne as a data accelerator."},{"name":"client-sdk-gospice","path":"client-sdk/gospice-sdk-sample","instructions":"This recipe demonstrates the Go SDK using public S3 data."},{"name":"client-sdk-spicepy","path":"client-sdk/spicepy-sdk-sample","instructions":"This recipe demonstrates the Python SDK using public S3 data."},{"name":"client-sdk-spicejs","path":"client-sdk/spice.js-sdk-sample","instructions":"This recipe demonstrates the JavaScript SDK using public S3 data."},{"name":"client-sdk-java","path":"client-sdk/spice-java-sdk-sample","instructions":"This recipe demonstrates the Java SDK using public S3 data."},{"name":"client-sdk-dotnet","path":"client-sdk/spice-dotnet-sdk-sample","instructions":"This recipe demonstrates the .NET SDK using public S3 data."},{"name":"client-sdk-rust","path":"client-sdk/spice-rs-sdk-sample","instructions":"This recipe demonstrates the Rust SDK using public S3 data."},{"name":"clients-adbc","path":"clients/adbc","instructions":"This recipe demonstrates ADBC client connectivity."},{"name":"clients-java","path":"clients/java","instructions":"This recipe demonstrates Java JDBC client connectivity."},{"name":"clients-scala","path":"clients/scala","instructions":"This recipe demonstrates Scala JDBC client connectivity."},{"name":"distributed","path":"distributed","instructions":"This recipe demonstrates a local distributed Spice cluster."},{"name":"dremio","path":"dremio","instructions":"This recipe demonstrates the Dremio connector using public demo instance."},{"name":"duckdb-accelerator","path":"duckdb/accelerator","instructions":"This recipe demonstrates using DuckDB as an acceleration engine."},{"name":"duckdb-connector","path":"duckdb/connector","instructions":"This recipe demonstrates using DuckDB as a data source. The DuckDB database file may need to be created or downloaded."},{"name":"federation","path":"federation","instructions":"This recipe demonstrates federated SQL queries across data sources. Uses demo Dremio instance and public S3 data. Login to Dremio with: spice login dremio -u demo -p demo1234. Add the spicepod from spicerack: spice add spiceai/fed-demo"},{"name":"file","path":"file","instructions":"This recipe demonstrates using local files (Parquet, CSV, Markdown) as data sources. You may need to download sample data files as shown in the README. Test the Parquet file example first as it is the simplest."},{"name":"hashed-partitioning","path":"hashed_partitioning","instructions":"This recipe demonstrates hashed partitioning with DuckDB."},{"name":"http","path":"http","instructions":"This recipe demonstrates using HTTP endpoints as data sources. Uses public APIs that do not require authentication."},{"name":"json-strings","path":"json_strings","instructions":"This recipe demonstrates working with JSON string data in Spice."},{"name":"localpod","path":"localpod","instructions":"This recipe demonstrates using local pod configurations."},{"name":"mcp","path":"mcp","instructions":"This recipe demonstrates Model Context Protocol integration."},{"name":"refresh-data-window","path":"refresh-data-window","instructions":"This recipe demonstrates refresh data window using public S3 data."},{"name":"s3","path":"s3","instructions":"This recipe demonstrates the S3 connector using public demo bucket."},{"name":"search","path":"search","instructions":"This recipe demonstrates search capabilities in Spice."},{"name":"sqlite-accelerator","path":"sqlite/accelerator","instructions":"This recipe demonstrates using SQLite as an acceleration engine."},{"name":"tpc-h","path":"tpc-h","instructions":"This recipe demonstrates TPC-H benchmark using spiceai/tpch pod."},{"name":"vectors","path":"vectors","instructions":"This recipe demonstrates vector embeddings and similarity search. May use public data or local embeddings."},{"name":"views","path":"views","instructions":"This recipe demonstrates accelerated views in Spice."}]'
-
-          SECRETS_RECIPES='[{"name":"ai","path":"ai","instructions":"This recipe demonstrates the ai() SQL function for LLM integration. Requires SPICE_OPENAI_API_KEY to be set in .env file. Test with simple ai() queries as shown in the README."},{"name":"azure-openai","path":"azure_openai","instructions":"This recipe demonstrates Azure OpenAI integration. Requires Azure OpenAI credentials."},{"name":"catalogs-databricks","path":"catalogs/databricks","instructions":"This recipe demonstrates the Databricks catalog. Requires Databricks token and cloud credentials."},{"name":"catalogs-glue","path":"catalogs/glue","instructions":"This recipe demonstrates the AWS Glue catalog. Requires AWS credentials."},{"name":"catalogs-spiceai","path":"catalogs/spiceai","instructions":"This recipe demonstrates the Spice.ai Cloud catalog. Requires Spice.ai Cloud login."},{"name":"catalogs-unity-catalog","path":"catalogs/unity_catalog","instructions":"This recipe demonstrates Unity Catalog integration. Requires Unity Catalog and cloud credentials."},{"name":"databricks","path":"databricks","instructions":"This recipe demonstrates the Databricks connector. Requires Databricks token and AWS credentials."},{"name":"deepseek","path":"deepseek","instructions":"This recipe demonstrates using DeepSeek models. Requires DEEPSEEK_API_KEY."},{"name":"delta-lake","path":"delta-lake","instructions":"This recipe demonstrates Delta Lake integration. Requires AWS credentials for S3 bucket access."},{"name":"dynamodb","path":"dynamodb","instructions":"This recipe demonstrates the DynamoDB connector. Requires AWS credentials."},{"name":"evals","path":"evals","instructions":"This recipe demonstrates language model evaluations. Requires SPICE_OPENAI_API_KEY."},{"name":"generative-visualisations","path":"generative-visualisations","instructions":"This recipe demonstrates generative visualizations. Requires SPICE_OPENAI_API_KEY."},{"name":"github","path":"github","instructions":"This recipe demonstrates the GitHub data connector. Requires GITHUB_TOKEN to be set."},{"name":"glue","path":"glue","instructions":"This recipe demonstrates AWS Glue integration. Requires AWS credentials."},{"name":"graphql","path":"graphql","instructions":"This recipe demonstrates the GraphQL data connector. Often uses GitHub GraphQL API which requires a token."},{"name":"imap","path":"imap","instructions":"This recipe demonstrates the IMAP email connector. Requires IMAP server credentials."},{"name":"llama","path":"llama","instructions":"This recipe demonstrates Llama model integration. Requires SPICE_HUGGINGFACE_API_KEY."},{"name":"llm-judge","path":"llm-judge","instructions":"This recipe demonstrates LLM as a judge for evaluations. Requires SPICE_OPENAI_API_KEY."},{"name":"llm-memory","path":"llm-memory","instructions":"This recipe demonstrates persistent memory for language models. Requires SPICE_OPENAI_API_KEY."},{"name":"models-openai","path":"models/openai","instructions":"This recipe demonstrates using OpenAI LLM and embedding models. Requires SPICE_OPENAI_API_KEY."},{"name":"models-xai","path":"models/xai","instructions":"This recipe demonstrates xAI model integration. Requires xAI API key."},{"name":"mysql","path":"mysql","instructions":"This recipe demonstrates the MySQL connector. Requires MySQL/Planetscale credentials."},{"name":"openai-responses-api","path":"openai-responses-api","instructions":"This recipe demonstrates OpenAI Responses API with Spice. Requires OPENAI_API_KEY."},{"name":"openai-sdk","path":"openai_sdk","instructions":"This recipe demonstrates using the OpenAI SDK with Spice-hosted models. Requires OPENAI_API_KEY."},{"name":"postgres","path":"postgres","instructions":"This recipe demonstrates the PostgreSQL connector. Requires PostgreSQL/Supabase credentials."},{"name":"redshift","path":"redshift","instructions":"This recipe demonstrates the Redshift connector. Requires AWS Redshift credentials."},{"name":"search-github-files","path":"search_github_files","instructions":"This recipe demonstrates searching GitHub files with embeddings. Requires GITHUB_TOKEN and SPICE_OPENAI_API_KEY."},{"name":"sharepoint","path":"sharepoint","instructions":"This recipe demonstrates the SharePoint connector. Requires SharePoint tenant credentials."},{"name":"snowflake","path":"snowflake","instructions":"This recipe demonstrates the Snowflake connector. Requires Snowflake account credentials."},{"name":"spiceai","path":"spiceai","instructions":"This recipe demonstrates Spice.ai Cloud integration. Requires Spice.ai Cloud login."},{"name":"text-to-sql","path":"text-to-sql","instructions":"This recipe demonstrates text-to-SQL capabilities with LLM tools. Requires SPICE_OPENAI_API_KEY."},{"name":"websearch","path":"websearch","instructions":"This recipe demonstrates web search tools using Perplexity/Tavily. Requires SPICE_PERPLEXITY_AUTH_TOKEN and/or SPICE_OPENAI_API_KEY."}]'
-
-          # Filter recipes if a specific one is requested
-          REQUESTED="${{ inputs.recipe || 'all' }}"
-          if [ "$REQUESTED" != "all" ]; then
-            # Filter to just the selected recipe
-            SIMPLE_RECIPES=$(echo "$SIMPLE_RECIPES" | jq -c --arg recipe "$REQUESTED" '
-              [.[] | select(.name == $recipe)]
-            ')
-            SECRETS_RECIPES=$(echo "$SECRETS_RECIPES" | jq -c --arg recipe "$REQUESTED" '
-              [.[] | select(.name == $recipe)]
-            ')
+          if [ ${#FILTERED_SECRETS[@]} -gt 0 ]; then
+            SECRETS_JSON=$(build_json "${FILTERED_SECRETS[@]}")
+            echo "secrets_matrix=$SECRETS_JSON" >> $GITHUB_OUTPUT
+          else
+            echo 'secrets_matrix={"include":[]}' >> $GITHUB_OUTPUT
           fi
 
-          echo "simple=$SIMPLE_RECIPES" >> $GITHUB_OUTPUT
-          echo "secrets=$SECRETS_RECIPES" >> $GITHUB_OUTPUT
-
-  # ============================================
-  # Test Simple Recipes (No API keys required)
-  # ============================================
   test-simple:
-    name: Test ${{ matrix.recipe.name }}
-    needs: setup
-    if: ${{ needs.setup.outputs.simple_matrix != '[]' }}
-    runs-on: spiceai-dev-runners
-    timeout-minutes: 15
+    needs: generate-matrix
+    if: ${{ fromJson(needs.generate-matrix.outputs.simple_matrix).include[0] != null }}
     strategy:
       fail-fast: false
-      matrix:
-        recipe: ${{ fromJson(needs.setup.outputs.simple_matrix) }}
-    env:
-      OUTPUT_FILE: ${{ github.workspace }}/test_results/${{ matrix.recipe.name }}.log
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.simple_matrix) }}
+    uses: ./.github/workflows/codex-test-reusable.yml
+    with:
+      recipe_name: ${{ matrix.name }}
+      recipe_path: ${{ matrix.path }}
+      timeout_minutes: ${{ matrix.timeout }}
+      spice_version: ${{ inputs.spice_version || 'latest' }}
+      github_run_id: ${{ inputs.github_run_id || '' }}
+      requires_secrets: false
+      minimum_version: ${{ matrix.min_ver || '' }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      SPICEAI_GH_TOKEN: ${{ secrets.SPICEAI_GH_TOKEN }}
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install Codex CLI
-        run: npm install -g @openai/codex
-
-      - name: Authenticate Codex CLI
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: |
-          echo "$OPENAI_API_KEY" | codex login --with-api-key
-
-      - name: Setup Spice
-        uses: ./.github/actions/setup-spice
-        with:
-          version: ${{ needs.setup.outputs.spice_version }}
-          github-run-id: ${{ needs.setup.outputs.github_run_id }}
-          github-token: ${{ secrets.SPICEAI_GH_TOKEN || github.token }}
-
-      - name: Create output directory
-        run: mkdir -p test_results
-
-      - name: Build test prompt
-        id: prompt
-        run: |
-          cat > /tmp/prompt.txt << 'PROMPT_EOF'
-          You are a QA tester validating the '${{ matrix.recipe.name }}' cookbook recipe.
-
-          YOUR MISSION: Execute the README.md instructions EXACTLY as written and verify they work.
-          This is a documentation test - if the documented steps don't work, that's a bug we need to know about.
-
-          STRICT RULES:
-          - Follow EVERY command in the README.md exactly as documented, character for character
-          - Do NOT improvise, fix, or work around any issues
-          - Do NOT modify any files unless the README explicitly instructs you to
-          - Do NOT try alternative approaches if something fails
-          - If a command fails or output doesn't match, STOP and report FAILURE immediately
-          - The recipe must work exactly as documented or it's a test failure
-
-          STEPS:
-          1. Read the README.md to understand what commands to run
-          2. Execute each command exactly as shown in the README
-          3. Start Spice with 'spice run' when instructed (run in background with & if needed)
-          4. Run SQL queries exactly as documented using 'spice sql'
-          5. Compare actual output to expected output shown in README
-          6. If ANY step fails or differs from documentation, report FAILURE
-
-          ${{ matrix.recipe.instructions }}
-
-          IMPORTANT:
-          - If external credentials/services are unavailable, note it and skip ONLY that specific step
-          - Timeout is 15 minutes
-
-          FINAL OUTPUT REQUIREMENT (CRITICAL):
-          At the very end of your response, you MUST output EXACTLY ONE of these two lines (copy verbatim):
-          - If all documented steps worked: TEST PASSED
-          - If any step failed: TEST FAILED: <describe what failed>
-
-          This final line determines whether the CI pipeline passes or fails. Do not add extra formatting or emojis.
-          PROMPT_EOF
-          echo "file=/tmp/prompt.txt" >> $GITHUB_OUTPUT
-
-      - name: Run Codex CLI test
-        id: codex_run
-        working-directory: ${{ matrix.recipe.path }}
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: |
-          codex exec \
-                --model gpt-5.2 \
-                --dangerously-bypass-approvals-and-sandbox \
-                "$(cat ${{ steps.prompt.outputs.file }})" \
-                2>&1 | tee "${{ env.OUTPUT_FILE }}"
-
-      - name: Parse test result
-        id: codex_test
-        uses: ./.github/actions/parse-llm-test-result
-        with:
-          output_file: ${{ env.OUTPUT_FILE }}
-          debug: 'true'
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: test-result-${{ matrix.recipe.name }}
-          path: test_results/
-          if-no-files-found: warn
-
-      - name: Display test output on failure
-        if: ${{ steps.codex_test.outputs.result != 'passed' }}
-        env:
-          TEST_RESULT: ${{ steps.codex_test.outputs.result }}
-          TEST_REASON: ${{ steps.codex_test.outputs.reason }}
-          RECIPE_NAME: ${{ matrix.recipe.name }}
-        run: |
-          echo "::error::Test failed for ${RECIPE_NAME}: ${TEST_REASON}"
-          echo ""
-          echo "=== Full Test Output ==="
-          cat "${{ env.OUTPUT_FILE }}" || echo "No log file found"
-
-      - name: Fail workflow if test failed
-        if: ${{ steps.codex_test.outputs.result != 'passed' }}
-        env:
-          TEST_RESULT: ${{ steps.codex_test.outputs.result }}
-          TEST_REASON: ${{ steps.codex_test.outputs.reason }}
-        run: |
-          echo "Test result: ${TEST_RESULT}"
-          echo "Reason: ${TEST_REASON}"
-          exit 1
-
-  # ============================================
-  # Test Secrets Recipes (Require API keys)
-  # ============================================
-  test-secrets:
-    name: Test ${{ matrix.recipe.name }}
-    needs: setup
-    if: ${{ inputs.include_secrets_recipes && needs.setup.outputs.secrets_matrix != '[]' }}
-    runs-on: spiceai-dev-runners
-    timeout-minutes: 15
+  test-with-secrets:
+    needs: generate-matrix
+    if: ${{ fromJson(needs.generate-matrix.outputs.secrets_matrix).include[0] != null }}
     strategy:
       fail-fast: false
-      matrix:
-        recipe: ${{ fromJson(needs.setup.outputs.secrets_matrix) }}
-    env:
-      OUTPUT_FILE: ${{ github.workspace }}/test_results/${{ matrix.recipe.name }}.log
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.secrets_matrix) }}
+    uses: ./.github/workflows/codex-test-reusable.yml
+    with:
+      recipe_name: ${{ matrix.name }}
+      recipe_path: ${{ matrix.path }}
+      timeout_minutes: ${{ matrix.timeout }}
+      spice_version: ${{ inputs.spice_version || 'latest' }}
+      github_run_id: ${{ inputs.github_run_id || '' }}
+      requires_secrets: true
+      minimum_version: ${{ matrix.min_ver || '' }}
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      SPICEAI_GH_TOKEN: ${{ secrets.SPICEAI_GH_TOKEN }}
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install Codex CLI
-        run: npm install -g @openai/codex
-
-      - name: Authenticate Codex CLI
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: |
-          echo "$OPENAI_API_KEY" | codex login --with-api-key
-
-      - name: Setup Spice
-        uses: ./.github/actions/setup-spice
-        with:
-          version: ${{ needs.setup.outputs.spice_version }}
-          github-run-id: ${{ needs.setup.outputs.github_run_id }}
-          github-token: ${{ secrets.SPICEAI_GH_TOKEN || github.token }}
-
-      - name: Create output directory
-        run: mkdir -p test_results
-
-      - name: Setup environment file
-        working-directory: ${{ matrix.recipe.path }}
-        run: |
-          echo "SPICE_OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
-          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
-          echo "GITHUB_TOKEN=${{ github.token }}" >> .env
-          echo "GH_TOKEN=${{ github.token }}" >> .env
-
-      - name: Build test prompt
-        id: prompt
-        run: |
-          cat > /tmp/prompt.txt << 'PROMPT_EOF'
-          You are a QA tester validating the '${{ matrix.recipe.name }}' cookbook recipe.
-
-          YOUR MISSION: Execute the README.md instructions EXACTLY as written and verify they work.
-          This is a documentation test - if the documented steps don't work, that's a bug we need to know about.
-
-          STRICT RULES:
-          - Follow EVERY command in the README.md exactly as documented, character for character
-          - Do NOT improvise, fix, or work around any issues
-          - Do NOT modify any files unless the README explicitly instructs you to
-          - Do NOT try alternative approaches if something fails
-          - If a command fails or output doesn't match, STOP and report FAILURE immediately
-          - The recipe must work exactly as documented or it's a test failure
-
-          STEPS:
-          1. Read the README.md to understand what commands to run
-          2. Execute each command exactly as shown in the README
-          3. Start Spice with 'spice run' when instructed (run in background with & if needed)
-          4. Run SQL queries exactly as documented using 'spice sql'
-          5. Compare actual output to expected output shown in README
-          6. If ANY step fails or differs from documentation, report FAILURE
-
-          ${{ matrix.recipe.instructions }}
-
-          IMPORTANT:
-          - If external credentials/services are unavailable, note it and skip ONLY that specific step
-          - Timeout is 15 minutes
-
-          FINAL OUTPUT REQUIREMENT (CRITICAL):
-          At the very end of your response, you MUST output EXACTLY ONE of these two lines (copy verbatim):
-          - If all documented steps worked: TEST PASSED
-          - If any step failed: TEST FAILED: <describe what failed>
-
-          This final line determines whether the CI pipeline passes or fails. Do not add extra formatting or emojis.
-          PROMPT_EOF
-          echo "file=/tmp/prompt.txt" >> $GITHUB_OUTPUT
-
-      - name: Run Codex CLI test
-        id: codex_run
-        working-directory: ${{ matrix.recipe.path }}
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: |
-          codex exec \
-                --model gpt-5.2 \
-                --dangerously-bypass-approvals-and-sandbox \
-                "$(cat ${{ steps.prompt.outputs.file }})" \
-                2>&1 | tee "${{ env.OUTPUT_FILE }}"
-
-      - name: Parse test result
-        id: codex_test
-        uses: ./.github/actions/parse-llm-test-result
-        with:
-          output_file: ${{ env.OUTPUT_FILE }}
-          debug: 'true'
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: test-result-${{ matrix.recipe.name }}
-          path: test_results/
-          if-no-files-found: warn
-
-      - name: Display test output on failure
-        if: ${{ steps.codex_test.outputs.result != 'passed' }}
-        env:
-          TEST_RESULT: ${{ steps.codex_test.outputs.result }}
-          TEST_REASON: ${{ steps.codex_test.outputs.reason }}
-          RECIPE_NAME: ${{ matrix.recipe.name }}
-        run: |
-          echo "::error::Test failed for ${RECIPE_NAME}: ${TEST_REASON}"
-          echo ""
-          echo "=== Full Test Output ==="
-          cat "${{ env.OUTPUT_FILE }}" || echo "No log file found"
-
-      - name: Fail workflow if test failed
-        if: ${{ steps.codex_test.outputs.result != 'passed' }}
-        env:
-          TEST_RESULT: ${{ steps.codex_test.outputs.result }}
-          TEST_REASON: ${{ steps.codex_test.outputs.reason }}
-        run: |
-          echo "Test result: ${TEST_RESULT}"
-          echo "Reason: ${TEST_REASON}"
-          exit 1
-
-  # ============================================
-  # Summary
-  # ============================================
-  summary:
-    name: Summary
-    runs-on: ubuntu-latest
-    needs: [setup, test-simple, test-secrets]
+  report:
+    needs: [test-simple, test-with-secrets]
     if: always()
+    runs-on: ubuntu-latest
     steps:
+      - name: Download all test results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: test-result-*
+          merge-multiple: true
+          path: test_results
+        continue-on-error: true
+
       - name: Generate summary
+        env:
+          SIMPLE_STATUS: ${{ needs.test-simple.result }}
+          SECRETS_STATUS: ${{ needs.test-with-secrets.result }}
         run: |
-          echo "## SpiceQA Test Summary" >> $GITHUB_STEP_SUMMARY
+          echo "# SpiceQA Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Job Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Job Group | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Simple Recipes | ${SIMPLE_STATUS} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Secret Recipes | ${SECRETS_STATUS} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          # Build source info
-          GITHUB_RUN_ID="${{ needs.setup.outputs.github_run_id }}"
-          if [ -n "$GITHUB_RUN_ID" ]; then
-            echo "### Build Source: Pre-release from GitHub Run" >> $GITHUB_STEP_SUMMARY
-            echo "- Run ID: $GITHUB_RUN_ID" >> $GITHUB_STEP_SUMMARY
+          echo "## Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Find and display results from all log files
+          if [ -d "test_results" ]; then
+            for log in test_results/*.log; do
+              if [ -f "$log" ]; then
+                RECIPE_NAME=$(basename "$log" .log)
+                # Extract last line or relevant result
+                RESULT=$(tail -1 "$log" 2>/dev/null || echo "No output")
+                echo "### $RECIPE_NAME" >> $GITHUB_STEP_SUMMARY
+                echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+                tail -20 "$log" >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo "No output available"
+                echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+                echo "" >> $GITHUB_STEP_SUMMARY
+              fi
+            done
           else
-            echo "### Build Source: Released Version" >> $GITHUB_STEP_SUMMARY
-            echo "- Version: ${{ needs.setup.outputs.spice_version || 'latest' }}" >> $GITHUB_STEP_SUMMARY
+            echo "No test result artifacts found." >> $GITHUB_STEP_SUMMARY
           fi
-          echo "" >> $GITHUB_STEP_SUMMARY
 
-          # Test results
-          echo "### Test Results" >> $GITHUB_STEP_SUMMARY
-          echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
-          echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Simple Recipes | ${{ needs.test-simple.result || 'skipped' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Secrets Recipes | ${{ needs.test-secrets.result || 'skipped' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
+      - name: Report overall status
+        env:
+          SIMPLE_STATUS: ${{ needs.test-simple.result }}
+          SECRETS_STATUS: ${{ needs.test-with-secrets.result }}
+        run: |
+          # Treat 'skipped' as success (matrix was empty)
+          SIMPLE="${SIMPLE_STATUS}"
+          SECRETS="${SECRETS_STATUS}"
+          
+          if [[ "$SIMPLE" == "skipped" ]]; then SIMPLE="success"; fi
+          if [[ "$SECRETS" == "skipped" ]]; then SECRETS="success"; fi
+          
+          if [[ "$SIMPLE" == "success" && "$SECRETS" == "success" ]]; then
+            echo "✅ All tests passed!"
+            exit 0
+          else
+            echo "❌ Some tests failed"
+            echo "  Simple recipes: ${SIMPLE_STATUS}"
+            echo "  Secret recipes: ${SECRETS_STATUS}"
+            exit 1
+          fi
 
-          echo "### Skipped Recipes (Docker-in-Docker Not Supported)" >> $GITHUB_STEP_SUMMARY
-          echo "cdc-debezium, cqrs, docker, ftp, grafana-datasource, kafka, oracle, retention, tls, sales-bi, spark, catalogs/iceberg, catalogs/iceberg-hadoop, acceleration/constraints" >> $GITHUB_STEP_SUMMARY
+# Skipped recipes (require external services or complex setup):
+# - acceleration/* (cron, data-refresh, indexes, partitioning, snapshots, constraints)
+# - api_key (needs API key setup)
+# - architectures/* (microservice, sidecar - complex multi-container setup)
+# - arrow (requires custom client)
+# - azure_openai (requires Azure credentials)
+# - caching/* (accelerator, sql_results)
+# - catalogs/* (databricks, glue, iceberg*, spiceai, unity_catalog - need cloud services)
+# - cayenne (not a testable recipe)
+# - cdc-debezium (needs Kafka, PostgreSQL, Debezium)
+# - client-sdk/* (various SDK samples)
+# - clients/* (adbc, java, scala)
+# - cqrs (needs Docker Compose)
+# - databricks (needs Databricks credentials)
+# - deepseek (needs DeepSeek API)
+# - delta-lake (needs cloud storage)
+# - distributed (multi-node setup)
+# - docker (needs Docker Compose)
+# - dremio (needs Dremio server)
+# - dynamodb (needs AWS)
+# - ftp (needs FTP server)
+# - generative-visualisations (Python app)
+# - github (needs GitHub token)
+# - glue (needs AWS Glue)
+# - grafana-datasource (needs Grafana)
+# - graphql (needs GraphQL server)
+# - guides/* (various guides)
+# - hashed_partitioning (needs specific setup)
+# - http (needs HTTP server)
+# - imap (needs IMAP server)
+# - json_strings (needs specific data)
+# - kafka (needs Kafka)
+# - kubernetes (needs K8s cluster)
+# - llama (needs Llama model)
+# - llm-judge (needs LLM setup)
+# - llm-memory (needs LLM setup)
+# - models (needs model files)
+# - mongodb (needs MongoDB)
+# - mssql (needs SQL Server)
+# - mysql (needs MySQL)
+# - nvidia-nim (needs NVIDIA NIM)
+# - odbc (needs ODBC drivers)
+# - openai_sdk (needs OpenAI SDK setup)
+# - openai-responses-api (needs OpenAI API)
+# - oracle (needs Oracle DB)
+# - postgres (needs PostgreSQL)
+# - redshift (needs AWS Redshift)
+# - refresh-data-window (needs specific setup)
+# - retention (needs specific setup)
+# - s3 (needs AWS S3)
+# - sales-bi (complex setup)
+# - search (needs external search)
+# - search_github_files (needs GitHub)
+# - sharepoint (needs SharePoint)
+# - snowflake (needs Snowflake)
+# - spark (needs Spark)
+# - spiceai (needs Spice.ai Cloud)
+# - text-to-sql (needs LLM)
+# - tls (needs TLS setup)
+# - tpc-h (benchmark suite)
+# - vectors (needs vector setup)
+# - websearch (needs web search API)

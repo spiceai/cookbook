@@ -35,6 +35,11 @@ on:
         required: false
         type: string
         default: ''
+      minimum_version:
+        description: 'Minimum Spice version required for this recipe (e.g. v1.11.0-rc.2)'
+        required: false
+        type: string
+        default: ''
     secrets:
       OPENAI_API_KEY:
         required: false
@@ -78,11 +83,82 @@ jobs:
           github-run-id: ${{ inputs.github_run_id }}
           github-token: ${{ secrets.SPICEAI_GH_TOKEN || github.token }}
 
+      - name: Get Spice version
+        id: spice_version
+        run: |
+          spice version
+          # Extract version for comparison
+          INSTALLED_VERSION=$(spice version 2>&1 | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?' | head -1)
+          echo "installed_version=$INSTALLED_VERSION" >> $GITHUB_OUTPUT
+          echo "Installed Spice version: $INSTALLED_VERSION"
+
+      - name: Check minimum version requirement
+        id: version_check
+        if: ${{ inputs.minimum_version != '' }}
+        run: |
+          INSTALLED="${{ steps.spice_version.outputs.installed_version }}"
+          MINIMUM="${{ inputs.minimum_version }}"
+
+          echo "Installed version: $INSTALLED"
+          echo "Minimum required: $MINIMUM"
+
+          # Function to normalize version for comparison
+          # Converts v1.11.0-rc.2 to comparable format
+          normalize_version() {
+            local ver="$1"
+            # Remove 'v' prefix
+            ver="${ver#v}"
+            # Split main version and prerelease
+            local main_ver="${ver%%-*}"
+            local prerelease="${ver#*-}"
+            if [ "$prerelease" = "$ver" ]; then
+              prerelease=""
+            fi
+            echo "$main_ver|$prerelease"
+          }
+
+          compare_versions() {
+            local v1="$1"
+            local v2="$2"
+            
+            # Use sort -V for version comparison
+            if [ "$v1" = "$v2" ]; then
+              echo "equal"
+            elif [ "$(printf '%s\n%s' "$v1" "$v2" | sort -V | head -1)" = "$v1" ]; then
+              echo "less"
+            else
+              echo "greater"
+            fi
+          }
+
+          # Compare versions
+          RESULT=$(compare_versions "${INSTALLED#v}" "${MINIMUM#v}")
+
+          if [ "$RESULT" = "less" ]; then
+            echo "::warning::Spice version $INSTALLED is below minimum required $MINIMUM"
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "reason=Spice version $INSTALLED is below minimum required $MINIMUM" >> $GITHUB_OUTPUT
+          else
+            echo "Version check passed: $INSTALLED >= $MINIMUM"
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Skip test due to version requirement
+        if: ${{ steps.version_check.outputs.skip == 'true' }}
+        id: skip_test
+        run: |
+          echo "::notice::Skipping test for ${{ inputs.recipe_name }}: ${{ steps.version_check.outputs.reason }}"
+          echo "This recipe requires Spice ${{ inputs.minimum_version }} or later."
+          mkdir -p test_results
+          echo "TEST SKIPPED: ${{ steps.version_check.outputs.reason }}" > "${{ env.OUTPUT_FILE }}"
+          echo "skipped=true" >> $GITHUB_OUTPUT
+
       - name: Create output directory
+        if: ${{ steps.skip_test.outputs.skipped != 'true' }}
         run: mkdir -p test_results
 
       - name: Setup environment file
-        if: ${{ inputs.requires_secrets }}
+        if: ${{ inputs.requires_secrets && steps.skip_test.outputs.skipped != 'true' }}
         working-directory: ${{ inputs.recipe_path }}
         run: |
           echo "SPICE_OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
@@ -91,6 +167,7 @@ jobs:
           echo "GH_TOKEN=${{ github.token }}" >> .env
 
       - name: Build test prompt
+        if: ${{ steps.skip_test.outputs.skipped != 'true' }}
         id: prompt
         run: |
           cat > /tmp/prompt.txt << 'PROMPT_EOF'
@@ -131,6 +208,7 @@ jobs:
           echo "file=/tmp/prompt.txt" >> $GITHUB_OUTPUT
 
       - name: Run Codex CLI test
+        if: ${{ steps.skip_test.outputs.skipped != 'true' }}
         id: codex_run
         working-directory: ${{ inputs.recipe_path }}
         env:
@@ -143,6 +221,7 @@ jobs:
                 2>&1 | tee "${{ env.OUTPUT_FILE }}"
 
       - name: Parse test result
+        if: ${{ steps.skip_test.outputs.skipped != 'true' }}
         id: codex_test
         uses: ./.github/actions/parse-llm-test-result
         with:
@@ -158,7 +237,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Display test output on failure
-        if: ${{ steps.codex_test.outputs.result != 'passed' }}
+        if: ${{ steps.codex_test.outputs.result != 'passed' && steps.skip_test.outputs.skipped != 'true' }}
         env:
           TEST_RESULT: ${{ steps.codex_test.outputs.result }}
           TEST_REASON: ${{ steps.codex_test.outputs.reason }}
@@ -170,7 +249,7 @@ jobs:
           cat "${{ env.OUTPUT_FILE }}" || echo "No log file found"
 
       - name: Fail workflow if test failed
-        if: ${{ steps.codex_test.outputs.result != 'passed' }}
+        if: ${{ steps.codex_test.outputs.result != 'passed' && steps.skip_test.outputs.skipped != 'true' }}
         env:
           TEST_RESULT: ${{ steps.codex_test.outputs.result }}
           TEST_REASON: ${{ steps.codex_test.outputs.reason }}

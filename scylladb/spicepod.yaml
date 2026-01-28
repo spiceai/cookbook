@@ -1,0 +1,15 @@
+version: v1
+kind: Spicepod
+name: scylladb-demo
+
+datasets:
+  - from: scylladb:users
+    name: users
+    description: Demo users table from ScyllaDB
+    params:
+      scylladb_host: localhost
+      scylladb_port: 9042
+      scylladb_keyspace: demo
+      # Uncomment for authentication:
+      # scylladb_user: ${secrets:SCYLLADB_USER}
+      # scylladb_pass: ${secrets:SCYLLADB_PASS}

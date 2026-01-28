@@ -1,0 +1,43 @@
+name: Codex Test - SMB Data Connector
+on:
+  workflow_call:
+    inputs:
+      spice_version:
+        description: 'Spice.ai version to test'
+        required: false
+        type: string
+        default: 'latest'
+    secrets:
+      OPENAI_API_KEY:
+        required: false
+  workflow_dispatch:
+    inputs:
+      spice_version:
+        description: 'Spice.ai version to test'
+        required: false
+        type: string
+        default: 'latest'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    uses: ./.github/workflows/codex-test-reusable.yml
+    with:
+      recipe_name: smb
+      recipe_path: smb
+      spice_version: ${{ inputs.spice_version }}
+      requires_secrets: false
+      minimum_version: v1.11.0-rc.2
+      additional_instructions: |
+        This recipe demonstrates using SMB network shares as a data source.
+
+        DOCKER SETUP (REQUIRED):
+        1. Create a data directory with sample CSV files
+        2. Start the Samba container as documented in README
+        3. Configure credentials in .env file
+
+        After Docker setup, proceed with the spicepod configuration and queries.
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

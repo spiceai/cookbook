@@ -83,7 +83,9 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 - [Amazon Redshift](./redshift/README.md) - Read and write TPC-H data with Amazon Redshift.
 - [Oracle Data Connector](./oracle/README.md)
 - [S3 Data Connector](./s3/README.md)
+- [ScyllaDB Data Connector](./scylladb/README.md) - Query data from ScyllaDB clusters using federated SQL.
 - [SharePoint/OneDrive for Business Data Connector](./sharepoint/README.md)
+- [SMB Data Connector](./smb/README.md) - Query data files from SMB/CIFS network shares.
 - [Snowflake Data Connector](./snowflake/README.md)
 - [Spice.ai Cloud Platform Data Connector](./spiceai/README.md)
 - [Apache Spark Data Connector](./spark/README.md)
