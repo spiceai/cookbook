@@ -234,10 +234,10 @@ jobs:
           # Treat 'skipped' as success (matrix was empty)
           SIMPLE="${SIMPLE_STATUS}"
           SECRETS="${SECRETS_STATUS}"
-          
+
           if [[ "$SIMPLE" == "skipped" ]]; then SIMPLE="success"; fi
           if [[ "$SECRETS" == "skipped" ]]; then SECRETS="success"; fi
-          
+
           if [[ "$SIMPLE" == "success" && "$SECRETS" == "success" ]]; then
             echo "✅ All tests passed!"
             exit 0
