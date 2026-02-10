@@ -159,7 +159,7 @@ Compare responses from different models (requires multiple models configured):
 ```sql
 SELECT
   left(ai('Explain quantum computing in 10 words', 'gpt-4o-mini'), 50) as gpt4,
-  left(ai('Explain quantum computing in 10 words', 'sonnet-3-5'), 50) as claude
+  left(ai('Explain quantum computing in 10 words', 'sonnet-4-5'), 50) as claude
 FROM (SELECT 1);  -- Dummy table for single row;
 ```
 
@@ -289,8 +289,8 @@ Add to `spicepod.yaml`:
 
 ```yaml
 models:
-  - name: sonnet-3-5
-    from: anthropic:claude-3-5-sonnet-20241022
+  - name: sonnet-4-5
+    from: anthropic:claude-4-5-sonnet
     params:
       anthropic_api_key: ${secrets:ANTHROPIC_API_KEY}
 ```
@@ -299,8 +299,8 @@ models:
 
 ```yaml
 models:
-  - name: grok-fast
-    from: xai:grok-2-1212
+  - name: grok-4-1-fast
+    from: xai:grok-4-1-fast-non-reasoning
     params:
       xai_api_key: ${secrets:XAI_API_KEY}
 ```
@@ -310,8 +310,8 @@ Then use in queries:
 ```sql
 SELECT
   ai('Hello!', 'gpt-4o-mini') as openai_response,
-  ai('Hello!', 'sonnet-3-5') as claude_response,
-  ai('Hello!', 'grok-fast') as grok_response;
+  ai('Hello!', 'sonnet-4-5') as claude_response,
+  ai('Hello!', 'grok-4-1-fast-non-reasoning') as grok_response;
 ```
 
 ## Real-World Use Cases
