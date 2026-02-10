@@ -53,7 +53,9 @@ Sign the CSR with the CA to generate a certificate for `spiced`.
 
 ```bash
 # Sign the CSR with the CA
-openssl x509 -req -in spiced.csr -CA ca.pem -CAkey ca.key -out spiced.crt -days 365 -copy_extensions copy
+# Note: `-copy_extensions copy` is not supported on some OpenSSL builds (e.g., LibreSSL on macOS).
+# Use extfile/extensions to include SAN and EKU from spiced.cnf.
+openssl x509 -req -in spiced.csr -CA ca.pem -CAkey ca.key -CAcreateserial -out spiced.crt -days 365 -sha256 -extfile spiced.cnf -extensions req_ext
 ```
 
 ## Create a certificate signing request & private key for `postgres`
@@ -73,19 +75,23 @@ Sign the CSR with the CA to generate a certificate for `postgres`.
 
 ```bash
 # Sign the CSR with the CA
-openssl x509 -req -in postgres.csr -CA ca.pem -CAkey ca.key -out postgres.crt -days 365 -copy_extensions copy
+# Note: `-copy_extensions copy` is not supported on some OpenSSL builds (e.g., LibreSSL on macOS).
+# Use extfile/extensions to include SAN and EKU from postgres.cnf.
+openssl x509 -req -in postgres.csr -CA ca.pem -CAkey ca.key -out postgres.crt -days 365 -sha256 -extfile postgres.cnf -extensions req_ext
 ```
 
 ## Start `postgres` with TLS
 
 ## Ubuntu: Change key file owner and permissions
 
-On Ubuntu, permissions changes are required to allow the `postgres` Docker instance to accesss the key.
+On Ubuntu, permissions changes are required to allow the `postgres` Docker instance to access the key.
 
-Set the owner to the UID `999` and GID `999`, which [match the UID and GID of the `postgres` user.](https://github.com/docker-library/postgres/blob/master/17/bullseye/Dockerfile#L10-L13)
+The UID/GID for the `postgres` user can vary by image version. Resolve it dynamically from the image used in `compose.yaml`:
 
 ```bash
-sudo chown 999:999 postgres.key
+POSTGRES_UID=$(docker run --rm postgres:alpine id -u postgres)
+POSTGRES_GID=$(docker run --rm postgres:alpine id -g postgres)
+sudo chown ${POSTGRES_UID}:${POSTGRES_GID} postgres.key
 sudo chmod 600 postgres.key
 ```
 
@@ -94,7 +100,9 @@ sudo chmod 600 postgres.key
 On Fedora, update permissions and SELinux context so the `postgres` Docker instance can read the key.
 
 ```bash
-sudo chown 999:999 postgres.key
+POSTGRES_UID=$(docker run --rm postgres:alpine id -u postgres)
+POSTGRES_GID=$(docker run --rm postgres:alpine id -g postgres)
+sudo chown ${POSTGRES_UID}:${POSTGRES_GID} postgres.key
 sudo chmod 600 postgres.key
 sudo chcon -Rt svirt_sandbox_file_t postgres.key
 ```
