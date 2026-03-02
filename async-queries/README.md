@@ -319,7 +319,7 @@ curl -s http://127.0.0.1:8090/v1/queries \
 
 ## Learn More
 
-- [Async Queries API Reference](https://spiceai.org/docs/features/async-queries-api) — Full HTTP and Flight API documentation
-- [Distributed Query](https://spiceai.org/docs/features/distributed-query) — Distributed multi-node SQL execution
+- [Distributed Query — Async Queries API](https://spiceai.org/docs/features/distributed-query#async-queries-api) — Full HTTP and Flight API reference
+- [Distributed Query](https://spiceai.org/docs/features/distributed-query) — Distributed multi-node SQL execution overview
 - [Distributed Query Recipe](../distributed/README.md) — Setting up a distributed Spice cluster
-- [`spice query` CLI Reference](https://spiceai.org/docs/features/async-queries-api#cli) — CLI command and REPL documentation
+- [`spice query` CLI](https://spiceai.org/docs/features/distributed-query#cli) — CLI command and REPL documentation
