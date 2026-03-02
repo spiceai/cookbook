@@ -1,0 +1,13 @@
+version: v1
+kind: Spicepod
+name: async-queries
+
+runtime:
+  scheduler:
+    state_location: file://.data/scheduler-state
+
+datasets:
+  - from: s3://spiceai-public-datasets/hive_partitioned_data/
+    name: data
+    params:
+      file_format: parquet
