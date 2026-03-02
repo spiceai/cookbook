@@ -1,5 +1,7 @@
 # Async Queries
 
+> **Note:** Async queries require Spice v2.0 or later.
+
 This recipe demonstrates how to use the async queries API to submit long-running SQL queries and retrieve results asynchronously. It shows how to:
 
 - Submit queries via the HTTP API and CLI
@@ -12,7 +14,7 @@ Async queries build on top of [distributed query](../distributed/README.md) mode
 
 ## Prerequisites
 
-- [Spice CLI](https://docs.spiceai.org/getting-started) installed
+- [Spice CLI](https://docs.spiceai.org/getting-started) installed (v2.0+)
 
 ## Getting Started
 
@@ -259,15 +261,15 @@ query> .exit
 
 ### REPL Commands
 
-| Command | Description |
-|---------|-------------|
-| `.list` | List tracked queries from this session |
-| `.status <id>` | Show query status |
-| `.results <id>` | Fetch and display results |
-| `.wait <id>` | Resume waiting for a query |
-| `.cancel <id>` | Cancel a running query |
-| `.help` | Show all commands |
-| `.exit` | Exit the REPL |
+| Command         | Description                            |
+| --------------- | -------------------------------------- |
+| `.list`         | List tracked queries from this session |
+| `.status <id>`  | Show query status                      |
+| `.results <id>` | Fetch and display results              |
+| `.wait <id>`    | Resume waiting for a query             |
+| `.cancel <id>`  | Cancel a running query                 |
+| `.help`         | Show all commands                      |
+| `.exit`         | Exit the REPL                          |
 
 Partial query IDs are supported — `01ABC` resolves to the full ID if it uniquely matches one tracked query.
 
