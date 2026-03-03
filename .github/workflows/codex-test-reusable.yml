@@ -243,6 +243,7 @@ jobs:
           - In CI, repository bootstrap commands like `git clone ...`, `cd cookbook`, or `cd cookbook/<recipe>` may already be satisfied by the current working directory; treat these as context-setup equivalents, then continue with the next documented step
           - For OS-specific setup commands (for example `brew install ...`) in Linux CI, treat an equivalent preinstalled or successfully installed tool as satisfying that setup requirement
           - For documented placeholder credential commands (for example values like `your_openai_api_key`, `YOUR_API_KEY`, or similar templates), preserve/use valid CI-provided secrets instead of replacing them with placeholder literals
+          - In CI, if a documented sequence relies on shell-local state (for example `source .venv/bin/activate` followed by `pip ...`), preserve equivalent behavior by running dependent commands in the same shell context (or via `.venv/bin/python`/`.venv/bin/pip`) without changing intent
 
           STEPS:
           1. Read the README.md to understand what commands to run
