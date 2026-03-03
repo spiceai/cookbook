@@ -209,11 +209,11 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          codex exec \
-                --model gpt-5.2 \
-                --dangerously-bypass-approvals-and-sandbox \
-                "$(cat ${{ steps.prompt.outputs.file }})" \
-                2>&1 | tee "${{ env.OUTPUT_FILE }}"
+          codex agent \
+            --model gpt-5.3-codex \
+            --dangerously-bypass-approvals-and-sandbox \
+            "$(cat ${{ steps.prompt.outputs.file }})" \
+            2>&1 | tee "${{ env.OUTPUT_FILE }}"
 
       - name: Parse test result
         if: ${{ steps.skip_test.outputs.skipped != 'true' }}
