@@ -181,9 +181,21 @@ jobs:
             exit 0
           fi
 
-          sudo apt-get update
-          sudo apt-get install -y websocat
-          websocat --version || true
+          sudo apt-get update || true
+          sudo apt-get install -y websocat || true
+
+          if ! command -v websocat >/dev/null 2>&1; then
+            mkdir -p "$HOME/.local/bin"
+            curl -fL "https://github.com/vi/websocat/releases/latest/download/websocat.x86_64-unknown-linux-musl" -o "$HOME/.local/bin/websocat"
+            chmod +x "$HOME/.local/bin/websocat"
+            echo "$HOME/.local/bin" >> $GITHUB_PATH
+          fi
+
+          if ! command -v websocat >/dev/null 2>&1; then
+            echo "::warning::websocat could not be installed automatically"
+          else
+            websocat --version || true
+          fi
 
       - name: Build test prompt
         if: ${{ steps.skip_test.outputs.skipped != 'true' }}
