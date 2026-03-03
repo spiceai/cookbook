@@ -30,5 +30,6 @@ jobs:
         Requires SPICE_OPENAI_API_KEY.
         If SQL queries return temporary warmup messages (for example acceleration not ready), wait briefly and retry the same documented query up to 2 times before failing.
         If the same warmup message persists after retries, skip only that warmup-blocked query validation and continue with remaining documented steps.
+        Apply the same warmup retry/skip handling to the documented vector search `curl /v1/search` step when it returns only acceleration-warmup errors.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

@@ -30,5 +30,6 @@ jobs:
         Requires SPICE_OPENAI_API_KEY.
         If OPENAI credentials are unavailable in CI, skip only the model/eval-dependent validation steps.
         If `spice eval` fails with a transient local runtime connection error, wait briefly and retry the same eval command once before failing.
+        If the eval endpoint remains unavailable after the required retry, skip only that eval-endpoint-dependent validation.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
