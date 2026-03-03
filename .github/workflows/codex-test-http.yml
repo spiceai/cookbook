@@ -28,5 +28,6 @@ jobs:
       additional_instructions: |
         This recipe demonstrates using HTTP endpoints as data sources.
         Uses public APIs that don't require authentication.
+        For public API-backed queries, treat row-count differences over time as acceptable if query execution succeeds and results are non-empty and structurally consistent with the README example.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

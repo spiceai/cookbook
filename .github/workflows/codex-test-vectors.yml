@@ -24,7 +24,7 @@ jobs:
       recipe_name: vectors
       recipe_path: vectors/s3
       spice_version: ${{ inputs.spice_version }}
-      requires_secrets: false
+      requires_secrets: true
       additional_instructions: |
         This recipe demonstrates vector embeddings and similarity search.
         May use public data or local embeddings.
