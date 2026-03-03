@@ -214,7 +214,7 @@ jobs:
           pip --version
 
       - name: Install uv for openai-sdk
-        if: ${{ inputs.recipe_path == 'openai_sdk' && steps.skip_test.outputs.skipped != 'true' }}
+        if: ${{ contains(fromJSON('["openai_sdk","openai-responses-api"]'), inputs.recipe_path) && steps.skip_test.outputs.skipped != 'true' }}
         run: |
           if command -v uv >/dev/null 2>&1; then
             uv --version || true
