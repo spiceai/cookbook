@@ -31,5 +31,6 @@ jobs:
         If OPENAI credentials are unavailable in CI, skip only the model/eval-dependent validation steps.
         If `spice eval` fails with a transient local runtime connection error, wait briefly and retry the same eval command once before failing.
         If the eval endpoint remains unavailable after the required retry, skip only that eval-endpoint-dependent validation.
+        When eval execution is skipped due endpoint unavailability, also skip dependent result-inspection steps (for example eval result queries/curl checks) that require successful eval output.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
