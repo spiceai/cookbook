@@ -27,5 +27,6 @@ jobs:
       requires_secrets: false
       additional_instructions: |
         This recipe demonstrates hashed partitioning with DuckDB.
+        For `EXPLAIN` output, accept semantic equivalence and do not fail on plan-node naming/order differences across Spice/DataFusion versions.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

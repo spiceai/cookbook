@@ -27,5 +27,6 @@ jobs:
       requires_secrets: false
       additional_instructions: |
         This recipe demonstrates using local pod configurations.
+        After running `./generate_data.sh`, wait up to 30 seconds for the documented refresh to apply before concluding failure on `SELECT COUNT(*) FROM local_time_series;`.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

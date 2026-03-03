@@ -161,6 +161,18 @@ jobs:
           echo "GITHUB_TOKEN=${{ github.token }}" >> .env
           echo "GH_TOKEN=${{ github.token }}" >> .env
 
+      - name: Install DuckDB CLI
+        if: ${{ inputs.recipe_path == 'duckdb/connector' && steps.skip_test.outputs.skipped != 'true' }}
+        run: |
+          if command -v duckdb >/dev/null 2>&1; then
+            duckdb --version
+            exit 0
+          fi
+
+          curl -fsSL https://install.duckdb.org | sh
+          echo "$HOME/.duckdb/cli/latest" >> $GITHUB_PATH
+          "$HOME/.duckdb/cli/latest/duckdb" --version
+
       - name: Build test prompt
         if: ${{ steps.skip_test.outputs.skipped != 'true' }}
         id: prompt
