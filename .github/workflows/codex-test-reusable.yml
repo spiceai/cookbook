@@ -212,6 +212,14 @@ jobs:
           python --version
           pip --version
 
+      - name: Prepare Python venv for search
+        if: ${{ inputs.recipe_path == 'search' && steps.skip_test.outputs.skipped != 'true' }}
+        working-directory: ${{ inputs.recipe_path }}
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install -r requirements.txt
+
       - name: Build test prompt
         if: ${{ steps.skip_test.outputs.skipped != 'true' }}
         id: prompt
