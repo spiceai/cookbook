@@ -30,5 +30,6 @@ jobs:
         Requires SPICE_OPENAI_API_KEY.
         If eval API requests fail due schema/version incompatibility (for example payload field mismatch like `no field named input`), skip only that incompatible eval step.
         If a README command uses `curlie`, treat successful execution with the equivalent `curl` request as semantically valid only when `curlie` is unavailable in CI.
+        If the eval run is skipped due that schema incompatibility, also skip dependent `eval.results` validation queries that are expected to return rows from that run.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
