@@ -221,7 +221,7 @@ jobs:
             exit 0
           fi
 
-          python -m pip install --user curlie
+          python -m pip install --user --break-system-packages curlie
           echo "$HOME/.local/bin" >> $GITHUB_PATH
           "$HOME/.local/bin/curlie" --version || true
 
