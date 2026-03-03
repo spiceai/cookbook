@@ -242,6 +242,6 @@ jobs:
       - name: Fail workflow if test failed
         if: ${{ steps.codex_test.outputs.result != 'passed' && steps.skip_test.outputs.skipped != 'true' }}
         run: |
-          echo "Test result: ${{ steps.codex_test.outputs.result }}"
-          echo "Reason: ${{ steps.codex_test.outputs.reason }}"
+          printf 'Test result: %s\n' "${{ steps.codex_test.outputs.result }}"
+          printf 'Reason: %s\n' "${{ steps.codex_test.outputs.reason }}"
           exit 1

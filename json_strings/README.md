@@ -130,7 +130,7 @@ Use the `->` operator to retrieve a JSON property as a JSON object.
 ```console
 sql> select name, properties->'inventory' from products;
 +-------------------------+----------------------------------------------------------------------------------------------------+
-| name                    | products.properties -> Utf8("inventory")                                                           |
+| name                    | properties -> 'inventory'                                                                          |
 +-------------------------+----------------------------------------------------------------------------------------------------+
 | Ink Fusion T-Shirt      | {object={"stock": {"S": 12, "M": 20, "L": 10, "XL": 4}, "locations": ["warehouse_1", "store_1"]}}  |
 | ThreadVerse T-Shirt     | {object={"stock": {"S": 7, "M": 15, "L": 9, "XL": 3}, "locations": ["warehouse_2", "store_2"]}}    |
