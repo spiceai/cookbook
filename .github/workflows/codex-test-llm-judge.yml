@@ -29,5 +29,6 @@ jobs:
         This recipe demonstrates LLM as a judge for evaluations.
         Requires SPICE_OPENAI_API_KEY.
         If OPENAI credentials are unavailable in CI, skip only the model/eval-dependent validation steps.
+        If `spice eval` fails with a transient local runtime connection error, wait briefly and retry the same eval command once before failing.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
