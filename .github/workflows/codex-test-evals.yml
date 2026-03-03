@@ -29,5 +29,6 @@ jobs:
         This recipe demonstrates language model evaluations.
         Requires SPICE_OPENAI_API_KEY.
         If eval API requests fail due schema/version incompatibility (for example payload field mismatch like `no field named input`), skip only that incompatible eval step.
+        If a README command uses `curlie`, treat successful execution with the equivalent `curl` request as semantically valid only when `curlie` is unavailable in CI.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

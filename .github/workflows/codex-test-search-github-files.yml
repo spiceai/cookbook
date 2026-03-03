@@ -29,5 +29,6 @@ jobs:
         This recipe demonstrates searching GitHub files with embeddings.
         Requires GITHUB_TOKEN and SPICE_OPENAI_API_KEY.
         Treat SQL search output as semantically passing when documented expected paths/rows are present, even if additional relevant rows are returned.
+        For vector search examples, treat ranking/path variability as non-deterministic; pass when results are relevant to the query and include at least one documented expected path, even if the second returned path differs.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

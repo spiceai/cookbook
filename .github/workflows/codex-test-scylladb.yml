@@ -35,10 +35,8 @@ jobs:
 
         DOCKER SETUP (REQUIRED):
         1. Start the ScyllaDB container: docker run --name scylladb -d -p 9042:9042 scylladb/scylla
-        2. Wait for ScyllaDB to be ready (check with: docker logs scylladb | grep "listening on")
+        2. Wait for ScyllaDB to be ready (in CI, use case-insensitive check: docker logs scylladb | grep -i "listening on")
         3. Create keyspace and sample data using cqlsh as documented in README
-
-        Treat readiness log matching as case-insensitive for this check (`listening on` vs `Listening on`).
 
         After Docker setup, proceed with the spicepod configuration and queries.
     secrets:

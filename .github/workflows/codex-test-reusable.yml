@@ -199,7 +199,7 @@ jobs:
           fi
 
       - name: Install Python tooling
-        if: ${{ contains(fromJSON('["search","openai_sdk","openai-responses-api"]'), inputs.recipe_path) && steps.skip_test.outputs.skipped != 'true' }}
+        if: ${{ contains(fromJSON('["search","openai_sdk","openai-responses-api","evals"]'), inputs.recipe_path) && steps.skip_test.outputs.skipped != 'true' }}
         run: |
           if command -v python >/dev/null 2>&1 && command -v pip >/dev/null 2>&1; then
             python --version || true
@@ -212,6 +212,18 @@ jobs:
 
           python --version
           pip --version
+
+      - name: Install curlie for evals
+        if: ${{ inputs.recipe_path == 'evals' && steps.skip_test.outputs.skipped != 'true' }}
+        run: |
+          if command -v curlie >/dev/null 2>&1; then
+            curlie --version || true
+            exit 0
+          fi
+
+          python -m pip install --user curlie
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          "$HOME/.local/bin/curlie" --version || true
 
       - name: Install uv for openai-sdk
         if: ${{ contains(fromJSON('["openai_sdk","openai-responses-api"]'), inputs.recipe_path) && steps.skip_test.outputs.skipped != 'true' }}
