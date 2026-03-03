@@ -1,5 +1,7 @@
 # DuckLake Catalog Connector
 
+> **Note:** The DuckLake connector is available in Spice v2.0 or later.
+
 The DuckLake Catalog Connector enables Spice to automatically discover and query all schemas and tables in a [DuckLake](https://ducklake.select/) catalog — an open lakehouse format that stores metadata in a SQLite-compatible database and data in Parquet files.
 
 ## Prerequisites
