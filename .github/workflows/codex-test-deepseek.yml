@@ -28,5 +28,6 @@ jobs:
       additional_instructions: |
         This recipe demonstrates using DeepSeek models.
         Requires DeepSeek API key.
+        If DeepSeek-specific credentials are unavailable in CI, skip only the provider-dependent model/chat validation steps and continue validating remaining documented steps.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

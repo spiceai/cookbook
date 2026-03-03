@@ -158,6 +158,7 @@ jobs:
         run: |
           echo "SPICE_OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
           echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
+          echo "SPICE_GITHUB_TOKEN=${{ github.token }}" >> .env
           echo "GITHUB_TOKEN=${{ github.token }}" >> .env
           echo "GH_TOKEN=${{ github.token }}" >> .env
 
@@ -241,6 +242,7 @@ jobs:
           - Treat non-deterministic differences as acceptable (timings, absolute paths, log wording/casing, row order unless ORDER BY is specified, EXPLAIN plan node naming/order across versions)
           - In CI, repository bootstrap commands like `git clone ...`, `cd cookbook`, or `cd cookbook/<recipe>` may already be satisfied by the current working directory; treat these as context-setup equivalents, then continue with the next documented step
           - For OS-specific setup commands (for example `brew install ...`) in Linux CI, treat an equivalent preinstalled or successfully installed tool as satisfying that setup requirement
+          - For documented placeholder credential commands (for example values like `your_openai_api_key`, `YOUR_API_KEY`, or similar templates), preserve/use valid CI-provided secrets instead of replacing them with placeholder literals
 
           STEPS:
           1. Read the README.md to understand what commands to run

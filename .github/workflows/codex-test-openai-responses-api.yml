@@ -28,5 +28,6 @@ jobs:
       additional_instructions: |
         This recipe demonstrates OpenAI's Responses API with Spice.
         Requires OPENAI_API_KEY.
+        If README uses `spice chat --responses` and the installed CLI does not support `--responses`, use `spice chat` as the equivalent command and continue.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
