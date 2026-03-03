@@ -209,7 +209,7 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          codex agent \
+              codex exec \
             --model gpt-5.3-codex \
             --dangerously-bypass-approvals-and-sandbox \
             "$(cat ${{ steps.prompt.outputs.file }})" \
