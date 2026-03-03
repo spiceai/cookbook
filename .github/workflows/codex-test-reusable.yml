@@ -221,7 +221,12 @@ jobs:
             exit 0
           fi
 
-          python -m pip install --user --break-system-packages curlie
+          mkdir -p "$HOME/.local/bin"
+          cat > "$HOME/.local/bin/curlie" << 'EOF'
+          #!/usr/bin/env bash
+          exec curl "$@"
+          EOF
+          chmod +x "$HOME/.local/bin/curlie"
           echo "$HOME/.local/bin" >> $GITHUB_PATH
           "$HOME/.local/bin/curlie" --version || true
 
