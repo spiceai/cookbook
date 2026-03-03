@@ -253,13 +253,13 @@ Every `ai()` call is tracked in the `runtime.task_history` table:
 
 ```sql
 SELECT
-  task_id,
+  trace_id,
   task,
-  execution_time,
+  execution_duration_ms,
   captured_output
 FROM runtime.task_history
 WHERE task = 'ai'
-ORDER BY captured_at DESC
+ORDER BY start_time DESC
 LIMIT 5;
 ```
 
