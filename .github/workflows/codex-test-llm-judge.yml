@@ -28,5 +28,6 @@ jobs:
       additional_instructions: |
         This recipe demonstrates LLM as a judge for evaluations.
         Requires SPICE_OPENAI_API_KEY.
+        If OPENAI credentials are unavailable in CI, skip only the model/eval-dependent validation steps.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

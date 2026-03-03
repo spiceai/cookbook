@@ -28,5 +28,6 @@ jobs:
       additional_instructions: |
         This recipe demonstrates using the OpenAI SDK with Spice-hosted models.
         Requires OPENAI_API_KEY.
+        If OPENAI credentials are unavailable in CI, skip only the model-dependent request/response validation steps.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

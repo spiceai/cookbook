@@ -198,8 +198,8 @@ jobs:
             websocat --version || true
           fi
 
-      - name: Install Python for search
-        if: ${{ inputs.recipe_path == 'search' && steps.skip_test.outputs.skipped != 'true' }}
+      - name: Install Python tooling
+        if: ${{ contains(fromJSON('["search","openai_sdk"]'), inputs.recipe_path) && steps.skip_test.outputs.skipped != 'true' }}
         run: |
           if command -v python >/dev/null 2>&1 && command -v pip >/dev/null 2>&1; then
             python --version || true
@@ -273,6 +273,10 @@ jobs:
         working-directory: ${{ inputs.recipe_path }}
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          SPICE_OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
+          SPICE_GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -o pipefail
           codex exec \
