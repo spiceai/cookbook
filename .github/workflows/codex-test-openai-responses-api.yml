@@ -31,5 +31,6 @@ jobs:
         If README uses `spice chat --responses` and the installed CLI does not support `--responses`, use `spice chat` as the equivalent command and continue.
         If web-search capability is unavailable in the runtime/model for this environment, skip only that web-search-dependent prompt validation.
         If code-interpreter/tool-execution capability is unavailable in the runtime/model for this environment, skip only that code-execution-dependent prompt validation.
+        If the SDK client step fails due Responses API schema/version incompatibility (for example `Invalid 'input[1].id' ... expected ... begins with 'fc'`), skip only that incompatible client step.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
