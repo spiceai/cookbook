@@ -189,14 +189,15 @@ jobs:
           - Do NOT modify any files unless the README explicitly instructs you to
           - Do NOT try alternative approaches if something fails
           - If a command fails or output doesn't match, STOP and report FAILURE immediately
-          - The recipe must work exactly as documented or it's a test failure
+          - The recipe must work as documented at a semantic level or it's a test failure
+          - Treat non-deterministic differences as acceptable (timings, absolute paths, log wording/casing, row order unless ORDER BY is specified, EXPLAIN plan node naming/order across versions)
 
           STEPS:
           1. Read the README.md to understand what commands to run
           2. Execute each command exactly as shown in the README
           3. Start Spice with 'spice run' when instructed (run in background with & if needed)
           4. Run SQL queries exactly as documented using 'spice sql'
-          5. Compare actual output to expected output shown in README
+          5. Compare actual output to expected output shown in README (semantic equivalence for non-deterministic fields)
           6. If ANY step fails or differs from documentation, report FAILURE
 
           ${{ inputs.additional_instructions }}
