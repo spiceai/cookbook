@@ -197,6 +197,21 @@ jobs:
             websocat --version || true
           fi
 
+      - name: Install Python for search
+        if: ${{ inputs.recipe_path == 'search' && steps.skip_test.outputs.skipped != 'true' }}
+        run: |
+          if command -v python >/dev/null 2>&1 && command -v pip >/dev/null 2>&1; then
+            python --version || true
+            pip --version || true
+            exit 0
+          fi
+
+          sudo apt-get update
+          sudo apt-get install -y python3 python3-venv python3-pip python-is-python3
+
+          python --version
+          pip --version
+
       - name: Build test prompt
         if: ${{ steps.skip_test.outputs.skipped != 'true' }}
         id: prompt
