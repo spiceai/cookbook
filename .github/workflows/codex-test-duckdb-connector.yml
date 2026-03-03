@@ -28,5 +28,6 @@ jobs:
       additional_instructions: |
         This recipe demonstrates using DuckDB as a data source.
         The DuckDB database file may need to be created or downloaded.
+        For `spice run` output checks, validate that the dataset initializes successfully but do not fail on exact log-string wording differences (e.g. `Loaded dataset` vs `Dataset ... registered`).
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

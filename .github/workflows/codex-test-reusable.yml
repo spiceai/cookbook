@@ -246,7 +246,7 @@ jobs:
       - name: Display test output on failure
         if: ${{ steps.codex_test.outputs.result != 'passed' && steps.skip_test.outputs.skipped != 'true' }}
         run: |
-          printf '::error::Test failed for %s: %s\n' "${{ inputs.recipe_name }}" "${{ steps.codex_test.outputs.reason }}"
+          printf '::error::Test failed for %s\n' "${{ inputs.recipe_name }}"
           echo ""
           echo "=== Full Test Output ==="
           cat "${{ env.OUTPUT_FILE }}" || echo "No log file found"
@@ -255,5 +255,4 @@ jobs:
         if: ${{ steps.codex_test.outputs.result != 'passed' && steps.skip_test.outputs.skipped != 'true' }}
         run: |
           printf 'Test result: %s\n' "${{ steps.codex_test.outputs.result }}"
-          printf 'Reason: %s\n' "${{ steps.codex_test.outputs.reason }}"
           exit 1
