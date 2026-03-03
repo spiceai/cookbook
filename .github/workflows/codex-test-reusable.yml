@@ -199,7 +199,7 @@ jobs:
           fi
 
       - name: Install Python tooling
-        if: ${{ contains(fromJSON('["search","openai_sdk"]'), inputs.recipe_path) && steps.skip_test.outputs.skipped != 'true' }}
+        if: ${{ contains(fromJSON('["search","openai_sdk","openai-responses-api"]'), inputs.recipe_path) && steps.skip_test.outputs.skipped != 'true' }}
         run: |
           if command -v python >/dev/null 2>&1 && command -v pip >/dev/null 2>&1; then
             python --version || true
