@@ -27,5 +27,6 @@ jobs:
       requires_secrets: false
       additional_instructions: |
         This recipe demonstrates using Apache Arrow as an in-memory acceleration engine.
+        For startup logs, validate functional readiness and successful query behavior; do not fail solely on missing/changed acceleration log wording from template or runtime version differences.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
