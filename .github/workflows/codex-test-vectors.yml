@@ -22,7 +22,7 @@ jobs:
     uses: ./.github/workflows/codex-test-reusable.yml
     with:
       recipe_name: vectors
-      recipe_path: vectors
+      recipe_path: vectors/s3
       spice_version: ${{ inputs.spice_version }}
       requires_secrets: false
       additional_instructions: |
