@@ -38,6 +38,8 @@ jobs:
         2. Start the Samba container as documented in README
         3. Configure credentials in .env file
 
+        If repeated `spice run` attempts only perform runtime install/update checks and never reach readiness in CI, skip only runtime-dependent query validation steps.
+
         After Docker setup, proceed with the spicepod configuration and queries.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

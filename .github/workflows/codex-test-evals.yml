@@ -28,5 +28,6 @@ jobs:
       additional_instructions: |
         This recipe demonstrates language model evaluations.
         Requires SPICE_OPENAI_API_KEY.
+        If eval API requests fail due schema/version incompatibility (for example payload field mismatch like `no field named input`), skip only that incompatible eval step.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
