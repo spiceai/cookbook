@@ -29,5 +29,6 @@ jobs:
         This recipe demonstrates using local files (Parquet, CSV, Markdown) as data sources.
         You may need to download sample data files as shown in the README.
         Test the Parquet file example first as it's the simplest.
+        For Markdown `location` query results, treat equivalent paths as PASS even if they include absolute prefixes (e.g. `/home/runner/...`) and do not fail on row-order differences unless the README explicitly requires ordering.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
