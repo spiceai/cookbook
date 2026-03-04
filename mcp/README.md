@@ -97,39 +97,6 @@ spice run --http-endpoint 127.0.0.1:8091 --flight-endpoint 127.0.0.1:50061 --met
 ```bash
 curl -sS http://127.0.0.1:8091/v1/tools | jq '.[].name'
 ```
-```bash
-"top_n_sample"
-"search"
-"store_memory"
-"spice_mcp/store_memory"
-"spice_mcp/get_readiness"
-"spice_mcp/sample_distinct_columns"
-"spice_mcp/sql"
-"spice_mcp/fs/read_file"
-"spice_mcp/fs/read_multiple_files"
-"spice_mcp/fs/write_file"
-"spice_mcp/fs/edit_file"
-"spice_mcp/fs/create_directory"
-"spice_mcp/fs/list_directory"
-"spice_mcp/fs/directory_tree"
-"spice_mcp/fs/move_file"
-"spice_mcp/fs/search_files"
-"spice_mcp/fs/get_file_info"
-"spice_mcp/fs/list_allowed_directories"
-"spice_mcp/top_n_sample"
-"spice_mcp/random_sample"
-"spice_mcp/load_memory"
-"spice_mcp/list_datasets"
-"spice_mcp/search"
-"spice_mcp/table_schema"
-"table_schema"
-"sql"
-"get_readiness"
-"sample_distinct_columns"
-"load_memory"
-"list_datasets"
-"random_sample"
-```
 Now you will see the following tools:
 * Builtin tools within the second spicepod.
 * Builtin tools from the first spicepod, over MCP (e.g. `spice_mcp/sql`).

@@ -45,10 +45,12 @@ WHERE
 3. Wait until vector search is ready:
 
 ```shell
-until curl -sS -XPOST http://localhost:8090/v1/search \
-    -H "Content-Type: application/json" \
-    -d '{"datasets":["spiceai.files"],"text":"testing","where":"not contains(path, '\''docs/release_notes'\'')","limit":1}' \
-    2>/dev/null | grep -q '"results"'; do sleep 10; done
+for _ in {1..30}; do
+    curl -sS --max-time 20 -XPOST http://localhost:8090/v1/search \
+        -H "Content-Type: application/json" \
+        -d '{"datasets":["spiceai.files"],"text":"testing","where":"not contains(path, '\''docs/release_notes'\'')","limit":1}' >/dev/null 2>&1 && break
+    sleep 10
+done
 ```
 
 4. Perform a basic search
