@@ -27,6 +27,12 @@ For this recipe, set `SPICE_ALLOWED_DIR` to the absolute path of the `cookbook/m
 spice run
 ```
 
+Wait for the HTTP tools endpoint to become reachable before continuing:
+
+```bash
+until curl -sS http://127.0.0.1:8090/v1/tools >/dev/null; do sleep 2; done
+```
+
 4. Show the available tools.
 ```bash
 curl -sS http://127.0.0.1:8090/v1/tools | jq '.[].name'

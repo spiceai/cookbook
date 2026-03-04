@@ -42,7 +42,16 @@ WHERE
 
 1. In the `spicepod.yaml`, uncomment the `datasets[0].columns[0].embeddings`.
 2. Restart the spiced.
-3. Perform a basic search
+3. Wait until vector search is ready:
+
+```shell
+until curl -sS -XPOST http://localhost:8090/v1/search \
+    -H "Content-Type: application/json" \
+    -d '{"datasets":["spiceai.files"],"text":"testing","where":"not contains(path, '\''docs/release_notes'\'')","limit":1}' \
+    | jq -e '.results | length > 0' >/dev/null; do sleep 10; done
+```
+
+4. Perform a basic search
 
 ```shell
 curl --retry 10 --retry-delay 5 --retry-all-errors --max-time 180 -XPOST http://localhost:8090/v1/search \
@@ -56,7 +65,7 @@ curl --retry 10 --retry-delay 5 --retry-all-errors --max-time 180 -XPOST http://
     }"
 ```
 
-4. Rerun the search, and retrieve the full document by adding `content` column to `additional_columns`).
+5. Rerun the search, and retrieve the full document by adding `content` column to `additional_columns`).
 
 ```shell
 curl --retry 10 --retry-delay 5 --retry-all-errors --max-time 180 -XPOST http://localhost:8090/v1/search \
