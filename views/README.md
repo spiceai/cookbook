@@ -183,10 +183,10 @@ Observe the query execution time.
 | Supplier#000008331 | SAUDI ARABIA | 17      |
 +--------------------+--------------+---------+
 
-Time: 0.259203917 seconds. 10 rows.
+Time: <non-deterministic> seconds. 10 rows.
 ```
 
-Now query the same data using the created view and observe a significant reduction in query execution time, from **0.259203917** to **0.005394292** seconds, due to the result being retrieved from pre-calculated data.
+Now query the same data using the created view and observe a reduction in query execution time, due to the result being retrieved from pre-calculated data.
 
 ```sql
 SELECT * FROM supplier_order_waits WHERE nation = 'SAUDI ARABIA' LIMIT 10;
@@ -208,8 +208,10 @@ SELECT * FROM supplier_order_waits WHERE nation = 'SAUDI ARABIA' LIMIT 10;
 | Supplier#000008331 | SAUDI ARABIA | 17      |
 +--------------------+--------------+---------+
 
-Time: 0.005394292 seconds. 10 rows.
+Time: <non-deterministic> seconds. 10 rows.
 ```
+
+Execution time values are non-deterministic and should not be validated exactly.
 
 ## Step 5 (optional): Refresh on a defined schedule
 

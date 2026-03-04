@@ -238,9 +238,23 @@ jobs:
             exit 0
           fi
 
-          curl -LsSf https://astral.sh/uv/install.sh | sh
+          curl -LsSf --retry 5 --retry-delay 2 --retry-all-errors https://astral.sh/uv/install.sh | sh || true
           echo "$HOME/.local/bin" >> $GITHUB_PATH
-          "$HOME/.local/bin/uv" --version
+
+          if [ -x "$HOME/.local/bin/uv" ]; then
+            "$HOME/.local/bin/uv" --version
+            exit 0
+          fi
+
+          python -m pip install --user uv
+          if command -v uv >/dev/null 2>&1; then
+            uv --version
+          elif [ -x "$HOME/.local/bin/uv" ]; then
+            "$HOME/.local/bin/uv" --version
+          else
+            echo "::error::uv installation failed"
+            exit 1
+          fi
 
       - name: Prepare Python venv for search
         if: ${{ inputs.recipe_path == 'search' && steps.skip_test.outputs.skipped != 'true' }}

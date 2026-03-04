@@ -93,7 +93,9 @@ sql> SELECT COUNT(*) FROM local_time_series;
 | 1000     |
 +----------+
 
-Time: 0.005385625 seconds. 1 rows.
+Time: <non-deterministic> seconds. 1 rows.
 ```
+
+Execution time lines are non-deterministic and should not be validated exactly.
 
 The `local_time_series` dataset is faster because it's accelerated locally using [DuckDB](https://docs.spiceai.org/components/data-accelerators/duckdb)

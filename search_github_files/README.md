@@ -39,6 +39,8 @@ WHERE
 
 Result:
 
+Result paths are non-deterministic because repository contents evolve. Validate semantically that relevant documentation paths are returned.
+
 ```shell
 +------------------------------+
 | path                         |
@@ -69,6 +71,8 @@ curl -XPOST http://localhost:8090/v1/search \
 ```
 
 Result:
+
+Vector search results, scores, and duration are non-deterministic; validate relevance rather than exact path ordering/score values.
 
 ```json
 {
@@ -119,6 +123,8 @@ curl -XPOST http://localhost:8090/v1/search \
 ```
 
 Result:
+
+As above, result ordering/scores and durations are non-deterministic.
 
 ```json
 {

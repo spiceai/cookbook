@@ -56,6 +56,8 @@ EXPLAIN SELECT * FROM taxi_trips;
 
 and you'll see the 10 `DuckSqlExec` plans, one for each partition scan.
 
+`EXPLAIN` output is non-deterministic across engine/runtime versions (node names, ordering, and formatting can differ). Validate this step semantically: the unfiltered plan scans all partitions.
+
 ```shell
 +---------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | plan_type     | plan                                                                                                                                                                                                                                                                                                                                                                                   |
@@ -87,6 +89,8 @@ EXPLAIN SELECT * FROM taxi_trips WHERE PULocationID = 221;
 ```
 
 In this case, only one partitioned file is relevant for scanning and remains in the scan plan while all other partitions are pruned from the plan.
+
+As above, validate semantically (partition pruning to a single relevant partition), not by exact line-for-line `EXPLAIN` text.
 
 ```shell
 +---------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+

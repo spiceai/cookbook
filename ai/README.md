@@ -65,11 +65,13 @@ SELECT ai('Say hello in a creative way!') as greeting;
 
 Result:
 
+The exact generated greeting text is non-deterministic and can vary across model/runtime versions. Treat this step as successful when a single non-empty `greeting` value is returned.
+
 ```text
 +--------------------------------------------------+
 | greeting                                         |
 +--------------------------------------------------+
-| Greetings, cosmic wanderer! 🌟 How do you do?  |
+| <non-deterministic generated greeting text>      |
 +--------------------------------------------------+
 ```
 

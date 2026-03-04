@@ -105,8 +105,10 @@ This queries the Breaking Bad show details. The `content` column contains the fu
 |            |        |       | "Thriller"],"status":"Ended",...}        |
 +------------+--------+-------+------------------------------------------+
 
-Time: 0.16491975 seconds. 1 rows.
+Time: <non-deterministic> seconds. 1 rows.
 ```
+
+The exact response payload and projected columns may vary by Spice/runtime version and API response shape (for example, additional metadata columns like `response_status` or `fetched_at`). Validate semantically that the request is executed and relevant content is returned.
 
 ### Search for people using query parameters
 
@@ -141,6 +143,8 @@ This executes two separate API calls (one for each query parameter) and combines
 
 Time: 0.336182833 seconds. 40 rows.
 ```
+
+Row counts and timing are non-deterministic and may vary over time.
 
 ## Advanced Usage
 

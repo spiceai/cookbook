@@ -36,6 +36,8 @@ spice add spiceai/fed-demo
 spice run
 ```
 
+Startup logs are non-deterministic across Spice/runtime versions.
+
 ```bash
 2025/01/27 11:36:41 INFO Checking for latest Spice runtime release...
 2025/01/27 11:36:42 INFO Spice.ai runtime starting...
@@ -79,8 +81,10 @@ select * from s3_source;
 ...
 +--------------+------------------+------------+-------------------+---------+---------------------+---------+---------+-------+------+--------------+------+--------------+--------------------+------------------+-------------------------------+---------------+-------+-------+-------------+---------+-----------+-------------------+--------------------+-----------+
 
-Time: 0.876282458 seconds. 500/2823 rows displayed.
+Time: <non-deterministic> seconds. 500/<non-deterministic> rows displayed.
 ```
+
+Sample rows/order and timing are non-deterministic; validate schema and successful query execution.
 
 ```sql
 -- Query the accelerated S3 source
@@ -102,6 +106,8 @@ Output:
 Time: 0.024679208 seconds. 500/2823 rows displayed.
 ```
 
+Timing and displayed sample rows are non-deterministic.
+
 ```sql
 -- Query the federated Dremio source
 select * from dremio_source;
@@ -122,6 +128,8 @@ Output:
 Time: 2.671361917 seconds. 500/100000 rows displayed.
 ```
 
+Timing and displayed sample rows are non-deterministic.
+
 ```sql
 -- Query the accelerated Dremio source
 select * from dremio_source_accelerated;
@@ -141,6 +149,8 @@ Output:
 
 Time: 0.015666208 seconds. 500/100000 rows displayed.
 ```
+
+Timing and displayed sample rows are non-deterministic.
 
 ```sql
 -- Perform an aggregation query that combines data from S3 and Dremio
@@ -168,3 +178,5 @@ Output:
 
 Time: 0.009526666 seconds. 1 rows.
 ```
+
+Aggregate timing is non-deterministic.

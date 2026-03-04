@@ -134,6 +134,8 @@ SELECT * FROM users;
 
 Sample output:
 
+Sample row values are non-deterministic because UUIDs and timestamps are generated at insert time. Validate schema/columns and that inserted users are present.
+
 ```console
 +--------------------------------------+---------------+---------------------+-----+-------------------------+
 | id                                   | name          | email               | age | created_at              |

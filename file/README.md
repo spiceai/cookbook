@@ -55,6 +55,8 @@ select avg(passenger_count) from yellow_taxis;
 
 You should see the following output:
 
+The execution time line is non-deterministic and will vary by environment.
+
 ```output
 sql> select avg(passenger_count) from yellow_taxis;
 +-----------------------------------+
@@ -63,7 +65,7 @@ sql> select avg(passenger_count) from yellow_taxis;
 | 1.3392808966805005                |
 +-----------------------------------+
 
-Time: 0.0253585 seconds. 1 rows.
+Time: <non-deterministic> seconds. 1 rows.
 ```
 
 ### Step 5: Terminate the Spice Runtime

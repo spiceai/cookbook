@@ -32,6 +32,8 @@ CALL dbgen(sf = 1);
 
 Output:
 
+The progress bar and CLI formatting are non-deterministic across DuckDB versions.
+
 ```SQL
 100% ▕████████████████████████████████████████████████████████████▏
 ┌─────────┐
@@ -89,6 +91,8 @@ spice run
 
 Confirm in the terminal output the `tpch_customer` dataset has been loaded:
 
+Startup logs vary by Spice/runtime version; validate semantically that `tpch_customer` is loaded and queryable.
+
 ```bash
 Spice.ai runtime starting...
 2024-04-29T18:23:18.055782Z  INFO spiced: Metrics listening on 127.0.0.1:9090
@@ -130,6 +134,8 @@ select c_name, c_address, c_acctbal, c_mktsegment from tpch_customer limit 10;
 
 Time: 0.003510375 seconds. 10 rows.
 ```
+
+Timing is non-deterministic.
 
 ## Learn more
 
