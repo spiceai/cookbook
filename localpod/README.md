@@ -45,19 +45,11 @@ In a new terminal, start `spice sql` and run these two queries to validate that 
 $ spice sql
 
 sql> SELECT COUNT(*) FROM time_series;
-+----------+
-| count(*) |
-+----------+
-| 0        |
-+----------+
 
 sql> SELECT COUNT(*) FROM local_time_series;
-+----------+
-| count(*) |
-+----------+
-| 0        |
-+----------+
 ```
+
+Both queries should return the same count value.
 
 
 ### Updating the parent dataset
@@ -74,11 +66,6 @@ The parent dataset count should now be updated:
 
 ```shell
 sql> SELECT COUNT(*) FROM time_series;
-+----------+
-| count(*) |
-+----------+
-| 1000     |
-+----------+
 ```
 
 The `local_time_series` dataset is faster because it's accelerated locally using [DuckDB](https://docs.spiceai.org/components/data-accelerators/duckdb)

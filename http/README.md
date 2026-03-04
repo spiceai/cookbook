@@ -126,17 +126,7 @@ WHERE request_path = '/search/people'
 
 This executes two separate API calls (one for each query parameter) and combines the results:
 
-```console
-+----------------+---------------+--------------+------------------------------------+
-| request_path   | request_query | request_body | content                            |
-+----------------+---------------+--------------+------------------------------------+
-| /search/people | q=michael     |              | {"score":0.70710677,"person":{...}}|
-| /search/people | q=michael     |              | {"score":0.70710677,"person":{...}}|
-| ...            | ...           | ...          | ...                                |
-| /search/people | q=luke        |              | {"score":0.5,"person":{...}}       |
-| /search/people | q=luke        |              | {"score":0.5,"person":{...}}       |
-+----------------+---------------+--------------+------------------------------------+
-```
+The result includes request metadata and response metadata columns (for example: `request_path`, `request_query`, `request_body`, `response_status`, `fetched_at`, `content`).
 
 ## Advanced Usage
 

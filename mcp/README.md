@@ -29,13 +29,13 @@ spice run
 
 4. Show the available tools.
 ```bash
-curl http://127.0.0.1:8090/v1/tools | jq '.[].name'
+curl -sS http://127.0.0.1:8090/v1/tools | jq '.[].name'
 ```
 This returns the available tool names for the running runtime (including built-in tools and MCP-provided tools).
 
 5. List the files from the current directory using the `fs/list_directory` MCP tool.
 ```bash
-curl -XPOST http://127.0.0.1:8090/v1/tools/fs/list_directory \
+curl -sS -XPOST http://127.0.0.1:8090/v1/tools/fs/list_directory \
     -d '{"path": "./"}' | jq -r '.[0].text'
 ```
 ```bash
@@ -105,7 +105,7 @@ spice run --http-endpoint 127.0.0.1:8091 --flight-endpoint 127.0.0.1:50061 --met
 
 7.  Show the tools available in the second Spice instance (note the different port).
 ```bash
-curl http://127.0.0.1:8091/v1/tools | jq '.[].name'
+curl -sS http://127.0.0.1:8091/v1/tools | jq '.[].name'
 ```
 ```bash
 "top_n_sample"
@@ -156,7 +156,7 @@ Now you will see the following tools:
 
 8. Use the SQL tool of the first Spice server, over MCP.
 ```bash
-curl -XPOST http://127.0.0.1:8091/v1/tools/spice_mcp/sql \
+curl -sS -XPOST http://127.0.0.1:8091/v1/tools/spice_mcp/sql \
     -d '{"query": "SELECT * FROM taxi_trips LIMIT 1"}'
 ```
 ```bash

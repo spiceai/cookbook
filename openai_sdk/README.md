@@ -33,18 +33,16 @@ These steps only need to be done once. Use a Python `virtualenv` to keep project
 ### Using pip
 
 1. Create the virtual environment: `python -m venv .venv`
-2. Activate the virtual environment: `source .venv/bin/activate`
-3. Install the required packages: `pip install openai python-dotenv`
+2. Install the required packages: `.venv/bin/pip install openai python-dotenv`
 
-Run the client: `python spice_openai_sdk.py`.
+Run the client: `.venv/bin/python spice_openai_sdk.py`.
 
 ### Using uv
 
-1. Use `uv venv` to create the virtual environment
-2. Activate the virtual environment: `source .venv/bin/activate`
-3. Ensure the packages are installed: `uv pip install openai python-dotenv`
+1. Use `uv venv .venv` to create the virtual environment
+2. Ensure the packages are installed: `uv pip install --python .venv/bin/python openai python-dotenv`
 
-Run the client: `uv run spice_openai_sdk.py`.
+Run the client: `uv run --python .venv/bin/python spice_openai_sdk.py`.
 
 ## About the client
 

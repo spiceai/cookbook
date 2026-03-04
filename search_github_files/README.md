@@ -45,7 +45,7 @@ WHERE
 3. Perform a basic search
 
 ```shell
-curl --max-time 30 -XPOST http://localhost:8090/v1/search \
+curl --max-time 120 -XPOST http://localhost:8090/v1/search \
     -H "Content-Type: application/json" \
     -d "{
     \"datasets\": [\"spiceai.files\"],
@@ -95,7 +95,7 @@ Result:
 4. Rerun the search, and retrieve the full document by adding `content` column to `additional_columns`).
 
 ```shell
-curl --max-time 30 -XPOST http://localhost:8090/v1/search \
+curl --max-time 120 -XPOST http://localhost:8090/v1/search \
 -H 'Content-Type: application/json' \
 -d "{
     \"datasets\": [\"spiceai.files\"],
@@ -177,7 +177,7 @@ spiced --http 127.0.0.1:8091 --flight 127.0.0.1:50061 --open_telemetry 127.0.0.1
 2. Rerun the search, this time against the child `spiced` (port `8091`)
 
 ```shell
-curl --max-time 30 -XPOST http://localhost:8091/v1/search \
+curl --max-time 120 -XPOST http://localhost:8091/v1/search \
 -H 'Content-Type: application/json' \
 -d "{
     \"datasets\": [\"spiceai.files\"],

@@ -35,7 +35,7 @@ docker run --name scylladb -d \
 Wait for ScyllaDB to be ready (about 30 seconds):
 
 ```bash
-docker exec -it scylladb nodetool status
+docker exec scylladb nodetool status
 ```
 
 ---
