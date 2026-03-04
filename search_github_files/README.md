@@ -48,7 +48,7 @@ WHERE
 until curl -sS -XPOST http://localhost:8090/v1/search \
     -H "Content-Type: application/json" \
     -d '{"datasets":["spiceai.files"],"text":"testing","where":"not contains(path, '\''docs/release_notes'\'')","limit":1}' \
-    | jq -e '.results | length > 0' >/dev/null; do sleep 10; done
+    2>/dev/null | grep -q '"results"'; do sleep 10; done
 ```
 
 4. Perform a basic search

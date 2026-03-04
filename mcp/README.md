@@ -51,11 +51,6 @@ This should return directory listing text for the allowed directory.
 spice chat
 ```
 
-7. Make sure the LLM called the MCP tool (and didn't hallucinate)
-```bash
->>> spice trace ai_chat
-```
-
 ## Connect to Spice over MCP
 Spice is an MCP server. It can be connected to like any other MCP server running over HTTP SSE.
 
