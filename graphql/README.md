@@ -69,19 +69,7 @@ spice run
 Example output:
 
 ```console
-2025/07/07 11:32:50 INFO Checking for latest Spice runtime release...
-2025/07/07 11:32:50 INFO Spice.ai runtime starting...
-2025-07-07T18:32:50.373735Z  INFO spiced: Starting runtime v1.5.0-unstable-build.2187f22e7+models
-2025-07-07T18:32:50.374154Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2025-07-07T18:32:50.374183Z  INFO runtime::init::caching: Initialized search results cache;
-2025-07-07T18:32:50.761270Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-07-07T18:32:50.761326Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2025-07-07T18:32:50.761704Z  INFO runtime::init::dataset: Initializing dataset stargazers
-2025-07-07T18:32:50.761790Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2025-07-07T18:32:52.129189Z  INFO runtime::init::dataset: Dataset stargazers registered (graphql:https://api.github.com/graphql), acceleration (arrow), results cache enabled.
-2025-07-07T18:32:52.130877Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset stargazers
-2025-07-07T18:33:14.858107Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,478 rows (2.59 MiB) for dataset stargazers in 22s 727ms.
-2025-07-07T18:33:14.930166Z  INFO runtime: All components are loaded. Spice runtime is ready!
+INFO Installing Spice.ai runtime v1.11.2 (spiced_models_linux_x86_64.tar.gz)...
 ```
 
 **Step 3.** Run `spice sql` in a new terminal to start an interactive SQL query session against the Spice runtime.

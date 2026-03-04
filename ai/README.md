@@ -64,17 +64,17 @@ spice sql
 Try this simple example:
 
 ```sql
-SELECT ai('Say hello in a creative way!') as greeting;
+SELECT ai('Respond with exactly HELLO and no other text.') as greeting;
 ```
 
 Result:
 
 ```text
-+--------------------------------------------------+
-| greeting                                         |
-+--------------------------------------------------+
-| Greetings, cosmic wanderer! 🌟 How do you do?  |
-+--------------------------------------------------+
++----------+
+| greeting |
++----------+
+| HELLO    |
++----------+
 ```
 
 ## Example Queries

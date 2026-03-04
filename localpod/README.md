@@ -77,7 +77,7 @@ sql> SELECT COUNT(*) FROM time_series;
 | 0        |
 +----------+
 
-Time: 0.004800375 seconds. 1 rows.
+Time: 0.003950372 seconds. 1 rows.
 sql> SELECT COUNT(*) FROM local_time_series;
 +----------+
 | count(*) |
@@ -88,6 +88,7 @@ sql> SELECT COUNT(*) FROM local_time_series;
 
 Time: 0.005054417 seconds. 1 rows.
 ```
+
 
 ### Updating the parent dataset
 

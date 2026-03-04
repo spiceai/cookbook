@@ -104,21 +104,23 @@ For more information on using `spice sql`, see the [CLI reference](https://docs.
 ### Query a specific show by ID
 
 ```sql
-SELECT * FROM tvmaze WHERE request_path = '/shows/169';
+SELECT request_path, response_status, content
+FROM tvmaze
+WHERE request_path = '/shows/169';
 ```
 
 This queries the Breaking Bad show details. The `content` column contains the full JSON response:
 
 ```console
-+---------------+--------------+---------------+------------------------------------------+
-| request_path  | request_query| request_body  | content                                  |
-+---------------+--------------+---------------+------------------------------------------+
-| /shows/169    |              |               | {"id":169,"url":"https://www.tvmaze.com/|
-|            |        |       | shows/169/breaking-bad","name":"Breaking |
-|            |        |       | Bad","type":"Scripted","language":       |
-|            |        |       | "English","genres":["Drama","Crime",     |
-|            |        |       | "Thriller"],"status":"Ended",...}        |
-+------------+--------+-------+------------------------------------------+
++---------------+-----------------+------------------------------------------+
+| request_path  | response_status | content                                  |
++---------------+-----------------+------------------------------------------+
+| /shows/169    | 200             | {"id":169,"url":"https://www.tvmaze.com/|
+|               |                 | shows/169/breaking-bad","name":"Breaking |
+|               |                 | Bad","type":"Scripted","language":       |
+|               |                 | "English","genres":["Drama","Crime",     |
+|               |                 | "Thriller"],"status":"Ended",...}        |
++---------------+-----------------+------------------------------------------+
 
 Time: 0.16491975 seconds. 1 rows.
 ```

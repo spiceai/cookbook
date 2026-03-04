@@ -63,7 +63,7 @@ sql> select avg(passenger_count) from yellow_taxis;
 | 1.3392808966805005                |
 +-----------------------------------+
 
-Time: 0.0253585 seconds. 1 rows.
+Time: 0.016079375 seconds. 1 rows.
 ```
 
 ### Step 5: Terminate the Spice Runtime

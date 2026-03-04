@@ -129,19 +129,19 @@ SHOW TABLES;
 To query your sample data:
 
 ```sql
-SELECT * FROM users;
+SELECT name, email, age FROM users ORDER BY name;
 ```
 
 Sample output:
 
 ```console
-+--------------------------------------+---------------+---------------------+-----+-------------------------+
-| id                                   | name          | email               | age | created_at              |
-+--------------------------------------+---------------+---------------------+-----+-------------------------+
-| a1b2c3d4-e5f6-7890-abcd-ef1234567890 | Alice Smith   | alice@example.com   | 30  | 2025-01-19T12:00:00.000 |
-| b2c3d4e5-f6a7-8901-bcde-f12345678901 | Bob Johnson   | bob@example.com     | 25  | 2025-01-19T12:00:01.000 |
-| c3d4e5f6-a7b8-9012-cdef-123456789012 | Charlie Brown | charlie@example.com | 35  | 2025-01-19T12:00:02.000 |
-+--------------------------------------+---------------+---------------------+-----+-------------------------+
++---------------+---------------------+-----+
+| name          | email               | age |
++---------------+---------------------+-----+
+| Alice Smith   | alice@example.com   | 30  |
+| Bob Johnson   | bob@example.com     | 25  |
+| Charlie Brown | charlie@example.com | 35  |
++---------------+---------------------+-----+
 ```
 
 ---
