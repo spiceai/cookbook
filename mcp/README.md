@@ -145,7 +145,7 @@ cat spicepod.yaml
 ```
 ```yaml
 name: spicepod
-version: v1beta1
+version: v1
 kind: Spicepod
 
 tools:
