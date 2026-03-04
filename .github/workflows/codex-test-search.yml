@@ -27,8 +27,6 @@ jobs:
       requires_secrets: false
       additional_instructions: |
         This recipe demonstrates search capabilities in Spice.
-        For `spice chat` steps, evaluate success semantically rather than exact wording.
-        If a chat response is a transient retrieval/tool-use error but the command itself succeeds, retry the same documented prompt once.
-        Treat the chat validation as passed if a retry returns a valid answer aligned with the prompt intent.
+        Do not skip steps; any Spice/runtime error or output mismatch must fail and indicates the recipe needs updating.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

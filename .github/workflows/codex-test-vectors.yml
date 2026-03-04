@@ -28,6 +28,6 @@ jobs:
       additional_instructions: |
         This recipe demonstrates vector embeddings and similarity search.
         May use public data or local embeddings.
-        This recipe is credential-dependent (OpenAI, GitHub, AWS S3 Vectors). If startup fails due invalid/missing external credentials (e.g. OpenAI `invalid_api_key`, GitHub `401`, or S3 Vectors auth), treat those steps as skipped external dependencies and do not fail solely for that reason.
+        Do not skip steps; any Spice/runtime error or output mismatch must fail and indicates the recipe needs updating.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

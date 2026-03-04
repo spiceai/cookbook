@@ -28,7 +28,6 @@ jobs:
       additional_instructions: |
         This recipe demonstrates web search tools using Perplexity/Tavily.
         Requires SPICE_TAVILY_API_KEY and/or other API keys.
-        If Perplexity credentials are missing/invalid (for example 401 or `model 'perp' not found`), skip only Perplexity-dependent prompts/tool calls/citation checks.
-        If all non-skipped documented steps succeed, finalize with `TEST PASSED`.
+        Do not skip steps; any Spice/runtime error or output mismatch must fail and indicates the recipe needs updating.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

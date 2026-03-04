@@ -27,7 +27,6 @@ jobs:
       requires_secrets: false
       additional_instructions: |
         This recipe demonstrates using Apache Arrow as an in-memory acceleration engine.
-        For startup logs, validate functional readiness and successful query behavior; do not fail solely on missing/changed acceleration log wording from template or runtime version differences.
-        For sample taxi query result rows, do not require exact timestamp or `passenger_count` value matches; treat successful execution and correctly shaped/non-empty results as pass.
+        Do not skip steps; any Spice/runtime error or output mismatch must fail and indicates the recipe needs updating.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

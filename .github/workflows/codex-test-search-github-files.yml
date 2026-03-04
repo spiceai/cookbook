@@ -28,11 +28,6 @@ jobs:
       additional_instructions: |
         This recipe demonstrates searching GitHub files with embeddings.
         Requires GITHUB_TOKEN and SPICE_OPENAI_API_KEY.
-        Treat SQL search output as semantically passing when documented expected paths/rows are present, even if additional relevant rows are returned.
-        For vector search examples, treat ranking/path variability as non-deterministic; pass when results are relevant to the query and include at least one documented expected path, even if the second returned path differs.
-        If the optional pre-existing-embeddings section fails because datasource `spiceai.files` is missing on the alternate endpoint (for example `localhost:8091`) after restart/reconfiguration, skip only that optional section.
-        If vector-search HTTP requests still fail readiness or hang without JSON response after the single allowed retry, skip only the affected vector-search validation steps; if all other steps pass, end with `TEST PASSED`.
-        If `doc.pulls` full-text/vector search requests continue returning acceleration-not-ready or empty-reply errors after the single allowed retry, skip only those affected `doc.pulls` validation steps and pass when all other steps succeed.
-        If README-directed uncomment/edit operations on `spicepod.yaml` produce YAML parse errors when restarting runtime, treat that optional mutation section as documentation drift: skip only those affected steps and pass if all other sections succeeded.
+        Do not skip steps; any Spice/runtime error or output mismatch must fail and indicates the recipe needs updating.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

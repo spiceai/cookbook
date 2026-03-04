@@ -38,9 +38,7 @@ jobs:
         2. Start the Samba container as documented in README
         3. Configure credentials in .env file
 
-        If repeated `spice run` attempts only perform runtime install/update checks and never reach readiness in CI, skip only runtime-dependent query validation steps.
-        If runtime reports the SMB dataset path has no matching `.parquet` files (for example at `smb://localhost/data/`), treat it as data-availability dependent and skip only the affected query validation steps.
-        If all non-skipped README steps complete and only this allowed data-availability skip occurred, end with `TEST PASSED`.
+        Do not skip steps; any Spice/runtime error or output mismatch must fail and indicates the recipe needs updating.
 
         After Docker setup, proceed with the spicepod configuration and queries.
     secrets:

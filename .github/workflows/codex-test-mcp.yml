@@ -27,6 +27,6 @@ jobs:
       requires_secrets: false
       additional_instructions: |
         This recipe demonstrates Model Context Protocol integration.
-        After `spice run`, if HTTP endpoint checks fail initially, retry readiness/tool-list calls for up to 60 seconds before concluding failure.
+        Do not skip steps; any Spice/runtime error or output mismatch must fail and indicates the recipe needs updating.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

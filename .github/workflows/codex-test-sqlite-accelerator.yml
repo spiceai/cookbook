@@ -27,6 +27,6 @@ jobs:
       requires_secrets: false
       additional_instructions: |
         This recipe demonstrates using SQLite as an acceleration engine.
-        When toggling acceleration in `spicepod.yaml`, do not fail solely on missing/changed runtime reload log lines; validate by successful queries and accelerated behavior instead.
+        Do not skip steps; any Spice/runtime error or output mismatch must fail and indicates the recipe needs updating.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

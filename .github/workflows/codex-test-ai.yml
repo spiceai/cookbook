@@ -29,9 +29,6 @@ jobs:
         This recipe demonstrates the ai() SQL function for LLM integration.
         Requires SPICE_OPENAI_API_KEY to be set in .env file.
         Test with simple ai() queries as shown in the README.
-        Accept semantically equivalent sentiment outputs (for example short phrases/sentences) when intent matches documented positive/negative/neutral labeling.
-        If OPENAI credentials are unavailable in CI, skip only the model-dependent ai() result validation steps.
-        If the first `spice run` exits after runtime install/update checks before readiness logs, rerun the same `spice run` command once and continue.
-        If the runtime task-history introspection SQL step fails due metadata/query-engine differences, skip only that task-history-dependent validation step.
+        Do not skip steps; any Spice/runtime error or output mismatch must fail and indicates the recipe needs updating.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

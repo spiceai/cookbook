@@ -28,7 +28,6 @@ jobs:
       additional_instructions: |
         This recipe demonstrates persistent memory for language models.
         Requires SPICE_OPENAI_API_KEY.
-        If OPENAI credentials are unavailable in CI, skip only the model/chat-dependent validation steps.
-        For memory inspection outputs, treat additional rows/order differences as acceptable if the documented memory facts are present and retrievable.
+        Do not skip steps; any Spice/runtime error or output mismatch must fail and indicates the recipe needs updating.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

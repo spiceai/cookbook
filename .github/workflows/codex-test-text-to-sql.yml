@@ -28,7 +28,6 @@ jobs:
       additional_instructions: |
         This recipe demonstrates text-to-SQL capabilities with LLM tools.
         Requires SPICE_OPENAI_API_KEY.
-        If OPENAI credentials are unavailable in CI, skip only the model-dependent NSQL execution/answer validation steps.
-        Accept semantically correct NSQL results even when trailing row-count metadata differs (for example 3 vs 4 rows) if key result values and ordering intent match.
+        Do not skip steps; any Spice/runtime error or output mismatch must fail and indicates the recipe needs updating.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

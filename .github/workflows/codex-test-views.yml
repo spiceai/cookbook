@@ -27,6 +27,6 @@ jobs:
       requires_secrets: false
       additional_instructions: |
         This recipe demonstrates accelerated views in Spice.
-        Do not fail the test for differences in query execution time values; treat timing fields as non-deterministic and validate query results semantically.
+        Do not skip steps; any Spice/runtime error or output mismatch must fail and indicates the recipe needs updating.
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
