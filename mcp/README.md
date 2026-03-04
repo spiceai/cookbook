@@ -20,7 +20,7 @@ SPICE_OPENAI_API_KEY="{OpenAI API key}"
 SPICE_ALLOWED_DIR="{directory the fs MCP tool is allowed to access}"
 ```
 
-For this recipe, `SPICE_ALLOWED_DIR` should be set to allow access to this cookbook directory - like `SPICE_ALLOWED_DIR="./"`.
+For this recipe, set `SPICE_ALLOWED_DIR` to the absolute path of the `cookbook/mcp` directory (for example: `SPICE_ALLOWED_DIR="/full/path/to/cookbook/mcp"`).
 
 3. Start Spice
 ```bash
@@ -38,12 +38,7 @@ This returns the available tool names for the running runtime (including built-i
 curl -sS -XPOST http://127.0.0.1:8090/v1/tools/fs/list_directory \
     -d '{"path": "./"}' | jq -r '.[0].text'
 ```
-```bash
-[FILE] .env
-[FILE] README.md
-[DIR] child
-[FILE] spicepod.yaml
-```
+This should return directory listing text for the allowed directory.
 
 6. Use the `fs` MCP server from a model.
 ```bash

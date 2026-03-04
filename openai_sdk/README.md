@@ -16,8 +16,8 @@ The first step is to get the Spice instance up and running.
 ```bash
 git clone https://github.com/spiceai/cookbook # Skip if already cloned
 cd cookbook/openai_sdk
-# Add your OpenAI API key to the .env.local file
-echo "SPICE_OPENAI_API_KEY=your_openai_api_key" > .env.local
+# Add your OpenAI API key to the .env file
+echo "SPICE_OPENAI_API_KEY=your_openai_api_key" > .env
 # Start Spice
 spice run
 ```

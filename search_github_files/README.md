@@ -45,14 +45,14 @@ WHERE
 3. Perform a basic search
 
 ```shell
-curl --max-time 120 -XPOST http://localhost:8090/v1/search \
+curl --retry 10 --retry-delay 5 --retry-all-errors --max-time 180 -XPOST http://localhost:8090/v1/search \
     -H "Content-Type: application/json" \
     -d "{
     \"datasets\": [\"spiceai.files\"],
     \"text\": \"testing\",
     \"where\": \"not contains(path, 'docs/release_notes')\",
     \"additional_columns\": [\"download_url\"],
-    \"limit\": 2
+  \"limit\": 1
     }"
 ```
 
@@ -95,14 +95,14 @@ Result:
 4. Rerun the search, and retrieve the full document by adding `content` column to `additional_columns`).
 
 ```shell
-curl --max-time 120 -XPOST http://localhost:8090/v1/search \
+curl --retry 10 --retry-delay 5 --retry-all-errors --max-time 180 -XPOST http://localhost:8090/v1/search \
 -H 'Content-Type: application/json' \
 -d "{
     \"datasets\": [\"spiceai.files\"],
     \"text\": \"errors\",
     \"where\": \"not contains(path, 'docs/release_notes')\",
     \"additional_columns\": [\"download_url\" , \"content\"],
-    \"limit\": 2
+    \"limit\": 1
 }"
 ```
 
@@ -177,14 +177,14 @@ spiced --http 127.0.0.1:8091 --flight 127.0.0.1:50061 --open_telemetry 127.0.0.1
 2. Rerun the search, this time against the child `spiced` (port `8091`)
 
 ```shell
-curl --max-time 120 -XPOST http://localhost:8091/v1/search \
+curl --retry 10 --retry-delay 5 --retry-all-errors --max-time 180 -XPOST http://localhost:8091/v1/search \
 -H 'Content-Type: application/json' \
 -d "{
     \"datasets\": [\"spiceai.files\"],
     \"text\": \"errors\",
     \"where\": \"not contains(path, 'docs/release_notes')\",
     \"additional_columns\": [\"download_url\"],
-    \"limit\": 2
+    \"limit\": 1
 }"
 ```
 

@@ -54,7 +54,7 @@ Both queries should return the same count value.
 
 ### Updating the parent dataset
 
-Let's insert new data into the parent dataset and see the `localpod` update. In a new terminal, navigate to this sample directory and run the following:
+Let's insert new data into the parent dataset. In a new terminal, navigate to this sample directory and run the following:
 
 ```shell
 ./generate_data.sh
@@ -68,4 +68,4 @@ The parent dataset count should now be updated:
 sql> SELECT COUNT(*) FROM time_series;
 ```
 
-The `local_time_series` dataset is faster because it's accelerated locally using [DuckDB](https://docs.spiceai.org/components/data-accelerators/duckdb)
+The `local_time_series` dataset is accelerated locally using [DuckDB](https://docs.spiceai.org/components/data-accelerators/duckdb) and may refresh shortly after the parent dataset update.
