@@ -35,33 +35,7 @@ The parent dataset must have `refresh_mode` set to `full` in order for the `loca
 
 In a new terminal, start `spice` with `spice run`.
 
-You should see terminal output like so:
-
-```shell
-$ spice run
-2024/10/29 18:31:38 INFO Checking for latest Spice runtime release...
-2024/10/29 18:31:38 INFO Spice.ai runtime starting...
-2024-10-30T01:31:38.912802Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2024-10-30T01:31:38.913151Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
-2024-10-30T01:31:38.913247Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2024-10-30T01:31:38.921580Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2024-10-30T01:31:39.112883Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2024-10-30T01:31:39.123137Z  INFO runtime: Tool [search] ready to use
-2024-10-30T01:31:39.123166Z  INFO runtime: Tool [table_schema] ready to use
-2024-10-30T01:31:39.123172Z  INFO runtime: Tool [sql] ready to use
-2024-10-30T01:31:39.123180Z  INFO runtime: Tool [list_datasets] ready to use
-2024-10-30T01:31:39.123183Z  INFO runtime: Tool [get_readiness] ready to use
-2024-10-30T01:31:39.123187Z  INFO runtime: Tool [random_sample] ready to use
-2024-10-30T01:31:39.123193Z  INFO runtime: Tool [sample_distinct_columns] ready to use
-2024-10-30T01:31:39.123197Z  INFO runtime: Tool [top_n_sample] ready to use
-2024-10-30T01:31:39.125295Z  INFO runtime: Dataset time_series registered (file:data.csv), acceleration (arrow, 15s refresh), results cache enabled.
-2024-10-30T01:31:39.126352Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset time_series
-2024-10-30T01:31:39.128337Z  INFO runtime::accelerated_table::refresh_task: Loaded 0 rows for dataset time_series in 1ms.
-2024-10-30T01:31:39.136703Z  INFO runtime::datafusion: Localpod dataset local_time_series synchronizing refreshes with parent table time_series
-2024-10-30T01:31:39.136764Z  INFO runtime: Dataset local_time_series registered (localpod:time_series), acceleration (duckdb:file, 10s refresh), results cache enabled.
-2024-10-30T01:31:39.137955Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset local_time_series
-2024-10-30T01:31:39.139139Z  INFO runtime::accelerated_table::refresh_task: Loaded 0 rows for dataset local_time_series in 1ms.
-```
+Wait until the runtime reports it is ready before opening `spice sql`.
 
 ### Querying the `localpod`
 
@@ -77,16 +51,12 @@ sql> SELECT COUNT(*) FROM time_series;
 | 0        |
 +----------+
 
-Time: 0.003950372 seconds. 1 rows.
 sql> SELECT COUNT(*) FROM local_time_series;
 +----------+
 | count(*) |
 +----------+
 | 0        |
 +----------+
-
-
-Time: 0.005054417 seconds. 1 rows.
 ```
 
 
@@ -114,16 +84,12 @@ sql> SELECT COUNT(*) FROM time_series;
 +----------+
 | 1000     |
 +----------+
-
-Time: 0.006115708 seconds. 1 rows.
 sql> SELECT COUNT(*) FROM local_time_series;
 +----------+
 | count(*) |
 +----------+
 | 1000     |
 +----------+
-
-Time: 0.005385625 seconds. 1 rows.
 ```
 
 The `local_time_series` dataset is faster because it's accelerated locally using [DuckDB](https://docs.spiceai.org/components/data-accelerators/duckdb)

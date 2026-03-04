@@ -30,7 +30,7 @@ spice sql
 Then:
 
 ```sql
-SELECT path
+SELECT COUNT(*) > 0 AS has_matches
 FROM spiceai.files
 WHERE
     LOWER(content) LIKE '%errors%'
@@ -40,18 +40,11 @@ WHERE
 Result:
 
 ```shell
-+-------------------------------------+
-| path                                |
-+-------------------------------------+
-| docs/PRINCIPLES.md                  |
-| docs/criteria/definitions.md        |
-| docs/criteria/features/alpha.md     |
-| docs/dev/error_handling.md          |
-| docs/dev/metrics.md                 |
-| docs/dev/style_guide.md             |
-| docs/features/gcs-connector.md      |
-| docs/threat_models/v1.9.2.md        |
-+-------------------------------------+
++-------------+
+| has_matches |
++-------------+
+| true        |
++-------------+
 ```
 
 ## Utilizing Vector-Based Search

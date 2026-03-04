@@ -242,7 +242,9 @@ The following SQL operations cannot be pushed down to ScyllaDB and are performed
 
 ## Step 7. Cleanup
 
-To stop and remove the ScyllaDB container:
+First stop the running Spice runtime (in the terminal where `spice run` is active) with `Ctrl+C`.
+
+Then stop and remove the ScyllaDB container:
 
 ```bash
 docker stop scylladb

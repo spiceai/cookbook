@@ -31,32 +31,7 @@ spice run
 ```bash
 curl http://127.0.0.1:8090/v1/tools | jq '.[].name'
 ```
-```bash
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-100 12779  100 12779    0     0  1434k      0 --:--:-- --:--:-- --:--:-- 1386k
-100 12779  100 12779    0     0  1419k      0 --:--:-- --:--:-- --:--:-- 1386k
-"random_sample"
-"list_datasets"
-"store_memory"
-"search"
-"top_n_sample"
-"sql"
-"table_schema"
-"fs/read_file"
-"fs/read_text_file"
-"fs/read_media_file"
-"fs/read_multiple_files"
-"fs/write_file"
-"fs/edit_file"
-"fs/create_directory"
-"fs/list_directory"
-"fs/list_directory_with_sizes"
-"fs/directory_tree"
-```
-This shows both the built in tools (e.g. `sql`) and all the tools listed by the MCP server `fs`.
+This returns the available tool names for the running runtime (including built-in tools and MCP-provided tools).
 
 5. List the files from the current directory using the `fs/list_directory` MCP tool.
 ```bash

@@ -14,13 +14,7 @@ cd accelerated-views
 spice run
 ```
 
-Example output:
-
-```bash
-INFO Installing Spice.ai runtime v1.11.2 (spiced_models_linux_x86_64.tar.gz)...
-2026-03-04T18:51:32.879754Z  INFO runtime: No datasets or catalogs were configured. If this is unexpected, check the Spicepod configuration.
-2026-03-04T18:51:32.879779Z  INFO runtime: All components are loaded. Spice runtime is ready!
-```
+Wait until the runtime reports it is ready before continuing.
 
 ## Step 2: Add the TPC-H Benchmark Spicepod
 
@@ -216,10 +210,9 @@ Observe the query execution time.
 | Supplier#000008331 | SAUDI ARABIA | 17      |
 +--------------------+--------------+---------+
 
-Time: 0.259203917 seconds. 10 rows.
 ```
 
-Now query the same data using the created view and observe a significant reduction in query execution time, from **0.259203917** to **0.005394292** seconds, due to the result being retrieved from pre-calculated data.
+Now query the same data using the created view and observe reduced latency due to pre-calculated results.
 
 ```sql
 SELECT * FROM supplier_order_waits WHERE nation = 'SAUDI ARABIA' LIMIT 10;
@@ -241,7 +234,6 @@ SELECT * FROM supplier_order_waits WHERE nation = 'SAUDI ARABIA' LIMIT 10;
 | Supplier#000008331 | SAUDI ARABIA | 17      |
 +--------------------+--------------+---------+
 
-Time: 0.005394292 seconds. 10 rows.
 ```
 
 ## Step 5 (optional): Refresh on a defined schedule

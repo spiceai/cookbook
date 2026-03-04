@@ -22,12 +22,7 @@ echo "SPICE_OPENAI_API_KEY=your_openai_api_key" > .env.local
 spice run
 ```
 
-Output:
-
-```bash
-INFO Installing Spice.ai runtime v1.11.2 (spiced_models_linux_x86_64.tar.gz)...
-2026-03-04T18:52:15.457612Z  INFO runtime: All components are loaded. Spice runtime is ready!
-```
+Wait until the runtime reports it is ready before running the client.
 
 Spice will use your OpenAI API key to communicate with OpenAI on your client code's behalf.
 

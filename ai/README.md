@@ -100,19 +100,6 @@ FROM taxi_zones
 LIMIT 5;
 ```
 
-Result:
-
-```text
-+------------+-------------------------+-------------+
-| LocationID | Zone                    | category    |
-+------------+-------------------------+-------------+
-| 1          | Newark Airport          | Transport   |
-| 2          | Jamaica Bay             | Nature      |
-| 3          | Allerton/Pelham Gardens | Residential |
-| 4          | Alphabet City           | Urban       |
-| 5          | Arden Heights           | Suburban    |
-+------------+-------------------------+-------------+
-```
 
 ### Example 3: Sentiment Analysis
 
@@ -126,17 +113,6 @@ FROM customer_feedback
 LIMIT 3;
 ```
 
-Result:
-
-```text
-+------------------------------------------+-----------+
-| feedback                                 | sentiment |
-+------------------------------------------+-----------+
-| Great service, very helpful!             | positive  |
-| The product broke after one day          | negative  |
-| It's okay, nothing special               | neutral   |
-+------------------------------------------+-----------+
-```
 
 ### Example 4: Data Enrichment
 
@@ -177,17 +153,6 @@ WHERE Borough = 'Manhattan'
 LIMIT 5;
 ```
 
-Result:
-
-```text
-+----------------+------------------+-----------------+
-| original       | spanish          | french          |
-+----------------+------------------+-----------------+
-| Central Park   | Parque Central   | Parc Central    |
-| Times Square   | Times Square     | Times Square    |
-| Battery Park   | Parque Battery   | Battery Park    |
-+----------------+------------------+-----------------+
-```
 
 ## Understanding the Configuration
 
