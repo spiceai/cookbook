@@ -50,6 +50,26 @@ runs:
         # Also get just the last 50 lines for focused matching (LLM typically puts result at end)
         TAIL_OUTPUT=$(tail -50 "$OUTPUT_FILE" | tr '[:upper:]' '[:lower:]' | tr -s '[:space:]' ' ')
 
+        # Require explicit final verdict line
+        FINAL_LINE=$(awk 'NF{line=$0} END{print line}' "$OUTPUT_FILE" | tr -d '\r')
+        FINAL_LINE_LOWER=$(echo "$FINAL_LINE" | tr '[:upper:]' '[:lower:]')
+
+        if [ "$FINAL_LINE" = "TEST PASSED" ]; then
+          RESULT="passed"
+          REASON=""
+        elif echo "$FINAL_LINE_LOWER" | grep -q '^test failed:'; then
+          RESULT="failed"
+          REASON="${FINAL_LINE#TEST FAILED: }"
+
+          # Normalize output mismatch reasons to explicit recipe-update wording
+          if echo "$FINAL_LINE_LOWER" | grep -Eq 'mismatch|did not match|does not match|unexpected output|output differs'; then
+            REASON="Spice output does not match the recipe documentation; recipe needs updating. ${REASON}"
+          fi
+        else
+          RESULT="error"
+          REASON="Missing strict final verdict line. Last line must be exactly 'TEST PASSED' or start with 'TEST FAILED:'."
+        fi
+
         # === FAIL PATTERNS (check first - fail takes priority) ===
         # These patterns indicate test failure
         FAIL_PATTERNS=(
@@ -84,66 +104,71 @@ runs:
           "timeout"
         )
 
-        RESULT=""
-        REASON=""
+        # If strict final verdict already set, skip fallback heuristics.
+        if [ "$RESULT" = "passed" ] || [ "$RESULT" = "failed" ] || [ "$RESULT" = "error" ]; then
+          :
+        else
+          RESULT=""
+          REASON=""
 
-        # Check for explicit fail patterns in the tail (most relevant)
-        for pattern in "${FAIL_PATTERNS[@]}"; do
-          if echo "$TAIL_OUTPUT" | grep -qi "$pattern"; then
-            RESULT="failed"
-            # Try to extract the reason after "failed:" or similar
-            REASON=$(echo "$TAIL_OUTPUT" | grep -oi "failed[: ]*[^.]*" | tail -1 || echo "Test failed")
-            break
-          fi
-        done
-
-        # If no fail found, check for error patterns
-        if [ -z "$RESULT" ]; then
-          for pattern in "${ERROR_PATTERNS[@]}"; do
-            if echo "$TAIL_OUTPUT" | grep -qi "$pattern"; then
-              RESULT="error"
-              REASON="Test inconclusive or timed out"
-              break
-            fi
-          done
-        fi
-
-        # If no fail/error found, check for pass patterns
-        if [ -z "$RESULT" ]; then
-          for pattern in "${PASS_PATTERNS[@]}"; do
-            if echo "$TAIL_OUTPUT" | grep -qi "$pattern"; then
-              RESULT="passed"
-              REASON=""
-              break
-            fi
-          done
-        fi
-
-        # If still no result, check the full output as fallback
-        if [ -z "$RESULT" ]; then
+          # Check for explicit fail patterns in the tail (most relevant)
           for pattern in "${FAIL_PATTERNS[@]}"; do
-            if echo "$NORMALIZED_OUTPUT" | grep -qi "$pattern"; then
+            if echo "$TAIL_OUTPUT" | grep -qi "$pattern"; then
               RESULT="failed"
-              REASON="Test failed (detected in full output)"
+              # Try to extract the reason after "failed:" or similar
+              REASON=$(echo "$TAIL_OUTPUT" | grep -oi "failed[: ]*[^.]*" | tail -1 || echo "Test failed")
               break
             fi
           done
-        fi
 
-        if [ -z "$RESULT" ]; then
-          for pattern in "${PASS_PATTERNS[@]}"; do
-            if echo "$NORMALIZED_OUTPUT" | grep -qi "$pattern"; then
-              RESULT="passed"
-              REASON=""
-              break
-            fi
-          done
-        fi
+          # If no fail found, check for error patterns
+          if [ -z "$RESULT" ]; then
+            for pattern in "${ERROR_PATTERNS[@]}"; do
+              if echo "$TAIL_OUTPUT" | grep -qi "$pattern"; then
+                RESULT="error"
+                REASON="Test inconclusive or timed out"
+                break
+              fi
+            done
+          fi
 
-        # Default to error if we couldn't determine result
-        if [ -z "$RESULT" ]; then
-          RESULT="error"
-          REASON="Could not determine test result from LLM output"
+          # If no fail/error found, check for pass patterns
+          if [ -z "$RESULT" ]; then
+            for pattern in "${PASS_PATTERNS[@]}"; do
+              if echo "$TAIL_OUTPUT" | grep -qi "$pattern"; then
+                RESULT="passed"
+                REASON=""
+                break
+              fi
+            done
+          fi
+
+          # If still no result, check the full output as fallback
+          if [ -z "$RESULT" ]; then
+            for pattern in "${FAIL_PATTERNS[@]}"; do
+              if echo "$NORMALIZED_OUTPUT" | grep -qi "$pattern"; then
+                RESULT="failed"
+                REASON="Test failed (detected in full output)"
+                break
+              fi
+            done
+          fi
+
+          if [ -z "$RESULT" ]; then
+            for pattern in "${PASS_PATTERNS[@]}"; do
+              if echo "$NORMALIZED_OUTPUT" | grep -qi "$pattern"; then
+                RESULT="passed"
+                REASON=""
+                break
+              fi
+            done
+          fi
+
+          # Default to error if we couldn't determine result
+          if [ -z "$RESULT" ]; then
+            RESULT="error"
+            REASON="Could not determine test result from LLM output"
+          fi
         fi
 
         # Output results
@@ -154,6 +179,7 @@ runs:
         if [ "$DEBUG" = "true" ]; then
           echo "--- Parse LLM Test Result Debug ---"
           echo "File size: $FILE_SIZE bytes"
+          echo "Final line: $FINAL_LINE"
           echo "Result: $RESULT"
           echo "Reason: $REASON"
           echo ""

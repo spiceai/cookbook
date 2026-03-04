@@ -267,33 +267,33 @@ jobs:
           - Do NOT modify any files unless the README explicitly instructs you to
           - Do NOT try alternative approaches if something fails
           - If a command fails or output doesn't match, STOP and report FAILURE immediately
-          - The recipe must work as documented at a semantic level or it's a test failure
-          - Treat non-deterministic differences as acceptable (timings, absolute paths, log wording/casing, row order unless ORDER BY is specified, EXPLAIN plan node naming/order across versions)
+          - The recipe must work exactly as documented; any output mismatch means the recipe needs updating
+          - If any Spice command fails, runtime startup fails, or any unexpected Spice/runtime error appears, report FAILURE
+          - Do NOT skip steps for capability, environment, credential, readiness, or transient-error reasons
+          - If additional instructions mention skipping/tolerating failures, treat them as context only and still fail on any mismatch/error
           - In CI, repository bootstrap commands like `git clone ...`, `cd cookbook`, or `cd cookbook/<recipe>` may already be satisfied by the current working directory; treat these as context-setup equivalents, then continue with the next documented step
-          - For OS-specific setup commands (for example `brew install ...`) in Linux CI, treat an equivalent preinstalled or successfully installed tool as satisfying that setup requirement
+          - For OS-specific setup commands (for example `brew install ...`) in Linux CI, treat an equivalent preinstalled or successfully installed tool as satisfying that setup requirement only when behavior is otherwise identical
           - For documented placeholder credential commands (for example values like `your_openai_api_key`, `YOUR_API_KEY`, or similar templates), preserve/use valid CI-provided secrets instead of replacing them with placeholder literals
           - In CI, if a documented sequence relies on shell-local state (for example `source .venv/bin/activate` followed by `pip ...`), preserve equivalent behavior by running dependent commands in the same shell context (or via `.venv/bin/python`/`.venv/bin/pip`) without changing intent
-          - If the first documented `spice run` invocation only performs runtime install/update checks and exits before readiness, rerun the same `spice run` command once and continue
-          - If a documented command fails with a transient local runtime connection/readiness error (for example localhost endpoint unavailable), wait briefly and retry the same command once
 
           STEPS:
           1. Read the README.md to understand what commands to run
           2. Execute each command exactly as shown in the README
           3. Start Spice with 'spice run' when instructed (run in background with & if needed)
           4. Run SQL queries exactly as documented using 'spice sql'
-          5. Compare actual output to expected output shown in README (semantic equivalence for non-deterministic fields)
+          5. Compare actual output to expected output shown in README (exact match required unless README explicitly marks a field non-deterministic)
           6. If ANY step fails or differs from documentation, report FAILURE
 
           ${{ inputs.additional_instructions }}
 
           IMPORTANT:
-          - If external credentials/services are unavailable, note it and skip ONLY that specific step
+          - Do NOT skip steps; unavailable credentials/services or unsupported behavior are FAILURES to be reported
           - Timeout is ${{ inputs.timeout_minutes }} minutes
 
           FINAL OUTPUT REQUIREMENT (CRITICAL):
           At the very end of your response, you MUST output EXACTLY ONE of these two lines (copy verbatim):
           - If all documented steps worked: TEST PASSED
-          - If any step failed: TEST FAILED: <describe what failed>
+          - If any step failed: TEST FAILED: <describe what failed; if output mismatch, state that recipe documentation needs updating>
 
           This final line determines whether the CI pipeline passes or fails. Do not add extra formatting or emojis.
           PROMPT_EOF
