@@ -47,11 +47,7 @@ spice run
 
 You should see output indicating the model is ready:
 
-```shell
-2025-10-06T10:30:00.123456Z  INFO runtime::init::model: Loading model [gpt-4o-mini] from openai:gpt-4o-mini...
-2025-10-06T10:30:01.234567Z  INFO runtime::init::model: Model [gpt-4o-mini] deployed, ready for inferencing
-2025-10-06T10:30:02.345678Z  INFO runtime::init::dataset: Dataset taxi_zones registered...
-```
+Runtime startup logs vary by Spice version and environment. Continue once you see the model and dataset initialization complete and the runtime is ready.
 
 ### Step 4: Try Your First AI Query
 

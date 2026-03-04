@@ -78,22 +78,7 @@ spice run
 
 Example output:
 
-```console
-2025/11/09 14:51:05 INFO Checking for latest Spice runtime release...
-2025/11/09 14:51:05 INFO Spice.ai runtime starting...
-2025-11-09T22:51:05.790767Z  INFO spiced: Starting runtime v1.9.0-unstable-build.521d6438f+models.metal
-2025-11-09T22:51:05.792981Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s
-2025-11-09T22:51:05.793020Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s
-2025-11-09T22:51:05.793031Z  INFO runtime::init::caching: Initialized embeddings cache; max size: 128.00 MiB, item ttl: 1s
-2025-11-09T22:51:06.136639Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2025-11-09T22:51:06.137090Z  INFO runtime::init::task_history: Task history enabled: retention_period=28800s, retention_check_interval=900s
-2025-11-09T22:51:06.137446Z  INFO runtime::init::dataset: Dataset tvmaze initializing...
-2025-11-09T22:51:06.137756Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2025-11-09T22:51:06.336540Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-11-09T22:51:06.367725Z  INFO runtime::init::dataset: Dataset tvmaze registered (https://api.tvmaze.com), results cache enabled.
-2025-11-09T22:51:06.671311Z  INFO runtime::management: Connected to Spice Cloud for management and monitoring
-2025-11-09T22:51:06.774002Z  INFO runtime: All components are loaded. Spice runtime is ready!
-```
+Startup logs vary by version and environment. Continue when `tvmaze` is registered and the runtime reports readiness.
 
 **Step 3.** Run `spice sql` in a new terminal to start an interactive SQL query session.
 
