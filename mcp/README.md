@@ -86,15 +86,7 @@ cd child
 ```bash
 cat spicepod.yaml
 ```
-```yaml
-name: spicepod
-version: v1beta1
-kind: Spicepod
-
-tools:
-  - name: spice_mcp
-    from: mcp:http://localhost:8090/v1/mcp/sse
-```
+This file should define a `spice_mcp` tool that points to `http://localhost:8090/v1/mcp/sse`.
 
 6. Run the second Spice instance on separate ports.
 ```bash
