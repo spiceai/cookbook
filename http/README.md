@@ -136,8 +136,6 @@ This executes two separate API calls (one for each query parameter) and combines
 | /search/people | q=luke        |              | {"score":0.5,"person":{...}}       |
 | /search/people | q=luke        |              | {"score":0.5,"person":{...}}       |
 +----------------+---------------+--------------+------------------------------------+
-
-Time: 0.336182833 seconds. 40 rows.
 ```
 
 ## Advanced Usage

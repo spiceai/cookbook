@@ -107,10 +107,7 @@ spice run
 
 If the configuration is correct, you should see output similar to:
 
-```console
-INFO runtime::init::dataset: Dataset users initializing...
-INFO runtime::init::dataset: Dataset users registered (scylladb:users), acceleration (none), results cache enabled.
-```
+The runtime should start and register the `users` dataset.
 
 ---
 

@@ -75,16 +75,10 @@ In the terminal where `spice run` is running, you should see a message indicatin
 2024-10-30T01:37:24.266422Z  INFO runtime::accelerated_table::refresh_task: Loaded 1,000 rows (48.16 kiB) for dataset local_time_series in 3ms.
 ```
 
-And the same SQL queries as above will give updated results:
+The parent dataset count should now be updated:
 
 ```shell
 sql> SELECT COUNT(*) FROM time_series;
-+----------+
-| count(*) |
-+----------+
-| 1000     |
-+----------+
-sql> SELECT COUNT(*) FROM local_time_series;
 +----------+
 | count(*) |
 +----------+

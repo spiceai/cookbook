@@ -36,13 +36,7 @@ These steps only need to be done once. Use a Python `virtualenv` to keep project
 2. Activate the virtual environment: `source .venv/bin/activate`
 3. Install the required packages: `pip install openai python-dotenv`
 
-Run the client: `python spice_openai_sdk.py` and observe the model's response to the `What datasets do I have access to?` question:
-
-```bash
-You have access to the following dataset:
-
-- **taxi_trips**: This dataset contains data about taxi trips in s3.
-```
+Run the client: `python spice_openai_sdk.py`.
 
 ### Using uv
 
@@ -50,13 +44,7 @@ You have access to the following dataset:
 2. Activate the virtual environment: `source .venv/bin/activate`
 3. Ensure the packages are installed: `uv pip install openai python-dotenv`
 
-Run the client: `uv run spice_openai_sdk.py` and observe the model's response to the `What datasets do I have access to?` question:
-
-```bash
-You have access to the following dataset:
-
-- **taxi_trips**: This dataset contains data about taxi trips in s3.
-```
+Run the client: `uv run spice_openai_sdk.py`.
 
 ## About the client
 

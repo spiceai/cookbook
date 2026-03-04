@@ -49,21 +49,6 @@ curl -XPOST http://127.0.0.1:8090/v1/tools/fs/list_directory \
 ```bash
 spice chat
 ```
-```bash
->>> spice chat
-Spice.ai OSS CLI v1.1.0
-Using model: openai-with-spice
-
-chat> Summarize the README.md
-The README.md for the Spice.ai OSS Cookbook serves as a comprehensive guide to creating and deploying data and AI applications using Spice.ai. It is structured into various sections, each offering recipes for different use cases and features. Here’s a summary of its contents:
-
-### Overview
-- **Spice.ai OSS Cookbook**: A collection of recipes demonstrating how to utilize Spice.ai for data and AI application development.
-
-### Main Sections
-- **Guides**: Provides practical instructions, such as the "Real-time Data Access Pattern Analysis" for security analysis.
-...
-```
 
 7. Make sure the LLM called the MCP tool (and didn't hallucinate)
 ```bash

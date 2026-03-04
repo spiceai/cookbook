@@ -53,16 +53,7 @@ Then execute a query on the `yellow_taxis` dataset.
 select avg(passenger_count) from yellow_taxis;
 ```
 
-You should see the following output:
-
-```output
-sql> select avg(passenger_count) from yellow_taxis;
-+-----------------------------------+
-| avg(yellow_taxis.passenger_count) |
-+-----------------------------------+
-| 1.3392808966805005                |
-+-----------------------------------+
-```
+This query returns a single-row aggregate result.
 
 ### Step 5: Terminate the Spice Runtime
 

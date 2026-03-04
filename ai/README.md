@@ -128,18 +128,7 @@ WHERE Borough = 'Manhattan'
 LIMIT 3;
 ```
 
-### Example 5: Using Multiple Models
-
-Compare responses from different models (requires multiple models configured):
-
-```sql
-SELECT
-  left(ai('Explain quantum computing in 10 words', 'gpt-4o-mini'), 50) as gpt4,
-  left(ai('Explain quantum computing in 10 words', 'sonnet-4-5'), 50) as claude
-FROM (SELECT 1);  -- Dummy table for single row;
-```
-
-### Example 6: Translation
+### Example 5: Translation
 
 Translate text to different languages:
 

@@ -76,18 +76,18 @@ INFO Installing Spice.ai runtime v1.11.2 (spiced_models_linux_x86_64.tar.gz)...
 
 For more information on using `spice sql`, see the [CLI reference](https://docs.spiceai.org/cli/reference/sql).
 
-**Step 4.** Execute a deterministic query to verify GraphQL data is available:
+**Step 4.** Verify the dataset is registered:
 
 ```sql
-select count(*) > 0 as has_rows from stargazers;
+SHOW TABLES;
 ```
 
 Example output:
 
 ```console
-+----------+
-| has_rows |
-+----------+
-| true     |
-+----------+
++-----------+
+| table     |
++-----------+
+| stargazers|
++-----------+
 ```
