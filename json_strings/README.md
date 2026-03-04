@@ -64,7 +64,17 @@ spice run
 
 Result:
 
-Startup logs vary by version and environment. Continue when `products` is registered and the runtime is ready.
+```console
+2024/12/22 16:15:42 INFO Checking for latest Spice runtime release...
+2024/12/22 16:15:42 INFO Spice.ai runtime starting...
+2024-12-23T00:15:42.923112Z  INFO runtime::init::dataset: Initializing dataset products
+2024-12-23T00:15:42.925812Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
+2024-12-23T00:15:42.926466Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2024-12-23T00:15:42.929730Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2024-12-23T00:15:42.936005Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
+2024-12-23T00:15:42.937855Z  INFO runtime::init::dataset: Dataset products registered (file://tshirts.csv).
+2024-12-23T00:15:43.123000Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+```
 
 Run `spice sql` in another window and review the `products` dataset structure. You will observe that the `products.properties` field represents JSON data stored as a string (Utf8).
 

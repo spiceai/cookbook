@@ -28,8 +28,42 @@ GITHUB_TOKEN=<your_github_token>
 spice run
 ```
 
-Startup logs vary by version and environment. Continue once the configured GitHub datasets are registered and the runtime reports readiness.
-Wait until dataset loading/refresh activity settles before running SQL queries.
+```console
+2025/07/16 08:17:09 INFO Checking for latest Spice runtime release...
+2025/07/16 08:17:13 INFO Spice.ai runtime starting...
+2025-07-16T15:17:13.713677Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2025-07-16T15:17:13.713846Z  INFO runtime::init::caching: Initialized search results cache;
+2025-07-16T15:17:14.160058Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
+2025-07-16T15:17:14.160281Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2025-07-16T15:17:14.162142Z  INFO runtime::init::dataset: Initializing dataset spiceai.issues
+2025-07-16T15:17:14.162164Z  INFO runtime::init::dataset: Initializing dataset spiceai.pulls
+2025-07-16T15:17:14.162231Z  INFO runtime::init::dataset: Initializing dataset spiceai.commits
+2025-07-16T15:17:14.162161Z  INFO runtime::init::dataset: Initializing dataset apache.members
+2025-07-16T15:17:14.162218Z  INFO runtime::init::dataset: Initializing dataset spiceai.stargazers
+2025-07-16T15:17:14.162515Z  INFO runtime::init::dataset: Initializing dataset spiceai.files
+2025-07-16T15:17:14.166935Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2025-07-16T15:17:15.311687Z  INFO runtime::init::dataset: Dataset spiceai.commits registered (github:github.com/spiceai/spiceai/commits), acceleration (arrow), results cache enabled.
+2025-07-16T15:17:15.313347Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset spiceai.commits
+2025-07-16T15:17:15.507378Z  INFO runtime::init::dataset: Dataset spiceai.stargazers registered (github:github.com/spiceai/spiceai/stargazers), acceleration (arrow), results cache enabled.
+2025-07-16T15:17:15.508684Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset spiceai.stargazers
+2025-07-16T15:17:16.406635Z  INFO runtime::init::dataset: Dataset spiceai.files registered (github:github.com/spiceai/spiceai/files/trunk), acceleration (arrow), results cache enabled.
+2025-07-16T15:17:16.407961Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset spiceai.files
+2025-07-16T15:17:16.772995Z  INFO runtime::init::dataset: Dataset spiceai.issues registered (github:github.com/spiceai/spiceai/issues), acceleration (arrow), results cache enabled.
+2025-07-16T15:17:16.774218Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset spiceai.issues
+2025-07-16T15:17:17.447103Z  INFO runtime::init::dataset: Dataset apache.members registered (github:github.com/apache/members), acceleration (arrow), results cache enabled.
+2025-07-16T15:17:17.448839Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset apache.members
+```
+
+Wait until all datasets are loaded:
+
+```console
+2025-07-16T15:17:18.240151Z  INFO runtime::accelerated_table::refresh_task: Loaded 52 rows (184.75 kiB) for dataset spiceai.issues in 1s 465ms.
+2025-07-16T15:17:19.861151Z  INFO runtime::accelerated_table::refresh_task: Loaded 300 rows (617.12 kiB) for dataset spiceai.stargazers in 4s 352ms.
+2025-07-16T15:17:19.965102Z  INFO runtime::accelerated_table::refresh_task: Loaded 300 rows (618.50 kiB) for dataset apache.members in 2s 516ms.
+2025-07-16T15:17:23.204760Z  INFO runtime::accelerated_table::refresh_task: Loaded 140 rows (1.20 MiB) for dataset spiceai.files in 6s 796ms.
+2025-07-16T15:17:26.329481Z  INFO runtime::accelerated_table::refresh_task: Loaded 49 rows (149.97 kiB) for dataset spiceai.pulls in 3s 203ms.
+2025-07-16T15:17:26.419725Z  INFO runtime::accelerated_table::refresh_task: Loaded 300 rows (908.66 kiB) for dataset spiceai.commits in 11s 106ms.
+```
 
 **Step 3.** Run `spice sql` in a new terminal to start an interactive SQL query session against the Spice runtime.
 

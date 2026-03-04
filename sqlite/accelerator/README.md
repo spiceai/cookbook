@@ -25,7 +25,14 @@ spice run
 
 Output:
 
-Startup logs vary by version and environment. Continue once `taxi_trips` is registered and the runtime is ready.
+```bash
+2024-09-10T06:54:36.184935Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
+2024-09-10T06:54:36.185086Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2024-09-10T06:54:36.187305Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2024-09-10T06:54:36.193225Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
+2024-09-10T06:54:36.385124Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2024-09-10T06:54:37.020990Z  INFO runtime: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), results cache enabled.
+```
 
 ## Step 2. Run query against the dataset using the Spice SQL REPL
 
@@ -104,7 +111,12 @@ datasets:
 
 The following output is shown in the Spice runtime terminal confirming new configuration is applied.
 
-The exact refresh logs vary by version and environment. Continue when `taxi_trips` is re-registered with `acceleration (sqlite:file)` and refresh completes.
+```bash
+2024-09-10T06:59:21.908667Z  INFO runtime: Unloaded dataset taxi_trips
+2024-09-10T06:59:22.524295Z  INFO runtime: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (sqlite:file), results cache enabled.
+2024-09-10T06:59:22.525789Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
+2024-09-10T06:59:39.244473Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (421.71 MiB) for dataset taxi_trips in 16s 718ms.
+```
 
 Run query to display the longest taxi trips again:
 

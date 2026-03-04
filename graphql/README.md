@@ -68,8 +68,6 @@ spice run
 
 Example output:
 
-Startup logs are non-deterministic across Spice/runtime versions.
-
 ```console
 2025/07/07 11:32:50 INFO Checking for latest Spice runtime release...
 2025/07/07 11:32:50 INFO Spice.ai runtime starting...
@@ -98,8 +96,6 @@ select * from stargazers limit 10;
 
 Example output:
 
-Result rows and ordering are non-deterministic because the upstream GitHub dataset changes over time. Validate the presence of expected columns (`starredAt`, `node`) and that rows are returned.
-
 ```console
 +----------------------+---------------------------------------------------------------------------------+
 | starredAt            | node                                                                            |
@@ -116,5 +112,5 @@ Result rows and ordering are non-deterministic because the upstream GitHub datas
 | 2021-09-07T21:15:22Z | {id: MDQ6VXNlcjMwNjUyNA==, name: Felix Chan, login: felixchan}                  |
 +----------------------+---------------------------------------------------------------------------------+
 
-Time: <non-deterministic> seconds. 10 rows.
+Time: 0.00609725 seconds. 10 rows.
 ```

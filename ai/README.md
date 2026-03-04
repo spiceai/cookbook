@@ -47,7 +47,11 @@ spice run
 
 You should see output indicating the model is ready:
 
-Runtime startup logs vary by Spice version and environment. Continue once you see the model and dataset initialization complete and the runtime is ready.
+```shell
+2025-10-06T10:30:00.123456Z  INFO runtime::init::model: Loading model [gpt-4o-mini] from openai:gpt-4o-mini...
+2025-10-06T10:30:01.234567Z  INFO runtime::init::model: Model [gpt-4o-mini] deployed, ready for inferencing
+2025-10-06T10:30:02.345678Z  INFO runtime::init::dataset: Dataset taxi_zones registered...
+```
 
 ### Step 4: Try Your First AI Query
 
@@ -65,13 +69,11 @@ SELECT ai('Say hello in a creative way!') as greeting;
 
 Result:
 
-The exact generated greeting text is non-deterministic and can vary across model/runtime versions. Treat this step as successful when a single non-empty `greeting` value is returned.
-
 ```text
 +--------------------------------------------------+
 | greeting                                         |
 +--------------------------------------------------+
-| <non-deterministic generated greeting text>      |
+| Greetings, cosmic wanderer! 🌟 How do you do?  |
 +--------------------------------------------------+
 ```
 

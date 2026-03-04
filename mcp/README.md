@@ -31,8 +31,6 @@ spice run
 ```bash
 curl http://127.0.0.1:8090/v1/tools | jq '.[].name'
 ```
-
-Tool ordering and the full set of tools are non-deterministic across Spice/runtime versions and enabled integrations. Validate semantically that built-in tools (e.g. `sql`) and MCP filesystem tools (e.g. `fs/list_directory`) are present.
 ```bash
 "sql"
 "top_n_sample"
@@ -164,8 +162,6 @@ spice run --http-endpoint 127.0.0.1:8091 --flight-endpoint 127.0.0.1:50061 --met
 ```bash
 curl http://127.0.0.1:8091/v1/tools | jq '.[].name'
 ```
-
-As above, tool ordering and full tool lists are non-deterministic; validate that both local tools and proxied `spice_mcp/*` tools are available.
 ```bash
 "top_n_sample"
 "search"
