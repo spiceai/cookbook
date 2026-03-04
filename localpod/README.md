@@ -68,12 +68,7 @@ Let's insert new data into the parent dataset and see the `localpod` update. In 
 ./generate_data.sh
 ```
 
-In the terminal where `spice run` is running, you should see a message indicating the new data is loaded:
-
-```shell
-2024-10-30T01:37:24.266411Z  INFO runtime::accelerated_table::refresh_task: Loaded 1,000 rows (48.16 kiB) for dataset time_series in 3ms.
-2024-10-30T01:37:24.266422Z  INFO runtime::accelerated_table::refresh_task: Loaded 1,000 rows (48.16 kiB) for dataset local_time_series in 3ms.
-```
+In the terminal where `spice run` is running, wait for refresh logs indicating new data was loaded.
 
 The parent dataset count should now be updated:
 

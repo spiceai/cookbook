@@ -201,22 +201,6 @@ If an AI call fails, the function returns `NULL` and logs the error. You can che
 
 ## Advanced Usage
 
-### Task History
-
-Every `ai()` call is tracked in the `runtime.task_history` table:
-
-```sql
-SELECT
-  task_id,
-  task,
-  execution_time,
-  captured_output
-FROM runtime.task_history
-WHERE task = 'ai'
-ORDER BY captured_at DESC
-LIMIT 5;
-```
-
 ### Combining with Other Functions
 
 The `ai()` function works seamlessly with SQL:

@@ -75,12 +75,3 @@ Here we're using the chat completions API to ask a question. Notice that we're a
 ```python
 print(chat_completion.choices[0].message.content)
 ```
-
-```shell
-You have access to the following dataset:
-
-- **Table Name:** taxi_trips
-  - **Description:** Taxi trips data stored in S3.
-
-This dataset is available in the SQL database.
-```

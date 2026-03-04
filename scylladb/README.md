@@ -25,6 +25,7 @@ cd cookbook/scylladb
 If you don't have an existing ScyllaDB cluster, you can start one locally using Docker:
 
 ```bash
+docker rm -f scylladb >/dev/null 2>&1 || true
 docker run --name scylladb -d \
   -p 9042:9042 \
   scylladb/scylla:latest \

@@ -130,21 +130,17 @@ spice sql
 Then execute a query on the `docs` dataset.
 
 ```sql
-select location from docs;
+select count(*) > 0 as has_docs from docs;
 ```
 
 Expected output:
 
 ```text
-+---------------------------------------------+
-| location                                    |
-+---------------------------------------------+
-| Users/lukim/dev/cookbook/file/debezium.md   |
-| Users/lukim/dev/cookbook/file/databricks.md |
-| Users/lukim/dev/cookbook/file/README.md     |
-| Users/lukim/dev/cookbook/file/clickhouse.md |
-| Users/lukim/dev/cookbook/file/delta-lake.md |
-+---------------------------------------------+
++----------+
+| has_docs |
++----------+
+| true     |
++----------+
 ```
 
 ### Step 5: Terminate the Spice Runtime

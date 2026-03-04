@@ -24,11 +24,7 @@ In a separate terminal, in the `accelerated-views` directory, add the `spiceai/t
 spice add spiceai/tpch
 ```
 
-Example output:
-
-```bash
-Getting Spicepod... added spicepods/spiceai/tpch
-```
+Wait for `spice add` to complete successfully before continuing.
 
 ## Step 3: Create View
 
@@ -88,13 +84,7 @@ views:
 EOF
 ```
 
-Example output:
-
-```bash
-2025-05-18T20:20:11.150665Z  INFO runtime::datafusion: View supplier_order_waits registered, acceleration (duckdb, 3600s refresh).
-2025-05-18T20:20:11.151971Z  INFO runtime::accelerated_table::refresh_task: Loading data for view supplier_order_waits
-2025-05-18T20:20:12.414223Z  INFO runtime::accelerated_table::refresh_task: Loaded 10,000 rows (481.43 kiB) for view supplier_order_waits in 1s 262ms.
-```
+Wait for the view registration and initial refresh to complete before querying.
 
 ## Step 4: Run Queries
 
@@ -241,15 +231,7 @@ Start the Spice Runtime, and observe scheduled refreshes:
 spice run
 ```
 
-Example output:
-
-```bash
-2025-05-18T20:20:11.150665Z  INFO runtime::datafusion: View supplier_order_waits registered, acceleration (duckdb, 3600s refresh).
-2025-05-18T20:20:11.151971Z  INFO runtime::accelerated_table::refresh_task: Loading data for view supplier_order_waits
-2025-05-18T20:20:12.414223Z  INFO runtime::accelerated_table::refresh_task: Loaded 10,000 rows (481.43 kiB) for view supplier_order_waits in 1s 262ms.
-2025-05-18T20:21:00.151971Z  INFO runtime::accelerated_table::refresh_task: Loading data for view supplier_order_waits
-2025-05-18T20:21:01.414223Z  INFO runtime::accelerated_table::refresh_task: Loaded 10,000 rows (481.43 kiB) for view supplier_order_waits in 1s 262ms.
-```
+Observe periodic refresh log entries for the view.
 
 ## Additional Resources
 

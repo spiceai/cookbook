@@ -82,12 +82,4 @@ For more information on using `spice sql`, see the [CLI reference](https://docs.
 SHOW TABLES;
 ```
 
-Example output:
 
-```console
-+-----------+
-| table     |
-+-----------+
-| stargazers|
-+-----------+
-```
