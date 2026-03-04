@@ -53,6 +53,8 @@ spice chat
 ## Connect to Spice over MCP
 Spice is an MCP server. It can be connected to like any other MCP server running over HTTP SSE.
 
+Before starting this section, stop the previous `spice run` process from the earlier section to avoid port conflicts.
+
 1. Clone the cookbook, and navigate to the MCP recipe.
 
 ```bash

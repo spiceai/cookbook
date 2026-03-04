@@ -67,5 +67,3 @@ The parent dataset count should now be updated:
 ```shell
 sql> SELECT COUNT(*) FROM time_series;
 ```
-
-The `local_time_series` dataset is accelerated locally using [DuckDB](https://docs.spiceai.org/components/data-accelerators/duckdb) and may refresh shortly after the parent dataset update.

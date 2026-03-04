@@ -46,7 +46,8 @@ docker exec scylladb nodetool status
 Connect to the ScyllaDB CQL shell:
 
 ```bash
-docker exec -it scylladb cqlsh
+until docker exec scylladb cqlsh -e "DESCRIBE KEYSPACES" >/dev/null 2>&1; do sleep 5; done
+docker exec scylladb cqlsh
 ```
 
 Create a keyspace and table with sample data:
