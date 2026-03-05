@@ -130,4 +130,4 @@ curl --retry 10 --retry-delay 5 --retry-all-errors --max-time 180 -XPOST http://
 }"
 ```
 
-The response should contain one or more matched documents from `spiceai.files`.
+This request should return a JSON response from the child runtime.
