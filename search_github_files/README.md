@@ -91,16 +91,30 @@ Spice can build full-text search indexes from dataset columns. Enable full text 
 
 1. In the `spicepod.yaml`, uncomment `datasets[1]` (i.e. `doc.pulls` dataset).
 2. Restart the spiced.
-3. Perform a basic search
+3. Warm up full-text search indexing:
 
 ```shell
-curl -XPOST http://localhost:8090/v1/search \
-    -H "Content-Type: application/json" \
-    -d '{
-        "datasets": ["doc.pulls"],
-        "text": "Glue data",
-        "limit": 3
-    }'
+for _ in {1..30}; do
+  curl -s --max-time 20 -XPOST http://localhost:8090/v1/search \
+      -H "Content-Type: application/json" \
+      -d '{"datasets":["doc.pulls"],"text":"Glue data","limit":1}' >/dev/null 2>&1 && break
+  sleep 10
+done
+```
+
+4. Perform a basic search
+
+```shell
+for _ in {1..20}; do
+  curl -s --max-time 60 -XPOST http://localhost:8090/v1/search \
+      -H "Content-Type: application/json" \
+      -d '{
+          "datasets": ["doc.pulls"],
+          "text": "Glue data",
+          "limit": 3
+      }' && break
+  sleep 10
+done
 ```
 
 Note: Only the columns marked `full_text_search.enabled: true` and the table primary keys are stored in the search index.
