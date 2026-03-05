@@ -39,17 +39,13 @@ Wait until the runtime reports it is ready before opening `spice sql`.
 
 ### Querying the `localpod`
 
-In a new terminal, start `spice sql` and run these two queries to validate that both datasets contain the same number of rows:
+In a new terminal, start `spice sql` and run this query to check the parent dataset:
 
 ```shell
 $ spice sql
 
 sql> SELECT COUNT(*) FROM time_series;
-
-sql> SELECT COUNT(*) FROM local_time_series;
 ```
-
-Both queries should return the same count value.
 
 
 ### Updating the parent dataset

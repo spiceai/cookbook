@@ -67,16 +67,6 @@ Try this simple example:
 SELECT ai('Respond with exactly HELLO and no other text.') as greeting;
 ```
 
-Result:
-
-```text
-+----------+
-| greeting |
-+----------+
-| HELLO    |
-+----------+
-```
-
 ## Example Queries
 
 ### Example 1: Simple Text Generation

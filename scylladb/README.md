@@ -43,50 +43,16 @@ docker exec scylladb nodetool status
 
 ## Step 3. Create a Keyspace and Table with Sample Data
 
-Connect to the ScyllaDB CQL shell:
+Run the following commands to create the keyspace/table and insert sample rows:
 
 ```bash
 until docker exec scylladb cqlsh -e "DESCRIBE KEYSPACES" >/dev/null 2>&1; do sleep 5; done
-docker exec scylladb cqlsh
-```
-
-Create a keyspace and table with sample data:
-
-```sql
--- Create keyspace
-CREATE KEYSPACE IF NOT EXISTS demo
-WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
-
--- Use the keyspace
-USE demo;
-
--- Create a sample users table
-CREATE TABLE IF NOT EXISTS users (
-    id UUID PRIMARY KEY,
-    name TEXT,
-    email TEXT,
-    age INT,
-    created_at TIMESTAMP
-);
-
--- Insert sample data
-INSERT INTO users (id, name, email, age, created_at)
-VALUES (uuid(), 'Alice Smith', 'alice@example.com', 30, toTimestamp(now()));
-
-INSERT INTO users (id, name, email, age, created_at)
-VALUES (uuid(), 'Bob Johnson', 'bob@example.com', 25, toTimestamp(now()));
-
-INSERT INTO users (id, name, email, age, created_at)
-VALUES (uuid(), 'Charlie Brown', 'charlie@example.com', 35, toTimestamp(now()));
-
--- Verify data
-SELECT * FROM users;
-```
-
-Exit the CQL shell:
-
-```sql
-EXIT;
+docker exec scylladb cqlsh -e "CREATE KEYSPACE IF NOT EXISTS demo WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};"
+docker exec scylladb cqlsh -e "CREATE TABLE IF NOT EXISTS demo.users (id UUID PRIMARY KEY, name TEXT, email TEXT, age INT, created_at TIMESTAMP);"
+docker exec scylladb cqlsh -e "INSERT INTO demo.users (id, name, email, age, created_at) VALUES (uuid(), 'Alice Smith', 'alice@example.com', 30, toTimestamp(now()));"
+docker exec scylladb cqlsh -e "INSERT INTO demo.users (id, name, email, age, created_at) VALUES (uuid(), 'Bob Johnson', 'bob@example.com', 25, toTimestamp(now()));"
+docker exec scylladb cqlsh -e "INSERT INTO demo.users (id, name, email, age, created_at) VALUES (uuid(), 'Charlie Brown', 'charlie@example.com', 35, toTimestamp(now()));"
+docker exec scylladb cqlsh -e "SELECT * FROM demo.users;"
 ```
 
 ---

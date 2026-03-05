@@ -14,26 +14,7 @@ cd cookbook/hashed_partitioning
 ```
 
 ## Step 2. Spicepod configuration
-The `spicepod.yaml` configuration will accelerate and partition the `taxi_trips` dataset by hashing the `PULocationID` column and placing the data into one of 10 buckets using the `partition_by` parameter.
-
-```yaml
-version: v1
-kind: Spicepod
-name: hashed-partitioning
-
-datasets:
-  - from: s3://spiceai-demo-datasets/taxi_trips/2024/
-    name: taxi_trips
-    description: taxi trips in s3
-    params:
-      file_format: parquet
-    acceleration:
-      enabled: true
-      engine: duckdb
-      mode: file
-      partition_by:
-        - bucket(10, PULocationID)
-```
+Review `spicepod.yaml` in this directory. It configures `taxi_trips` acceleration with hashed partitioning on `PULocationID` using `partition_by` and `bucket(10, PULocationID)`.
 
 If you know you will be writing queries that filter on the `PULocationID` often, this can improve query times for very large tables by pruning the amount of data required to be read in order to execute the query.
 
