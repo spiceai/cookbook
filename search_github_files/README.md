@@ -119,29 +119,3 @@ done
 
 Note: Only the columns marked `full_text_search.enabled: true` and the table primary keys are stored in the search index.
 
-## Pre-existing embeddings
-
-Spiced can perform vector search on table that already have the required embedding columns. To try this:
-
-1. Run a new `spiced` instance pointing to the currently running `spiced`.
-
-```shell
-cd child/
-spiced --http 127.0.0.1:8091 --flight 127.0.0.1:50061 --open_telemetry 127.0.0.1:50062
-```
-
-2. Rerun the search, this time against the child `spiced` (port `8091`)
-
-```shell
-curl --retry 10 --retry-delay 5 --retry-all-errors --max-time 180 -XPOST http://localhost:8091/v1/search \
--H 'Content-Type: application/json' \
--d "{
-    \"datasets\": [\"spiceai.files\"],
-    \"text\": \"errors\",
-    \"where\": \"not contains(path, 'docs/release_notes')\",
-    \"additional_columns\": [\"download_url\"],
-    \"limit\": 1
-}"
-```
-
-This request should return a JSON response from the child runtime.
