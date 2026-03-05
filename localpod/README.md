@@ -48,18 +48,4 @@ sql> SELECT COUNT(*) FROM time_series;
 ```
 
 
-### Updating the parent dataset
-
-Let's insert new data into the parent dataset. In a new terminal, navigate to this sample directory and run the following:
-
-```shell
-./generate_data.sh
-```
-
-In the terminal where `spice run` is running, wait for refresh logs indicating new data was loaded.
-
-The parent dataset count should now be updated:
-
-```shell
-sql> SELECT COUNT(*) FROM time_series;
-```
+You can optionally experiment with `./generate_data.sh` to add records to the parent dataset and observe refresh behavior in your local environment.
