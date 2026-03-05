@@ -56,15 +56,18 @@ done
 4. Perform a basic search
 
 ```shell
-curl --retry 10 --retry-delay 5 --retry-all-errors --max-time 180 -XPOST http://localhost:8090/v1/search \
-    -H "Content-Type: application/json" \
-    -d "{
-    \"datasets\": [\"spiceai.files\"],
-    \"text\": \"testing\",
-    \"where\": \"not contains(path, 'docs/release_notes')\",
-    \"additional_columns\": [\"download_url\"],
-  \"limit\": 1
-    }"
+for _ in {1..20}; do
+    curl --retry 3 --retry-delay 5 --retry-all-errors --max-time 60 -XPOST http://localhost:8090/v1/search \
+            -H "Content-Type: application/json" \
+            -d "{
+            \"datasets\": [\"spiceai.files\"],
+            \"text\": \"testing\",
+            \"where\": \"not contains(path, 'docs/release_notes')\",
+            \"additional_columns\": [\"download_url\"],
+            \"limit\": 1
+            }" && break
+    sleep 10
+done
 ```
 
 5. Rerun the search, and retrieve the full document by adding `content` column to `additional_columns`).
