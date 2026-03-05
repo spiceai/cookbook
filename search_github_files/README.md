@@ -57,7 +57,7 @@ done
 
 ```shell
 for _ in {1..20}; do
-    curl --retry 3 --retry-delay 5 --retry-all-errors --max-time 60 -XPOST http://localhost:8090/v1/search \
+    curl -s --max-time 60 -XPOST http://localhost:8090/v1/search \
             -H "Content-Type: application/json" \
             -d "{
             \"datasets\": [\"spiceai.files\"],
@@ -65,7 +65,7 @@ for _ in {1..20}; do
             \"where\": \"not contains(path, 'docs/release_notes')\",
             \"additional_columns\": [\"download_url\"],
             \"limit\": 1
-            }" && break
+            }" >/dev/null 2>&1 && break
     sleep 10
 done
 ```
