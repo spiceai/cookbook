@@ -35,9 +35,9 @@ until curl -sS http://127.0.0.1:8090/v1/tools >/dev/null; do sleep 2; done
 
 4. Show the available tools.
 ```bash
-curl -sS http://127.0.0.1:8090/v1/tools | jq '.[].name'
+curl -sS http://127.0.0.1:8090/v1/tools | jq 'type, length'
 ```
-This returns the available tool names for the running runtime (including built-in tools and MCP-provided tools).
+This confirms the endpoint returns a JSON array. The array may be empty while tools are still initializing.
 
 5. List the files from the current directory using the `fs/list_directory` MCP tool.
 ```bash
