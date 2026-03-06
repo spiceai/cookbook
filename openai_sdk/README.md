@@ -31,8 +31,7 @@ Spice will use your OpenAI API key to communicate with OpenAI on your client cod
 Install dependencies and run the client:
 
 ```bash
-python -m pip install openai python-dotenv
-python spice_openai_sdk.py
+uv run --with openai --with python-dotenv spice_openai_sdk.py
 ```
 
 ## About the client
