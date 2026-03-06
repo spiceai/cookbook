@@ -42,9 +42,8 @@ Wait until the runtime reports it is ready before opening `spice sql`.
 In a new terminal, start `spice sql` and run this query to check the parent dataset:
 
 ```shell
-$ spice sql
-
-sql> SELECT COUNT(*) FROM time_series;
+spice sql
+SELECT COUNT(*) FROM time_series;
 ```
 
 

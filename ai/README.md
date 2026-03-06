@@ -42,6 +42,7 @@ SPICE_OPENAI_API_KEY=your_openai_api_key_here
 ### Step 3: Start Spice
 
 ```bash
+spice install
 spice run
 ```
 
