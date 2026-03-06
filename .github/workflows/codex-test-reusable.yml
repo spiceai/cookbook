@@ -326,7 +326,7 @@ jobs:
         run: |
           set -o pipefail
           codex exec \
-                --model gpt-5.3-codex \
+                --model gpt-5.4 \
                 --dangerously-bypass-approvals-and-sandbox \
                 "$(cat ${{ steps.prompt.outputs.file }})" \
                 2>&1 | tee "${{ env.OUTPUT_FILE }}"
