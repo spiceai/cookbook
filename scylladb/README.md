@@ -98,17 +98,7 @@ To query your sample data:
 SELECT name, email, age FROM users ORDER BY name;
 ```
 
-Sample output:
-
-```console
-+---------------+---------------------+-----+
-| name          | email               | age |
-+---------------+---------------------+-----+
-| Alice Smith   | alice@example.com   | 30  |
-| Bob Johnson   | bob@example.com     | 25  |
-| Charlie Brown | charlie@example.com | 35  |
-+---------------+---------------------+-----+
-```
+This query should return the sample rows inserted in Step 3.
 
 ---
 
