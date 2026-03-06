@@ -19,6 +19,7 @@ cd cookbook/openai_sdk
 # Add your OpenAI API key to the .env file
 echo "SPICE_OPENAI_API_KEY=your_openai_api_key" > .env
 # Start Spice
+spice install
 spice run
 ```
 

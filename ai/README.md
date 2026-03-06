@@ -57,6 +57,7 @@ spice sql
 ```
 
 Wait until the runtime reports that it is ready before proceeding.
+When you are done with `spice sql`, leave the REPL with `Ctrl+D` (EOF) rather than running `exit;` as a SQL statement.
 
 ## Example Queries
 

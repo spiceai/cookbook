@@ -100,7 +100,7 @@ Review view content:
 SELECT * FROM supplier_order_waits LIMIT 5;
 ```
 
-Run the _Suppliers Who Kept Orders Waiting Query (Q21)_ directly:
+Run a filtered query against the accelerated view:
 
 ```sql
 SELECT * FROM supplier_order_waits WHERE nation = 'SAUDI ARABIA' LIMIT 10;
@@ -108,7 +108,7 @@ SELECT * FROM supplier_order_waits WHERE nation = 'SAUDI ARABIA' LIMIT 10;
 
 Observe the query execution time.
 
-Now query the same data using the created view and observe reduced latency due to pre-calculated results.
+Run the same query again to compare warm-cache behavior.
 
 ```sql
 SELECT * FROM supplier_order_waits WHERE nation = 'SAUDI ARABIA' LIMIT 10;
