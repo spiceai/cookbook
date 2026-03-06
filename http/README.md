@@ -94,17 +94,7 @@ WHERE request_path = '/shows/169';
 
 This queries the Breaking Bad show details. The `content` column contains the full JSON response:
 
-```console
-+---------------+-----------------+------------------------------------------+
-| request_path  | response_status | content                                  |
-+---------------+-----------------+------------------------------------------+
-| /shows/169    | 200             | {"id":169,"url":"https://www.tvmaze.com/|
-|               |                 | shows/169/breaking-bad","name":"Breaking |
-|               |                 | Bad","type":"Scripted","language":       |
-|               |                 | "English","genres":["Drama","Crime",     |
-|               |                 | "Thriller"],"status":"Ended",...}        |
-+---------------+-----------------+------------------------------------------+
-```
+You should see a row for `/shows/169` with HTTP status and JSON content.
 
 ### Search for people using query parameters
 

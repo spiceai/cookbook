@@ -66,12 +66,6 @@ cd path/to/graphql
 spice run
 ```
 
-Example output:
-
-```console
-INFO Installing Spice.ai runtime v1.11.2 (spiced_models_linux_x86_64.tar.gz)...
-```
-
 **Step 3.** Run `spice sql` in a new terminal to start an interactive SQL query session against the Spice runtime.
 
 For more information on using `spice sql`, see the [CLI reference](https://docs.spiceai.org/cli/reference/sql).

@@ -133,15 +133,7 @@ Then execute a query on the `docs` dataset.
 select count(*) > 0 as has_docs from docs;
 ```
 
-Expected output:
-
-```text
-+----------+
-| has_docs |
-+----------+
-| true     |
-+----------+
-```
+This query should return a single boolean indicating whether markdown documents were loaded.
 
 ### Step 5: Terminate the Spice Runtime
 

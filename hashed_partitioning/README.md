@@ -37,16 +37,6 @@ EXPLAIN SELECT * FROM taxi_trips;
 
 and you'll see a plan shape where `logical_plan` begins with `TableScan` and `physical_plan` includes `PartitionedUnionExec` and `CooperativeExec` over partitioned scans.
 
-```shell
-logical_plan
-  TableScan: taxi_trips projection=[VendorID, tpep_pickup_datetime, tpep_dropoff_datetime, passenger_count, trip_distance, RatecodeID, store_and_fwd_flag, PULocationID, DOLocationID, payment_type, fare_amount, extra, mta_tax, tip_amount, tolls_amount, improvement_surcharge, total_amount, congestion_surcharge, Airport_fee]
-
-physical_plan
-  PartitionedUnionExec
-    CooperativeExec
-      ... partition scans ...
-```
-
 If you add a filter on the partitioned column to the query,
 
 ```sql

@@ -48,4 +48,4 @@ sql> SELECT COUNT(*) FROM time_series;
 ```
 
 
-You can optionally experiment with `./generate_data.sh` to add records to the parent dataset and observe refresh behavior in your local environment.
+You can optionally add records to the parent dataset and observe refresh behavior in your local environment.
