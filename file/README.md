@@ -148,7 +148,7 @@ Remove the created files:
 rm spicepod.yaml
 
 # Remove the downloaded Markdown files
-rm *.md
+rm clickhouse.md databricks.md debezium.md delta-lake.md
 ```
 
 ## Additional Resources
