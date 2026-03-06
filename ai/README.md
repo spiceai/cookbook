@@ -193,9 +193,10 @@ SELECT upper(ai('say hello')) as loud_greeting;
 -- Get first 20 characters of response
 SELECT left(ai('Write a long story'), 20) as preview;
 
--- Use in WHERE clauses
-SELECT Zone, Borough FROM taxi_zones
-WHERE ai('Is this in Manhattan? Answer yes or no: ' || Borough) = 'yes'
+-- Use in projections for row-level classification
+SELECT Zone, Borough,
+  ai('Is this in Manhattan? Answer yes or no: ' || Borough) as is_manhattan
+FROM taxi_zones
 LIMIT 5;
 ```
 
