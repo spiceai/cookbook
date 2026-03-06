@@ -28,21 +28,12 @@ Spice will use your OpenAI API key to communicate with OpenAI on your client cod
 
 ## Client prerequisites
 
-These steps only need to be done once. Use a Python `virtualenv` to keep projects isolated.
+Install dependencies and run the client:
 
-### Using pip
-
-1. Create the virtual environment: `python -m venv .venv`
-2. Install the required packages: `.venv/bin/pip install openai python-dotenv`
-
-Run the client: `.venv/bin/python spice_openai_sdk.py`.
-
-### Using uv
-
-1. Use `uv venv .venv` to create the virtual environment
-2. Ensure the packages are installed: `uv pip install --python .venv/bin/python openai python-dotenv`
-
-Run the client: `uv run --python .venv/bin/python spice_openai_sdk.py`.
+```bash
+python -m pip install openai python-dotenv
+python spice_openai_sdk.py
+```
 
 ## About the client
 

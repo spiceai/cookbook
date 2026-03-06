@@ -61,11 +61,7 @@ Open the Spice SQL REPL in a new terminal:
 spice sql
 ```
 
-Try this simple example:
-
-```sql
-SELECT ai('Respond with exactly HELLO and no other text.') as greeting;
-```
+Wait until the runtime reports that it is ready before proceeding.
 
 ## Example Queries
 
