@@ -194,8 +194,9 @@ SELECT upper(ai('say hello')) as loud_greeting;
 SELECT left(ai('Write a long story'), 20) as preview;
 
 -- Use in WHERE clauses
-SELECT * FROM products
-WHERE ai('Is this a tech product? Answer yes or no: ' || description) = 'yes';
+SELECT Zone, Borough FROM taxi_zones
+WHERE ai('Is this in Manhattan? Answer yes or no: ' || Borough) = 'yes'
+LIMIT 5;
 ```
 
 ## Using Different Model Providers
