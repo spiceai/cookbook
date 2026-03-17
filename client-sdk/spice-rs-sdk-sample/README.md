@@ -1,25 +1,28 @@
 # Spice with Rust SDK
 
-This recipe demonstrates how to use the Spice Rust SDK to connect to a Spice runtime and query data, including parameterized queries.
+Use the [Spice Rust SDK](https://crates.io/crates/spiceai) to query a local Spice runtime.
 
 ## Prerequisites
 
-This recipe requires [Rust](https://www.rust-lang.org/) to be installed.
+- [Rust](https://www.rust-lang.org/)
+- [Spice CLI](https://docs.spiceai.org/getting-started)
 
-## Clone sample application
+## Quick Start
 
-```shell
+```bash
 git clone https://github.com/spiceai/cookbook.git
 cd cookbook/client-sdk/spice-rs-sdk-sample
 ```
 
-## Start Spice runtime
+Start Spice runtime in one terminal:
 
-```shell
+```bash
 spice run
 ```
 
-```shell
+Sample runtime logs:
+
+```text
 2024/11/27 12:46:10 INFO Checking for latest Spice runtime release...
 2024/11/27 12:46:10 INFO Spice.ai runtime starting...
 2024-11-27T20:46:11.343825Z  INFO runtime::init::dataset: Initializing dataset taxi_trips
@@ -33,21 +36,15 @@ spice run
 2024-11-27T20:46:22.751704Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (419.31 MiB) for dataset taxi_trips in 10s 464ms.
 ```
 
-## Build sample application
+Run the Rust sample in another terminal:
 
-```shell
-cargo build
-```
-
-## Run sample application
-
-```shell
+```bash
 cargo run
 ```
 
-Results:
+Sample output:
 
-```console
+```text
 === Using query ===
 VendorID: 2, tpep_pickup_datetime: 2024-01-06 14:41:17, fare_amount: 8.60
 VendorID: 2, tpep_pickup_datetime: 2024-01-06 14:56:46, fare_amount: 7.20
@@ -66,4 +63,12 @@ VendorID: 2, tpep_pickup_datetime: 2024-01-26 06:48:07, fare_amount: 70.00
 VendorID: 1, tpep_pickup_datetime: 2024-01-26 06:29:55, fare_amount: 20.50
 VendorID: 1, tpep_pickup_datetime: 2024-01-26 06:23:42, fare_amount: 10.70
 VendorID: 2, tpep_pickup_datetime: 2024-01-26 06:08:06, fare_amount: 70.00
+```
+
+## Advanced
+
+Build the sample without running it:
+
+```bash
+cargo build
 ```

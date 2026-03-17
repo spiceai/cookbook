@@ -1,7 +1,9 @@
-# Install the Spice CLI
-# https://docs.spiceai.org/getting-started
-curl https://install.spiceai.org | /bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Run a SQL query via HTTP
-spice sql --api-key API_KEY --http-url https://data.spiceai.io \
-  "SELECT * FROM my_dataset LIMIT 10"
+: "${SPICE_API_KEY:?Set SPICE_API_KEY before running this script.}"
+SPICE_ENDPOINT="${SPICE_ENDPOINT:-https://data.spiceai.io}"
+SPICE_DATASET="${SPICE_DATASET:-my_dataset}"
+
+spice sql --api-key "${SPICE_API_KEY}" --endpoint "${SPICE_ENDPOINT}" \
+  "SELECT * FROM ${SPICE_DATASET} LIMIT 10"

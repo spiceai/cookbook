@@ -1,26 +1,33 @@
 # Spice with Dotnet SDK
 
-This recipe shows how to interact with Spice using the [Dotnet SDK](https://github.com/spiceai/spice-dotnet).
+Use the [Spice Dotnet SDK](https://github.com/spiceai/spice-dotnet) to query Spice from C#.
+
+## What This Sample Includes
+
+- `Program.cs`: Query a local Spice runtime, including a parameterized query.
+- `Cloud.cs`: Query Spice.ai Cloud using environment variables.
 
 ## Prerequisites
 
--   [Spice](https://github.com/spiceai/spiceai) is installed
--   [Dotnet](https://dotnet.microsoft.com/en-us/download)
+- [.NET SDK](https://dotnet.microsoft.com/en-us/download) compatible with `net10.0`
+- [Spice CLI](https://docs.spiceai.org/getting-started) for local mode
 
-## Clone this sample
+## Local Quick Start
 
-```shell
+```bash
 git clone https://github.com/spiceai/cookbook.git
 cd cookbook/client-sdk/spice-dotnet-sdk-sample
 ```
 
-## Start the Spice runtime
+Start Spice runtime in one terminal:
 
-```shell
+```bash
 spice run
 ```
 
-```shell
+Sample runtime logs:
+
+```text
 2025-08-28T21:08:10.674387Z  INFO spiced: Starting runtime v1.7.0-unstable-build.246c46c4d-dev+models
 2025-08-28T21:08:10.675513Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
 2025-08-28T21:08:10.675671Z  INFO runtime::init::caching: Initialized search results cache;
@@ -34,13 +41,15 @@ spice run
 2025-08-28T21:08:20.455383Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
-## Run the sample
+Run the sample in another terminal:
 
-```shell
+```bash
 dotnet run
 ```
 
-```shell
+Sample output:
+
+```text
 === Using Query ===
 VendorID: 2, tpep_pickup_datetime: 2024-01-09 23:22:13, fare_amount: 7.20
 VendorID: 1, tpep_pickup_datetime: 2024-01-09 23:40:08, fare_amount: 18.40
@@ -59,4 +68,14 @@ VendorID: 2, tpep_pickup_datetime: 2024-01-31 09:04:39, fare_amount: 44.30
 VendorID: 2, tpep_pickup_datetime: 2024-01-31 09:12:53, fare_amount: 7.90
 VendorID: 2, tpep_pickup_datetime: 2024-01-31 09:24:15, fare_amount: 27.50
 VendorID: 2, tpep_pickup_datetime: 2024-01-31 09:42:13, fare_amount: 7.90
+```
+
+## Spice.ai Cloud Configuration
+
+`Cloud.cs` reads these environment variables:
+
+```bash
+export SPICE_API_KEY="<your-api-key>"
+export SPICE_HTTP_URL="https://data.spiceai.io"
+export SPICE_FLIGHT_URL="flight.spiceai.io:443"
 ```
