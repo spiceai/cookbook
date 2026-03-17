@@ -8,17 +8,13 @@ import (
 )
 
 func main() {
-	apiKey := "<YOUR_API_KEY>"
-	httpAddress := "https://data.spiceai.io"
-	flightAddress := "flight.spiceai.io:443"
-
 	spice := gospice.NewSpiceClient()
 	defer spice.Close()
 
 	err := spice.Init(
-		gospice.WithApiKey(apiKey),
-		gospice.WithHttpAddress(httpAddress),
-		gospice.WithFlightAddress(flightAddress),
+		gospice.WithApiKey("API_KEY"),
+		gospice.WithHttpAddress("https://data.spiceai.io"),
+		gospice.WithFlightAddress("flight.spiceai.io:443"),
 	)
 	if err != nil {
 		panic(fmt.Errorf("Error initializing client: %s", err))

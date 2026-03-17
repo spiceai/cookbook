@@ -9,15 +9,11 @@ import ai.spice.SpiceClient;
 
 public class Cloud {
     public static void main(String[] args) {
-        String apiKey = "<YOUR_API_KEY>";
-        String httpUrl = "https://data.spiceai.io";
-        String flightUrl = "grpc+tls://flight.spiceai.io:443";
-
         try (
             SpiceClient client = SpiceClient.builder()
-                .withApiKey(apiKey)
-                .withHttpAddress(URI.create(httpUrl))
-                .withFlightAddress(URI.create(flightUrl))
+                .withApiKey("API_KEY")
+                .withHttpAddress(URI.create("https://data.spiceai.io"))
+                .withFlightAddress(URI.create("grpc+tls://flight.spiceai.io:443"))
                 .build()
         ) {
             FlightStream stream = client.query(

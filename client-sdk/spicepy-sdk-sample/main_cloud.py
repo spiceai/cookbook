@@ -1,14 +1,11 @@
+# Install with: pip install git+https://github.com/spiceai/spicepy
 from spicepy import Client
 
+client = Client(
+    api_key='API_KEY',
+    flight_url="grpc+tls://flight.spiceai.io"
+)
+data = client.query('show tables;', timeout=5*60)
+pd = data.read_pandas()
 
-def main() -> None:
-    api_key = "<YOUR_API_KEY>"
-    flight_url = "grpc+tls://flight.spiceai.io:443"
-
-    client = Client(api_key=api_key, flight_url=flight_url)
-    data = client.query("show tables;", timeout=5 * 60)
-    print(data.read_pandas())
-
-
-if __name__ == "__main__":
-    main()
+print(pd)
