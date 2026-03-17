@@ -9,14 +9,9 @@ import ai.spice.SpiceClient;
 
 public class Cloud {
     public static void main(String[] args) {
-        String apiKey = System.getenv("SPICE_API_KEY");
-        if (apiKey == null || apiKey.isBlank()) {
-            System.err.println("Set SPICE_API_KEY before running this sample.");
-            System.exit(1);
-        }
-
-        String httpUrl = System.getenv().getOrDefault("SPICE_HTTP_URL", "https://data.spiceai.io");
-        String flightUrl = System.getenv().getOrDefault("SPICE_FLIGHT_URL", "grpc+tls://flight.spiceai.io:443");
+        String apiKey = "<YOUR_API_KEY>";
+        String httpUrl = "https://data.spiceai.io";
+        String flightUrl = "grpc+tls://flight.spiceai.io:443";
 
         try (
             SpiceClient client = SpiceClient.builder()

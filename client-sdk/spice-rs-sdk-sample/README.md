@@ -72,3 +72,10 @@ Build the sample without running it:
 ```bash
 cargo build
 ```
+
+## Links
+
+- [Spice Rust SDK](https://github.com/spiceai/spice-rs)
+- [crates.io](https://crates.io/crates/spiceai)
+- [Spice.ai Cloud](https://spice.ai)
+- [Spice.ai documentation](https://docs.spiceai.org)
