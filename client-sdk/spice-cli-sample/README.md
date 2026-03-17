@@ -58,12 +58,18 @@ bash query_cloud_http.sh
 ## Manual Commands
 
 ```bash
-spice sql --cloud --api-key "${SPICE_API_KEY}" \
+spice sql \
+  --cloud \
+  --api-key "${SPICE_API_KEY}" \
   "SELECT * FROM ${SPICE_DATASET} LIMIT 10"
 
-spice sql --api-key "${SPICE_API_KEY}" --endpoint "grpc+tls://flight.spiceai.io:443" \
+spice sql \
+  --api-key "${SPICE_API_KEY}" \
+  --endpoint "grpc+tls://flight.spiceai.io:443" \
   "SELECT * FROM ${SPICE_DATASET} LIMIT 10"
 
-spice sql --api-key "${SPICE_API_KEY}" --endpoint "https://data.spiceai.io" \
+spice sql \
+  --api-key "${SPICE_API_KEY}" \
+  --endpoint "https://data.spiceai.io" \
   "SELECT * FROM ${SPICE_DATASET} LIMIT 10"
 ```
