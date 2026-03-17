@@ -5,7 +5,7 @@ Use the [Spice Dotnet SDK](https://github.com/spiceai/spice-dotnet) to query Spi
 ## What This Sample Includes
 
 - `Program.cs`: Query a local Spice runtime, including a parameterized query.
-- `Cloud.cs`: Query Spice.ai Cloud using environment variables.
+- `Cloud.cs`: Query Spice.ai Cloud with inline replacement values.
 
 ## Prerequisites
 
@@ -72,10 +72,17 @@ VendorID: 2, tpep_pickup_datetime: 2024-01-31 09:42:13, fare_amount: 7.90
 
 ## Spice.ai Cloud Configuration
 
-`Cloud.cs` reads these environment variables:
+Set your API key for the commands in this README:
 
 ```bash
-export SPICE_API_KEY="<your-api-key>"
-export SPICE_HTTP_URL="https://data.spiceai.io"
-export SPICE_FLIGHT_URL="flight.spiceai.io:443"
+export SPICE_API_KEY="your_api_key"
 ```
+
+The cloud snippet keeps an inline API key placeholder by design. Replace the API key placeholder in `Cloud.cs` with `${SPICE_API_KEY}`.
+
+## Links
+
+- [Spice .NET SDK](https://github.com/spiceai/spice-dotnet)
+- [NuGet package](https://www.nuget.org/packages/SpiceAI.Client)
+- [Spice.ai Cloud](https://spice.ai)
+- [Spice.ai documentation](https://docs.spiceai.org)

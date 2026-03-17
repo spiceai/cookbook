@@ -5,7 +5,7 @@ Use the [gospice SDK](https://github.com/spiceai/gospice) to query Spice from Go
 ## What This Sample Includes
 
 - `main.go`: Query a local Spice runtime, including a parameterized query.
-- `cloud/main.go`: Query Spice.ai Cloud using environment variables.
+- `cloud/main.go`: Query Spice.ai Cloud with inline replacement values.
 
 ## Prerequisites
 
@@ -72,12 +72,23 @@ VendorID: 2, tpep_pickup_datetime: 1706249286000000, fare_amount: 70
 
 ## Spice.ai Cloud Quick Start
 
-```bash
-export SPICE_API_KEY="<your-api-key>"
-export SPICE_HTTP_URL="https://data.spiceai.io"
-export SPICE_FLIGHT_URL="flight.spiceai.io:443"
+Set your API key for the commands in this README:
 
+```bash
+export SPICE_API_KEY="your_api_key"
+```
+
+The cloud snippet keeps an inline API key placeholder by design. Replace the API key placeholder in `cloud/main.go` with `${SPICE_API_KEY}`, then run:
+
+```bash
 go run ./cloud
 ```
 
 Expected output is a list of tables from `show tables;`.
+
+## Links
+
+- [gospice SDK](https://github.com/spiceai/gospice)
+- [Go package](https://pkg.go.dev/github.com/spiceai/gospice/v6)
+- [Spice.ai Cloud](https://spice.ai)
+- [Spice.ai documentation](https://docs.spiceai.org)

@@ -35,18 +35,21 @@ Run the Node sample in another terminal:
 npm start
 ```
 
-`index.js` automatically uses local mode when `SPICE_API_KEY` is not set.
+`index.js` runs against your local runtime by default.
 
 ## Run with Spice.ai Cloud
 
-```bash
-cp .env.example .env
-# Edit .env and set SPICE_API_KEY
+Set your API key for the commands in this README:
 
-npm start
+```bash
+export SPICE_API_KEY="your_api_key"
 ```
 
-`index.js` automatically switches to cloud mode when `SPICE_API_KEY` is present.
+The cloud snippet keeps an inline API key placeholder by design. Replace the API key placeholder in `index_cloud.mjs` with `${SPICE_API_KEY}`, then run:
+
+```bash
+node index_cloud.mjs
+```
 
 ## Example Output
 
@@ -61,7 +64,7 @@ Spice.js initialized
 NYC Taxi Trips Data Analysis
 
 Connected to: Local Spice Runtime
-Tip: Set SPICE_API_KEY in .env to use Spice.ai Cloud
+Tip: Use `index_cloud.mjs` with your cloud API key for Spice.ai Cloud
 
 Querying taxi_trips dataset...
 
@@ -191,10 +194,6 @@ Analysis complete!
 ## Optional: Minimal Cloud-Only Script
 
 ```bash
-export SPICE_API_KEY="<your-api-key>"
-export SPICE_HTTP_URL="https://data.spiceai.io"
-export SPICE_FLIGHT_URL="flight.spiceai.io:443"
-
 node index_cloud.mjs
 ```
 
@@ -213,8 +212,8 @@ Expected output is a table list from `show tables;`.
 1. Create a free account at [spice.ai](https://spice.ai).
 2. Create a Spice.ai Cloud app.
 3. Deploy this sample's `spicepod.yaml` to your Cloud app.
-4. Add your API key to `.env` as `SPICE_API_KEY=<your-api-key>`.
-5. Run `npm start`.
+4. Set `SPICE_API_KEY`, then replace the API key placeholder in `index_cloud.mjs` with that value.
+5. Run `node index_cloud.mjs`.
 
 ### Code Examples
 
@@ -250,3 +249,10 @@ This sample uses the NYC `taxi_trips` dataset.
 
 - Local mode: dataset is defined in `spicepod.yaml` and loads with `spice run`.
 - Cloud mode: deploy `spicepod.yaml` to your Cloud app before running queries.
+
+## Links
+
+- [spice.js SDK](https://github.com/spiceai/spice.js)
+- [npm package](https://www.npmjs.com/package/@spiceai/spice)
+- [Spice.ai Cloud](https://spice.ai)
+- [Spice.ai documentation](https://docs.spiceai.org)

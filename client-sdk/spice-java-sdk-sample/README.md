@@ -5,7 +5,7 @@ Use the [Spice Java SDK](https://github.com/spiceai/spice-java) to query Spice f
 ## What This Sample Includes
 
 - `App.java`: Query a local Spice runtime.
-- `Cloud.java`: Query Spice.ai Cloud using environment variables.
+- `Cloud.java`: Query Spice.ai Cloud with inline replacement values.
 
 ## Prerequisites
 
@@ -113,11 +113,15 @@ VendorID        tpep_pickup_datetime    fare_amount
 
 ## Spice.ai Cloud Quick Start
 
-```bash
-export SPICE_API_KEY="<your-api-key>"
-export SPICE_HTTP_URL="https://data.spiceai.io"
-export SPICE_FLIGHT_URL="grpc+tls://flight.spiceai.io:443"
+Set your API key for the commands in this README:
 
+```bash
+export SPICE_API_KEY="your_api_key"
+```
+
+The cloud snippet keeps an inline API key placeholder by design. Replace the API key placeholder in `src/main/java/ai/spice/example/Cloud.java` with `${SPICE_API_KEY}`, then run:
+
+```bash
 _JAVA_OPTIONS="--add-opens=java.base/java.nio=ALL-UNNAMED" \
   mvn exec:java -Dexec.mainClass="ai.spice.example.Cloud"
 ```
@@ -205,3 +209,10 @@ VendorID        tpep_pickup_datetime    fare_amount
 2       2024-01-02T14:27:29     44.3
 2       2024-01-02T14:54:39     8.6
 ```
+
+## Links
+
+- [Spice Java SDK](https://github.com/spiceai/spice-java)
+- [Maven Central](https://central.sonatype.com/artifact/ai.spice/spice)
+- [Spice.ai Cloud](https://spice.ai)
+- [Spice.ai documentation](https://docs.spiceai.org)
