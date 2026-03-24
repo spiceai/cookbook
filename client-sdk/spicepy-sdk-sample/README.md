@@ -1,29 +1,38 @@
 # Spice with spicepy SDK
 
-This recipe demonstrates how to use the Spice Python SDK to connect to a Spice runtime and query data.
+Use [spicepy](https://github.com/spiceai/spicepy) to query Spice from Python.
+
+## What This Sample Includes
+
+- `sample.py`: Query a local Spice runtime, including a parameterized query.
+- `main_cloud.py`: Query Spice.ai Cloud with inline replacement values.
 
 ## Prerequisites
 
-This recipe requires [uv](https://docs.astral.sh/uv/) to be installed.
+- [uv](https://docs.astral.sh/uv/)
+- [Spice CLI](https://docs.spiceai.org/getting-started) for local mode
 
-- Install `uv` with:
-  - macOS/Linux: `curl -LsSf https://astral.sh/uv/install.sh | sh`
-  - Windows: `powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`
+Install `uv` if needed:
 
-Navigate to `spicepy-sdk-sample`:
+- macOS/Linux: `curl -LsSf https://astral.sh/uv/install.sh | sh`
+- Windows: `powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`
 
-```shell
-git clone https://github.com/spiceai/cookbook # skip if already cloned
+## Local Quick Start
+
+```bash
+git clone https://github.com/spiceai/cookbook.git
 cd cookbook/client-sdk/spicepy-sdk-sample
 ```
 
-## Start spice runtime
+Start Spice runtime in one terminal:
 
-```shell
+```bash
 spice run
 ```
 
-```shell
+Sample runtime logs:
+
+```text
 2025/01/27 11:53:58 INFO Checking for latest Spice runtime release...
 2025/01/27 11:54:01 INFO Spice.ai runtime starting...
 2025-01-27T19:54:01.956890Z  INFO runtime::init::dataset: Initializing dataset taxi_trips
@@ -37,16 +46,15 @@ spice run
 2025-01-27T19:54:13.743056Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (399.41 MiB) for dataset taxi_trips in 10s 874ms.
 ```
 
-## Run sample application
+Run the Python sample in another terminal:
 
-```shell
+```bash
 uv run sample.py
 ```
 
-Results:
+Sample output:
 
-```shell
-➜ uv run sample.py 
+```text
 === Using query ===
 VendorID: 1, tpep_pickup_datetime: 2024-01-11 09:37:05, fare_amount: 7.9
 VendorID: 1, tpep_pickup_datetime: 2024-01-11 09:50:21, fare_amount: 8.6
@@ -66,3 +74,26 @@ VendorID: 2, tpep_pickup_datetime: 2024-01-25 22:14:50, fare_amount: 31.0
 VendorID: 2, tpep_pickup_datetime: 2024-01-25 22:52:11, fare_amount: 21.9
 VendorID: 1, tpep_pickup_datetime: 2024-01-25 22:06:02, fare_amount: 13.5
 ```
+
+## Spice.ai Cloud Quick Start
+
+Set your API key for the commands in this README:
+
+```bash
+export SPICE_API_KEY="your_api_key"
+```
+
+The cloud snippet keeps an inline API key placeholder by design. Replace the API key placeholder in `main_cloud.py` with `${SPICE_API_KEY}`, then run:
+
+```bash
+uv run main_cloud.py
+```
+
+Expected output is a table list from `show tables;`.
+
+## Links
+
+- [spicepy SDK](https://github.com/spiceai/spicepy)
+- [PyPI package](https://pypi.org/project/spicepy/)
+- [Spice.ai Cloud](https://spice.ai)
+- [Spice.ai documentation](https://docs.spiceai.org)
