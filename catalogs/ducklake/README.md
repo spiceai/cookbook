@@ -6,8 +6,8 @@ The DuckLake Catalog Connector enables Spice to automatically discover and query
 
 ## Prerequisites
 
-- [DuckDB CLI](https://duckdb.org/docs/installation/) installed (to create a DuckLake catalog).
-- Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation).
+- [DuckDB CLI](https://duckdb.org/docs/installation/) v1.3.0 or later installed (to create a DuckLake catalog).
+- Spice v2.0 or later is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation).
 
 ## Step 1. Create a new directory and initialize a Spicepod
 
@@ -33,11 +33,21 @@ LOAD ducklake;
 INSTALL tpch;
 LOAD tpch;
 
+-- Generate TPC-H data in-memory (scale factor 0.01 for a quick demo)
+CALL dbgen(sf = 0.01);
+
 -- Create a DuckLake catalog with local metadata storage
 ATTACH 'ducklake:metadata.ducklake' AS my_lakehouse;
 
--- Generate TPC-H data (scale factor 0.01 for a quick demo)
-CALL dbgen(sf = 0.01, catalog = 'my_lakehouse');
+-- Copy tables into DuckLake
+CREATE TABLE my_lakehouse.main.customer AS SELECT * FROM customer;
+CREATE TABLE my_lakehouse.main.lineitem AS SELECT * FROM lineitem;
+CREATE TABLE my_lakehouse.main.nation AS SELECT * FROM nation;
+CREATE TABLE my_lakehouse.main.orders AS SELECT * FROM orders;
+CREATE TABLE my_lakehouse.main.part AS SELECT * FROM part;
+CREATE TABLE my_lakehouse.main.partsupp AS SELECT * FROM partsupp;
+CREATE TABLE my_lakehouse.main.region AS SELECT * FROM region;
+CREATE TABLE my_lakehouse.main.supplier AS SELECT * FROM supplier;
 ```
 
 Verify the tables were created:
