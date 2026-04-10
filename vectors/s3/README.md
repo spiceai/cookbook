@@ -1,5 +1,7 @@
 # Amazon S3 Vectors Engine with Spice.ai
 
+Works with `v1.8+`
+
 Spice.ai integrates Amazon S3 Vectors, launched in public preview at AWS Summit New York 2025, as a scalable vector index backend for embedding storage and similarity search. This recipe configures a dataset of GitHub pull requests from the `spiceai/spiceai` repository, embeds the `body` column using OpenAI, stores embeddings in S3 Vectors, and demonstrates semantic search via SQL and HTTP. Spice manages index creation, data synchronization, and query execution, enabling sub-second similarity queries on large datasets at ~$0.02/GB, reducing costs by up to 90% versus traditional vector databases.
 
 ## Prerequisites
@@ -227,7 +229,7 @@ curl --request POST \
 
 Response:
 
-```json
+````json
 {
   "results": [
     {
@@ -289,10 +291,12 @@ Response:
   ],
   "duration_ms": 3387
 }
-```
+````
 
 ## Chunking
+
 The Spice runtime can manage chunking, embedding and reaggregating chunks of datasets with large content. Spice loaded `spiceai.cookbook_readme`: all cookbook READMEs. Search, both HTTP and SQL can be queried as before.
+
 ```SQL
 SELECT
     path,
@@ -303,7 +307,8 @@ FROM vector_search(spiceai.cookbook_readme, 'data governance and auditing')
 ORDER BY score DESC
 LIMIT 3;
 ```
-```
+
+````
 +------------------------------------+------------------------------------------------------------------------------------------------------------+----------------+---------------------+
 | path                               | match                                                                                                      | content_length | score               |
 +------------------------------------+------------------------------------------------------------------------------------------------------------+----------------+---------------------+
@@ -340,7 +345,8 @@ LIMIT 3;
 |                                    | drop table <CATALOG_NAME>.<SCHEMA_NAME>.test_table_no_v2checkpoint;                                        |                |                     |
 |                                    | ```                                                                                                        |                |                     |
 |                                    | (truncated for brevity.)                                                                                   |                |                     |
-```
+````
+
 ```shell
 curl --request POST \
   --url http://localhost:8090/v1/search \
@@ -353,33 +359,34 @@ curl --request POST \
 	"limit": 2
 }'
 ```
-```json
+
+````json
 {
-    "results": [
-        {
-            "matches": {
-                "content": "\n```sql\n-- Normal query - single department access\nINSERT INTO query_audit_logs (user_id, query_text, database_name, schema_name, rows_affected, ..."
-            },
-            "primary_key": {
-                "path": "guides/security-analyzer/README.md"
-            },
-            "score": 0.4742351770401001,
-            "dataset": "spiceai.cookbook_readme"
-        },
-        {
-            "matches": {
-                "content": "\n```shell\ndrop table <CATALOG_NAME>.<SCHEMA_NAME>.test_table_no_v2checkpoint;\n```\n\n**Verify table removal in Spice**: Observe that the table has beem removed in spice runtime log\n\n```shell\n2025-01-18T00:59:49.121835Z  INFO data_components::unity_catalog::provider: Refreshed schema <CATALOG_NAME>.<SCHEMA_NAME>. Tables removed: test_table_no_v2checkpoint.\n```\n\n## Step 8. Use Databricks Service Principal\n\nCreate a Databricks service ..."
-            },
-            "primary_key": {
-                "path": "catalogs/databricks/README.md"
-            },
-            "score": 0.3918114900588989,
-            "dataset": "spiceai.cookbook_readme"
-        }
-    ],
-    "duration_ms": 657
+  "results": [
+    {
+      "matches": {
+        "content": "\n```sql\n-- Normal query - single department access\nINSERT INTO query_audit_logs (user_id, query_text, database_name, schema_name, rows_affected, ..."
+      },
+      "primary_key": {
+        "path": "guides/security-analyzer/README.md"
+      },
+      "score": 0.4742351770401001,
+      "dataset": "spiceai.cookbook_readme"
+    },
+    {
+      "matches": {
+        "content": "\n```shell\ndrop table <CATALOG_NAME>.<SCHEMA_NAME>.test_table_no_v2checkpoint;\n```\n\n**Verify table removal in Spice**: Observe that the table has beem removed in spice runtime log\n\n```shell\n2025-01-18T00:59:49.121835Z  INFO data_components::unity_catalog::provider: Refreshed schema <CATALOG_NAME>.<SCHEMA_NAME>. Tables removed: test_table_no_v2checkpoint.\n```\n\n## Step 8. Use Databricks Service Principal\n\nCreate a Databricks service ..."
+      },
+      "primary_key": {
+        "path": "catalogs/databricks/README.md"
+      },
+      "score": 0.3918114900588989,
+      "dataset": "spiceai.cookbook_readme"
+    }
+  ],
+  "duration_ms": 657
 }
-```
+````
 
 ## Advanced Usage
 

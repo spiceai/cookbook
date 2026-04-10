@@ -1,6 +1,8 @@
 # Spice with Rust SDK
 
-Use the [Spice Rust SDK](https://crates.io/crates/spiceai) to query a local Spice runtime.
+Works with `v1.0+`
+
+This recipe demonstrates how to use the Spice Rust SDK to connect to a Spice runtime and query data, including parameterized queries.
 
 ## Prerequisites
 

@@ -1,5 +1,7 @@
 # Generative Visualizations
 
+Works with `v1.8+`
+
 This recipe demonstrates how to build an AI-powered data analyst that generates SQL queries and interactive Chart.js visualizations from natural language questions.
 
 ## What You'll Learn
@@ -85,6 +87,7 @@ python main.py "How has per month sales trended?"
 ```
 
 The script will:
+
 1. Send your question to the `visualisation_and_sql` model
 2. Execute the generated SQL query against Spice
 3. Pass the results to the `summary_maker` model for analysis
@@ -136,16 +139,16 @@ ORDER BY "year", "month";
 
 ```html
 <html>
-<head>
+  <head>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
+  </head>
+  <body>
     <canvas id="salesTrendChart" width="600" height="400"></canvas>
     <script>
-        // Chart configuration with line chart showing monthly sales trends
-        ...
+      // Chart configuration with line chart showing monthly sales trends
+      ...
     </script>
-</body>
+  </body>
 </html>
 ```
 

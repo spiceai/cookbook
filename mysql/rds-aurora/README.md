@@ -1,5 +1,7 @@
 # AWS RDS Aurora (MySQL Data Connector)
 
+Works with `v1.0+`
+
 Follow these steps to get started with federated SQL query against AWS RDS Aurora (MySQL Compatible).
 
 ## Pre-requisites
@@ -8,7 +10,9 @@ Follow these steps to get started with federated SQL query against AWS RDS Auror
 - Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation).
 
 ## Steps
+
 **Step 1.** Deploy an RDS Aurora cluster:
+
 ```bash
 aws cloudformation create-stack \
   --stack-name aurora-cookbook \
@@ -46,6 +50,7 @@ For more information on using `spice sql`, see the [CLI reference](https://docs.
 **Step 8.** Execute the query `select * from [local_table_name];` to see the AWS RDS table accelerated locally.
 
 **Step 9.** Tear down the Aurora cluster
+
 ```bash
 aws cloudformation delete-stack --stack-name aurora-cookbook
 ```

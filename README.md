@@ -50,6 +50,7 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 - [PostgreSQL Data Accelerator](./postgres/accelerator/README.md) - Materialize data into an attached PostgreSQL instance.
 - [SQLite Data Accelerator](./sqlite/accelerator/README.md) - Accelerate data using SQLite.
 - [Database Snapshots](./acceleration/snapshots/README.md) - Bootstrap accelerations from object storage to skip cold starts.
+- [Dual-Dataset Registration](./acceleration/dual-dataset-registration/README.md) - Serve queries instantly while large tables accelerate in the background.
 - [Apache Arrow Data Accelerator](./arrow/README.md) - Accelerate data using in-memory Arrow.
 - [Accelerated Views](./views/README.md) - Pre-calculate and materialize derived data for faster queries.
 - [Dataset Partitioning](./acceleration/partitioning/README.md) - Partition accelerated datasets to improve query performance.

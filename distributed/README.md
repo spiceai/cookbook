@@ -1,5 +1,7 @@
 # Distributed Query
 
+Works with `v1.9+`
+
 This recipe demonstrates how to run Spice.ai OSS in a distributed mode, for maximum performance in queries on large datasets across multiple nodes. It shows how to:
 
 - Generate mTLS certificates for development environments
@@ -145,7 +147,7 @@ Observing the logs from the scheduler and executor shows the scheduler queuing t
 2025-12-15T23:18:15.943448Z  INFO ballista_core::execution_plans::shuffle_writer: Executed partition 0 in 0 seconds. Statistics: numBatches=Some(1), numRows=Some(10), numBytes=Some(454)
 2025-12-15T23:18:15.943509Z  INFO ballista_executor::metrics: === [dyHURMz/2/0] Physical plan with metrics ===
 DefaultQueryStageExec: (write_time{partition=0}=3.050939ms, repart_time{partition=0}=NOT RECORDED, input_rows{partition=0}=10, output_rows{partition=0}=10)
-ShuffleWriterExec: job=dyHURMz stage=2 work_dir=/tmp partitioning=None plan: 
+ShuffleWriterExec: job=dyHURMz stage=2 work_dir=/tmp partitioning=None plan:
  CoalescePartitionsExec: fetch=10, statistics=[Rows=Exact(10), Bytes=Absent, [(Col[0]:),(Col[1]:)]]
   ShuffleReaderExec: partitioning=UnknownPartitioning(2), statistics=[Rows=Exact(20), Bytes=Exact(1104), [(Col[0]:),(Col[1]:)]]
 

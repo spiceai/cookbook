@@ -1,6 +1,8 @@
 # Spice.ai Cloud Platform Data Connector
 
-The Spice.ai Cloud Platform has many datasets that can be used within Spice.  A valid login for the Spice.ai Cloud Platform is required to access the datasets.  Before beginning this recipe, [link your GitHub account to Spice.ai](https://spice.ai/login) to get access to the platform.
+Works with `v1.0+`
+
+The Spice.ai Cloud Platform has many datasets that can be used within Spice. A valid login for the Spice.ai Cloud Platform is required to access the datasets. Before beginning this recipe, [link your GitHub account to Spice.ai](https://spice.ai/login) to get access to the platform.
 
 **Step 1.** Initialize a Spice project:
 
@@ -15,7 +17,7 @@ cd spiceai-demo
 spice login
 ```
 
-A browser window will open displaying a code that will appear in the terminal.  Select Approve if the authorization codes match.
+A browser window will open displaying a code that will appear in the terminal. Select Approve if the authorization codes match.
 
 ![Screenshot](./device_login.png)
 
@@ -129,6 +131,6 @@ Time: 0.852775583 seconds. 10 rows.
 ```
 
 **Next Steps**
-This recipe queries the Spice.ai Cloud Platform directly without any acceleration.  Experiment with different acceleration options using [Spice Data Accelerators](https://docs.spiceai.org/data-accelerators).
+This recipe queries the Spice.ai Cloud Platform directly without any acceleration. Experiment with different acceleration options using [Spice Data Accelerators](https://docs.spiceai.org/data-accelerators).
 
 View the [Spice.ai documentation](https://docs.spice.ai/building-blocks/datasets) and search on [spicerack.org](https://spicerack.org/) to explore and experiment with retrieving and accelerating multiple datasets to use with Spice.

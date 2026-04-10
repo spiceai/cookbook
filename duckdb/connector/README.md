@@ -1,5 +1,7 @@
 # DuckDB Data Connector
 
+Works with `v1.0+`
+
 This recipe will walkthrough how to connect to a DuckDB database in Spice with sample TPCH data.
 
 ## Requirements

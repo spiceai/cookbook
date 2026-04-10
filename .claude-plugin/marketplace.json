@@ -1,0 +1,29 @@
+{
+  "name": "spiceai-cookbook",
+  "owner": {
+    "name": "Spice AI",
+    "email": "team@spice.ai"
+  },
+  "metadata": {
+    "description": "Plugins for the Spice.ai cookbook"
+  },
+  "plugins": [
+    {
+      "name": "run-recipe",
+      "source": "./plugins/run-recipe",
+      "description": "Run a Spice.ai cookbook recipe to completion by following its README instructions",
+      "version": "1.0.0",
+      "author": {
+        "name": "Spice AI"
+      },
+      "homepage": "https://github.com/spiceai/cookbook",
+      "license": "Apache-2.0",
+      "keywords": [
+        "spice",
+        "cookbook",
+        "recipe",
+        "testing"
+      ]
+    }
+  ]
+}

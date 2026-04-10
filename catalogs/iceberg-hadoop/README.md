@@ -1,5 +1,7 @@
 # Iceberg Hadoop Catalog Connector
 
+Works with `v1.0+`
+
 The Iceberg Catalog Connector supports connecting to Hadoop catalogs, locally or on S3-compatible object storage.
 
 This recipe uses the Spice Runtime to connect to a TPCH dataset, configured on a MinIO Object Store.
@@ -12,6 +14,7 @@ This recipe uses the Spice Runtime to connect to a TPCH dataset, configured on a
 ## Step 1: Start the MinIO Server.
 
 Clone the Spice cookbook repository and navigate to the `iceberg-hadoop` directory:
+
 ```bash
 git clone https://github.com/spiceai/cookbook.git # Skip if already cloned
 cd cookbook/catalogs/iceberg-hadoop

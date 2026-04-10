@@ -1,5 +1,7 @@
 # Streaming changes in real-time with Debezium CDC and SASL/SCRAM authentication
 
+Works with `v1.0+`
+
 This recipe is identical to the [cdc-debezium](../README.md) recipe, but using SASL/SCRAM over TLS authentication for Kafka instead of PLAINTEXT and from a MySQL database.
 
 ## Prerequisites

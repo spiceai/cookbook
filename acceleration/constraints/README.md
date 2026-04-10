@@ -1,5 +1,7 @@
 # Accelerated table data quality with constraint enforcement
 
+Works with `v1.0+`
+
 This recipe demonstrates how to use Spice to enforce constraints on locally accelerated data. This can be especially useful when you have a `refresh_mode: append` accelerated dataset and the data can be updated in the datasource.
 
 By specifying a `time_column` on the dataset with `refresh_mode: append` on the acceleration, Spice will automatically pull in all changes from the datasource that have occurred after the max timestamp in the accelerated dataset. This can present a problem if the datasource updates the data and it appears as a new row in the accelerated dataset, when it should have updated an existing row.

@@ -1,8 +1,11 @@
 # Spice with Java SDK
 
+Works with `v1.0+`
+
 Use the [Spice Java SDK](https://github.com/spiceai/spice-java) to query Spice from Java.
 
 ## What This Sample Includes
+
 
 - `App.java`: Query a local Spice runtime.
 - `Cloud.java`: Query Spice.ai Cloud with inline replacement values.

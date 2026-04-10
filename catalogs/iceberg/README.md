@@ -1,5 +1,7 @@
 # Iceberg Catalog Connector
 
+Works with `v1.0+`
+
 The Iceberg Catalog Connector enables Spice to query and write to Iceberg tables in an Iceberg catalog.
 
 [![Watch the Spice.ai OSS Iceberg Catalog connector demo](https://img.youtube.com/vi/Akq39ml8LO0/hqdefault.jpg)](https://www.youtube.com/embed/Akq39ml8LO0)
@@ -136,7 +138,7 @@ Edit the `spicepod.yaml` file to uncomment the access line:
 ```yaml
 catalogs:
   - from: iceberg:http://localhost:8181/v1/namespaces
-    access: read_write  # Uncomment this line
+    access: read_write # Uncomment this line
     name: ice
     params:
       iceberg_s3_endpoint: http://localhost:9000
@@ -164,7 +166,7 @@ spice sql
 Example: Insert a new region into the region table:
 
 ```sql
-INSERT INTO ice.tpch_sf1.region (r_regionkey, r_name, r_comment) 
+INSERT INTO ice.tpch_sf1.region (r_regionkey, r_name, r_comment)
 VALUES (5, 'ANTARCTICA', 'A cold and remote region');
 ```
 
@@ -179,7 +181,7 @@ VALUES (5, 'ANTARCTICA', 'A cold and remote region');
 Example: Insert a new nation into the nation table:
 
 ```sql
-INSERT INTO ice.tpch_sf1.nation (n_nationkey, n_name, n_regionkey, n_comment) 
+INSERT INTO ice.tpch_sf1.nation (n_nationkey, n_name, n_regionkey, n_comment)
 VALUES (25, 'PENGUINIA', 5, 'A vibrant home for brave penguins in Antarctica');
 ```
 

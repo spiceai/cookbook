@@ -1,0 +1,22 @@
+version: v1
+kind: Spicepod
+name: dual-dataset-registration
+
+datasets:
+  # Federated table — available immediately at startup
+  - from: s3://spiceai-public-datasets/taxi_trips/
+    name: taxi_trips
+    params:
+      file_format: parquet
+
+  # Accelerated copy — loads in the background
+  - from: s3://spiceai-public-datasets/taxi_trips/
+    name: taxi_trips_accelerated
+    params:
+      file_format: parquet
+    ready_state: on_registration
+    acceleration:
+      enabled: true
+      engine: duckdb
+      mode: file
+      refresh_check_interval: 30m

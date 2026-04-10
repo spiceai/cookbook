@@ -1,5 +1,7 @@
 # Spice on Databricks - Delta Lake and Spark Connect
 
+Works with `v1.0+`
+
 Spice can read data straight from a Databricks instance. This recipe will create an app, configure Databricks, load and query a dataset directly from Delta Lake Tables through `mode: delta_lake` and from Databricks instance through `mode: spark_connect`. It assumes:
 
 - Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation).

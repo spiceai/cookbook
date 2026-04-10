@@ -1,5 +1,7 @@
 # Sales BI (Apache Superset)
 
+Works with `v1.0+`
+
 Use [Apache Superset](https://superset.apache.org/) to query and visualize datasets loaded in Spice.
 
 > Apache Superset is a modern, enterprise-ready business intelligence web application. It is fast, lightweight, intuitive, and loaded with options that make it easy for users of all skill sets to explore and visualize their data, from simple pie charts to highly detailed deck.gl geospatial charts.

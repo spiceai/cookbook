@@ -1,5 +1,7 @@
 # SharePoint Data Connector
 
+Works with `v1.0+`
+
 Use the SharePoint Data Connector to query documents stored in SharePoint from Spice.
 
 ## Requirements

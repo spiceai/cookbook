@@ -1,5 +1,7 @@
 # ODBC Data Connector
 
+Works with `v1.0+`
+
 Follow these steps to get started with ODBC as a Data Connector. This recipe will create an SQLite database, install the SQLite ODBC driver, and connect to SQLite via ODBC with the Spice Runtime.
 
 ## Preparation
@@ -10,7 +12,7 @@ Follow these steps to get started with ODBC as a Data Connector. This recipe wil
 
 ### Step 1: Install the SQLite ODBC Driver
 
-#### Generic *nix Instructions
+#### Generic \*nix Instructions
 
 Install the [SQLite ODBC driver](https://github.com/softace/sqliteodbc) for your operating system.
 
@@ -51,13 +53,13 @@ brew install unixodbc sqliteodbc
 ```
 
 Configure the SQLite driver:
+
 ```bash
 cat <<EOF >> /opt/homebrew/etc/odbcinst.ini
 [SQLite3]
 Driver = /opt/homebrew/lib/libsqlite3odbc.so
 EOF
 ```
-
 
 ### Step 2: Setup Data
 

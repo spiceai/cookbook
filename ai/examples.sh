@@ -18,13 +18,13 @@ NC='\033[0m' # No Color
 run_query() {
     local title="$1"
     local query="$2"
-    
+
     echo -e "${BLUE}Example: ${title}${NC}"
     echo "Query:"
     echo "$query"
     echo ""
     echo "Result:"
-    spice sql --query "$query"
+    echo "$query" | spice sql
     echo ""
     echo "---"
     echo ""
@@ -40,7 +40,7 @@ run_query "Categorize NYC Zones" \
 
 # Example 3: Sentiment analysis
 run_query "Sentiment Analysis" \
-"SELECT id, feedback, ai('Classify this feedback as positive, negative, or neutral: ' || feedback, 'gpt-4o-mini') as sentiment FROM customer_feedback LIMIT 3;"
+"SELECT feedback, ai('Classify this feedback as positive, negative, or neutral: ' || feedback, 'gpt-4o-mini') as sentiment FROM customer_feedback LIMIT 3;"
 
 # Example 4: Question answering
 run_query "AI Question Answering" \

@@ -1,5 +1,7 @@
 # Delta Lake Data Connector
 
+Works with `v1.0+`
+
 Spice supports reading data directly from Delta Lake tables. This recipe will create an app that loads and queries a dataset from a Delta Lake table in AWS S3. It assumes:
 
 - Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation).
@@ -51,9 +53,9 @@ Spice supports reading data directly from Delta Lake tables. This recipe will cr
 
 5. In another terminal window, run `spice sql` and check the `delta_lake_table` dataset exists from the Spice REPL:
 
-    ```sql
-    show tables;
-    ```
+   ```sql
+   show tables;
+   ```
 
    ```shell
    >>> spice sql

@@ -1,8 +1,11 @@
 # Spice.js SDK Sample
 
+Works with `v1.0+`
+
 Use [`@spiceai/spice`](https://www.npmjs.com/package/@spiceai/spice) from Node.js to query `taxi_trips`.
 
 ## What This Sample Includes
+
 
 - `index.js`: Main sample with multiple analytics queries.
 - `index_cloud.mjs`: Minimal cloud-only query (`show tables;`).

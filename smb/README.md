@@ -1,5 +1,7 @@
 # SMB Data Connector
 
+Works with `v1.11+`
+
 This recipe demonstrates how to configure a Spice dataset to connect to SMB (Server Message Block) network shares and query data files using federated SQL queries.
 
 ## Prerequisites

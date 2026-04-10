@@ -1,5 +1,7 @@
 # Async Queries
 
+Works with `v2.0+`
+
 > **Note:** Async queries require Spice v2.0 or later.
 
 This recipe demonstrates how to use the async queries API to submit long-running SQL queries and retrieve results asynchronously. It shows how to:

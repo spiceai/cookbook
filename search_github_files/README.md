@@ -1,5 +1,7 @@
 # Searching GitHub Files
 
+Works with `v1.0+`
+
 This recipe demonstrates how to create embeddings for GitHub files and perform vector-based searches.
 
 [![Watch the Spice.ai vector search over GitHub files demo](https://img.youtube.com/vi/5y26MveEJ8c/hqdefault.jpg)](https://www.youtube.com/embed/5y26MveEJ8c)
@@ -157,6 +159,7 @@ Result:
 ```
 
 ## Full Text Search
+
 Spice can build full-text search indexes from dataset columns. Enable full text search at the column level (see `doc.pulls` dataset).
 
 1. In the `spicepod.yaml`, uncomment `datasets[1]` (i.e. `doc.pulls` dataset).

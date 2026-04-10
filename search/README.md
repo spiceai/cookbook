@@ -1,5 +1,7 @@
 # Hybrid Search & Real Time Indexing
 
+Works with `v1.0+`
+
 In today's hyper-connected digital ecosystem, social media represents an untapped goldmine of actionable intelligence for organizations. Beyond traditional metrics, these platforms offer unprecedented visibility into market dynamics, consumer sentiment trajectories, demographic clustering patterns, and emergent behavioral signals that can fundamentally transform go-to-market strategies and competitive positioning.
 
 Spice AI revolutionizes this paradigm by enabling organizations to harness real-time data streams at the edge, creating a sophisticated indexing and search infrastructure that transforms raw social signals into strategic insights. Our hybrid search architecture combines the precision of lexical matching with the nuanced understanding of semantic vector embeddings, powered by advanced Reciprocal Rank Fusion (RRF) algorithms that intelligently weigh and merge multiple search modalities.

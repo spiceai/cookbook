@@ -1,5 +1,7 @@
 # Postgres Data Connector
 
+Works with `v1.0+`
+
 This recipe will use a demo instance of Postgres with a dataset generated using SQL stored procedure. Follow the recipe to create Postgres instance and get started with Postgres as a Data Connector.
 
 ## Pre-requisites
@@ -112,7 +114,6 @@ Drop the stored procedure.
 DROP PROCEDURE sample_data_gen();
 ```
 
-
 ## Step 2: Initialize a Spice app.
 
 ```bash
@@ -120,7 +121,7 @@ spice init postgres-connector-demo
 cd postgres-connector-demo
 ```
 
-## Step 3: Configure the dataset to connect to Postgres. 
+## Step 3: Configure the dataset to connect to Postgres.
 
 Copy and paste the configuration below to `spicepod.yaml` in the Spice app.
 
@@ -176,6 +177,7 @@ List available datasets in spice runtime.
 ```sql
 show tables;
 ```
+
 ```
 +---------------+--------------+--------------+------------+
 | table_catalog | table_schema | table_name   | table_type |
@@ -192,6 +194,7 @@ You can now now query `sample_data` in the runtime.
 ```sql
 select * from sample_data limit 10;
 ```
+
 ```
 +----+---------------------+--------+----------+--------------------+-----------------+----------+---------+------------+-------------+
 | id | datetime            | name   | phone    | email              | street_address  | zip_code | region  | latitude   | longitude   |

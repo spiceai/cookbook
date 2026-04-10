@@ -1,5 +1,7 @@
 # Cayenne Data Accelerator
 
+Works with `v1.9+`
+
 This recipe will walkthrough how to accelerate a local copy of the taxi trips dataset stored in S3 using Cayenne as the data accelerator engine.
 
 ## Requirements

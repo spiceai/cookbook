@@ -1,5 +1,7 @@
 # MySQL Data Connector
 
+Works with `v1.0+`
+
 This recipe will use a demo instance of MySQL with a dataset generated using SQL stored procedure. Follow the recipe to create MySQL instance and get started with MySQL as a Data Connector.
 
 ## Prerequisites

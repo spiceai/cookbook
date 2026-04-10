@@ -1,5 +1,7 @@
 # DynamoDB Streams Data Connector (AWS Hosted)
 
+Works with `v1.10+`
+
 This recipe demonstrates how to configure a Spice dataset to stream real-time changes from an AWS-hosted DynamoDB table using DynamoDB Streams. You'll see how inserts, updates, and deletes automatically flow into Spice.
 
 ## Prerequisites
@@ -12,12 +14,14 @@ This recipe demonstrates how to configure a Spice dataset to stream real-time ch
 ---
 
 ## Step 1. Clone this cookbook repo locally
+
 ```bash
 git clone https://github.com/spiceai/cookbook.git
 cd cookbook/dynamodb/streams
 ```
 
 ## Step 2. Define AWS_REGION
+
 ```bash
 export AWS_REGION=<your-region>
 ```
@@ -25,6 +29,7 @@ export AWS_REGION=<your-region>
 ## Step 3. Create a DynamoDB Table with Streams Enabled and Insert a Record
 
 Create a simple table with DynamoDB Streams enabled to capture all changes:
+
 ```bash
 aws dynamodb create-table \
   --table-name orders \
@@ -33,7 +38,7 @@ aws dynamodb create-table \
   --billing-mode PAY_PER_REQUEST \
   --stream-specification StreamEnabled=true,StreamViewType=NEW_AND_OLD_IMAGES \
   --region $AWS_REGION
-  
+
 aws dynamodb put-item --table-name orders --item \
   '{"id": {"S": "order-001"}, "customer": {"S": "Alice"}, "amount": {"N": "99.99"}, "status": {"S": "pending"}}' \
   --region $AWS_REGION
@@ -44,6 +49,7 @@ aws dynamodb put-item --table-name orders --item \
 ## Step 4. Configure Spice to Use DynamoDB Credentials
 
 Update the `.env` file with your AWS credentials:
+
 ```env
 SPICE_DYNAMODB_KEY=<aws_access_key_id>
 SPICE_DYNAMODB_SECRET=<aws_secret_access_key>
@@ -52,11 +58,13 @@ SPICE_DYNAMODB_SECRET=<aws_secret_access_key>
 ---
 
 ## Step 5. Start the Spice Runtime and Watch Table Bootstrapping
+
 ```bash
 spice run
 ```
 
 You should see the dataset initialize and begin streaming:
+
 ```bash
 INFO runtime::init::dataset: Dataset orders_stream registered (dynamodb:orders), acceleration (duckdb:file, changes), results cache enabled.
 INFO runtime::dataconnector::dynamodb: No existing checkpoint found for table orders_stream, starting from bootstrap
@@ -70,11 +78,13 @@ INFO runtime: All components are loaded. Spice runtime is ready!
 ## Step 6. Insert Records and Watch Them Stream
 
 In the Spice SQL REPL (run `spice sql` in another terminal), query the table:
+
 ```sql
 SELECT * FROM orders_stream;
 ```
 
 You should see the new record:
+
 ```console
 +-----------+----------+--------+---------+
 | id        | customer | amount | status  |
@@ -88,6 +98,7 @@ You should see the new record:
 ## Step 8. Update a Record and See the Change
 
 Update the order status:
+
 ```bash
 aws dynamodb put-item --table-name orders --item \
   '{"id": {"S": "order-002"}, "customer": {"S": "Bob"}, "amount": {"N": "149.99"}, "status": {"S": "pending"}}' \
@@ -95,11 +106,13 @@ aws dynamodb put-item --table-name orders --item \
 ```
 
 Query again in the SQL REPL:
+
 ```sql
 SELECT * FROM orders_stream;
 ```
 
 The status should now be updated:
+
 ```console
 +-----------+----------+---------+---------+
 | id        | customer | amount  | status  |
@@ -114,6 +127,7 @@ The status should now be updated:
 ## Step 9. Cleanup
 
 To delete the DynamoDB table:
+
 ```bash
 aws dynamodb delete-table --table-name orders --region $AWS_REGION
 ```

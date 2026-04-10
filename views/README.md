@@ -1,5 +1,7 @@
 # Accelerated Views
 
+Works with `v1.0+`
+
 This recipe demonstrates how to use accelerated [Views](https://spiceai.org/docs/components/views) to pre-calculate and materialize data derived from one or more underlying datasets. By defining views that aggregate, join, or transform source data in advance, you can significantly improve the performance of analytical queries. In this recipe, we will create a locally accelerated view for the [TPC-H Q21 - Suppliers Who Kept Orders Waiting](https://github.com/spiceai/cookbook/tree/trunk/tpc-h) report.
 
 ---
@@ -72,7 +74,7 @@ cat <<'EOF' >> spicepod.yaml
 
 views:
   - name: supplier_order_waits
-    acceleration: 
+    acceleration:
       enabled: true
       refresh_check_interval: 1h
       engine: duckdb
@@ -261,7 +263,7 @@ Example view spicepod:
 ```yaml
 views:
   - name: supplier_order_waits
-    acceleration: 
+    acceleration:
       enabled: true
       refresh_cron: "* * * * *"
       engine: duckdb

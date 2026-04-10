@@ -1,5 +1,7 @@
 # Advanced Data Refresh
 
+Works with `v1.0+`
+
 Data refresh for accelerated datasets can be configured and tuned for specific scenarios.
 
 Follow this recipe to dynamically refresh specific data at runtime by programmatically updating `refresh_sql` and triggering data refreshes.

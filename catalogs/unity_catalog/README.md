@@ -1,5 +1,7 @@
 # Unity Catalog Connector
 
+Works with `v1.0+`
+
 The Unity Catalog Connector makes querying tables in a Unity Catalog with Spice simple.
 
 Note: This recipe applies to the [open-source version of Unity Catalog](https://www.unitycatalog.io/). To get started with the Databricks Unity Catalog Connector, see the [Databricks Unity Catalog Connector recipe](../databricks/README.md).

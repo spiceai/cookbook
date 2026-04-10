@@ -1,5 +1,7 @@
 # Supabase (PostgreSQL Data Connector)
 
+Works with `v1.0+`
+
 Follow these steps to get started with Supabase using the PostgreSQL Data Connector.
 
 ## Pre-requisites
@@ -26,15 +28,15 @@ insert into spice_test (value) values (10), (20), (30), (40), (50);
 **Step 5.** Edit the `spicepod.yaml` file in this directory and replace `spice_test` with the path to the Supabase table to be accelerated and add the following params section with the connection parameters from the Supabase project.
 
 ```yaml
-  - from: postgres:spice_test # Replace `spice_test` with your table name if not using the example table
-    name: spice_test
-    params:
-      pg_host: [Host] # replace from `host` field in Supabase connection parameters
-      pg_db: postgres # replace from `database` field, usually `postgres`
-      pg_port: 5432 # replace from `port` field, usually `5432`
-      pg_user: postgres.<project_ref> # replace from `user` field
-      pg_pass: ${env:PG_PASS}
-      pg_sslmode: require
+- from: postgres:spice_test # Replace `spice_test` with your table name if not using the example table
+  name: spice_test
+  params:
+    pg_host: [Host] # replace from `host` field in Supabase connection parameters
+    pg_db: postgres # replace from `database` field, usually `postgres`
+    pg_port: 5432 # replace from `port` field, usually `5432`
+    pg_user: postgres.<project_ref> # replace from `user` field
+    pg_pass: ${env:PG_PASS}
+    pg_sslmode: require
 ```
 
 See the [datasets reference](https://docs.spiceai.org/reference/spicepod/datasets) for more dataset configuration options and [PostgreSQL Data Connector](https://docs.spiceai.org/data-connectors/postgres) for more options on configuring a PostgreSQL Data Connector.

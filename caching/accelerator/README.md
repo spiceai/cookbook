@@ -1,5 +1,7 @@
 # Caching Accelerator
 
+Works with `v1.10+`
+
 This recipe demonstrates the **caching accelerator** (`refresh_mode: caching`), which provides intelligent caching for HTTP-based datasets with Stale-While-Revalidate (SWR) support.
 
 ## Overview
@@ -21,12 +23,12 @@ This recipe includes a small Rust-based time server that helps illustrate and ex
 
 The included time server (`time_server/`) serves the current UTC time on `http://localhost:7400/time` and provides interactive controls to simulate various caching scenarios. A pre-built Docker image is available at `ghcr.io/spiceai/cookbook-time-server:latest`.
 
-| Key | Action |
-|-----|--------|
+| Key | Action                                                |
+| --- | ----------------------------------------------------- |
 | `s` | Toggle error mode (returns 500 Internal Server Error) |
-| `+` | Increase response delay by 100ms |
-| `-` | Decrease response delay by 100ms |
-| `q` | Quit the server |
+| `+` | Increase response delay by 100ms                      |
+| `-` | Decrease response delay by 100ms                      |
+| `q` | Quit the server                                       |
 
 The server also displays:
 
@@ -99,13 +101,13 @@ datasets:
 
 ### Key Configuration Options
 
-| Parameter | Value | Description |
-|-----------|-------|-------------|
-| `refresh_mode` | `caching` | Enables the caching accelerator with SWR support |
-| `engine` | `duckdb` | Uses DuckDB for cache storage |
-| `caching_ttl` | `10s` | Cache entries are considered fresh for 10 seconds |
-| `caching_stale_while_revalidate_ttl` | `10s` | Serve stale data for 10 seconds while refreshing in background |
-| `caching_stale_if_error` | `enabled` | Return cached data if the upstream server returns an error |
+| Parameter                            | Value     | Description                                                    |
+| ------------------------------------ | --------- | -------------------------------------------------------------- |
+| `refresh_mode`                       | `caching` | Enables the caching accelerator with SWR support               |
+| `engine`                             | `duckdb`  | Uses DuckDB for cache storage                                  |
+| `caching_ttl`                        | `10s`     | Cache entries are considered fresh for 10 seconds              |
+| `caching_stale_while_revalidate_ttl` | `10s`     | Serve stale data for 10 seconds while refreshing in background |
+| `caching_stale_if_error`             | `enabled` | Return cached data if the upstream server returns an error     |
 
 ## Experimenting with Caching Behavior
 
@@ -159,13 +161,13 @@ The `+` and `-` keys on the time server adjust response delay:
 
 The caching accelerator automatically adds metadata fields to cached data:
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `request_path` | String | The URL path used for the request |
-| `request_query` | String | Query parameters from the request |
-| `request_body` | String | Request body (for POST requests) |
-| `content` | String | The response content |
-| `fetched_at` | Timestamp | When the data was fetched |
+| Field           | Type      | Description                       |
+| --------------- | --------- | --------------------------------- |
+| `request_path`  | String    | The URL path used for the request |
+| `request_query` | String    | Query parameters from the request |
+| `request_body`  | String    | Request body (for POST requests)  |
+| `content`       | String    | The response content              |
+| `fetched_at`    | Timestamp | When the data was fetched         |
 
 ## Use Cases
 

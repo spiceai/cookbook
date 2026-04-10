@@ -1,5 +1,7 @@
 # Accelerated Snapshots
 
+Works with `v1.8+`
+
 This recipe walks through configuring database snapshots for file-mode accelerations so datasets avoid cold starts and recover quickly after restarts.
 
 _Tip: Keep the [Snapshots documentation](https://spiceai.org/docs/features/data-acceleration/snapshots) handy while following this guide._
@@ -49,7 +51,7 @@ name: quickstart
 snapshots:
   enabled: true
   location: s3://my-snapshots-prod/quickstart/
-  bootstrap_on_failure_behavior: fallback  # retry | fallback | warn (default)
+  bootstrap_on_failure_behavior: fallback # retry | fallback | warn (default)
   params:
     s3_auth: key
     s3_key: ${ env:S3_SNAPSHOT_KEY }
@@ -66,9 +68,9 @@ datasets:
       enabled: true
       engine: duckdb
       mode: file
-      snapshots: enabled             # enabled | bootstrap_only | create_only | disabled
+      snapshots: enabled # enabled | bootstrap_only | create_only | disabled
       params:
-        duckdb_file: taxi_trips.db   # Stored on local disk and bootstrapped from snapshots
+        duckdb_file: taxi_trips.db # Stored on local disk and bootstrapped from snapshots
 ```
 
 Key settings to note:

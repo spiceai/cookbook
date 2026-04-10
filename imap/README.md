@@ -1,5 +1,7 @@
 # IMAP Data Connector
 
+Works with `v1.0+`
+
 Follow these steps to get started with the IMAP Data Connector, connecting to an IMAP server with a plain username and password.
 
 ## Pre-requisites

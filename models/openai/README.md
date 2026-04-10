@@ -1,5 +1,7 @@
 # OpenAI Models
 
+Works with `v1.0+`
+
 This recipe demonstrates how to use OpenAI models in Spice.ai.
 
 ## Prerequisites
@@ -22,7 +24,7 @@ datasets:
     description: Spice.ai project documentation (github.com/spiceai/spiceai)
     params:
       github_token: ${secrets:GITHUB_TOKEN}
-      include: 'docs/**/*.md'
+      include: "docs/**/*.md"
     acceleration:
       enabled: true
     columns:
@@ -142,7 +144,7 @@ Result
     },
     {
       "matches": {
-        "content":  "# Criteria Definitions\n\n## RC\n\nAcronym for \"Release Candidate\". Identifies a version that is eligible for ..."
+        "content": "# Criteria Definitions\n\n## RC\n\nAcronym for \"Release Candidate\". Identifies a version that is eligible for ..."
       },
       "score": 0.7145749783070606,
       "dataset": "spiceai.docs",

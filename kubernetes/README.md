@@ -1,5 +1,7 @@
 # Running Spice.ai in Kubernetes
 
+Works with `v1.0+`
+
 **Step 1.** (Optional) Start a local [`kind`](https://kind.sigs.k8s.io/) cluster:
 
 ```bash

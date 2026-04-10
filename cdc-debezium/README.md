@@ -1,5 +1,7 @@
 # Streaming changes in real-time with Debezium CDC
 
+Works with `v1.0+`
+
 Change Data Capture (CDC) is a technique to capture changed rows from a database's transaction log and deliver to consumers with low latency. Leveraging this technique allows Spice to keep locally accelerated datasets up-to-date in real-time with the source data, and is highly efficient by only transferring the changed rows instead of re-fetching the entire dataset on refresh.
 
 In this recipe we will have a local Postgres database with a table `customer_addresses` and a Spice runtime that accelerates the data from the `customer_addresses` table. A Debezium connector will capture changes from the `customer_addresses` table and publish them to a Kafka topic called `cdc.public.customer_addresses`. The Spice runtime will consume the changes from the Kafka topic and keep an accelerated dataset updated with the changes, including the initial state.

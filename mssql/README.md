@@ -1,5 +1,7 @@
 # MSSQL (Microsoft SQL Server) Connector
 
+Works with `v1.0+`
+
 This recipe is meant to get you up and running with Spice's MSSQL data connector. It runs two instances of MSSQL server: 2019 and 2022. Both
 instances are accessible from within Spice to demonstrate that you can query across multiple servers.
 

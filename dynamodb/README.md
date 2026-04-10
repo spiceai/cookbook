@@ -1,5 +1,7 @@
 # DynamoDB Data Connector (AWS Hosted)
 
+Works with `v1.0+`
+
 This recipe demonstrates how to configure a Spice dataset to connect to an AWS-hosted DynamoDB table and query data from it.
 
 ## Prerequisites
@@ -19,6 +21,7 @@ cd cookbook/dynamodb
 ```
 
 ## Step 2. Define AWS_REGION
+
 ```bash
 export AWS_REGION=<your-region>
 ```

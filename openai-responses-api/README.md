@@ -1,13 +1,15 @@
 # Using OpenAI's Responses API with Spice
 
+Works with `v1.10+`
+
 This recipe shows how Spice integrates with [OpenAI's Responses API](https://platform.openai.com/docs/api-reference/responses), OpenAI's most advanced interface for generating model responses, supporting both hosted and custom tool calls. This recipe also covers how to use the OpenAI SDK's support for the Responses API to connect to compatible models running on Spice.
 
 ## Prerequisites
 
--   Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation)
--   `OPENAI_API_KEY` is set in `.env`. To acquire an OpenAI API Key, see [OpenAI's Guide](https://platform.openai.com/account/api-keys).
--   Python >= 3.10
--   Python package manager (`pip` or `uv`)
+- Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation)
+- `OPENAI_API_KEY` is set in `.env`. To acquire an OpenAI API Key, see [OpenAI's Guide](https://platform.openai.com/account/api-keys).
+- Python >= 3.10
+- Python package manager (`pip` or `uv`)
 
 ## How to run
 
@@ -114,9 +116,9 @@ if __name__ == '__main__':
 
 Use this single line to paste into the spice chat repl:
 
-```
+````
 # Prompt: Run the following code using your code interpreter and output its#\nresult#\nimport hashlib, math, random#\ndef scramble(n):#\n    s = str(n).encode()#\n    h = hashlib.sha256(s).hexdigest()#\n    nums = [int(h[i:i+2], 16) for i in range(0, len(h), 2)]#\n    random.seed(sum(nums))#\n    random.shuffle(nums)#\n    return sum(int(math.sin(x) * 1000) for x in nums[:10])#\ndef main():#\n    base = 123456789#\n    result = scramble(base)#\n    print(result)#\nif __name__ == '__main__':#\n    main()#\n```
-```
+````
 
 ```console
 Arrr, matey! The code be runnin' smooth as silk, and the result be \(1562\)! 🏴‍☠️
@@ -272,5 +274,5 @@ Arrr, matey! I've got me hands on the "taxi trips" dataset from yonder S3 seas. 
 
 ## Learn More
 
--   [OpenAI Model Provider Documentation](https://spiceai.org/docs/components/models/openai)
--   [OpenAI's Responses API](https://platform.openai.com/docs/api-reference/responses)
+- [OpenAI Model Provider Documentation](https://spiceai.org/docs/components/models/openai)
+- [OpenAI's Responses API](https://platform.openai.com/docs/api-reference/responses)

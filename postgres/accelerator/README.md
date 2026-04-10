@@ -1,5 +1,7 @@
 # PostgreSQL Data Accelerator
 
+Works with `v1.0+`
+
 Follow these steps to get started with PostgreSQL as a Data Accelerator.
 
 This recipe will use a demo instance of Postgres. Follow the recipe to create Postgres instance and get started with Postgres as a Data Accelerator. With Postgres as a Data Accelerator, data sourced by Data Connectors can be **locally materialized and accelerated** into an attached Postgres instance. Unlike other Data Accelerators which are local to Spice, this enables other applications to query the accelerated data via a native integration with Postgres, which Spice keeps up-to-date automatically.
@@ -164,7 +166,7 @@ SELECT "VendorID", tpep_pickup_datetime, fare_amount FROM taxi_trips LIMIT 10;
 ```
 
 ```shell
- VendorID | tpep_pickup_datetime | fare_amount 
+ VendorID | tpep_pickup_datetime | fare_amount
 ----------+----------------------+-------------
         2 | 2024-01-28 00:22:02  |       16.57
         2 | 2024-01-28 00:48:06  |          -1

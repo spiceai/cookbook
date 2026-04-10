@@ -1,5 +1,7 @@
 # Sidecar Deployment Architecture
 
+Works with `v1.0+`
+
 The sidecar deployment pattern runs the Spice.ai Runtime as a companion container or process alongside the main application on the same host. This architecture provides low-latency access to accelerated data through localhost communication.
 
 ## Architecture Overview
@@ -62,8 +64,8 @@ datasets:
     acceleration:
       enabled: true
       engine: duckdb
-      refresh_mode: full         # Replace entire dataset on each refresh
-      refresh_sql: |             # Accelerate specific product subset
+      refresh_mode: full # Replace entire dataset on each refresh
+      refresh_sql: | # Accelerate specific product subset
         SELECT * FROM products 
         WHERE category = 'electronics' 
         AND status = 'active'
@@ -93,7 +95,8 @@ datasets:
       engine: duckdb # Persist the accelerated data to a DuckDB file
       mode: file
       refresh_mode: append # Append only the data that has changed since the last refresh
-      refresh_sql: | # Configure the initial load of the dataset to only load data from the last 90 days
+      refresh_sql:
+        | # Configure the initial load of the dataset to only load data from the last 90 days
         SELECT * FROM customer_interactions 
         WHERE interaction_timestamp >= NOW() - INTERVAL '90 days'
       primary_key: interaction_id # Primary key is required if data is updated in place as opposed to only appending new data

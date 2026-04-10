@@ -1,5 +1,7 @@
 # Spice.ai API Key Authentication
 
+Works with `v1.0+`
+
 Spice supports securing its HTTP, Flight/FlightSQL, and OpenTelemetry endpoints using API keys.
 
 Enable API key authentication with:
