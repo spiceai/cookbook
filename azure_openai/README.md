@@ -1,5 +1,7 @@
 # Azure OpenAI Models
 
+Works with `v1.0+`
+
 This recipe demonstrates how to use Azure OpenAI models for vector-based search and chat functionalities with structured (taxi trips) and unstructured GitHub data.
 
 ## Prerequisites
@@ -136,7 +138,8 @@ Result:
 {
   "results": [
     {
-      "matches": {        "content": ".\n\n## Definitions\n\n- Metric: is a measurement used to track the state and behavior of a system component. Metrics represent the current status ..."
+      "matches": {
+        "content": ".\n\n## Definitions\n\n- Metric: is a measurement used to track the state and behavior of a system component. Metrics represent the current status ..."
       },
       "data": {
         "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/dev/metrics.md"
@@ -214,6 +217,7 @@ Time: 650ms. 10 results.
 ```
 
 ## Vector Search on multiple columns
+
 Notice on the `name: spiceai.issues` dataset, there are embeddings on both the `body` & `title`. When performing vector search on this table, it will search across both these columns, and return results based on combined relevance.
 
 ```shell

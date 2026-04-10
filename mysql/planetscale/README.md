@@ -1,5 +1,7 @@
 # Planetscale (MySQL Data Connector)
 
+Works with `v1.0+`
+
 Follow these steps to get started with federated SQL query against [Planetscale](https://planetscale.com/) using the MySQL Data Connector.
 
 **Step 1.** Navigate to your Planetscale account and select your database, then click `Connect`.

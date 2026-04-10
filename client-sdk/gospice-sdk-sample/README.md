@@ -1,27 +1,35 @@
 # Spice with gospice SDK
 
-This recipe demonstrates how to use the gospice SDK to connect to a Spice runtime and query data.
+Works with `v1.0+`
 
-Clone this cookbook repo locally and navigate to the `gospice-sdk-sample` directory:
+Use the [gospice SDK](https://github.com/spiceai/gospice) to query Spice from Go.
 
-```shell
-git clone https://github.com/spiceai/cookbook.git
-cd cookbook/client-sdk/gospice-sdk-sample/
-```
+## What This Sample Includes
+
+- `main.go`: Query a local Spice runtime, including a parameterized query.
+- `cloud/main.go`: Query Spice.ai Cloud with inline replacement values.
 
 ## Prerequisites
 
-This recipe requires [Go](https://go.dev/) to be installed.
+- [Go](https://go.dev/) 1.24+
+- [Spice CLI](https://docs.spiceai.org/getting-started) for local mode
 
-## Start spice runtime
+## Local Quick Start
 
-```shell
+```bash
+git clone https://github.com/spiceai/cookbook.git
+cd cookbook/client-sdk/gospice-sdk-sample
+```
+
+Start Spice runtime in one terminal:
+
+```bash
 spice run
 ```
 
-Output:
+Sample runtime logs:
 
-```shell
+```text
 2024/11/27 16:24:27 INFO Checking for latest Spice runtime release...
 2024/11/27 16:24:27 INFO Spice.ai runtime starting...
 2024-11-28T00:24:28.411072Z  INFO runtime::init::dataset: Initializing dataset taxi_trips
@@ -35,15 +43,15 @@ Output:
 2024-11-28T00:24:37.106088Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (419.31 MiB) for dataset taxi_trips in 7s 856ms.
 ```
 
-## Run sample application
+Run the Go sample in another terminal:
 
-```shell
+```bash
 go run main.go
 ```
 
-Results:
+Sample output:
 
-```shell
+```text
 === Using Sql ===
 VendorID: 2, tpep_pickup_datetime: 1706465757000000, fare_amount: 15.6
 VendorID: 2, tpep_pickup_datetime: 1706466833000000, fare_amount: 14.2
@@ -63,3 +71,26 @@ VendorID: 1, tpep_pickup_datetime: 1706250595000000, fare_amount: 20.5
 VendorID: 1, tpep_pickup_datetime: 1706250222000000, fare_amount: 10.7
 VendorID: 2, tpep_pickup_datetime: 1706249286000000, fare_amount: 70
 ```
+
+## Spice.ai Cloud Quick Start
+
+Set your API key for the commands in this README:
+
+```bash
+export SPICE_API_KEY="your_api_key"
+```
+
+The cloud snippet keeps an inline API key placeholder by design. Replace the API key placeholder in `cloud/main.go` with `${SPICE_API_KEY}`, then run:
+
+```bash
+go run ./cloud
+```
+
+Expected output is a list of tables from `show tables;`.
+
+## Links
+
+- [gospice SDK](https://github.com/spiceai/gospice)
+- [Go package](https://pkg.go.dev/github.com/spiceai/gospice/v6)
+- [Spice.ai Cloud](https://spice.ai)
+- [Spice.ai documentation](https://docs.spiceai.org)

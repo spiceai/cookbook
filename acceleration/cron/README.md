@@ -1,5 +1,7 @@
 # Cron-based Dataset Refresh
 
+Works with `v1.0+`
+
 Spice supports specifying cron schedules for accelerated datasets, to refresh datasets on defined schedules.
 
 Follow this recipe to schedule a dataset to refresh on a cron schedule.
@@ -44,19 +46,19 @@ In the `acceleration` section, add a `refresh_cron` parameter with a value of `*
 The `spicepod.yaml` should be as below:
 
 ```yaml
-version: v1beta1
+version: v1
 kind: Spicepod
 name: quickstart
 
 datasets:
-- from: s3://spiceai-demo-datasets/taxi_trips/2024/
-  name: taxi_trips
-  description: taxi trips in s3
-  params:
-    file_format: parquet
-  acceleration:
-    enabled: true
-    refresh_cron: "*/30 * * * * *"
+  - from: s3://spiceai-demo-datasets/taxi_trips/2024/
+    name: taxi_trips
+    description: taxi trips in s3
+    params:
+      file_format: parquet
+    acceleration:
+      enabled: true
+      refresh_cron: "*/30 * * * * *"
 ```
 
 Save the file, and restart the Spice runtime:

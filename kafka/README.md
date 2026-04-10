@@ -1,5 +1,7 @@
 # Live Orders Analytics with Apache Kafka Data Connector
 
+Works with `v1.0+`
+
 In this recipe, you'll learn how to combine real-time data streaming from Kafka with other datasets using federated queries. The setup uses Apache Kafka with a test producer generating order events to the `orders_events` topic. The Spice runtime consumes these events, keeping an accelerated `orders` dataset updated in real time, enabling you to join this live data with other sources (such as S3 TPC-H benchmark data) for powerful analytics.
 
 ## Prerequisites
@@ -26,11 +28,11 @@ Output:
 
 ```shell
 [+] Running 5/5
- ✔ Network kafka_default          Created                                                                                                                                                                                           0.0s 
- ✔ Container broker               Healthy                                                                                                                                                                                          11.8s 
- ✔ Container kafka-ui             Started                                                                                                                                                                                          11.3s 
- ✔ Container kafka-topic-setup-1  Started                                                                                                                                                                                          11.3s 
- ✔ Container kafka-producer-1     Started   
+ ✔ Network kafka_default          Created                                                                                                                                                                                           0.0s
+ ✔ Container broker               Healthy                                                                                                                                                                                          11.8s
+ ✔ Container kafka-ui             Started                                                                                                                                                                                          11.3s
+ ✔ Container kafka-topic-setup-1  Started                                                                                                                                                                                          11.3s
+ ✔ Container kafka-producer-1     Started
 ```
 
 Navigate to <http://localhost:8080/ui/clusters/local/all-topics> to see the Apache Kafka console and the `orders_events` topic configured.

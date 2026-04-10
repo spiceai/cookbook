@@ -1,5 +1,7 @@
 # Clickhouse Data Connector
 
+Works with `v1.0+`
+
 Follow these steps to get started with Clickhouse as a Data Connector.
 
 ## Preparation

@@ -1,5 +1,7 @@
 # xAI Models
 
+Works with `v1.0+`
+
 This recipe demonstrates how to use xAI's Grok models with Spice.ai.
 
 [![Watch the Spice.ai LLM memory demo](https://img.youtube.com/vi/-7RkAsqQLdk/hqdefault.jpg)](https://www.youtube.com/embed/-7RkAsqQLdk)

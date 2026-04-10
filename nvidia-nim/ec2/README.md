@@ -1,11 +1,13 @@
 # Nvidia NIM on AWS EC2 g5.xlarge
 
+Works with `v1.0+`
+
 This recipe deploys Nvidia [NIM](https://docs.nvidia.com/nim/) on an AWS EC2 g5.xlarge instance. A local Spice instance runs and connects to the NIM OpenAI compatible LLM as a model.
 
 ## Prerequisites
 
- 1. An AWS account.
- 2. Spice installed locally, see [Spice Installation](https://spiceai.org/docs/installation)
+1.  An AWS account.
+2.  Spice installed locally, see [Spice Installation](https://spiceai.org/docs/installation)
 
 ## Deploying NIM
 
@@ -16,11 +18,11 @@ This recipe deploys Nvidia [NIM](https://docs.nvidia.com/nim/) on an AWS EC2 g5.
 3. Add a name to the instance, e.g. `nvidia-nim-testing`.
 4. Select the `NVIDIA GPU-Optimized AMI` for the machine image, it will be available in the AWS Marketplace AMIs.
 
-  ![AMI](./img/nvidia_ami.png)
+![AMI](./img/nvidia_ami.png)
 
 5. Select the **g5.xlarge** instance type.
 
-  ![Instance Type](./img/g5_instance.png)
+![Instance Type](./img/g5_instance.png)
 
 6. Select or create a new key pair.
 7. Allow SSH access from your IP address.
@@ -32,25 +34,25 @@ This recipe deploys Nvidia [NIM](https://docs.nvidia.com/nim/) on an AWS EC2 g5.
 2. Copy the public IP address of the instance.
 3. Open a terminal and run `ssh -i <path-to-your-key-pair> ubuntu@<public-ip-address>`. Wait for the instance to be ready and drivers installed.
 
-  ```bash
-  Welcome to the NVIDIA GPU Cloud image.  This image provides an optimized
-  environment for running the deep learning and HPC containers from the
-  NVIDIA GPU Cloud Container Registry.  Many NGC containers are freely
-  available.  However, some NGC containers require that you log in with
-  a valid NGC API key in order to access them.  This is indicated by a
-  "pull access denied for xyz ..." or "Get xyz: unauthorized: ..." error
-  message from the daemon.
+```bash
+Welcome to the NVIDIA GPU Cloud image.  This image provides an optimized
+environment for running the deep learning and HPC containers from the
+NVIDIA GPU Cloud Container Registry.  Many NGC containers are freely
+available.  However, some NGC containers require that you log in with
+a valid NGC API key in order to access them.  This is indicated by a
+"pull access denied for xyz ..." or "Get xyz: unauthorized: ..." error
+message from the daemon.
 
-  Documentation on using this image and accessing the NVIDIA GPU Cloud
-  Container Registry can be found at
-    http://docs.nvidia.com/ngc/index.html
+Documentation on using this image and accessing the NVIDIA GPU Cloud
+Container Registry can be found at
+  http://docs.nvidia.com/ngc/index.html
 
-  Installing drivers ...
-  Install complete
-  ubuntu is being added to docker group,
-  prefix sudo to all your docker commands,
-  or re-login to use docker without sudo
-  ```
+Installing drivers ...
+Install complete
+ubuntu is being added to docker group,
+prefix sudo to all your docker commands,
+or re-login to use docker without sudo
+```
 
 After the drivers are installed, logout and login again to the instance to allow running Docker commands as the `ubuntu` user.
 
@@ -59,9 +61,9 @@ After the drivers are installed, logout and login again to the instance to allow
 1. Get a NGC API key from Nvidia's NGC [website](https://org.ngc.nvidia.com/setup/personal-keys).
 2. Login to Nvidia's Docker registry on the instance
 
-    ```shell
-    docker login nvcr.io --username '$oauthtoken' # Enter your NGC API key when prompted for a password
-    ```
+   ```shell
+   docker login nvcr.io --username '$oauthtoken' # Enter your NGC API key when prompted for a password
+   ```
 
 ### Run a Phi-3 NIM model
 
@@ -92,12 +94,12 @@ While waiting for the model to start, configure the AWS security group to allow 
 
 1. On the instance details page, click the **Security** tab. Click the **Security groups** link.
 
-  ![Security Group](./img/security_group.png)
+![Security Group](./img/security_group.png)
 
 2. Click **Edit inbound rules**.
 3. Add a new rule to allow inbound traffic on port 8000 from your IP address or all IP addresses.
 
-  ![Inbound Rules](./img/inbound_rules.png)
+![Inbound Rules](./img/inbound_rules.png)
 
 4. Click **Save rules**.
 

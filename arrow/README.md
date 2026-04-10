@@ -1,5 +1,7 @@
 # In-Memory Arrow Data Accelerator
 
+Works with `v1.0+`
+
 Create a connector instance using sample data and accelerate it using In-Memory Arrow Data Accelerator.
 
 ## Requirements

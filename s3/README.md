@@ -1,5 +1,7 @@
 # S3 Data Connector
 
+Works with `v1.0+`
+
 This recipe demonstrates how to configure a Spice dataset to connect to an S3 bucket and query data from it.
 
 ## For a public S3 bucket

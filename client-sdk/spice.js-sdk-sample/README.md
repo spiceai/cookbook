@@ -1,101 +1,78 @@
 # Spice.js SDK Sample
 
-A Node.js sample application demonstrating the [`@spiceai/spice`](https://www.npmjs.com/package/@spiceai/spice) package with the NYC taxi_trips dataset.
+Works with `v1.0+`
 
-## Features
+Use [`@spiceai/spice`](https://www.npmjs.com/package/@spiceai/spice) from Node.js to query `taxi_trips`.
 
-- **Dual Mode Support**: Works with both Spice.ai Cloud ☁️ and local Spice runtime 🏠
-- Queries the NYC taxi_trips dataset using both `.sql()` and `.sqlJson()` methods
-- Demonstrates four practical analytics queries:
-  1. **Most Expensive Trips** - Find the top 10 highest-fare taxi rides
-  2. **Trip Statistics** - Calculate average fares, distances, tips, and more
-  3. **Popular Pickup Locations** - Identify the busiest pickup spots
-  4. **Payment Type Distribution** - Analyze payment methods and tipping patterns
+## What This Sample Includes
+
+- `index.js`: Main sample with multiple analytics queries.
+- `index_cloud.mjs`: Minimal cloud-only query (`show tables;`).
 
 ## Prerequisites
 
-- Node.js 20 or higher
-- npm or yarn
+- Node.js 20+
+- npm
+- [Spice CLI](https://docs.spiceai.org/getting-started) for local mode
 
-## Getting Started
-
-1. Clone the Spice.ai cookbook repository:
+## Quick Start
 
 ```bash
 git clone https://github.com/spiceai/cookbook.git
 cd cookbook/client-sdk/spice.js-sdk-sample
-```
-
-2. Install dependencies:
-
-```bash
 npm install
 ```
 
-## Usage
+## Run with Local Spice Runtime
 
-You can run this sample in two ways:
-
-### Option 1: Using Local Spice Runtime 🏠 (Recommended)
-
-1. Install the Spice CLI (see [Installation Guide](https://spiceai.org/docs/installation))
-2. From the `cookbook/client-sdk/spice.js-sdk-sample` directory, start the Spice runtime:
+Start Spice runtime in one terminal:
 
 ```bash
-# Terminal 1: Start Spice runtime (loads spicepod.yaml)
 spice run
 ```
 
-3. In a separate terminal, run the sample:
+Run the Node sample in another terminal:
 
 ```bash
-# Terminal 2: Run the sample (from the same directory)
-node index.js
+npm start
 ```
 
-The sample will automatically connect to the local runtime at `localhost:50051`.
+`index.js` runs against your local runtime by default.
 
-### Option 2: Using Spice.ai Cloud ☁️
+## Run with Spice.ai Cloud
 
-1. Sign up for a free account at [spice.ai](https://spice.ai)
-2. Create a new Spice app and manually deploy the `spicepod.yaml` through the web interface
-   - For detailed instructions, see the [Getting Started Guide](https://docs.spice.ai/getting-started/get-started)
-3. Get your API key from the Spice.ai dashboard
-4. Create a `.env` file with your API key:
-
-```env
-# .env file
-SPICE_API_KEY=your_api_key_here
-```
-
-5. Run the sample:
+Set your API key for the commands in this README:
 
 ```bash
-node index.js
+export SPICE_API_KEY="your_api_key"
 ```
 
-The sample automatically detects which mode to use based on whether `SPICE_API_KEY` is set.
+The cloud snippet keeps an inline API key placeholder by design. Replace the API key placeholder in `index_cloud.mjs` with `${SPICE_API_KEY}`, then run:
+
+```bash
+node index_cloud.mjs
+```
 
 ## Example Output
 
-The application will display:
+The application prints output similar to:
 
-```shell
-🌶️  Spice.js initialized
-   Platform: Node.js v24.9.0 darwin arm64
-   Transport: Arrow Flight → HTTP
-   Endpoint: http://127.0.0.1:8090
-   Flight URL: 127.0.0.1:50051
-🚕 NYC Taxi Trips Data Analysis
+```text
+Spice.js initialized
+  Platform: Node.js v24.9.0 darwin arm64
+  Transport: Arrow Flight -> HTTP
+  Endpoint: http://127.0.0.1:8090
+  Flight URL: 127.0.0.1:50051
+NYC Taxi Trips Data Analysis
 
-📡 Connected to: Local Spice Runtime 🏠
-💡 Tip: Set SPICE_API_KEY in .env to use Spice.ai Cloud
+Connected to: Local Spice Runtime
+Tip: Use `index_cloud.mjs` with your cloud API key for Spice.ai Cloud
 
 Querying taxi_trips dataset...
 
 ============================================================
 
-📊 Query 1: Top 10 Most Expensive Taxi Trips
+Query 1: Top 10 Most Expensive Taxi Trips
 
 Using .sql() - Apache Arrow Flight (gRPC) for high performance
 
@@ -112,73 +89,73 @@ Found 10 trips:
 9. $940.93 - 142.62 miles - 1 passenger(s)
 10. $900.00 - 157.25 miles - 1 passenger(s)
 
-⏱️  Execution time: 27.59ms
+Execution time: 27.59ms
 
 ============================================================
 
-📈 Query 2: Trip Statistics Summary
+Query 2: Trip Statistics Summary
 
 Statistics from sample:
-  • Total trips analyzed: 2964624
-  • Average fare: $26.8
-  • Average distance: 3.65 miles
-  • Average tip: $3.34
-  • Highest fare: $5000
-  • Lowest fare: $-900
+  - Total trips analyzed: 2964624
+  - Average fare: $26.8
+  - Average distance: 3.65 miles
+  - Average tip: $3.34
+  - Highest fare: $5000
+  - Lowest fare: $-900
 
-⏱️  Execution time: 9.25ms
+Execution time: 9.25ms
 
 ============================================================
 
-📍 Query 3: Top 10 Popular Pickup Locations
+Query 3: Top 10 Popular Pickup Locations
 
 Most popular pickup locations:
 
 1. Location ID 132:
-   145240 trips | Avg fare: $76.58 | Avg distance: 15.49 miles
+  145240 trips | Avg fare: $76.58 | Avg distance: 15.49 miles
 2. Location ID 161:
-   143471 trips | Avg fare: $23.48 | Avg distance: 2.56 miles
+  143471 trips | Avg fare: $23.48 | Avg distance: 2.56 miles
 3. Location ID 237:
-   142708 trips | Avg fare: $19.45 | Avg distance: 1.7 miles
+  142708 trips | Avg fare: $19.45 | Avg distance: 1.7 miles
 4. Location ID 236:
-   136465 trips | Avg fare: $20 | Avg distance: 1.85 miles
+  136465 trips | Avg fare: $20 | Avg distance: 1.85 miles
 5. Location ID 162:
-   106717 trips | Avg fare: $22.88 | Avg distance: 2.23 miles
+  106717 trips | Avg fare: $22.88 | Avg distance: 2.23 miles
 6. Location ID 230:
-   106324 trips | Avg fare: $26.27 | Avg distance: 2.91 miles
+  106324 trips | Avg fare: $26.27 | Avg distance: 2.91 miles
 7. Location ID 186:
-   104523 trips | Avg fare: $23.64 | Avg distance: 2.27 miles
+  104523 trips | Avg fare: $23.64 | Avg distance: 2.27 miles
 8. Location ID 142:
-   104080 trips | Avg fare: $21 | Avg distance: 2.09 miles
+  104080 trips | Avg fare: $21 | Avg distance: 2.09 miles
 9. Location ID 138:
-   89533 trips | Avg fare: $65.01 | Avg distance: 9.59 miles
+  89533 trips | Avg fare: $65.01 | Avg distance: 9.59 miles
 10. Location ID 239:
-   88474 trips | Avg fare: $20.93 | Avg distance: 2.26 miles
+  88474 trips | Avg fare: $20.93 | Avg distance: 2.26 miles
 
-⏱️  Execution time: 9.00ms
+Execution time: 9.00ms
 
 ============================================================
 
-💳 Query 4: Payment Type Distribution
+Query 4: Payment Type Distribution
 
 Using .sqlJson() - HTTP transport for simpler integration
 
 Payment type breakdown:
 
 1. Credit card (Type 1):
-   2,319,046 trips | Avg amount: $28.26 | Avg tip: $4.17
+  2,319,046 trips | Avg amount: $28.26 | Avg tip: $4.17
 2. Cash (Type 2):
-   439,191 trips | Avg amount: $22.88 | Avg tip: $0
+  439,191 trips | Avg amount: $22.88 | Avg tip: $0
 3. Dispute (Type 4):
-   46,628 trips | Avg amount: $1.77 | Avg tip: $0.04
+  46,628 trips | Avg amount: $1.77 | Avg tip: $0.04
 4. No charge (Type 3):
-   19,597 trips | Avg amount: $8.76 | Avg tip: $0.01
+  19,597 trips | Avg amount: $8.76 | Avg tip: $0.01
 
-⏱️  Execution time: 17.14ms
+Execution time: 17.14ms
 
 ============================================================
 
-🔢 Query 5: Parametrized Query - Trips by Distance Range
+Query 5: Parametrized Query - Trips by Distance Range
 
 Using .sql() with parameters for safe, dynamic queries
 
@@ -190,77 +167,94 @@ Trips with distance between 5 and 10 miles:
 4. 7.93 miles - $297.75 total - $0.00 tip - 1 passenger(s)
 5. 7.18 miles - $282.75 total - $5.00 tip - 1 passenger(s)
 
-⏱️  Execution time: 8.91ms
+Execution time: 8.91ms
 
-💡 Parameters used: $1=5, $2=10, $3=5
-
-============================================================
-
-📝 Method Comparison:
-
-• .sql() - Uses Apache Arrow Flight (gRPC)
-  ✓ Higher performance and efficiency
-  ✓ Better for large datasets and high-throughput applications
-  ✓ Returns Arrow Tables (columnar format)
-  ✓ Supports parametrized queries ($1, $2, ... placeholders)
-  ⚠️  Works in true Node.js runtimes (local Node.js, Lambda)
-
-• .sqlJson() - Uses HTTP
-  ✓ Simpler integration, works everywhere HTTP does
-  ✓ Better for smaller queries and web applications
-  ✓ Returns plain JavaScript objects (easier to work with)
-  ✓ Works in browsers, Vercel, Netlify, and sandbox environments
+Parameters used: $1=5, $2=10, $3=5
 
 ============================================================
 
-✅ Analysis complete!
+Method Comparison:
+
+.sql() - Uses Apache Arrow Flight (gRPC)
+  - Higher performance and efficiency
+  - Better for large datasets and high-throughput applications
+  - Returns Arrow Tables (columnar format)
+  - Supports parametrized queries ($1, $2, ... placeholders)
+  - Works in true Node.js runtimes (local Node.js, Lambda)
+
+.sqlJson() - Uses HTTP
+  - Simpler integration, works everywhere HTTP does
+  - Better for smaller queries and web applications
+  - Returns plain JavaScript objects (easier to work with)
+  - Works in browsers, Vercel, Netlify, and sandbox environments
+
+============================================================
+
+Analysis complete!
 ```
 
-## Code Examples
+## Optional: Minimal Cloud-Only Script
 
-### Connecting to Spice
+```bash
+node index_cloud.mjs
+```
+
+Expected output is a table list from `show tables;`.
+
+## Advanced and More
+
+### Features
+
+- Dual mode support: local Spice runtime and Spice.ai Cloud.
+- Uses both `.sql()` and `.sqlJson()` query methods.
+- Includes five analytics query examples over `taxi_trips`.
+
+### Detailed Cloud Setup
+
+1. Create a free account at [spice.ai](https://spice.ai).
+2. Create a Spice.ai Cloud app.
+3. Deploy this sample's `spicepod.yaml` to your Cloud app.
+4. Set `SPICE_API_KEY`, then replace the API key placeholder in `index_cloud.mjs` with that value.
+5. Run `node index_cloud.mjs`.
+
+### Code Examples
+
+Connect to Spice:
 
 ```javascript
-const { SpiceClient } = require('@spiceai/spice');
+const { SpiceClient } = require("@spiceai/spice");
 
-// Option 1: Spice.ai Cloud (with API key)
-const spiceCloud = new SpiceClient('your_api_key');
+// Cloud
+const spiceCloud = new SpiceClient({ apiKey: process.env.SPICE_API_KEY });
 
-// Option 2: Local Spice Runtime (default: localhost:50051)
+// Local (default localhost runtime)
 const spiceLocal = new SpiceClient();
 ```
 
-### Querying Data
-
-The SDK provides two query methods:
-
-**`.sql()` - Apache Arrow Flight (gRPC)**
-
-- Higher performance and efficiency
-- Better for large datasets and high-throughput applications
-- Returns Apache Arrow Tables (columnar format)
-- Works in Node.js, AWS Lambda, and other server environments
+Query with `.sql()` (Arrow Flight / gRPC):
 
 ```javascript
-const result = await spice.sql('SELECT * FROM taxi_trips LIMIT 10');
-const data = result.toArray();
+const result = await spice.sql("SELECT * FROM taxi_trips LIMIT 10");
+const rows = result.toArray();
 ```
 
-**`.sqlJson()` - HTTP/REST**
-
-- Simpler integration, works everywhere HTTP does
-- Better for smaller queries and web applications
-- Returns plain JavaScript objects
-- Works in browsers, Vercel, Netlify, and edge functions
+Query with `.sqlJson()` (HTTP):
 
 ```javascript
-const result = await spice.sqlJson('SELECT * FROM taxi_trips LIMIT 10');
-const data = result.data;
+const result = await spice.sqlJson("SELECT * FROM taxi_trips LIMIT 10");
+const rows = result.data;
 ```
 
-## About the Dataset
+### About the Dataset
 
-This sample uses the NYC taxi_trips dataset, which contains real taxi trip data including fares, distances, pickup/dropoff times, and locations.
+This sample uses the NYC `taxi_trips` dataset.
 
-- **Local**: The dataset is defined in `spicepod.yaml` and will be loaded automatically when you run `spice run`
-- **Cloud**: Manually deploy `spicepod.yaml` to Spice Cloud through the web interface. See the [Getting Started Guide](https://docs.spice.ai/getting-started/get-started) for help.
+- Local mode: dataset is defined in `spicepod.yaml` and loads with `spice run`.
+- Cloud mode: deploy `spicepod.yaml` to your Cloud app before running queries.
+
+## Links
+
+- [spice.js SDK](https://github.com/spiceai/spice.js)
+- [npm package](https://www.npmjs.com/package/@spiceai/spice)
+- [Spice.ai Cloud](https://spice.ai)
+- [Spice.ai documentation](https://docs.spiceai.org)

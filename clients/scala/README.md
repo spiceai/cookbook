@@ -1,5 +1,7 @@
 # Scala JDBC Client with Parameterized Queries
 
+Works with `v1.0+`
+
 This guide demonstrates how to use Scala to query Spice via the Apache Arrow Flight SQL JDBC driver. The example connects to a local Spice OSS runtime, executes a parameterized query, and fetches results.
 
 ## Requirements

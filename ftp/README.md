@@ -1,5 +1,7 @@
 # FTP/SFTP Data Connector
 
+Works with `v1.0+`
+
 Follow these steps to get started with FTP/SFTP as a Data Connector.
 
 ## Requirements

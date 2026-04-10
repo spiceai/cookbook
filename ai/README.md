@@ -1,5 +1,7 @@
 # AI SQL Function
 
+Works with `v1.8+`
+
 This recipe demonstrates how to use the `ai()` SQL function to invoke large language models (LLMs) directly within SQL queries for AI-powered text generation.
 
 The `ai()` function enables you to integrate AI capabilities into your data workflows without external APIs or complex integrations—simply call a function in your SQL query!
@@ -253,13 +255,13 @@ Every `ai()` call is tracked in the `runtime.task_history` table:
 
 ```sql
 SELECT
-  task_id,
+  trace_id,
   task,
-  execution_time,
+  execution_duration_ms,
   captured_output
 FROM runtime.task_history
 WHERE task = 'ai'
-ORDER BY captured_at DESC
+ORDER BY start_time DESC
 LIMIT 5;
 ```
 

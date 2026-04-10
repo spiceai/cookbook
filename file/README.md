@@ -1,5 +1,7 @@
 # File Data Connector Recipe
 
+Works with `v1.0+`
+
 Using the [File Data Connector](https://spiceai.org/docs/components/data-connectors/file), you can create datasets from files. This enables you to easily query locally accessible data stored in various file formats, including CSV, Parquet, and Markdown.
 
 ## Prerequisites
