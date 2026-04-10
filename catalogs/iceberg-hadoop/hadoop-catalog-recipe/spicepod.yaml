@@ -3,7 +3,7 @@ kind: Spicepod
 name: hadoop-catalog-recipe
 
 catalogs:
-    - from: iceberg:s3://hadoop/
+    - from: iceberg:s3a://hadoop/
       name: hadoop
       include:
          - "tpch.*"
