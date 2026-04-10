@@ -1,5 +1,7 @@
 # JSON strings
 
+Works with `v1.0+`
+
 This recipe demonstrates how to work with JSON strings with Spice. A JSON string represents a JSON object serialized into a string format.
 
 JSON string manipulation in Spice is based on [datafusion-functions-json](https://github.com/datafusion-contrib/datafusion-functions-json) which parses strings into JSON objects and provides the following functionality:
@@ -44,7 +46,6 @@ JSON string manipulation in Spice is based on [datafusion-functions-json](https:
 - `?` operator  
   Alias for `json_contains`.
 
-
 ## Prerequisites
 
 - Ensure the Spice CLI is installed. Follow the [Getting Started](https://docs.spiceai.org/getting-started) guide if you haven't done it yet.
@@ -53,7 +54,7 @@ JSON string manipulation in Spice is based on [datafusion-functions-json](https:
 
   ```shell
   git clone https://github.com/spiceai/cookbook
-  cd cookbook/json_strings 
+  cd cookbook/json_strings
   ```
 
 ## Run Spice
@@ -181,7 +182,7 @@ sql> select name, properties->'inventory'->'locations'->>0 "Store" from products
 
 Retrieve the products with the colors black and white using the `->>` operator in the `WHERE` clause:
 
-``` console
+```console
 sql> SELECT name, properties ->> 'color' color FROM products
 WHERE properties ->> 'color' IN ('black', 'white');
 +---------------------+-------+

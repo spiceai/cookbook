@@ -1,5 +1,7 @@
 # MongoDB Data Connector
 
+Works with `v1.0+`
+
 This recipe will use a demo instance of MongoDB with a generated dataset. Follow the recipe to create MongoDB instance and get started with MongoDB as a Data Connector.
 
 ## Prerequisites
@@ -178,5 +180,5 @@ For more information on using `spice sql`, see the [CLI reference](https://docs.
 **Step 6.** Cleanup
 
 ```bash
-docker rm -f mongodb-cookbook 
+docker rm -f mongodb-cookbook
 ```

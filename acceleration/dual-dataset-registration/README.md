@@ -1,5 +1,7 @@
 # Dual-Dataset Registration
 
+Works with `v1.0+`
+
 Serve queries instantly while a large table accelerates in the background by registering the same source as two datasets: one federated and one accelerated.
 
 _Tip: Keep the [Data Acceleration documentation](https://docs.spiceai.org/components/data-accelerators) handy while following this guide._

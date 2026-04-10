@@ -53,6 +53,7 @@ checking each recipe directory for:
   or multi-service architectures. Skip these.
 
 Recipes that use only these data sources are locally runnable:
+
 - `file:` or `file://` (local files)
 - `s3://spiceai-public-datasets/` or `s3://spiceai-demo-datasets/` (public S3)
 - `duckdb:` with a local `.db` file
@@ -77,6 +78,7 @@ Read the recipe's `README.md` in full. Before executing anything, identify:
 Before running anything:
 
 1. **Spice CLI** -- verify `spice` is installed: `spice version`. If not, install:
+
    ```bash
    curl https://install.spiceai.org | /bin/bash
    ```
@@ -94,9 +96,11 @@ Before running anything:
    etc., verify they're installed.
 
 5. **Port conflicts** -- check if Spice's ports are free:
+
    ```bash
    lsof -i :50051 -i :8090 -i :9090 2>/dev/null | grep LISTEN
    ```
+
    If port 8090 is occupied (common with VS Code, dev servers, etc.), don't try to
    kill the process. Instead, use `spiced` directly with an alternate HTTP port
    (see "Starting Spice runtime" below). Ports 50051 (Flight) and 9090 (metrics)
@@ -115,15 +119,18 @@ Before running anything:
 Follow the README instructions in order. Key patterns:
 
 ### Starting infrastructure (if needed)
+
 ```bash
 cd <recipe-dir>
 docker compose up -d   # or: make
 ```
+
 Wait for services to be healthy before proceeding.
 
 ### Starting Spice runtime
 
 **If port 8090 is free**, use the standard approach:
+
 ```bash
 cd <recipe-dir>
 spice run &>/tmp/spice_<recipe>.log &
@@ -131,6 +138,7 @@ spice run &>/tmp/spice_<recipe>.log &
 
 **If port 8090 is occupied**, use `spiced` directly with an alternate HTTP port.
 This is the most reliable approach and avoids port conflicts entirely:
+
 ```bash
 cd <recipe-dir>
 ~/.spice/bin/spiced --http 127.0.0.1:8091 &>/tmp/spice_<recipe>.log &
@@ -138,6 +146,7 @@ cd <recipe-dir>
 
 Always redirect output to a log file so you can inspect it. Wait for readiness by
 checking the log for key markers:
+
 - `Spice Runtime Flight listening on 127.0.0.1:50051` -- Flight endpoint ready
 - `Dataset <name> registered` -- datasets being configured
 - `Loaded N rows` -- acceleration data loaded
@@ -154,6 +163,7 @@ from S3 (millions of rows can take 10-60+ seconds).
 
 For recipes that accelerate large datasets, monitor loading progress rather than
 blindly sleeping:
+
 ```bash
 # Check the log for completion
 grep "Loaded\|All components\|Failed" /tmp/spice_<recipe>.log
@@ -161,6 +171,7 @@ grep "Loaded\|All components\|Failed" /tmp/spice_<recipe>.log
 
 For long-running loads (S3 datasets with millions of rows), use the Monitor tool
 or check the log periodically. Typical load times:
+
 - Local files (CSV, parquet): 1-5 seconds
 - Public S3 datasets (~3M rows): 8-20 seconds
 - Large S3 datasets with acceleration: 30-120 seconds
@@ -169,17 +180,21 @@ or check the log periodically. Typical load times:
 ### Running SQL queries
 
 Pipe queries directly rather than using the interactive REPL:
+
 ```bash
 echo "SELECT COUNT(*) FROM my_table;" | spice sql
 ```
+
 This avoids interactive mode issues and captures output cleanly.
 
 If the recipe uses API key authentication, pass the key:
+
 ```bash
 echo "SELECT 1;" | spice sql --api-key <key>
 ```
 
 ### Running helper scripts
+
 Some recipes have `generate_data.sh` or similar scripts. Run them as documented.
 
 ### Comparing output
@@ -234,6 +249,7 @@ Summarize what happened:
   the user chose not to provide it, note which steps were skipped and why.
 
 For batch runs, report a summary table:
+
 ```
 | Recipe | Status | Key Verification |
 |--------|--------|-----------------|

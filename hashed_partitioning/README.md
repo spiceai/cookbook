@@ -1,5 +1,7 @@
 # Hashed Partitioning with DuckDB
 
+Works with `v1.0+`
+
 Accelerate queries on terabyte and petabyte-scale datasets using hashed partitioning, which prunes irrelevant data during filters on categorical columns like IDs.
 
 Hashed partitioning divides data into fixed buckets using a hash expression for even distribution. It can significantly improve query performance for large datasets by reducing the volume of data required when processing a query. It works well for unpredictable categorical data, such as location IDs in geospatial workloads, distinct from range partitioning suited to sequential fields like dates.
@@ -14,6 +16,7 @@ cd cookbook/hashed_partitioning
 ```
 
 ## Step 2. Spicepod configuration
+
 The `spicepod.yaml` configuration will accelerate and partition the `taxi_trips` dataset by hashing the `PULocationID` column and placing the data into one of 10 buckets using the `partition_by` parameter.
 
 ```yaml
@@ -46,6 +49,7 @@ spice run
 ```
 
 ## Step 4: Verify partition pruning
+
 You can see, by inspecting the physical plan, that querying without a filter involves scanning all the partitioned files.
 
 In another terminal window, execute `spice sql`. Then at the `sql>` prompt, type:

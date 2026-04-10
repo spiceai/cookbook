@@ -1,5 +1,7 @@
 # Adding Spice as a Grafana Datasource
 
+Works with `v1.0+`
+
 This recipe will show how to configure a Grafana dashboard to use Spice as the data source using the [Infinity](https://grafana.com/docs/plugins/yesoreyeram-infinity-datasource/latest/) plugin.
 
 ## Prerequisites
@@ -33,7 +35,7 @@ Open a second terminal and run the following command to start Grafana in Docker:
 
 1. Open Grafana in your browser at [http://localhost:3000](http://localhost:3000).
 1. Log in with the default credentials `admin`/`admin`, skip the password change prompt.
-![screenshot](./img/grafana-datasource-1.png)
+   ![screenshot](./img/grafana-datasource-1.png)
 
 1. Navigate to Administation -> Plugins and data -> Plugins.
 
@@ -44,12 +46,14 @@ Open a second terminal and run the following command to start Grafana in Docker:
    ![screenshot](./img/grafana-datasource-8.png)
 
 1. Click on "Build a dashboard" and add a new visualization. Select "Infinity" from the list of data sources.
- - Change "Method" to "POST" and "URL" to `http://localhost:8090/v1/sql`.
- - Add SQL query in body, using "Raw" mode:
 
-   ```sql
-   SELECT to_timestamp(tpep_dropoff_datetime), fare_amount FROM public.taxi_trips LIMIT 100
-   ```
+- Change "Method" to "POST" and "URL" to `http://localhost:8090/v1/sql`.
+- Add SQL query in body, using "Raw" mode:
+
+  ```sql
+  SELECT to_timestamp(tpep_dropoff_datetime), fare_amount FROM public.taxi_trips LIMIT 100
+  ```
+
 - Add the header `Accept: application/json` as well.
 - Set visualization to `Table`
 

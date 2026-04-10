@@ -1,5 +1,7 @@
 # Refresh Data Window
 
+Works with `v1.0+`
+
 `refresh_data_window` is a duration parameter that filters data refresh source queries for time-series to recent data (duration into past from now).
 
 Requires `time_column` and `time_format` (optional) to also be configured. Only supported for `full` refresh mode datasets.
@@ -52,14 +54,17 @@ Run `spice sql` to check the number of rows and the 5 earliest records sorted by
 ```shell
 spice sql
 ```
+
 ```shell
 Welcome to the Spice.ai SQL REPL! Type 'help' for help.
 
 show tables; -- list available tables
 ```
+
 ```sql
 select count(1) from taxi_trips;
 ```
+
 ```shell
 +-----------------+
 | COUNT(Int64(1)) |
@@ -73,6 +78,7 @@ Time: 0.012826375 seconds. 1 rows.
 ```sql
 select * from taxi_trips order by tpep_pickup_datetime limit 5;
 ```
+
 ```shell
 +----------+----------------------+-----------------------+-----------------+---------------+------------+--------------------+--------------+--------------+--------------+-------------+-------+---------+------------+--------------+-----------------------+--------------+----------------------+-------------+
 | VendorID | tpep_pickup_datetime | tpep_dropoff_datetime | passenger_count | trip_distance | RatecodeID | store_and_fwd_flag | PULocationID | DOLocationID | payment_type | fare_amount | extra | mta_tax | tip_amount | tolls_amount | improvement_surcharge | total_amount | congestion_surcharge | Airport_fee |
@@ -119,6 +125,7 @@ Check the number of rows again, and it shows 5 rows difference. The previous 5 e
 ```sql
 select count(1) from taxi_trips;
 ```
+
 ```shell
 +-----------------+
 | COUNT(Int64(1)) |
@@ -128,9 +135,11 @@ select count(1) from taxi_trips;
 
 Time: 0.010782792 seconds. 1 rows.
 ```
+
 ```sql
 select * from taxi_trips order by tpep_pickup_datetime limit 1;
 ```
+
 ```shell
 +----------+----------------------+-----------------------+-----------------+---------------+------------+--------------------+--------------+--------------+--------------+-------------+-------+---------+------------+--------------+-----------------------+--------------+----------------------+-------------+
 | VendorID | tpep_pickup_datetime | tpep_dropoff_datetime | passenger_count | trip_distance | RatecodeID | store_and_fwd_flag | PULocationID | DOLocationID | payment_type | fare_amount | extra | mta_tax | tip_amount | tolls_amount | improvement_surcharge | total_amount | congestion_surcharge | Airport_fee |

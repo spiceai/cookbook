@@ -1,9 +1,14 @@
 # Model Context Protocol with Spice
+
+Works with `v1.0+`
+
 ## Prerequisties
- 1. Spice installed
- 2. `jq` installed
+
+1.  Spice installed
+2.  `jq` installed
 
 ## Connect to MCP servers
+
 Spice can run, or connect to MCP servers.
 
 1. Clone the cookbook, and navigate to the MCP recipe.
@@ -23,14 +28,17 @@ SPICE_ALLOWED_DIR="{directory the fs MCP tool is allowed to access}"
 For this recipe, `SPICE_ALLOWED_DIR` should be set to allow access to this cookbook directory - like `SPICE_ALLOWED_DIR="./"`.
 
 3. Start Spice
+
 ```bash
 spice run
 ```
 
 4. Show the available tools.
+
 ```bash
 curl http://127.0.0.1:8090/v1/tools | jq '.[].name'
 ```
+
 ```bash
 "sql"
 "top_n_sample"
@@ -54,13 +62,16 @@ curl http://127.0.0.1:8090/v1/tools | jq '.[].name'
 "get_readiness"
 "sample_distinct_columns"
 ```
+
 This shows both the built in tools (e.g. `sql`) and all the tools listed by the MCP server `fs`.
 
 5. List the files from the current directory using the `fs/list_directory` MCP tool.
+
 ```bash
 curl -XPOST http://127.0.0.1:8090/v1/tools/fs/list_directory \
     -d '{"path": "./"}' | jq -r '.[0].text'
 ```
+
 ```bash
 [FILE] .env
 [FILE] README.md
@@ -69,9 +80,11 @@ curl -XPOST http://127.0.0.1:8090/v1/tools/fs/list_directory \
 ```
 
 6. Use the `fs` MCP server from a model.
+
 ```bash
 spice chat
 ```
+
 ```bash
 >>> spice chat
 Spice.ai OSS CLI v1.1.0
@@ -89,6 +102,7 @@ The README.md for the Spice.ai OSS Cookbook serves as a comprehensive guide to c
 ```
 
 7. Make sure the LLM called the MCP tool (and didn't hallucinate)
+
 ```bash
 >>> spice trace ai_chat
 Spice.ai OSS CLI v1.5.0-build.2cfdba8f2
@@ -111,6 +125,7 @@ ai_chat                                     ✅     15417.63ms 8cda3b72ccc32496
 ```
 
 ## Connect to Spice over MCP
+
 Spice is an MCP server. It can be connected to like any other MCP server running over HTTP SSE.
 
 1. Clone the cookbook, and navigate to the MCP recipe.
@@ -130,19 +145,23 @@ SPICE_ALLOWED_DIR="{directory the fs MCP tool is allowed to access}"
 For this recipe, `SPICE_ALLOWED_DIR` should be set to allow access to this cookbook directory - like `SPICE_ALLOWED_DIR="./"`.
 
 3. Start Spice.
+
 ```bash
 spice run
 ```
 
 4. In a new terminal, change to the `child` directory.
+
 ```bash
 cd child
 ```
 
 5. Inspect the spicepod.
+
 ```bash
 cat spicepod.yaml
 ```
+
 ```yaml
 name: spicepod
 version: v1
@@ -154,14 +173,17 @@ tools:
 ```
 
 6. Run the second Spice instance on separate ports.
+
 ```bash
 spice run --http-endpoint 127.0.0.1:8091 --flight-endpoint 127.0.0.1:50061 --metrics-endpoint 127.0.0.1:9091
 ```
 
 7.  Show the tools available in the second Spice instance (note the different port).
+
 ```bash
 curl http://127.0.0.1:8091/v1/tools | jq '.[].name'
 ```
+
 ```bash
 "top_n_sample"
 "search"
@@ -195,25 +217,29 @@ curl http://127.0.0.1:8091/v1/tools | jq '.[].name'
 "list_datasets"
 "random_sample"
 ```
+
 Now you will see the following tools:
-* Builtin tools within the second spicepod.
-* Builtin tools from the first spicepod, over MCP (e.g. `spice_mcp/sql`).
-* Tools from the filesystem MCP server, connected to via the first spicepod, over MCP (e.g. `spice_mcp/fs/read_file`).
-   ```ascii
-   +-------------------------+     +--------------------+     +-----------------+
-   | 2nd Spice Instance      |     | 1st Spice Instance |     | `fs` MCP Server |
-   +-------------------------+     +--------------------+     +-----------------+
-   | sql                     |     |                    |     |                 |
-   | spice_mcp/sql-----------|-----|-->sql              |     |                 |
-   | spice_mcp/fs/read_file--|-----|-->fs/read_file-----|-----|-->read_file     |
-   +-------------------------+     +--------------------+     +-----------------+
-   ```
+
+- Builtin tools within the second spicepod.
+- Builtin tools from the first spicepod, over MCP (e.g. `spice_mcp/sql`).
+- Tools from the filesystem MCP server, connected to via the first spicepod, over MCP (e.g. `spice_mcp/fs/read_file`).
+  ```ascii
+  +-------------------------+     +--------------------+     +-----------------+
+  | 2nd Spice Instance      |     | 1st Spice Instance |     | `fs` MCP Server |
+  +-------------------------+     +--------------------+     +-----------------+
+  | sql                     |     |                    |     |                 |
+  | spice_mcp/sql-----------|-----|-->sql              |     |                 |
+  | spice_mcp/fs/read_file--|-----|-->fs/read_file-----|-----|-->read_file     |
+  +-------------------------+     +--------------------+     +-----------------+
+  ```
 
 8. Use the SQL tool of the first Spice server, over MCP.
+
 ```bash
 curl -XPOST http://127.0.0.1:8091/v1/tools/spice_mcp/sql \
     -d '{"query": "SELECT * FROM taxi_trips LIMIT 1"}'
 ```
+
 ```bash
 [
   {
@@ -224,9 +250,11 @@ curl -XPOST http://127.0.0.1:8091/v1/tools/spice_mcp/sql \
 ```
 
 9. Similarily to above, Use the `fs` MCP server from a model. In this case, the runtime will call the first spice instance, which subsequently, calls the `fs` MCP server.
+
 ```bash
 spice chat --http-endpoint http://127.0.0.1:8091
 ```
+
 ```bash
 Using model: openai-with-spice
 chat> Summarize the README.md

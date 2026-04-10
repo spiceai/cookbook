@@ -1,5 +1,7 @@
 # GitHub Data Connector
 
+Works with `v1.0+`
+
 This recipe will use the [spiceai/spiceai](https://github.com/spiceai/spiceai) repo for a demo.
 
 ## Pre-requisites
@@ -118,6 +120,7 @@ Time: 0.010307125 seconds. 10 rows.
 ```
 
 Query the review comments on a pull request:
+
 ```sql
 WITH review_comments AS (
   SELECT
@@ -135,6 +138,7 @@ FROM
   review_comments
 LIMIT 1;
 ```
+
 ```console
 +---------------------------------+-------------------------------------+---------------------------------+
 | review_comments.comment[author] | review_comments.comment[created_at] | review_comments.comment[body]   |
@@ -146,6 +150,7 @@ Time: 0.046107542 seconds. 1 rows.
 ```
 
 Query the discussion on a pull request:
+
 ```sql
 WITH discussion AS (
   SELECT
@@ -163,6 +168,7 @@ FROM
   discussion
 LIMIT 1;
 ```
+
 ```console
 +----------------------------+--------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | discussion.comment[author] | discussion.comment[created_at] | discussion.comment[body]                                                                                                                                                      |
@@ -254,7 +260,6 @@ select created_at, username from apache.members limit 10;
 
 Time: 0.027337792 seconds. 10 rows.
 ```
-
 
 List beta release notes files:
 

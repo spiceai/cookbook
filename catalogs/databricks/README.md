@@ -1,5 +1,7 @@
 # Databricks Unity Catalog Connector
 
+Works with `v1.0+`
+
 The Databricks Unity Catalog Connector makes querying Databricks Unity Catalog tables in Spice simple.
 
 ## Prerequisites

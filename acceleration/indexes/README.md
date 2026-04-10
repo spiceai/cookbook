@@ -1,5 +1,7 @@
 # Indexes on Accelerated Data
 
+Works with `v1.0+`
+
 Indexes can be created on accelerated datasets (for supported engines) to improve query performance. This recipe will demonstrate how to create an index and compare the performance on the same accelerated dataset without an index.
 
 Clone the Spice cookbook repository and navigate to the `indexes` directory:
@@ -62,4 +64,5 @@ SELECT * FROM traces WHERE trace_id = 'call_0x22ba49176f15ec5524434d87c47fc9dbff
 Much faster! Try exploring with indexes in different acceleration engines to get a sense of how they behave.
 
 ## Learn more
+
 - [Data Acceleration Indexes Documentation](https://spiceai.org/docs/features/data-acceleration/indexes)

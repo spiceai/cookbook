@@ -1,5 +1,7 @@
 # Building an Intelligent Security Copilot: Real-Time Data Access Pattern Analysis with Spice.ai
 
+Works with `v1.0+`
+
 Data breaches often occur not through dramatic hacks, but through subtle patterns of seemingly legitimate database access. While traditional security tools focus on obvious threats like failed login attempts or known malware signatures, they often miss sophisticated insider threats or clever data exfiltration attempts that hide within normal-looking database queries.
 
 In this guide, we'll build an intelligent security copilot using Spice.ai that can detect these subtle patterns. Unlike traditional rule-based systems, our solution will use AI to understand the context of database queries and identify potentially malicious patterns that might slip past conventional security tools.
@@ -119,19 +121,19 @@ models:
       tools: auto
       system_prompt: |
         You are a database security expert analyzing SQL query patterns for potential security risks. 
-        
+
         Focus on detecting:
         1. Potential data exfiltration attempts
         2. Suspicious query patterns that could indicate insider threats
         3. Unusual data access patterns for user roles
         4. Sequential queries that together could extract sensitive data
-        
+
         Consider factors like:
         - Query complexity and size of data accessed
         - Historical patterns for users/roles
         - Temporal patterns (time of day, frequency)
         - Combinations of queries that could bypass security controls
-        
+
         Provide specific, actionable recommendations and clear explanations of risks.
 ```
 
@@ -201,13 +203,13 @@ import os
 class QueryPatternAnalyzer:
     def __init__(self):
         self.spice_url = "http://localhost:8090"
-    
+
     def analyze_patterns(self):
         while True:
             try:
                 # Get recent query patterns for analysis
                 analysis_prompt = self.build_analysis_prompt()
-                
+
                 print("Analyzing patterns...")
                 # Ask Spice.ai's LLM to analyze the patterns
                 response = requests.post(
@@ -219,15 +221,15 @@ class QueryPatternAnalyzer:
                         ]
                     }
                 )
-                
+
                 analysis = response.json()
                 self.handle_analysis_results(analysis)
-                
+
             except Exception as e:
                 print(f"Error during analysis: {e}")
-            
+
             time.sleep(30)  # Run analysis every 30 seconds
-    
+
     def build_analysis_prompt(self):
         return """
         Analyze the recent query patterns in the user_query_patterns table for suspicious activity.
@@ -236,18 +238,18 @@ class QueryPatternAnalyzer:
         2. Users querying tables they don't normally access
         3. Sequential patterns that could indicate data harvesting
         4. Queries running at unusual times
-        
+
         Provide your analysis with:
         1. Description of any suspicious patterns
         2. Severity level (low, medium, high)
         3. Specific recommendations for security team
         """
-    
+
     def handle_analysis_results(self, analysis):
         try:
             content = analysis['choices'][0]['message']['content']
             print(content)
-            
+
         except Exception as e:
             print(f"Error handling analysis results: {e}")
 
@@ -264,24 +266,24 @@ To see our security copilot in action, let's simulate some suspicious patterns:
 ```sql
 -- Normal query - single department access
 INSERT INTO query_audit_logs (user_id, query_text, database_name, schema_name, rows_affected, query_type)
-VALUES 
+VALUES
 ('alice', 'SELECT * FROM employees WHERE department_id = 5', 'hr_db', 'public', 10, 'SELECT');
 
 -- Suspicious: Large data extraction
 INSERT INTO query_audit_logs (user_id, query_text, database_name, schema_name, rows_affected, query_type)
-VALUES 
+VALUES
 ('bob', 'SELECT * FROM employees', 'hr_db', 'public', 5000, 'SELECT');
 
 -- Suspicious: Cross-schema access
 INSERT INTO query_audit_logs (user_id, query_text, database_name, schema_name, rows_affected, query_type)
-VALUES 
+VALUES
 ('charlie', 'SELECT * FROM finance.salary_data', 'hr_db', 'finance', 100, 'SELECT'),
 ('charlie', 'SELECT * FROM hr.employee_reviews', 'hr_db', 'hr', 200, 'SELECT'),
 ('charlie', 'SELECT * FROM security.access_logs', 'hr_db', 'security', 300, 'SELECT');
 
 -- Suspicious: Sequential data harvesting
 INSERT INTO query_audit_logs (user_id, query_text, database_name, schema_name, rows_affected, query_type)
-VALUES 
+VALUES
 ('dave', 'SELECT email FROM customers WHERE region = ''West''', 'sales_db', 'public', 50, 'SELECT'),
 ('dave', 'SELECT phone FROM customers WHERE region = ''East''', 'sales_db', 'public', 50, 'SELECT'),
 ('dave', 'SELECT address FROM customers WHERE region = ''South''', 'sales_db', 'public', 50, 'SELECT');
@@ -295,7 +297,7 @@ Based on the recent query patterns, several concerning behaviors have been ident
 1. Sequential Data Harvesting (High Severity)
    User 'dave' is systematically extracting customer PII (email, phone, address) across different regions.
    While each query appears legitimate, the pattern suggests a methodical data gathering operation.
-   
+
    Recommendations:
    - Implement controls to detect cross-region PII access patterns
    - Review dave's role requirements for customer data access
@@ -304,7 +306,7 @@ Based on the recent query patterns, several concerning behaviors have been ident
 2. Bulk Data Access (Medium Severity)
    User 'bob' extracted 5000 employee records in a single query.
    This could be legitimate ETL work but requires verification.
-   
+
    Recommendations:
    - Verify if this is a scheduled data export
    - Implement row-level security if bulk access isn't required
@@ -313,7 +315,7 @@ Based on the recent query patterns, several concerning behaviors have been ident
 3. Cross-Schema Access (High Severity)
    User 'charlie' accessed sensitive tables across finance, HR, and security schemas.
    This unusual access pattern could indicate privilege escalation or credential compromise.
-   
+
    Recommendations:
    - Immediately review charlie's role permissions
    - Investigate if this access combines to expose sensitive relationships

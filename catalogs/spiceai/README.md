@@ -1,5 +1,7 @@
 # Spice.ai Cloud Platform Catalog Connector
 
+Works with `v1.0+`
+
 The Spice.ai Cloud Platform Catalog Connector makes querying datasets in the Spice.ai Cloud Platform simple.
 
 This example will show how to connect to public datasets available in the Spice.ai Cloud Platform. Additional public datasets are available in [Spicerack](https://spicerack.org/).

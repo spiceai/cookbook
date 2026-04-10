@@ -1,5 +1,7 @@
 # DeepSeek Model
 
+Works with `v1.0+`
+
 This recipe demonstrates how to use DeepSeek model in Spice.ai.
 
 ## Prerequisites

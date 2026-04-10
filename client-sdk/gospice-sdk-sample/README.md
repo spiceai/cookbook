@@ -1,5 +1,7 @@
 # Spice with gospice SDK
 
+Works with `v1.0+`
+
 Use the [gospice SDK](https://github.com/spiceai/gospice) to query Spice from Go.
 
 ## What This Sample Includes

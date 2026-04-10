@@ -1,5 +1,7 @@
 # ScyllaDB Data Connector
 
+Works with `v1.11+`
+
 This recipe demonstrates how to configure a Spice dataset to connect to a ScyllaDB cluster and query data using federated SQL queries.
 
 ## Prerequisites

@@ -1,5 +1,7 @@
 # Spice with Java SDK
 
+Works with `v1.0+`
+
 Use the [Spice Java SDK](https://github.com/spiceai/spice-java) to query Spice from Java.
 
 ## What This Sample Includes

@@ -9,6 +9,7 @@ This is the **Spice.ai OSS Cookbook** — a collection of self-contained "recipe
 ## Recipe Structure
 
 Every recipe follows the same pattern:
+
 - `spicepod.yaml` — Spice.ai configuration file defining datasets, models, views, and acceleration settings
 - `README.md` — Step-by-step instructions to run the recipe
 - Optional: `docker-compose.yml` / `compose.yaml`, `Makefile`, `.env.example`, data files, helper scripts
@@ -36,12 +37,14 @@ spice sql          # opens interactive SQL REPL against the running instance
 ```
 
 Some recipes require Docker infrastructure — check for `Makefile`, `docker-compose.yml`, or `compose.yaml`:
+
 ```bash
 make              # or docker compose up -d
 spice run
 ```
 
 Spice runtime listens on:
+
 - **50051** — Arrow Flight (primary query protocol)
 - **8090** — HTTP API
 - **9090** — OpenTelemetry metrics
@@ -49,11 +52,13 @@ Spice runtime listens on:
 ## CI / Testing
 
 Tests use a reusable GitHub Actions workflow (`.github/workflows/codex-test-reusable.yml`) that:
+
 1. Installs the Spice CLI
 2. Uses Codex CLI to execute each recipe's README instructions verbatim
 3. Parses output for `TEST PASSED` / `TEST FAILED`
 
 To add a new testable recipe:
+
 1. Create `.github/workflows/codex-test-<name>.yml` calling the reusable workflow
 2. Register it in `.github/workflows/spice-qa.yml` under the appropriate matrix (`trigger-simple-recipes` for no secrets, `trigger-secrets-recipes` for API-key-dependent recipes)
 
