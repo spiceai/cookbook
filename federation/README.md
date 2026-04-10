@@ -1,5 +1,7 @@
 # Federated SQL Query
 
+Works with `v1.0+`
+
 Fetch combined data from S3 Parquet, PostgreSQL, and Dremio in a single query.
 
 ## Follow these steps to use Spice to federate SQL queries across data sources

@@ -1,5 +1,7 @@
 # TPC-H Benchmark Sample Data
 
+Works with `v1.0+`
+
 > TPC-H is a decision support benchmark. It consists of a suite of business-oriented ad hoc queries and concurrent data modifications. The queries and the data populating the database have been chosen to have broad industry-wide relevance. This benchmark illustrates decision support systems that examine large volumes of data, execute queries with a high degree of complexity, and give answers to critical business questions.
 >
 > - [TPC Benchmark™ H (TPC-H)](https://www.tpc.org/tpch/)
@@ -89,7 +91,7 @@ show tables;
 Time: 0.006163958 seconds. 9 rows.
 ```
 
-Run *Pricing Summary Report Query (Q1)*. More information about TPC-H and all the queries involved can be found in the official [TPC Benchmark H Standard Specification](https://www.tpc.org/tpc_documents_current_versions/pdf/tpc-h_v2.17.1.pdf).
+Run _Pricing Summary Report Query (Q1)_. More information about TPC-H and all the queries involved can be found in the official [TPC Benchmark H Standard Specification](https://www.tpc.org/tpc_documents_current_versions/pdf/tpc-h_v2.17.1.pdf).
 
 ```sql
 select
@@ -115,6 +117,7 @@ order by
   l_linestatus
 ;
 ```
+
 ```sql
 +--------------+--------------+-------------+-----------------+-------------------+---------------------+-----------+--------------+----------+-------------+
 | l_returnflag | l_linestatus | sum_qty     | sum_base_price  | sum_disc_price    | sum_charge          | avg_qty   | avg_price    | avg_disc | count_order |

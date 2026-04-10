@@ -1,5 +1,7 @@
 # Spice with spicepy SDK
 
+Works with `v1.0+`
+
 Use [spicepy](https://github.com/spiceai/spicepy) to query Spice from Python.
 
 ## What This Sample Includes

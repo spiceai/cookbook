@@ -1,5 +1,7 @@
 # Text-to-SQL (NSQL)
 
+Works with `v1.0+`
+
 This recipe demonstrates how to use Spice.ai as an intelligent text-to-SQL interface, so you can query your data using natural language instead of writing SQL manually.
 
 ## What You'll Learn

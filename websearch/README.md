@@ -1,4 +1,7 @@
 # Web Search Using Perplexity
+
+Works with `v1.0+`
+
 This recipe demonstrates how to configure and use Perplexity web search within Spice AI.
 
 ## Prerequisites
@@ -9,6 +12,7 @@ This recipe demonstrates how to configure and use Perplexity web search within S
   - `SPICE_OPENAI_API_KEY`: A valid OpenAI API key (or equivalent).
 
 ## Using Perplexity for internet-informed conversations.
+
 1. Start the Spice runtime:
 
 ```shell
@@ -22,6 +26,7 @@ spice chat
 ```
 
 3. Select `perp`
+
 ```shell
 Use the arrow keys to navigate: ↓ ↑ → ←
 ? Select model:
@@ -34,6 +39,7 @@ Use the arrow keys to navigate: ↓ ↑ → ←
 ```shell
 spice chat
 ```
+
 ```shell
 Using model: perp
 chat>  What's the weather in Korea this week?
@@ -57,9 +63,11 @@ Time: 5.02s (first token 1.50s). Tokens: 345. Prompt: 35. Completion: 310 (88.28
 ```
 
 5. Check the citations used by the model
+
 ```shell
 spice sql
 ```
+
 ```sql
 SELECT captured_output
 FROM runtime.task_history
@@ -67,6 +75,7 @@ WHERE task='citations'
 ORDER BY end_time DESC
 LIMIT 1;
 ```
+
 ```json
 [
   "https://www.timeanddate.com/weather/south-korea/seoul",
@@ -77,8 +86,8 @@ LIMIT 1;
 ]
 ```
 
-
 ## Using the Web search tool
+
 Web search engines, like Perplexity, can be used by other models to enable internet-informed conversations.
 
 1. Start the Spice runtime:
@@ -88,6 +97,7 @@ spice run
 ```
 
 2. Call the web search tool directly (named `the_internet` in the `spicepod.yaml`).
+
 ```shell
 curl -XPOST http://127.0.0.1:8090/v1/tool/the_internet \
   --data '{"query": "What is the surf like today?"}'
@@ -106,7 +116,9 @@ spice run
 ```shell
 spice chat
 ```
+
 3. Select `openai-w-internet`
+
 ```shell
 Use the arrow keys to navigate: ↓ ↑ → ←
 ? Select model:
@@ -121,6 +133,7 @@ Use the arrow keys to navigate: ↓ ↑ → ←
 Using model: openai-w-internet
 chat> Where should I surf in California today?
 ```
+
 ```shell
 Today's surf conditions in California appear to be quite minimal. Here's a summary from a few key locations:
 
@@ -146,9 +159,11 @@ Time: 18.28s (first token 10.02s). Tokens: 183. Prompt: 160. Completion: 23 (2.7
 ```
 
 5. Check that the LLM did use the internet
+
 ```shell
 spice trace ai_chat
 ```
+
 ```shell
 [0c239b47bcb03b01] (18276.11ms) ai_chat
   ├── [1f4e0a007afdbbd7] (18274.71ms) ai_completion

@@ -1,5 +1,7 @@
 # Oracle Data Connector
 
+Works with `v1.0+`
+
 This cookbook demonstrates how to use Spice.ai to connect to and accelerate data from an Oracle database.
 
 The demo includes an Oracle Free database container with sample TPCH data: `lineitem`, `orders`, and `customer`.
@@ -32,8 +34,8 @@ Output:
 ```bash
 Starting Oracle database container...
 [+] Running 2/2
-✔ Network oracle_default     Created                                                                    0.0s 
-✔ Container oracle-oracle-1  Healthy                                                                   10.7s 
+✔ Network oracle_default     Created                                                                    0.0s
+✔ Container oracle-oracle-1  Healthy                                                                   10.7s
 Oracle database is running at localhost:15211
 Database: FREEPDB1
 Username: scott

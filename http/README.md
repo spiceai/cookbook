@@ -1,5 +1,7 @@
 # HTTP Data Connector
 
+Works with `v1.0+`
+
 The HTTP(s) data connector enables querying data from HTTP(s) endpoints such as REST APIs. The connector supports dynamic query construction and data refresh through SQL-based filtering, making it ideal for integrating external APIs and web-hosted datasets into your Spice application.
 
 This recipe demonstrates how to use the HTTP connector with the [TVMaze API](https://www.tvmaze.com/api) to query TV show information using dynamic endpoint routing.
@@ -43,7 +45,7 @@ datasets:
     params:
       file_format: json
       client_timeout: 30s
-      allowed_request_paths: '/shows/**,/search/people'
+      allowed_request_paths: "/shows/**,/search/people"
       request_query_filters: enabled
 ```
 
@@ -302,7 +304,7 @@ datasets:
     name: tvmaze_premium
     params:
       file_format: json
-      http_headers: 'Authorization:Bearer ${secrets:TVMAZE_TOKEN}'
+      http_headers: "Authorization:Bearer ${secrets:TVMAZE_TOKEN}"
 ```
 
 ### Multiple Custom Headers
@@ -315,7 +317,7 @@ datasets:
     name: tvmaze_premium
     params:
       file_format: json
-      http_headers: 'Authorization:Bearer ${secrets:TOKEN},X-API-Key:${secrets:API_KEY},Accept:application/json'
+      http_headers: "Authorization:Bearer ${secrets:TOKEN},X-API-Key:${secrets:API_KEY},Accept:application/json"
 ```
 
 Always use [secret stores](https://docs.spiceai.org/components/secret-stores) to manage sensitive credentials in production.

@@ -1,5 +1,7 @@
 # Python ADBC Client with Parameterized Queries
 
+Works with `v1.0+`
+
 This repository provides a simple cookbook example demonstrating how to use Python to query Spice via the Apache Arrow Database Connectivity (ADBC) API with the Flight SQL interface to Spice OSS. The example script connects to a local Spice OSS runtime, executes a parameterized query and a simple query, and fetches results as Arrow Tables.
 
 ## Requirements

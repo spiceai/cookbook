@@ -1,5 +1,7 @@
 # Running Llama3 Locally
 
+Works with `v1.0+`
+
 Use the Llama family of models locally from HuggingFace using Spice.
 
 [![Watch the Spice.ai local Llama demo](https://img.youtube.com/vi/ZlV3NX-bsIg/hqdefault.jpg)](https://www.youtube.com/embed/ZlV3NX-bsIg?si=yG2y6Q0Br_fDnQ1l)

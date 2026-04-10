@@ -1,5 +1,7 @@
 # Dataset Partitioning
 
+Works with `v1.8+`
+
 This recipe demonstrates how to partition accelerated datasets to improve query performance by enabling partition pruning for queries. Partitioning groups rows into separate files based on an expression, allowing Spice to skip reading unnecessary partitions during queries.
 
 ## Requirements
@@ -155,12 +157,14 @@ The query is now significantly faster because Spice only reads the partition(s) 
 The `partition_by` parameter supports several expressions:
 
 - **`bucket(n, column)`**: Hashes the column value and distributes rows into `n` partitions
+
   ```yaml
   partition_by:
     - bucket(50, PULocationID)
   ```
 
 - **Direct column reference**: Partitions by the column's actual values
+
   ```yaml
   partition_by:
     - PULocationID
@@ -181,4 +185,3 @@ The `partition_by` parameter supports several expressions:
 - For using `spice sql`, see the [CLI reference](https://docs.spiceai.org/cli/reference/sql)
 
 - See the [datasets reference](https://docs.spiceai.org/reference/spicepod/datasets) for additional dataset configuration options
-

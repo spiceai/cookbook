@@ -1,5 +1,7 @@
 # GraphQL Data Connector
 
+Works with `v1.0+`
+
 Follow these steps to get started with GraphQL as a Data Connector.
 
 ## Pre-requisites

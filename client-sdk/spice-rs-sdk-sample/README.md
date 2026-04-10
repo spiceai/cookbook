@@ -1,5 +1,7 @@
 # Spice with Rust SDK
 
+Works with `v1.0+`
+
 This recipe demonstrates how to use the Spice Rust SDK to connect to a Spice runtime and query data, including parameterized queries.
 
 ## Prerequisites

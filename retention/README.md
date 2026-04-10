@@ -1,5 +1,7 @@
 # Accelerated Dataset Retention Policy
 
+Works with `v1.0+`
+
 This recipe shows how to set up a [retention policy](https://spiceai.org/docs/features/data-acceleration/data-refresh#retention-policy) for an accelerated dataset to evict data older than a specified duration.
 
 ## Pre-requisites

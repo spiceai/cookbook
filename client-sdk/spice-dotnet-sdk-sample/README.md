@@ -1,5 +1,7 @@
 # Spice with Dotnet SDK
 
+Works with `v1.0+`
+
 Use the [Spice Dotnet SDK](https://github.com/spiceai/spice-dotnet) to query Spice from C#.
 
 ## What This Sample Includes
