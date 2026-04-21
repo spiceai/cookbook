@@ -184,6 +184,82 @@ FROM tvmaze
 WHERE request_path = '/shows/82';
 ```
 
+## Pagination
+
+The HTTP connector supports automatic pagination for REST APIs that return data across multiple pages. This recipe includes a second dataset that demonstrates query-parameter pagination with the [DummyJSON Products API](https://dummyjson.com/docs/products).
+
+### Configuration
+
+The `products` dataset in `spicepod.yaml` uses query-parameter pagination:
+
+```yaml
+datasets:
+  - from: https://dummyjson.com/products
+    name: products
+    params:
+      pagination: enabled
+      pagination_query_params: "skip={offset}&limit={limit}"
+      pagination_page_size: "30"
+      pagination_data_pointer: "/products"
+      pagination_max_pages: "10"
+```
+
+- **`pagination: enabled`** — Turns on pagination.
+- **`pagination_query_params`** — Template with `{offset}` and `{limit}` variables. Spice expands these automatically for each page (`skip=0&limit=30`, `skip=30&limit=30`, …).
+- **`pagination_page_size`** — Number of items per page. Also determines when to stop: if a page returns fewer rows than this value, pagination is complete.
+- **`pagination_max_pages`** — Safety limit on the number of pages to fetch.
+
+### Querying Paginated Data
+
+Count all products fetched across pages:
+
+```sql
+SELECT count(*) FROM products;
+```
+
+```console
++----------+
+| count(*) |
++----------+
+| 194      |
++----------+
+```
+
+All 194 products are returned transparently — Spice fetches 7 pages (30 items each, except the last page with 14) and combines them into a single result set.
+
+Inspect products and observe how `request_query` changes as rows span pages:
+
+```sql
+SELECT request_query,
+       json_get_str(content, 'title') AS title,
+       json_get_float(content, 'price') AS price
+FROM products
+LIMIT 35;
+```
+
+```console
++------------------+-------------------------------------------+---------+
+|   request_query  |                   title                   |  price  |
++------------------+-------------------------------------------+---------+
+| skip=0&limit=30  | Essence Mascara Lash Princess             | 9.99    |
+| skip=0&limit=30  | Eyeshadow Palette with Mirror             | 19.99   |
+| skip=0&limit=30  | Powder Canister                           | 14.99   |
+| skip=0&limit=30  | Red Lipstick                              | 12.99   |
+| skip=0&limit=30  | Red Nail Polish                           | 8.99    |
+| ...              | ...                                       | ...     |
+| skip=0&limit=30  | Kiwi                                      | 2.49    |
+| skip=30&limit=30 | Lemon                                     | 0.79    |
+| skip=30&limit=30 | Milk                                      | 3.49    |
+| skip=30&limit=30 | Mulberry                                  | 4.99    |
+| skip=30&limit=30 | Nescafe Coffee                            | 7.99    |
+| skip=30&limit=30 | Potatoes                                  | 2.29    |
++------------------+-------------------------------------------+---------+
+```
+
+The first 30 rows come from page 1 (`skip=0&limit=30`), then rows from page 2 (`skip=30&limit=30`) follow automatically.
+
+For the full pagination parameter reference, see the [HTTP Data Connector documentation](https://docs.spiceai.org/components/data-connectors/https#pagination-parameters).
+
 ## Dynamic HTTP Connector Features
 
 The HTTP connector provides powerful dynamic capabilities through special metadata fields that allow you to construct HTTP requests dynamically via SQL queries.
