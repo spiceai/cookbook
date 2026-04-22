@@ -1,0 +1,45 @@
+version: v2
+kind: Spicepod
+name: 06-search-engine
+
+embeddings:
+  - from: openai:text-embedding-3-small
+    name: openai_embeddings
+    params:
+      openai_api_key: ${secrets:OPENAI_API_KEY}
+
+datasets:
+  - from: file:./articles.parquet
+    name: articles
+    params:
+      file_format: parquet
+    acceleration:
+      enabled: true
+      engine: arrow
+    columns:
+      - name: content
+        embeddings:
+          - from: openai_embeddings
+            row_id: id
+            chunking:
+              enabled: true
+              target_chunk_size: 256
+              overlap_size: 64
+        full_text_search:
+          enabled: true
+          row_id:
+            - id
+      - name: title
+        full_text_search:
+          enabled: true
+          row_id:
+            - id
+    vectors:
+      enabled: true
+      engine: elasticsearch
+      params:
+        elasticsearch_endpoint: http://localhost:9200
+        elasticsearch_index: articles_index
+        elasticsearch_vector_field: content_embedding
+        elasticsearch_user: elastic
+        elasticsearch_pass: spiceai
