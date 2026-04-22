@@ -21,8 +21,9 @@ datasets:
             row_id: id
             chunking:
               enabled: true
-              target_chunk_size: 150
-              overlap_size: 20
+              target_chunk_size: 256
+              overlap_size: 64
+              file_format: md
         full_text_search:
           enabled: true
           row_id:

@@ -1,17 +1,13 @@
 #!/usr/bin/env python3
 """
-Generate articles.parquet — sample data for Spice Elasticsearch connector tests.
+Generate articles.parquet — sample data for the Spice Elasticsearch connector recipe.
 
-Produces ~15 000 records with sufficient lexical and semantic diversity to
-meaningfully exercise:
-  - Data connector (federated SQL via elasticsearch:articles)
-  - Vector search  (vector_search UDTF)
-  - Full-text search (text_search UDTF / BM25)
-  - Hybrid search with RRF (rrf(vector_search(...), text_search(...)))
+Produces article records with sufficient lexical diversity to exercise the
+Elasticsearch data connector.
 
 Usage:
   pip install pandas pyarrow faker
-  python generate_data.py [--rows N]   # default 15000
+  python generate_data.py [--rows N]
 """
 
 import argparse
@@ -30,15 +26,7 @@ from faker import Faker
 parser = argparse.ArgumentParser()
 parser.add_argument("--rows", type=int, default=100)
 parser.add_argument("--out", default="articles.parquet")
-parser.add_argument(
-    "--embeddings",
-    action="store_true",
-    help="Compute content_embedding column using all-MiniLM-L6-v2 and write into parquet",
-)
-parser.add_argument(
-    "--embedding-model", default="sentence-transformers/all-MiniLM-L6-v2"
-)
-parser.add_argument("--embedding-batch-size", type=int, default=64)
+
 args = parser.parse_args()
 
 TARGET_ROWS = args.rows
@@ -654,23 +642,6 @@ fields = [
     pa.field("views", pa.int32()),
     pa.field("likes", pa.int32()),
 ]
-
-if args.embeddings:
-    print(f"Computing embeddings with '{args.embedding_model}' …")
-    from sentence_transformers import SentenceTransformer
-
-    model = SentenceTransformer(args.embedding_model)
-    texts = df["content"].tolist()
-    vecs = model.encode(
-        texts,
-        batch_size=args.embedding_batch_size,
-        show_progress_bar=True,
-        convert_to_numpy=True,
-    )
-    dims = vecs.shape[1]
-    print(f"Computed {len(vecs)} embeddings, dims={dims}")
-    df["content_embedding"] = [v.tolist() for v in vecs]
-    fields.append(pa.field("content_embedding", pa.list_(pa.float32(), dims)))
 
 schema = pa.schema(fields)
 table = pa.Table.from_pandas(df, schema=schema, preserve_index=False)

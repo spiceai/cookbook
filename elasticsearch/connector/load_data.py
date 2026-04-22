@@ -3,9 +3,9 @@
 Load articles.parquet into Elasticsearch.
 
 Usage:
-  uv run load_data.py                        # load articles index only
-  uv run load_data.py --embeddings           # also compute + load vectors index
-  uv run load_data.py --embeddings --parquet 04-vector-search/articles.parquet
+  uv run load_data.py
+  uv run load_data.py --all-types
+  uv run load_data.py --parquet articles.parquet --all-types
 """
 
 import argparse
@@ -25,17 +25,6 @@ parser.add_argument("--es-user", default=os.environ.get("ES_USER", "elastic"))
 parser.add_argument("--es-pass", default=os.environ.get("ES_PASS", "spiceai"))
 parser.add_argument("--parquet", default="articles.parquet")
 parser.add_argument("--index", default="articles")
-parser.add_argument(
-    "--embeddings",
-    action="store_true",
-    help="Also compute and load vectors into a dense_vector index",
-)
-parser.add_argument("--vectors-index", default="articles_vectors")
-parser.add_argument(
-    "--embedding-model", default="sentence-transformers/all-MiniLM-L6-v2"
-)
-parser.add_argument("--embedding-column", default="content")
-parser.add_argument("--batch-size", type=int, default=64)
 parser.add_argument(
     "--all-types",
     action="store_true",
@@ -143,78 +132,6 @@ def load_articles(df: dict) -> None:
         requests.get(f"{ES_HOST}/{INDEX}/_count", auth=ES_AUTH).json().get("count", "?")
     )
     print(f"Loaded {n} documents → '{INDEX}' (count={count})")
-
-
-# ---------------------------------------------------------------------------
-# Vectors index
-# ---------------------------------------------------------------------------
-def vectors_mapping(dims: int) -> dict:
-    return {
-        "settings": {"number_of_shards": 1, "number_of_replicas": 0},
-        "mappings": {
-            "properties": {
-                "id": {"type": "integer"},
-                "content": {"type": "text", "index": False},
-                "content_embedding": {
-                    "type": "dense_vector",
-                    "dims": dims,
-                    "index": True,
-                    "similarity": "cosine",
-                },
-            }
-        },
-    }
-
-
-def load_vectors(df: dict) -> None:
-    print(f"Loading embedding model '{args.embedding_model}' …")
-    from sentence_transformers import SentenceTransformer
-
-    model = SentenceTransformer(args.embedding_model)
-
-    texts = df[args.embedding_column]
-    ids = df["id"]
-    n = len(ids)
-    dims = model.get_embedding_dimension()
-    print(
-        f"Model dims={dims}, encoding {n} documents in batches of {args.batch_size} …"
-    )
-
-    recreate_index(args.vectors_index, vectors_mapping(dims))
-
-    for batch_start in range(0, n, args.batch_size):
-        batch_texts = texts[batch_start : batch_start + args.batch_size]
-        batch_ids = ids[batch_start : batch_start + args.batch_size]
-        embeddings = model.encode(
-            batch_texts, show_progress_bar=False, convert_to_numpy=True
-        )
-
-        lines = []
-        for i, (doc_id, text, vec) in enumerate(
-            zip(batch_ids, batch_texts, embeddings)
-        ):
-            lines.append(
-                json.dumps({"index": {"_index": args.vectors_index, "_id": doc_id}})
-            )
-            lines.append(
-                json.dumps(
-                    {
-                        "id": doc_id,
-                        "content": text,
-                        "content_embedding": vec.tolist(),
-                    }
-                )
-            )
-        bulk_request(lines)
-        print(f"  Indexed {min(batch_start + args.batch_size, n)}/{n} vectors …")
-
-    requests.post(f"{ES_HOST}/{args.vectors_index}/_refresh", auth=ES_AUTH)
-    count = (
-        requests.get(f"{ES_HOST}/{args.vectors_index}/_count", auth=ES_AUTH)
-        .json()
-        .get("count", "?")
-    )
-    print(f"Loaded {n} vectors → '{args.vectors_index}' (count={count})")
 
 
 # ---------------------------------------------------------------------------
@@ -384,9 +301,6 @@ if __name__ == "__main__":
 
     recreate_index(INDEX, ARTICLES_MAPPING)
     load_articles(df)
-
-    if args.embeddings:
-        load_vectors(df)
 
     if args.all_types:
         load_all_types(args.all_types_docs)

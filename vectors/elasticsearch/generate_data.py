@@ -9,7 +9,6 @@ Usage:
 
 import argparse
 import random
-from datetime import datetime, timedelta
 from itertools import product
 
 import pandas as pd
@@ -387,16 +386,6 @@ CROSS_TOPIC_SEEDS = [
     },
 ]
 
-AUTHORS = [
-    "Alice Chen", "Bob Martinez", "Carol Okonkwo", "David Kim", "Eva Lindqvist",
-    "Frank Nguyen", "Grace Patel", "Hiro Tanaka", "Ingrid Sørensen", "James O'Brien",
-    "Kavya Reddy", "Luca Ferrari", "Maya Goldberg", "Nadia Petrov", "Oscar Bergström",
-    "Priya Sharma", "Quinn Walker", "Ravi Subramaniam", "Sofia Andrade", "Tom Brennan",
-]
-
-BASE_DATE = datetime(2024, 1, 1)
-YEAR_RANGE = 2
-
 # ---------------------------------------------------------------------------
 # Content generation
 # ---------------------------------------------------------------------------
@@ -452,31 +441,21 @@ def make_body(title: str, keywords: list[str], category: str, year: int) -> str:
         title=title, year=year, kw1=kw1, kw2=kw2, kw3=kw3
     )
 
-    paragraphs = [intro]
-    for _ in range(random.randint(3, 6)):
-        n_sentences = random.randint(3, 6)
-        sentences = []
-        for _ in range(n_sentences):
-            kw = random.choice(keywords)
-            tmpl = random.choice(BODY_SENTENCE_POOLS)
-            sentences.append(tmpl.format(kw=kw))
-        sentences += fake.sentences(nb=random.randint(1, 3))
-        random.shuffle(sentences)
-        paragraphs.append(" ".join(sentences))
+    sentences = []
+    for _ in range(random.randint(2, 3)):
+        kw = random.choice(keywords)
+        tmpl = random.choice(BODY_SENTENCE_POOLS)
+        sentences.append(tmpl.format(kw=kw))
+
+    sentences += fake.sentences(nb=1)
+    random.shuffle(sentences)
 
     closing_kw = random.choice(keywords)
-    paragraphs.append(
-        random.choice(CLOSING_TEMPLATES).format(kw=closing_kw, category=category)
+    closing = random.choice(CLOSING_TEMPLATES).format(
+        kw=closing_kw, category=category
     )
-    return "\n\n".join(paragraphs)
 
-
-def make_published_at() -> str:
-    days = random.randint(0, 365 * YEAR_RANGE)
-    hours = random.randint(0, 23)
-    minutes = random.randint(0, 59)
-    dt = BASE_DATE + timedelta(days=days, hours=hours, minutes=minutes)
-    return dt.isoformat()
+    return " ".join([intro, " ".join(sentences), closing])
 
 
 # ---------------------------------------------------------------------------
@@ -510,13 +489,8 @@ for i, seed in enumerate(CROSS_TOPIC_SEEDS, start=1):
         {
             "id": i,
             "title": seed["title"],
-            "content": make_body(seed["title"], kws, seed["category"], year),
-            "author": random.choice(AUTHORS),
             "category": seed["category"],
-            "tags": ", ".join(random.sample(kws, min(3, len(kws)))),
-            "published_at": make_published_at(),
-            "views": random.randint(5_000, 80_000),
-            "likes": random.randint(200, 8_000),
+            "content": make_body(seed["title"], kws, seed["category"], year),
         }
     )
 
@@ -537,13 +511,8 @@ for seed in pool_cycle:
         {
             "id": doc_id,
             "title": title,
-            "content": make_body(title, kws, seed["category"], year),
-            "author": random.choice(AUTHORS),
             "category": seed["category"],
-            "tags": ", ".join(random.sample(kws, min(4, len(kws)))),
-            "published_at": make_published_at(),
-            "views": random.randint(50, 60_000),
-            "likes": random.randint(0, 6_000),
+            "content": make_body(title, kws, seed["category"], year),
         }
     )
     doc_id += 1
@@ -557,13 +526,8 @@ schema = pa.schema(
     [
         pa.field("id", pa.int32()),
         pa.field("title", pa.string()),
-        pa.field("content", pa.string()),
-        pa.field("author", pa.string()),
         pa.field("category", pa.string()),
-        pa.field("tags", pa.string()),
-        pa.field("published_at", pa.string()),
-        pa.field("views", pa.int32()),
-        pa.field("likes", pa.int32()),
+        pa.field("content", pa.string()),
     ]
 )
 
