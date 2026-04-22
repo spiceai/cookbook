@@ -3,9 +3,6 @@ kind: Spicepod
 name: 06-search-engine
 
 embeddings:
-  - name: local_embeddings
-    from: huggingface:huggingface.co/sentence-transformers/all-MiniLM-L6-v2
-
   - from: openai:text-embedding-3-small
     name: openai_embeddings
     params:
@@ -28,7 +25,6 @@ datasets:
               enabled: true
               target_chunk_size: 256
               overlap_size: 64
-              file_format: md
         full_text_search:
           enabled: true
           row_id:
@@ -43,7 +39,7 @@ datasets:
       engine: elasticsearch
       params:
         elasticsearch_endpoint: http://localhost:9200
-        elasticsearch_index: articles_search_engine
+        elasticsearch_index: articles_index
         elasticsearch_vector_field: content_embedding
         elasticsearch_user: elastic
         elasticsearch_pass: spiceai
