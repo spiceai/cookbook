@@ -1,0 +1,43 @@
+version: v2
+kind: Spicepod
+name: 06-search-engine
+
+embeddings:
+  - name: local_embeddings
+    from: huggingface:huggingface.co/sentence-transformers/all-MiniLM-L6-v2
+
+datasets:
+  - from: file:./articles.parquet
+    name: articles
+    params:
+      file_format: parquet
+    acceleration:
+      enabled: true
+      engine: arrow
+    columns:
+      - name: content
+        embeddings:
+          - from: local_embeddings
+            row_id: id
+            chunking:
+              enabled: true
+              target_chunk_size: 150
+              overlap_size: 20
+        full_text_search:
+          enabled: true
+          row_id:
+            - id
+      - name: title
+        full_text_search:
+          enabled: true
+          row_id:
+            - id
+    vectors:
+      enabled: true
+      engine: elasticsearch
+      params:
+        elasticsearch_endpoint: http://localhost:9200
+        elasticsearch_index: articles_search_engine
+        elasticsearch_vector_field: content_embedding
+        elasticsearch_user: elastic
+        elasticsearch_pass: spiceai

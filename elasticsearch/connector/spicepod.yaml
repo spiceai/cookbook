@@ -1,0 +1,32 @@
+version: v2
+kind: Spicepod
+name: 01-connector
+
+datasets:
+  - from: elasticsearch:articles
+    name: articles
+    params:
+      elasticsearch_endpoint: http://localhost:9200
+      elasticsearch_user: elastic
+      elasticsearch_pass: spiceai
+
+  # all_types — federated (no acceleration, every query hits ES directly)
+  - from: elasticsearch:all_types
+    name: all_types
+    params:
+      elasticsearch_endpoint: http://localhost:9200
+      elasticsearch_user: elastic
+      elasticsearch_pass: spiceai
+
+  # all_types_accelerated — same index, materialized locally in DuckDB
+  - from: elasticsearch:all_types
+    name: all_types_accelerated
+    params:
+      elasticsearch_endpoint: http://localhost:9200
+      elasticsearch_user: elastic
+      elasticsearch_pass: spiceai
+    acceleration:
+      enabled: true
+      engine: duckdb
+      refresh_mode: full
+      refresh_check_interval: 30s
