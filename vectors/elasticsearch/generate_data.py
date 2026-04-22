@@ -435,27 +435,14 @@ CLOSING_TEMPLATES = [
 def make_body(title: str, keywords: list[str], category: str, year: int) -> str:
     kws = keywords[:]
     random.shuffle(kws)
-    kw1, kw2, kw3 = (kws + kws)[:3]
+    kw1, kw2 = (kws + kws)[:2]
 
-    intro = random.choice(INTRO_TEMPLATES).format(
-        title=title, year=year, kw1=kw1, kw2=kw2, kw3=kw3
-    )
+    intro = f"{title}. {kw1} and {kw2} are key ideas in {category.replace('_', ' ')}."
 
-    sentences = []
-    for _ in range(random.randint(2, 3)):
-        kw = random.choice(keywords)
-        tmpl = random.choice(BODY_SENTENCE_POOLS)
-        sentences.append(tmpl.format(kw=kw))
+    kw = random.choice(keywords)
+    body = random.choice(BODY_SENTENCE_POOLS).format(kw=kw)
 
-    sentences += fake.sentences(nb=1)
-    random.shuffle(sentences)
-
-    closing_kw = random.choice(keywords)
-    closing = random.choice(CLOSING_TEMPLATES).format(
-        kw=closing_kw, category=category
-    )
-
-    return " ".join([intro, " ".join(sentences), closing])
+    return " ".join([intro, body])
 
 
 # ---------------------------------------------------------------------------

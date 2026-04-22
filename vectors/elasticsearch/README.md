@@ -7,7 +7,7 @@ This recipe demonstrates how to use Elasticsearch as a vector engine in Spice.ai
 - Run Elasticsearch locally with Docker Compose
 - Generate a sample articles dataset
 - Start Spice and automatically write embeddings into Elasticsearch
-- Run vector and hybrid search queries against the indexed embeddings
+- Run vector and hybrid search queries that match the generated article titles and content
 
 ## Prerequisites
 
@@ -50,6 +50,7 @@ On startup, Spice automatically:
 4. Bulk indexes the vectors into Elasticsearch
 
 When startup completes, the `articles` dataset is ready for vector and hybrid search queries.
+Use search prompts that mirror the generated article topics, such as `pgvector`, `Kubernetes`, `AutoML`, and `hybrid search`.
 
 ### Step 3: Open the Spice SQL REPL
 
@@ -64,8 +65,8 @@ spice sql
 Run semantic similarity search over the indexed embeddings:
 
 ```sql
-SELECT id, title, _score
-FROM vector_search(articles, 'semantic similarity retrieval', 10)
+SELECT id, title, category, _score
+FROM vector_search(articles, 'pgvector vector databases sql query optimisation', 10)
 ORDER BY _score DESC;
 ```
 
@@ -73,8 +74,8 @@ Run vector search with a post-filter:
 
 ```sql
 SELECT id, title, category, _score
-FROM vector_search(articles, 'cost optimisation cloud infrastructure', 10)
-WHERE category = 'cloud_infrastructure'
+FROM vector_search(articles, 'kubernetes cost optimisation automl', 10)
+WHERE category = 'machine_learning'
 ORDER BY _score DESC;
 ```
 
@@ -83,8 +84,8 @@ Fuse vector and keyword results with [Reciprocal Rank Fusion (RRF)](https://spic
 ```sql
 SELECT id, title, category, fused_score
 FROM rrf(
-    vector_search(articles, 'machine learning algorithms'),
-    text_search(articles, 'machine learning algorithms', content),
+    vector_search(articles, 'hybrid search elasticsearch pgvector'),
+    text_search(articles, 'hybrid search elasticsearch pgvector', content),
     join_key => 'id'
 )
 ORDER BY fused_score DESC
