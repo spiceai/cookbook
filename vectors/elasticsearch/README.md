@@ -76,6 +76,22 @@ FROM vector_search(
 ORDER BY _score DESC;
 ```
 
+```
++-----+----------------------------------------------------------------------+----------------+------------+
+|  id |                                 title                                |    category    |   _score   |
+|int32|                                varchar                               |     varchar    |   float64  |
++-----+----------------------------------------------------------------------+----------------+------------+
+| 1   | Vector Search Inside PostgreSQL with pgvector                        | databases      | 0.8442027  |
+| 7   | Hybrid Search with Elasticsearch and pgvector                        | search_engines | 0.82845736 |
+| 211 | How Vector Databases Impacts Query Performance                       | databases      | 0.78836733 |
+| 26  | When to Use choosing Between Sql Query Optimisation and Alternatives | databases      | 0.7725092  |
+| 290 | Write-Ahead Logging for High-Throughput Applications                 | databases      | 0.7686081  |
+| 83  | Why debugging Slow Queries with In-Memory Databases                  | databases      | 0.76624966 |
++-----+----------------------------------------------------------------------+----------------+------------+
+
+Time: 0.491752584 seconds. 6 rows.
+```
+
 Run vector search with a post-filter using a natural-language question:
 
 ```sql
@@ -87,6 +103,19 @@ FROM vector_search(
 )
 WHERE category = 'machine_learning'
 ORDER BY _score DESC;
+```
+
+```
++-----+------------------------------------------------------------+------------------+------------+
+|  id |                            title                           |     category     |   _score   |
+|int32|                           varchar                          |      varchar     |   float64  |
++-----+------------------------------------------------------------+------------------+------------+
+| 6   | Cost-Aware AutoML on Kubernetes                            | machine_learning | 0.8782016  |
+| 208 | Benchmarking Transformer Models Across Popular Frameworks  | machine_learning | 0.80589664 |
+| 106 | Implementing Generative Adversarial Networks Without a PhD | machine_learning | 0.80574334 |
++-----+------------------------------------------------------------+------------------+------------+
+
+Time: 0.246288086 seconds. 3 rows.
 ```
 
 Fuse vector and keyword results with [Reciprocal Rank Fusion (RRF)](https://spiceai.org/docs/next/features/search#hybrid-search-with-rrf):
@@ -109,11 +138,23 @@ ORDER BY fused_score DESC
 LIMIT 10;
 ```
 
-## Notes
-
-- The Elasticsearch index is created automatically. No manual mapping step is required.
-- Embeddings are generated during the initial dataset refresh using OpenAI `text-embedding-3-small`.
-- If the Elasticsearch index already exists from a previous run with a different embedding model, delete it before rerunning the recipe so Spice can recreate the mapping with the correct vector dimensions.
+```
++-----+---------------------------------------------------------------------+----------------+----------------------+
+|  id |                                title                                |    category    |      fused_score     |
+|int32|                               varchar                               |     varchar    |        float64       |
++-----+---------------------------------------------------------------------+----------------+----------------------+
+| 7   | Hybrid Search with Elasticsearch and pgvector                       | search_engines | 0.03278688524590164  |
+| 1   | Vector Search Inside PostgreSQL with pgvector                       | databases      | 0.03225806451612903  |
+| 164 | How Embedding Models Powers Modern Search                           | search_engines | 0.031746031746031744 |
+| 148 | Why evaluating Sparse Retrieval: Metrics That Matter                | search_engines | 0.030776515151515152 |
+| 21  | Comparing Bi-Encoder Retrieval Approaches in 2025                   | search_engines | 0.02804284323271665  |
+| 295 | Full-Text Search Under the Hood: Architecture and Trade-offs        | search_engines | 0.015625             |
+| 78  | Comparing Sparse Retrieval Approaches in 2025                       | search_engines | 0.015384615384615385 |
+| 264 | Reciprocal Rank Fusion Under the Hood: Architecture and Trade-offs  | search_engines | 0.014925373134328358 |
+| 139 | How to Use cross-Encoder Reranking at Scale: Lessons from the Field | search_engines | 0.014705882352941176 |
+| 336 | A Developer's Guide to Embedding Models                             | search_engines | 0.014492753623188406 |
++-----+---------------------------------------------------------------------+----------------+----------------------+
+```
 
 ## Learn more
 
