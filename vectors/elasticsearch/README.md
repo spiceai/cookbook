@@ -7,7 +7,7 @@ This recipe demonstrates how to use Elasticsearch as a vector engine in Spice.ai
 - Run Elasticsearch locally with Docker Compose
 - Generate a sample articles dataset
 - Start Spice and automatically write embeddings into Elasticsearch
-- Run vector and hybrid search queries that match the generated article titles and content
+- Run vector and hybrid search queries using meaningful phrases and natural-language questions
 
 ## Prerequisites
 
@@ -50,7 +50,7 @@ On startup, Spice automatically:
 4. Bulk indexes the vectors into Elasticsearch
 
 When startup completes, the `articles` dataset is ready for vector and hybrid search queries.
-Use search prompts that mirror the generated article topics, such as `pgvector`, `Kubernetes`, `AutoML`, and `hybrid search`.
+Use phrase-based prompts and natural-language questions that mirror the generated article topics, such as `pgvector`, `Kubernetes`, `AutoML`, and `hybrid search`.
 
 ### Step 3: Open the Spice SQL REPL
 
@@ -62,19 +62,27 @@ spice sql
 
 ## Run Queries
 
-Run semantic similarity search over the indexed embeddings:
+Run semantic similarity search over the indexed embeddings using a phrase-based prompt:
 
 ```sql
 SELECT id, title, category, _score
-FROM vector_search(articles, 'pgvector vector databases sql query optimisation', 10)
+FROM vector_search(
+    articles,
+    'How does pgvector improve SQL query optimisation for vector search?',
+    10
+)
 ORDER BY _score DESC;
 ```
 
-Run vector search with a post-filter:
+Run vector search with a post-filter using a natural-language question:
 
 ```sql
 SELECT id, title, category, _score
-FROM vector_search(articles, 'kubernetes cost optimisation automl', 10)
+FROM vector_search(
+    articles,
+    'What are the trade-offs of cost-aware AutoML on Kubernetes?',
+    10
+)
 WHERE category = 'machine_learning'
 ORDER BY _score DESC;
 ```
@@ -84,8 +92,15 @@ Fuse vector and keyword results with [Reciprocal Rank Fusion (RRF)](https://spic
 ```sql
 SELECT id, title, category, fused_score
 FROM rrf(
-    vector_search(articles, 'hybrid search elasticsearch pgvector'),
-    text_search(articles, 'hybrid search elasticsearch pgvector', content),
+    vector_search(
+        articles,
+        'How can hybrid search combine Elasticsearch and pgvector effectively?'
+    ),
+    text_search(
+        articles,
+        'How can hybrid search combine Elasticsearch and pgvector effectively?',
+        content
+    ),
     join_key => 'id'
 )
 ORDER BY fused_score DESC

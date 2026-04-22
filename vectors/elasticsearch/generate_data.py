@@ -435,14 +435,95 @@ CLOSING_TEMPLATES = [
 def make_body(title: str, keywords: list[str], category: str, year: int) -> str:
     kws = keywords[:]
     random.shuffle(kws)
-    kw1, kw2 = (kws + kws)[:2]
+    selected = (kws + kws)[:6]
+    kw1, kw2, kw3, kw4, kw5, kw6 = selected
 
-    intro = f"{title}. {kw1} and {kw2} are key ideas in {category.replace('_', ' ')}."
+    category_label = category.replace("_", " ")
 
-    kw = random.choice(keywords)
-    body = random.choice(BODY_SENTENCE_POOLS).format(kw=kw)
+    intro = (
+        f"{title}\n\n"
+        f"In {year}, {category_label} teams are increasingly asking practical questions such as "
+        f"\"How do we apply {kw1} in production?\", "
+        f"\"When does {kw2} outperform older approaches?\", and "
+        f"\"What trade-offs should we expect when adopting {kw3}?\" "
+        f"This article explores those questions through concrete examples, implementation patterns, "
+        f"and lessons learned from real systems."
+    )
 
-    return " ".join([intro, body])
+    sections = [
+        (
+            f"What problem does {kw1} solve in modern {category_label} systems?\n\n"
+            f"At a high level, {kw1} helps teams improve how they design, operate, and scale their systems. "
+            f"When engineers first encounter {kw1}, they often focus on surface-level features, but the real value "
+            f"usually appears when it is combined with adjacent ideas such as {kw2} and {kw3}. "
+            f"In practice, this means better clarity around system behavior, faster iteration cycles, and more predictable "
+            f"performance in production environments.\n\n"
+            f"A common question is: \"How should we evaluate {kw1} before rolling it out widely?\" "
+            f"A good starting point is to define one or two measurable goals, such as reducing latency, increasing relevance, "
+            f"or simplifying operational workflows. Teams that skip this step often end up discussing {kw1} in abstract terms "
+            f"without learning whether it actually improves outcomes for users."
+        ),
+        (
+            f"How does {kw2} affect implementation choices?\n\n"
+            f"Implementation details matter. The way a team approaches {kw2} can influence data modeling, indexing strategy, "
+            f"query design, and even incident response. For example, engineers working with {kw2} often discover that the hardest "
+            f"part is not getting a basic demo running, but making it observable, cost-effective, and robust under real traffic.\n\n"
+            f"Another practical question is: \"What should we monitor once {kw2} is live?\" "
+            f"Useful signals include latency percentiles, throughput, error rates, and the quality of outputs returned to users. "
+            f"If those signals drift over time, the team can inspect whether {kw4}, infrastructure constraints, or poor query patterns "
+            f"are introducing regressions."
+        ),
+        (
+            f"Why do teams pair {kw3} with {kw4}?\n\n"
+            f"These topics are often discussed together because they reinforce each other. "
+            f"{kw3} can improve the expressiveness or quality of a system, while {kw4} helps ensure that the system remains stable "
+            f"and understandable as complexity grows. This combination is especially useful in architectures where the same dataset "
+            f"must support multiple access patterns such as analytics, retrieval, filtering, and ranking.\n\n"
+            f"A phrase that often appears in internal design reviews is \"progressive adoption.\" "
+            f"Instead of rewriting an entire platform, teams usually introduce {kw3} and {kw4} in stages. "
+            f"They start with one workflow, validate the impact, and then extend the pattern to adjacent services once the operational "
+            f"trade-offs are clear."
+        ),
+        (
+            f"What are the operational trade-offs of adopting {kw5}?\n\n"
+            f"Every meaningful architectural choice introduces trade-offs. "
+            f"{kw5} may improve developer productivity or system capability, but it can also add moving parts that require careful tuning. "
+            f"Engineers should ask questions like: \"How much additional storage will this require?\" "
+            f"\"Will it change the indexing pipeline?\" and \"How will we debug failures when results look plausible but are subtly wrong?\"\n\n"
+            f"Answering those questions usually requires a mix of benchmarking and qualitative review. "
+            f"Teams that succeed with {kw5} tend to document their assumptions, capture representative workloads, and compare multiple "
+            f"approaches before standardizing on one design."
+        ),
+        (
+            f"When should you choose {kw6} over simpler alternatives?\n\n"
+            f"The best choice depends on context. Sometimes {kw6} is clearly justified because the workload is large, the relevance "
+            f"requirements are strict, or the user experience depends on high-quality retrieval. In other situations, a simpler approach "
+            f"may be easier to explain, cheaper to operate, and good enough for the job.\n\n"
+            f"A useful decision framework is to ask whether {kw6} solves a problem that users can actually feel. "
+            f"If the answer is yes, the investment is often worthwhile. If not, a smaller design may create more value by reducing "
+            f"maintenance burden while keeping the system understandable for the team."
+        ),
+        (
+            f"Practical guidance for evaluation\n\n"
+            f"If you are exploring {title.lower()}, start with a narrow slice of the problem and use realistic data. "
+            f"Test how well the system handles representative phrases and natural-language questions, not just isolated keywords. "
+            f"For example, instead of evaluating only a term such as \"{kw1}\", try prompts like "
+            f"\"What are the trade-offs of {kw1}?\" or "
+            f"\"How does {kw2} improve production reliability?\" "
+            f"Those richer prompts usually reveal whether the system truly captures meaning or only memorizes exact wording.\n\n"
+            f"Over time, the most successful teams treat {kw1}, {kw2}, and {kw3} as part of a larger operating model rather than a single feature. "
+            f"They refine prompts, improve datasets, and monitor how changes affect relevance, latency, and operator confidence."
+        ),
+    ]
+
+    closing = (
+        f"In summary, {title.lower()} is best understood as a practical engineering topic rather than a buzzword. "
+        f"Teams that ask clear questions, benchmark carefully, and connect concepts like {kw1}, {kw2}, and {kw3} to user-facing outcomes "
+        f"are far more likely to see durable results. That is why topics such as {kw4}, {kw5}, and {kw6} continue to matter across modern "
+        f"{category_label} systems."
+    )
+
+    return "\n\n".join([intro, *sections, closing])
 
 
 # ---------------------------------------------------------------------------

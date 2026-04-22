@@ -6,6 +6,11 @@ embeddings:
   - name: local_embeddings
     from: huggingface:huggingface.co/sentence-transformers/all-MiniLM-L6-v2
 
+  - from: openai:text-embedding-3-small
+    name: openai_embeddings
+    params:
+      openai_api_key: ${secrets:OPENAI_API_KEY}
+
 datasets:
   - from: file:./articles.parquet
     name: articles
@@ -17,7 +22,7 @@ datasets:
     columns:
       - name: content
         embeddings:
-          - from: local_embeddings
+          - from: openai_embeddings
             row_id: id
             chunking:
               enabled: true
