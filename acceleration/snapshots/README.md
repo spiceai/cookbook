@@ -2,6 +2,8 @@
 
 This recipe walks through configuring database snapshots for file-mode accelerations so datasets avoid cold starts and recover quickly after restarts.
 
+> **Note:** Acceleration Snapshots require either [Spice Enterprise](https://spice.ai) or a Spice OSS build compiled with the `snapshots` feature flag. Running this recipe against a standard OSS binary will produce warnings and the snapshot functionality will be inactive.
+
 _Tip: Keep the [Snapshots documentation](https://spiceai.org/docs/features/data-acceleration/snapshots) handy while following this guide._
 
 ## Step 1. Prepare a Spice workspace
