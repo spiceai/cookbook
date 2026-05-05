@@ -89,16 +89,23 @@ LIMIT 10;
 ```
 
 ```
-+-----+----------------------------------------------------------------------+----------------+-----------+
-|  id |                                 title                                |    category    |  _score   |
-|int32|                                varchar                               |     varchar    |  float64  |
-+-----+----------------------------------------------------------------------+----------------+-----------+
-| 7   | Hybrid Search with Elasticsearch and pgvector                        | search_engines | 12.853201 |
-| 1   | Vector Search Inside PostgreSQL with pgvector                        | databases      |  9.412034 |
-| 295 | Full-Text Search Under the Hood: Architecture and Trade-offs         | search_engines |  8.901122 |
-+-----+----------------------------------------------------------------------+----------------+-----------+
++-----+---------------------------------------------------------------------+----------------+-----------+
+|  id |                                title                                |    category    |   _score  |
+|int32|                               varchar                               |     varchar    |  float64  |
++-----+---------------------------------------------------------------------+----------------+-----------+
+| 7   | Hybrid Search with Elasticsearch and pgvector                       | search_engines | 27.13612  |
+| 1   | Vector Search Inside PostgreSQL with pgvector                       | databases      | 11.930085 |
+| 164 | How Embedding Models Powers Modern Search                           | search_engines | 10.111884 |
+| 295 | Full-Text Search Under the Hood: Architecture and Trade-offs        | search_engines | 10.098769 |
+| 78  | Comparing Sparse Retrieval Approaches in 2025                       | search_engines | 10.047134 |
+| 148 | Why evaluating Sparse Retrieval: Metrics That Matter                | search_engines | 10.047134 |
+| 264 | Reciprocal Rank Fusion Under the Hood: Architecture and Trade-offs  | search_engines | 10.03161  |
+| 139 | How to Use cross-Encoder Reranking at Scale: Lessons from the Field | search_engines | 9.900897  |
+| 336 | A Developer's Guide to Embedding Models                             | search_engines | 9.7990885 |
+| 281 | Comparing Hnsw Graphs Approaches in 2025                            | search_engines | 9.631344  |
++-----+---------------------------------------------------------------------+----------------+-----------+
 
-Time: 0.312451234 seconds. 3 rows.
+Time: 0.067911779 seconds. 10 rows.
 ```
 
 Search by title field:
@@ -112,6 +119,26 @@ FROM text_search(
 )
 ORDER BY _score DESC
 LIMIT 10;
+```
+
+```
++-----+--------------------------------------------------------------------+----------------------+------------+
+|  id |                                title                               |       category       |   _score   |
+|int32|                               varchar                              |        varchar       |   float64  |
++-----+--------------------------------------------------------------------+----------------------+------------+
+| 6   | Cost-Aware AutoML on Kubernetes                                    | machine_learning     | 10.5090885 |
+| 117 | Benchmarking Automl Across Popular Frameworks                      | machine_learning     | 5.863331   |
+| 147 | How Automl Is Transforming AI Applications                         | machine_learning     | 5.5187984  |
+| 310 | Security Considerations for Kubernetes Orchestration               | cloud_infrastructure | 4.645757   |
+| 2   | Running Elasticsearch on Kubernetes: Lessons Learned               | cloud_infrastructure | 4.3727703  |
+| 171 | Automating Kubernetes Orchestration with Modern Tooling            | cloud_infrastructure | 4.3727703  |
+| 105 | Building Self-Service Infrastructure with Kubernetes Orchestration | cloud_infrastructure | 4.130084   |
+| 408 | Why kubernetes Orchestration in Practice: Real-World Patterns      | cloud_infrastructure | 3.9129195  |
+| 193 | When to Use kubernetes Orchestration for Platform Engineers        | cloud_infrastructure | 3.9129195  |
+| 19  | How We Cut Costs by Optimising Kubernetes Orchestration            | cloud_infrastructure | 3.9129195  |
++-----+--------------------------------------------------------------------+----------------------+------------+
+
+Time: 0.032008497 seconds. 10 rows.
 ```
 
 ### Vector Search (Semantic)
@@ -133,12 +160,15 @@ ORDER BY _score DESC;
 |  id |                                 title                                |    category    |   _score   |
 |int32|                                varchar                               |     varchar    |   float64  |
 +-----+----------------------------------------------------------------------+----------------+------------+
-| 1   | Vector Search Inside PostgreSQL with pgvector                        | databases      | 0.8442027  |
+| 1   | Vector Search Inside PostgreSQL with pgvector                        | databases      | 0.84424317 |
 | 7   | Hybrid Search with Elasticsearch and pgvector                        | search_engines | 0.82845736 |
-| 211 | How Vector Databases Impacts Query Performance                       | databases      | 0.78836733 |
+| 211 | How Vector Databases Impacts Query Performance                       | databases      | 0.78835374 |
+| 26  | When to Use choosing Between Sql Query Optimisation and Alternatives | databases      | 0.7725092  |
+| 290 | Write-Ahead Logging for High-Throughput Applications                 | databases      | 0.7686081  |
+| 83  | Why debugging Slow Queries with In-Memory Databases                  | databases      | 0.76624966 |
 +-----+----------------------------------------------------------------------+----------------+------------+
 
-Time: 0.491752584 seconds. 3 rows.
+Time: 0.573422185 seconds. 6 rows.
 ```
 
 Vector search with a post-filter:
@@ -159,12 +189,12 @@ ORDER BY _score DESC;
 |  id |                            title                           |     category     |   _score   |
 |int32|                           varchar                          |      varchar     |   float64  |
 +-----+------------------------------------------------------------+------------------+------------+
-| 6   | Cost-Aware AutoML on Kubernetes                            | machine_learning | 0.8782016  |
+| 6   | Cost-Aware AutoML on Kubernetes                            | machine_learning | 0.8782172  |
 | 208 | Benchmarking Transformer Models Across Popular Frameworks  | machine_learning | 0.80589664 |
-| 106 | Implementing Generative Adversarial Networks Without a PhD | machine_learning | 0.80574334 |
+| 106 | Implementing Generative Adversarial Networks Without a PhD | machine_learning | 0.80570924 |
 +-----+------------------------------------------------------------+------------------+------------+
 
-Time: 0.246288086 seconds. 3 rows.
+Time: 0.274407607 seconds. 3 rows.
 ```
 
 ### Hybrid Search with RRF
@@ -197,11 +227,16 @@ LIMIT 10;
 | 7   | Hybrid Search with Elasticsearch and pgvector                       | search_engines | 0.03278688524590164  |
 | 1   | Vector Search Inside PostgreSQL with pgvector                       | databases      | 0.03225806451612903  |
 | 164 | How Embedding Models Powers Modern Search                           | search_engines | 0.031746031746031744 |
+| 148 | Why evaluating Sparse Retrieval: Metrics That Matter                | search_engines | 0.030776515151515152 |
+| 21  | Comparing Bi-Encoder Retrieval Approaches in 2025                   | search_engines | 0.02804284323271665  |
 | 295 | Full-Text Search Under the Hood: Architecture and Trade-offs        | search_engines | 0.015625             |
 | 78  | Comparing Sparse Retrieval Approaches in 2025                       | search_engines | 0.015384615384615385 |
+| 264 | Reciprocal Rank Fusion Under the Hood: Architecture and Trade-offs  | search_engines | 0.014925373134328358 |
+| 139 | How to Use cross-Encoder Reranking at Scale: Lessons from the Field | search_engines | 0.014705882352941176 |
+| 336 | A Developer's Guide to Embedding Models                             | search_engines | 0.014492753623188406 |
 +-----+---------------------------------------------------------------------+----------------+----------------------+
 
-Time: 0.523841234 seconds. 5 rows.
+Time: 0.452906543 seconds. 10 rows.
 ```
 
 Hybrid search with recency boosting using exponential decay:
@@ -216,6 +251,26 @@ FROM rrf(
 )
 ORDER BY _fused_score DESC
 LIMIT 10;
+```
+
+```
++-----+--------------------------------------------------------------+-----------+----------------------+
+|  id |                             title                            |  category |     _fused_score     |
+|int32|                            varchar                           |  varchar  |        float64       |
++-----+--------------------------------------------------------------+-----------+----------------------+
+| 397 | How to Use choosing Between Foundationdb and Alternatives    | databases | 0.08051529790660225  |
+| 240 | Debugging Slow Queries with B-Tree Indexes                   | databases | 0.07670454545454546  |
+| 266 | Database Connection Pooling for High-Throughput Applications | databases | 0.07261904761904761  |
+| 276 | How B-Tree Indexes Impacts Query Performance                 | databases | 0.06666666666666667  |
+| 435 | How Lsm-Tree Storage Impacts Query Performance               | databases | 0.06325581395348837  |
+| 53  | How Distributed Databases Impacts Query Performance          | databases | 0.06285178236397748  |
+| 83  | Why debugging Slow Queries with In-Memory Databases          | databases | 0.052655677655677656 |
+| 15  | How to Use time-Series Databases Internals Explained         | databases | 0.047619047619047616 |
+| 186 | Columnar Databases for High-Throughput Applications          | databases | 0.046102932785575715 |
+| 380 | Production Lessons from Running Newsql at Scale              | databases | 0.045454545454545456 |
++-----+--------------------------------------------------------------+-----------+----------------------+
+
+Time: 0.351917263 seconds. 10 rows.
 ```
 
 ## How It Works
