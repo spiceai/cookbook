@@ -9,9 +9,9 @@ search_engines:
       - text
       - vector
     params:
-      endpoint: http://localhost:9200
-      user: elastic
-      pass: spiceai
+      elasticsearch_endpoint: http://localhost:9200
+      elasticsearch_user: elastic
+      elasticsearch_pass: spiceai
 
 embeddings:
   - from: openai:text-embedding-3-small
@@ -31,7 +31,8 @@ datasets:
       - name: content
         embeddings:
           - from: openai_embeddings
-            row_id: id
+            row_id:
+              - id
             chunking:
               enabled: true
               target_chunk_size: 256
@@ -49,7 +50,6 @@ datasets:
           engine: elastic
           params:
             elasticsearch_index: fts_index
-            # batch_write_rows: "100"
           row_id:
             - id
 
