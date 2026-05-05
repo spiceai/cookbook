@@ -282,15 +282,15 @@ search_engines:
   - name: elastic
     from: elasticsearch
     kind:
-      - vector
       - text
+      - vector
     params:
-      endpoint: http://localhost:9200
-      user: elastic
-      pass: spiceai
+      elasticsearch_endpoint: http://localhost:9200
+      elasticsearch_user: elastic
+      elasticsearch_pass: spiceai
 ```
 
-Datasets reference it by name in `columns[].vectors.engine` and `columns[].full_text_search.engine`:
+Datasets reference the engine by name in the top-level `vectors:` block and in `columns[].full_text_search.engine`:
 
 ```yaml
 datasets:
@@ -301,18 +301,40 @@ datasets:
     acceleration:
       enabled: true
       engine: arrow
+
+    vectors:
+      enabled: true
+      engine: elastic
+      params:
+        elasticsearch_index: vector_index
+        elasticsearch_vector_field: content_embedding
+
     columns:
       - name: content
         embeddings:
           - from: openai_embeddings
-            engine: es_hybrid    # vector index → Elasticsearch dense_vector
-            params:
-              index: articles_vectors
-              vector_field: content_embedding
+            row_id:
+              - id
+            chunking:
+              enabled: true
+              target_chunk_size: 256
+              overlap_size: 64
         full_text_search:
           enabled: true
-          row_id: id
-          engine: es_hybrid
+          engine: elastic
+          params:
+            elasticsearch_index: fts_index
+          row_id:
+            - id
+
+      - name: title
+        full_text_search:
+          enabled: true
+          engine: elastic
+          params:
+            elasticsearch_index: fts_index
+          row_id:
+            - id
 ```
 
 This means a single Elasticsearch cluster serves all search modalities, keeping infrastructure simple while enabling powerful hybrid queries.
