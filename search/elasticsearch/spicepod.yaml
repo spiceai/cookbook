@@ -48,16 +48,16 @@ datasets:
           enabled: true
           engine: elastic
           params:
-            index: fts_index
-            batch_write_rows: "100"
+            elasticsearch_index: fts_index
+            # batch_write_rows: "100"
           row_id:
             - id
 
-      # - name: title
-      #   full_text_search:
-      #     enabled: true
-      #     engine: elastic
-      #     params:
-      #       elasticsearch_index: fts_index
-      #     row_id:
-      #       - id
+      - name: title
+        full_text_search:
+          enabled: true
+          engine: elastic
+          params:
+            elasticsearch_index: fts_index
+          row_id:
+            - id

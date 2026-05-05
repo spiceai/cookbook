@@ -250,25 +250,14 @@ datasets:
       - name: content
         embeddings:
           - from: openai_embeddings
-            row_id: id
-            chunking:
-              enabled: true
-              target_chunk_size: 256
-              overlap_size: 64
-        vectors:
-          enabled: true
-          engine: elastic         # vector_search() → Elasticsearch kNN
+            engine: es_hybrid    # vector index → Elasticsearch dense_vector
+            params:
+              index: articles_vectors
+              vector_field: content_embedding
         full_text_search:
           enabled: true
-          engine: elastic         # text_search() → Elasticsearch BM25
-          row_id:
-            - id
-      - name: title
-        full_text_search:
-          enabled: true
-          engine: elastic
-          row_id:
-            - id
+          row_id: id
+          engine: es_hybrid
 ```
 
 This means a single Elasticsearch cluster serves all search modalities, keeping infrastructure simple while enabling powerful hybrid queries.
