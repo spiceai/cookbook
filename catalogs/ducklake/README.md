@@ -6,7 +6,10 @@ The DuckLake Catalog Connector enables Spice to automatically discover and query
 
 ## Prerequisites
 
-- [DuckDB CLI](https://duckdb.org/docs/installation/) v1.3.0 or later installed (to create a DuckLake catalog).
+- [DuckDB CLI](https://duckdb.org/docs/installation/) v1.3.0–v1.4.4 installed (to create a DuckLake catalog). DuckDB v1.5.x is **not** currently supported. Install the LTS version:
+  ```bash
+  curl https://install.duckdb.org | DUCKDB_VERSION=1.4.4 sh
+  ```
 - Spice v2.0 or later is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation).
 
 ## Step 1. Create a new directory and initialize a Spicepod
@@ -23,6 +26,19 @@ Open DuckDB and create a DuckLake catalog with TPC-H sample data:
 
 ```bash
 duckdb
+```
+
+```bash
+SELECT version();
+```
+
+```bash
+┌─────────────┐
+│ "version"() │
+│   varchar   │
+├─────────────┤
+│ v1.4.4      │
+└─────────────┘
 ```
 
 Install and load the DuckLake and TPC-H extensions, then create a catalog and populate it:
@@ -146,7 +162,8 @@ LIMIT 5;
 
 ```text
 +-----------+--------------------+--------------+-----------+
-| c_custkey | c_name             | c_mktsegment | c_acctbal |
+| c_custkey |       c_name       | c_mktsegment | c_acctbal |
+|   int64   |       varchar      |    varchar   |decimal(15,2)|
 +-----------+--------------------+--------------+-----------+
 | 1         | Customer#000000001 | BUILDING     | 711.56    |
 | 2         | Customer#000000002 | AUTOMOBILE   | 121.65    |
@@ -165,6 +182,19 @@ JOIN my_lakehouse.main.nation n ON c.c_nationkey = n.n_nationkey
 GROUP BY n.n_name
 ORDER BY num_customers DESC
 LIMIT 5;
+```
+
+```text
++---------+---------------+-------------+
+|  nation | num_customers | avg_balance |
+| varchar |     int64     |   float64   |
++---------+---------------+-------------+
+| MOROCCO | 72            | 5484.47     |
+| IRAN    | 72            | 4206.76     |
+| CANADA  | 69            | 4116.12     |
+| BRAZIL  | 68            | 3635.3      |
+| JAPAN   | 67            | 4962.46     |
++---------+---------------+-------------+
 ```
 
 ## Step 6. Enable read-write access (optional)
@@ -224,11 +254,11 @@ datasets:
   - from: ducklake:customer
     name: customer
     params:
-      connection_string: metadata.ducklake
+      ducklake_connection_string: metadata.ducklake
   - from: ducklake:orders
     name: orders
     params:
-      connection_string: metadata.ducklake
+      ducklake_connection_string: metadata.ducklake
 ```
 
 This is useful when you only need specific tables or want to configure each dataset independently (e.g., with different acceleration settings).
