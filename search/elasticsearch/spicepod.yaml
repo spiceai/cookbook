@@ -32,8 +32,8 @@ datasets:
       enabled: true
       engine: elastic
       params:
-        index: vector_index
-        vector_field: content_embedding
+        elasticsearch_index: vector_index
+        elasticsearch_vector_field: content_embedding
 
     columns:
       - name: content
@@ -46,11 +46,12 @@ datasets:
               target_chunk_size: 256
               overlap_size: 64
 
+
         full_text_search:
           enabled: true
           engine: elastic
           params:
-            index: fts_index
+            elasticsearch_index: fts_index
           row_id:
             - id
 
@@ -59,6 +60,6 @@ datasets:
           enabled: true
           engine: elastic
           params:
-            index: fts_index
+            elasticsearch_index: fts_index
           row_id:
             - id
