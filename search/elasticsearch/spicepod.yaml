@@ -1,0 +1,63 @@
+version: v2
+kind: Spicepod
+name: elasticsearch
+
+search_engines:
+  - name: elastic
+    from: elasticsearch
+    kind:
+      - text
+      - vector
+    params:
+      endpoint: http://localhost:9200
+      user: elastic
+      pass: spiceai
+
+embeddings:
+  - from: openai:text-embedding-3-small
+    name: openai_embeddings
+    params:
+      openai_api_key: ${secrets:OPENAI_API_KEY}
+
+datasets:
+  - from: file:./articles.parquet
+    name: articles
+    params:
+      file_format: parquet
+    acceleration:
+      enabled: true
+      engine: arrow
+    columns:
+      - name: content
+        embeddings:
+          - from: openai_embeddings
+            row_id: id
+            chunking:
+              enabled: true
+              target_chunk_size: 256
+              overlap_size: 64
+
+        vectors:
+          enabled: true
+          engine: elastic
+          params:
+            index: vector_index
+            vector_field: content_embedding
+
+        full_text_search:
+          enabled: true
+          engine: elastic
+          params:
+            index: fts_index
+            batch_write_rows: "100"
+          row_id:
+            - id
+
+      # - name: title
+      #   full_text_search:
+      #     enabled: true
+      #     engine: elastic
+      #     params:
+      #       elasticsearch_index: fts_index
+      #     row_id:
+      #       - id
