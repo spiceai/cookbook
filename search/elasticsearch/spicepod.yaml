@@ -27,6 +27,23 @@ x-elasticsearch-vectors: &elasticsearch_vectors
     elasticsearch_index: vector_index
     elasticsearch_vector_field: content_embedding
 
+x-elasticsearch-fts-tuned: &elasticsearch_fts_tuned
+  enabled: true
+  engine: elasticsearch
+  params:
+    elasticsearch_endpoint: http://localhost:9200
+    elasticsearch_user: ${secrets:ELASTIC_USER}
+    elasticsearch_pass: ${secrets:ELASTIC_PASS}
+    elasticsearch_index: fts_index_tuned   # separate index to avoid conflicts
+    number_of_shards: 1
+    number_of_replicas: 0
+    refresh_interval: 30s
+    bulk_load_refresh_interval: "-1"       # disable refresh during bulk load
+    force_merge_after_write: true
+    force_merge_segments: 1
+    batch_write_rows: 1000
+    index_settings: '{"index":{"codec":"best_compression"}}'
+
 datasets:
   - from: file:./articles.parquet
     name: articles
@@ -40,6 +57,7 @@ datasets:
 
     full_text_search:
       <<: *elasticsearch_fts
+      # <<: *elasticsearch_fts_tuned
 
     columns:
       - name: content
@@ -54,11 +72,13 @@ datasets:
 
         full_text_search:
           <<: *elasticsearch_fts
+          # <<: *elasticsearch_fts_tuned
           row_id:
             - id
 
       - name: title
         full_text_search:
           <<: *elasticsearch_fts
+          # <<: *elasticsearch_fts_tuned
           row_id:
             - id

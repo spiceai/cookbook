@@ -275,6 +275,85 @@ LIMIT 10;
 Time: 0.351917263 seconds. 10 rows.
 ```
 
+## Elasticsearch Ingestion Tuning
+
+Spice exposes a set of Elasticsearch-specific parameters that control how data is written to the index during acceleration. These are useful for optimising bulk-load throughput on large datasets.
+
+| Parameter | Description |
+|---|---|
+| `number_of_shards` | Number of primary shards created with the index. Only applied at index creation time. More shards allow parallel writes but increase overhead. |
+| `number_of_replicas` | Number of replica shards. Setting to `0` during initial load eliminates replication overhead; restore after load for resilience. |
+| `refresh_interval` | How often Elasticsearch refreshes the index to make new documents searchable. Only applied at index creation time. Use larger values (e.g. `30s`) to trade search freshness for write throughput. |
+| `bulk_load_refresh_interval` | Temporarily overrides `refresh_interval` for the duration of a Spice acceleration write (full or append). Set to `-1` to disable refresh entirely during the write, then restore after. This is the most impactful single tuning for bulk-load speed. |
+| `force_merge_after_write` | When `true`, triggers an Elasticsearch `_forcemerge` after each acceleration write completes. Reduces segment count, improving query performance at the cost of extra CPU/IO post-write. |
+| `force_merge_segments` | Target number of segments after force-merge. Defaults to `1` when `force_merge_after_write` is `true`. Fewer segments = faster queries. |
+| `batch_write_rows` | Number of documents sent per bulk request to Elasticsearch. Larger batches reduce HTTP overhead; too large may hit memory limits. Default: `1000`. |
+| `index_settings` | Arbitrary index settings as a JSON string, applied at index creation time. Use for advanced settings such as `codec`, `similarity`, or custom analyzers. |
+
+### Testing ingestion tuning
+
+The `spicepod.yaml` in this recipe includes a ready-to-use `x-elasticsearch-fts-tuned` anchor that enables all ingestion controls. To test it, replace the `&elasticsearch_fts` anchor reference with `&elasticsearch_fts_tuned` for the dataset-level and column-level `full_text_search:` entries.
+
+First, add this anchor to your `spicepod.yaml` alongside the existing ones:
+
+```yaml
+x-elasticsearch-fts-tuned: &elasticsearch_fts_tuned
+  enabled: true
+  engine: elasticsearch
+  params:
+    elasticsearch_endpoint: http://localhost:9200
+    elasticsearch_user: ${secrets:ELASTIC_USER}
+    elasticsearch_pass: ${secrets:ELASTIC_PASS}
+    elasticsearch_index: fts_index_tuned   # separate index to avoid conflicts
+    number_of_shards: 1
+    number_of_replicas: 0
+    refresh_interval: 30s
+    bulk_load_refresh_interval: "-1"       # disable refresh during bulk load
+    force_merge_after_write: true
+    force_merge_segments: 1
+    batch_write_rows: 1000
+    index_settings: '{"index":{"codec":"best_compression"}}'
+```
+
+Then switch the dataset and columns to use the tuned anchor:
+
+```yaml
+    full_text_search:
+      <<: *elasticsearch_fts_tuned          # was: *elasticsearch_fts
+
+    columns:
+      - name: content
+        full_text_search:
+          <<: *elasticsearch_fts_tuned      # was: *elasticsearch_fts
+          row_id:
+            - id
+
+      - name: title
+        full_text_search:
+          <<: *elasticsearch_fts_tuned      # was: *elasticsearch_fts
+          row_id:
+            - id
+```
+
+Restart Spice to apply the new index configuration:
+
+```bash
+spice run
+```
+
+Spice will create a fresh `fts_index_tuned` index using the tuned settings and bulk-index all documents. Once ready, run the same text search queries as before — results should be identical, with faster indexing observed in the startup logs:
+
+```sql
+SELECT id, title, category, _score
+FROM text_search(
+    articles,
+    'hybrid search Elasticsearch pgvector',
+    content
+)
+ORDER BY _score DESC
+LIMIT 10;
+```
+
 ## How It Works
 
 Engines are configured directly on each dataset and column. YAML anchors (`&elasticsearch_fts`, `&elasticsearch_vectors`) are used to define reusable engine configs and avoid repetition:
