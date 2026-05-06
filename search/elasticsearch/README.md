@@ -305,13 +305,13 @@ x-elasticsearch-fts-tuned: &elasticsearch_fts_tuned
     elasticsearch_user: ${secrets:ELASTIC_USER}
     elasticsearch_pass: ${secrets:ELASTIC_PASS}
     elasticsearch_index: fts_index_tuned   # separate index to avoid conflicts
-    number_of_shards: 1
+    number_of_shards: 2
     number_of_replicas: 0
-    refresh_interval: 30s
+    refresh_interval: 1s
     bulk_load_refresh_interval: "-1"       # disable refresh during bulk load
     force_merge_after_write: true
     force_merge_segments: 1
-    batch_write_rows: 1000
+    batch_write_rows: 500
     index_settings: '{"index":{"codec":"best_compression"}}'
 ```
 
@@ -392,9 +392,6 @@ datasets:
       engine: arrow
 
     vectors: *elasticsearch_vectors
-
-    full_text_search:
-      <<: *elasticsearch_fts
 
     columns:
       - name: content
