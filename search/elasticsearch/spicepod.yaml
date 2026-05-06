@@ -2,22 +2,30 @@ version: v2
 kind: Spicepod
 name: elasticsearch
 
-search_engines:
-  - name: elastic
-    from: elasticsearch
-    kind:
-      - text
-      - vector
-    params:
-      elasticsearch_endpoint: http://localhost:9200
-      elasticsearch_user: elastic
-      elasticsearch_pass: spiceai
-
 embeddings:
   - from: openai:text-embedding-3-small
     name: openai_embeddings
     params:
       openai_api_key: ${secrets:OPENAI_API_KEY}
+
+x-elasticsearch-fts: &elasticsearch_fts
+  enabled: true
+  engine: elasticsearch
+  params:
+    elasticsearch_endpoint: http://localhost:9200
+    elasticsearch_user: ${secrets:ELASTIC_USER}
+    elasticsearch_pass: ${secrets:ELASTIC_PASS}
+    elasticsearch_index: fts_index
+
+x-elasticsearch-vectors: &elasticsearch_vectors
+  enabled: true
+  engine: elasticsearch
+  params:
+    elasticsearch_endpoint: http://localhost:9200
+    elasticsearch_user: ${secrets:ELASTIC_USER}
+    elasticsearch_pass: ${secrets:ELASTIC_PASS}
+    elasticsearch_index: vector_index
+    elasticsearch_vector_field: content_embedding
 
 datasets:
   - from: file:./articles.parquet
@@ -28,12 +36,10 @@ datasets:
       enabled: true
       engine: arrow
 
-    vectors:
-      enabled: true
-      engine: elastic
-      params:
-        elasticsearch_index: vector_index
-        elasticsearch_vector_field: content_embedding
+    vectors: *elasticsearch_vectors
+
+    full_text_search:
+      <<: *elasticsearch_fts
 
     columns:
       - name: content
@@ -46,20 +52,13 @@ datasets:
               target_chunk_size: 256
               overlap_size: 64
 
-
         full_text_search:
-          enabled: true
-          engine: elastic
-          params:
-            elasticsearch_index: fts_index
+          <<: *elasticsearch_fts
           row_id:
             - id
 
       - name: title
         full_text_search:
-          enabled: true
-          engine: elastic
-          params:
-            elasticsearch_index: fts_index
+          <<: *elasticsearch_fts
           row_id:
             - id

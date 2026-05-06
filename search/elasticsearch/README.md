@@ -2,11 +2,11 @@
 
 Works with `v2.0+`
 
-This recipe demonstrates using Elasticsearch as a unified backend for both **full-text (BM25) search** and **vector (semantic) search** in Spice.ai, wired through the new top-level `search_engines:` configuration. It shows how to:
+This recipe demonstrates using Elasticsearch as a unified backend for both **full-text (BM25) search** and **vector (semantic) search** in Spice.ai, configured directly on each dataset and column. It shows how to:
 
 - Run Elasticsearch locally with Docker Compose
 - Generate a sample articles dataset
-- Configure a single named `elastic` search engine for both `vector` and `text` kinds
+- Configure Elasticsearch engines directly on datasets and columns using YAML anchors
 - Automatically write OpenAI embeddings and build text indexes in Elasticsearch on startup
 - Run text search, vector search, and hybrid (RRF) queries
 
@@ -25,6 +25,8 @@ Create a `.env.local` file in this directory:
 
 ```bash
 OPENAI_API_KEY=<your-openai-api-key>
+ELASTIC_USER=elastic
+ELASTIC_PASS=<your-elasticsearch-password>
 ```
 
 ### Step 2: Start Elasticsearch and generate the sample data
@@ -54,9 +56,9 @@ spice run
 
 On startup, Spice automatically:
 
-1. Resolves the `elastic` search engine defined under `search_engines:` (supports both `vector` and `text` kinds)
-2. Creates the `articles_vectors` Elasticsearch index with a `dense_vector` mapping for embeddings
-3. Creates the `articles_text` Elasticsearch index with an `english` analyzer for full-text search
+1. Resolves the Elasticsearch engine configured directly on the dataset's `vectors:` and `full_text_search:` blocks
+2. Creates the `vector_index` Elasticsearch index with a `dense_vector` mapping for embeddings
+3. Creates the `fts_index` Elasticsearch index with an `english` analyzer for full-text search
 4. Loads the article records
 5. Computes embeddings using OpenAI `text-embedding-3-small`
 6. Bulk indexes vectors and text into Elasticsearch
@@ -275,22 +277,30 @@ Time: 0.351917263 seconds. 10 rows.
 
 ## How It Works
 
-The `search_engines:` top-level block defines a named, reusable engine:
+Engines are configured directly on each dataset and column. YAML anchors (`&elasticsearch_fts`, `&elasticsearch_vectors`) are used to define reusable engine configs and avoid repetition:
 
 ```yaml
-search_engines:
-  - name: elastic
-    from: elasticsearch
-    kind:
-      - text
-      - vector
-    params:
-      elasticsearch_endpoint: http://localhost:9200
-      elasticsearch_user: elastic
-      elasticsearch_pass: spiceai
+x-elasticsearch-fts: &elasticsearch_fts
+  enabled: true
+  engine: elasticsearch
+  params:
+    elasticsearch_endpoint: http://localhost:9200
+    elasticsearch_user: ${secrets:ELASTIC_USER}
+    elasticsearch_pass: ${secrets:ELASTIC_PASS}
+    elasticsearch_index: fts_index
+
+x-elasticsearch-vectors: &elasticsearch_vectors
+  enabled: true
+  engine: elasticsearch
+  params:
+    elasticsearch_endpoint: http://localhost:9200
+    elasticsearch_user: ${secrets:ELASTIC_USER}
+    elasticsearch_pass: ${secrets:ELASTIC_PASS}
+    elasticsearch_index: vector_index
+    elasticsearch_vector_field: content_embedding
 ```
 
-Datasets reference the engine by name in the top-level `vectors:` block and in `columns[].full_text_search.engine`:
+Datasets reference these anchors directly in `vectors:` and `full_text_search:` blocks. Because all params — including credentials — are defined in the anchors, each usage site is a simple reference with no repetition:
 
 ```yaml
 datasets:
@@ -302,12 +312,10 @@ datasets:
       enabled: true
       engine: arrow
 
-    vectors:
-      enabled: true
-      engine: elastic
-      params:
-        elasticsearch_index: vector_index
-        elasticsearch_vector_field: content_embedding
+    vectors: *elasticsearch_vectors
+
+    full_text_search:
+      <<: *elasticsearch_fts
 
     columns:
       - name: content
@@ -320,19 +328,13 @@ datasets:
               target_chunk_size: 256
               overlap_size: 64
         full_text_search:
-          enabled: true
-          engine: elastic
-          params:
-            elasticsearch_index: fts_index
+          <<: *elasticsearch_fts
           row_id:
             - id
 
       - name: title
         full_text_search:
-          enabled: true
-          engine: elastic
-          params:
-            elasticsearch_index: fts_index
+          <<: *elasticsearch_fts
           row_id:
             - id
 ```
@@ -342,7 +344,7 @@ This means a single Elasticsearch cluster serves all search modalities, keeping 
 ## Learn more
 
 - [Elasticsearch Documentation](https://spiceai.org/docs/components/vectors/elasticsearch)
-- [Search Engines Configuration](https://spiceai.org/docs/reference/spicepod/search-engines)
+
 - [Full-Text Search Documentation](https://spiceai.org/docs/features/search/full-text-search)
 - [Vector Search Documentation](https://spiceai.org/docs/features/search/vector-search)
 - [Hybrid Search with RRF](https://spiceai.org/docs/features/search#hybrid-search-with-rrf)
