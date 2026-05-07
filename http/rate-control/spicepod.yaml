@@ -1,0 +1,24 @@
+version: v2
+kind: Spicepod
+name: http_rate_control_test
+
+runtime:
+  source_rate_control:
+    state_location: file:///home/ewgenius/Developer/Spice/cookbook/http/rate-control/.state
+    # state_location: abfss://spice-rate-control-state@spiceaiadlstest.dfs.core.windows.net/rate-control/
+    refresh_interval: 5s
+    params:
+      account: spiceaiadlstest
+      access_key: ${secrets:AZURE_STORAGE_ACCESS_KEY}
+  caching:
+    sql_results:
+      enabled: false
+
+datasets:
+  - from: http://localhost:8080
+    name: local_items
+    params:
+      file_format: json
+      allowed_request_paths: '/items,/status'
+      client_timeout: 10s
+      requests_per_second_limit: 10
