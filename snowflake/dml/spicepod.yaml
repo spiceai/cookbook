@@ -1,0 +1,45 @@
+version: v1
+kind: Spicepod
+name: snowflake-dml
+
+datasets:
+  # Source: TVMaze public HTTP API — paginated list of shows
+  - from: https://api.tvmaze.com/shows
+    name: tvmaze_shows_raw
+    params:
+      file_format: json
+      client_timeout: 30s
+      pagination: enabled
+      pagination_query_params: "page={page}"
+      pagination_page_size: "250"
+      pagination_max_pages: "2"   # ~500 shows; adjust as needed
+
+  # Destination: writable Snowflake table
+  - from: snowflake:SPICE_DEMO.PUBLIC."TV_SHOWS"
+    name: tv_shows
+    mode: read_write
+    params:
+      snowflake_role: ${secrets:SPICE_SNOWFLAKE_ROLE}
+      snowflake_warehouse: ${secrets:SPICE_SNOWFLAKE_WAREHOUSE}
+      snowflake_username: ${secrets:SPICE_SNOWFLAKE_USERNAME}
+      snowflake_account: ${secrets:SPICE_SNOWFLAKE_ACCOUNT}
+      snowflake_password: ${secrets:SPICE_SNOWFLAKE_PASSWORD}
+
+workers:
+  - name: ingest_tvmaze_shows
+    description: "Periodic pipeline: fetch new TVMaze shows from HTTP API and insert into Snowflake"
+    cron: "* * * * *"
+    sql: |
+      INSERT INTO tv_shows ("ID", "NAME", "TYPE", "LANGUAGE", "STATUS", "RUNTIME", "PREMIERED", "ENDED", "RATING_AVERAGE")
+      SELECT
+        json_get_int(content, 'id')                                        AS "ID",
+        json_get_str(content, 'name')                                      AS "NAME",
+        json_get_str(content, 'type')                                      AS "TYPE",
+        json_get_str(content, 'language')                                  AS "LANGUAGE",
+        json_get_str(content, 'status')                                    AS "STATUS",
+        json_get_int(content, 'runtime')                                   AS "RUNTIME",
+        CAST(json_get_str(content, 'premiered') AS DATE)                   AS "PREMIERED",
+        CAST(json_get_str(content, 'ended')     AS DATE)                   AS "ENDED",
+        json_get_float(json_get(content, 'rating'), 'average')             AS "RATING_AVERAGE"
+      FROM tvmaze_shows_raw
+      WHERE json_get_int(content, 'id') NOT IN (SELECT "ID" FROM tv_shows);
