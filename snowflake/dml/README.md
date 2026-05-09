@@ -1,6 +1,6 @@
 # Snowflake DML — HTTP API Ingestion Pipeline
 
-Works with `v1.0+`
+Works with `v2.0+`
 
 > This recipe demonstrates how to build a mini ingestion pipeline with Spice: fetch data from a public HTTP API ([TVMaze](https://www.tvmaze.com/api)), transform it with SQL, and write it into a writable Snowflake table using **Snowflake DML** (`INSERT`).
 
