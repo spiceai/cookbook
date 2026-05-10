@@ -4,25 +4,10 @@ Works with `v2.0+`
 
 > This recipe demonstrates how to build a mini ingestion pipeline with Spice: fetch data from a public HTTP API ([TVMaze](https://www.tvmaze.com/api)), transform it with SQL, and write it into a writable Snowflake table using **Snowflake DML** (`INSERT`).
 
-## Architecture
-
-```
-TVMaze HTTP API  ──(HTTP connector)──►  tvmaze_shows_raw  (read-only, in-memory)
-                                                │
-                                   ingest_tvmaze_shows worker
-                                      (cron: every hour)
-                                         INSERT new rows
-                                                │
-                                                ▼
-                                      Snowflake: TV_SHOWS  (read_write)
-```
-
-The **worker** (`ingest_tvmaze_shows`) runs on a cron schedule, fetches shows from the TVMaze API, and inserts any that are not already in Snowflake. Its execution history is recorded in `runtime.task_history`.
-
 ## Pre-requisites
 
-- Spice `v1.0+` — [Install Spice](https://docs.spiceai.org/getting-started/installation)
-- A Snowflake account — [free trial](https://signup.snowflake.com/) if needed
+- Spice `v2.0+` — [Install Spice](https://docs.spiceai.org/getting-started/installation)
+- A Snowflake account — [free trial](https://signup.snowflake.com/)
 
 ## Step 1. Create the destination table in Snowflake
 
