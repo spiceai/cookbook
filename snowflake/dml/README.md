@@ -75,9 +75,17 @@ Expected output:
 ```
 Spice.ai runtime starting...
 ...
-INFO runtime::init::dataset: Dataset tvmaze_shows_raw registered (https://api.tvmaze.com/shows), results cache enabled.
-INFO runtime::init::dataset: Dataset tv_shows registered (snowflake:SPICE_DEMO.PUBLIC.TV_SHOWS), results cache enabled.
-INFO runtime: All components are loaded. Spice runtime is ready!
+2026-05-10T22:03:07.236786Z  INFO runtime::init::dataset: Dataset tv_shows initializing...
+2026-05-10T22:03:07.236915Z  INFO runtime::init::dataset: Dataset tvmaze_shows_raw initializing...
+2026-05-10T22:03:07.237083Z  INFO runtime::init::worker: Loading worker [ingest_tvmaze_shows]...
+2026-05-10T22:03:07.237202Z  INFO runtime::init::worker: Worker [ingest_tvmaze_shows] loaded, ready for use
+2026-05-10T22:03:07.237660Z  INFO runtime::init::worker: Scheduler for worker [ingest_tvmaze_shows] created successfully
+2026-05-10T22:03:07.246890Z  INFO runtime::init::dataset: Dataset tvmaze_shows_raw registered (https://api.tvmaze.com/shows), results cache enabled. duration_ms=0
+2026-05-10T22:03:07.250581Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2026-05-10T22:03:10.209492Z  INFO runtime::init::dataset: Dataset tv_shows_ro registered (snowflake:SPICE_DEMO.PUBLIC."TV_SHOWS"), results cache enabled. duration_ms=0
+2026-05-10T22:03:11.936902Z  INFO runtime::init::dataset: Dataset tv_shows registered (snowflake:SPICE_DEMO.PUBLIC."TV_SHOWS"), results cache enabled. duration_ms=1865
+2026-05-10T22:03:12.039156Z  INFO runtime: All components are loaded. Spice runtime is ready!
+2026-05-10T22:03:37.238925Z  INFO runtime::init::dataset: Dataset load summary (after 30s): 4/4 ready, 0 unhealthy, 0 still initializing.
 ```
 
 ## Step 4. Wait for the ingestion worker to run
@@ -89,7 +97,7 @@ spice sql
 ```
 
 ```sql
-SELECT task, status, start_time, end_time, error_message
+SELECT task, start_time, end_time, error_message
 FROM runtime.task_history
 WHERE task = 'scheduled_worker'
 ORDER BY start_time DESC
@@ -97,11 +105,16 @@ LIMIT 5;
 ```
 
 ```
-+------------------+---------+---------------------+---------------------+---------------+
-| task             | status  | start_time          | end_time            | error_message |
-+------------------+---------+---------------------+---------------------+---------------+
-| scheduled_worker | success | 2025-01-01 10:00:02 | 2025-01-01 10:00:07 |               |
-+------------------+---------+---------------------+---------------------+---------------+
++------------------+--------------------------------+--------------------------------+
+|       task       |           start_time           |            end_time            |
+|      varchar     |       timestamp[ns] (UTC)      |       timestamp[ns] (UTC)      |
++------------------+--------------------------------+--------------------------------+
+| scheduled_worker | 2026-05-10T22:02:00.776514814Z | 2026-05-10T22:02:01.188614794Z |
+| scheduled_worker | 2026-05-10T22:01:00.410603700Z | 2026-05-10T22:01:00.776281757Z |
+| scheduled_worker | 2026-05-10T22:00:00.002615777Z | 2026-05-10T22:00:02.409577328Z |
++------------------+--------------------------------+--------------------------------+
+
+Time: 0.014705856 seconds. 3 rows.
 ```
 
 ## Step 5. Query the data
@@ -115,9 +128,12 @@ SELECT count(*) FROM tv_shows;
 ```
 +----------+
 | count(*) |
+|   int64  |
 +----------+
-| 500      |
+| 240      |
 +----------+
+
+Time: 0.582791267 seconds. 1 rows.
 ```
 
 > On subsequent runs, the worker only inserts shows not already present in Snowflake, so the count grows incrementally as TVMaze adds new shows.
@@ -133,13 +149,23 @@ LIMIT 10;
 ```
 
 ```
-+------------------------+---------+----------+----------------+
-| show_name              | status  | language | rating_average |
-+------------------------+---------+----------+----------------+
-| Breaking Bad           | Ended   | English  | 9.2            |
-| The Wire               | Ended   | English  | 9.2            |
-| ...                    | ...     | ...      | ...            |
-+------------------------+---------+----------+----------------+
++----------------------+---------+----------+----------------+
+|       show_name      |  status | language | rating_average |
+|        varchar       | varchar |  varchar |     float64    |
++----------------------+---------+----------+----------------+
+| Breaking Bad         | Ended   | English  | 9.2            |
+| Game of Thrones      | Ended   | English  | 8.9            |
+| Firefly              | Ended   | English  | 8.9            |
+| The Wire             | Ended   | English  | 8.9            |
+| Stargate Atlantis    | Ended   | English  | 8.8            |
+| Death Note           | Ended   | Japanese | 8.8            |
+| Stargate SG·1        | Ended   | English  | 8.8            |
+| Rick and Morty       | Running | English  | 8.8            |
+| Person of Interest   | Ended   | English  | 8.8            |
+| Battlestar Galactica | Ended   | English  | 8.7            |
++----------------------+---------+----------+----------------+
+
+Time: 0.678913675 seconds. 10 rows.
 ```
 
 ## Learn More
