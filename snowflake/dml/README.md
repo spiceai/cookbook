@@ -7,7 +7,7 @@ Works with `v2.0+`
 ## Pre-requisites
 
 - Spice `v2.0+` — [Install Spice](https://docs.spiceai.org/getting-started/installation)
-- A Snowflake account — [free trial](https://signup.snowflake.com/)
+- [A Snowflake account](https://signup.snowflake.com/)
 
 ## Step 1. Create the destination table in Snowflake
 
@@ -38,20 +38,17 @@ CREATE TABLE IF NOT EXISTS TV_SHOWS (
 spice login snowflake -a <account-identifier> -u <username> -p <password>
 ```
 
-This creates a `.env` file. Add `SPICE_SNOWFLAKE_ROLE` and `SPICE_SNOWFLAKE_WAREHOUSE`:
+This creates a `.env` file:
 
 ```bash
 SPICE_SNOWFLAKE_ACCOUNT=<account-identifier>
 SPICE_SNOWFLAKE_USERNAME=<username>
 SPICE_SNOWFLAKE_PASSWORD=<password>
-SPICE_SNOWFLAKE_ROLE=accountadmin
-SPICE_SNOWFLAKE_WAREHOUSE=COMPUTE_WH
 ```
 
 ## Step 3. Start Spice
 
 ```bash
-cd snowflake/dml
 spice run
 ```
 

@@ -19,8 +19,8 @@ datasets:
     name: tv_shows
     access: read_write
     params:
-      snowflake_role: ${secrets:SPICE_SNOWFLAKE_ROLE}
-      snowflake_warehouse: ${secrets:SPICE_SNOWFLAKE_WAREHOUSE}
+      snowflake_role: accountadmin
+      snowflake_warehouse: COMPUTE_WH
       snowflake_username: ${secrets:SPICE_SNOWFLAKE_USERNAME}
       snowflake_account: ${secrets:SPICE_SNOWFLAKE_ACCOUNT}
       snowflake_password: ${secrets:SPICE_SNOWFLAKE_PASSWORD}
