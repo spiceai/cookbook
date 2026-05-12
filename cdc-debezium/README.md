@@ -64,7 +64,7 @@ datasets:
 Spice runtime is already configured to run with the debug level of information, with environment variable configured in `cdc-debezium/.env`
 
 ```bash
-SPICED_LOG="spiced=DEBUG,runtime=DEBUG,data_components=DEBUG,cache=DEBUG"
+SPICED_LOG="runtime::accelerated_table::refresh_task::changes=TRACE,info"
 ```
 
 Ensure the current directory is `cdc-debezium`, and start the spice runtime with the following command
@@ -76,9 +76,9 @@ spice run
 Observe that it consumes all of the changes. It should look like:
 
 ```bash
-2024-07-01T12:39:22.207145Z  INFO runtime: Dataset cdc registered (debezium:cdc.public.customer_addresses), acceleration (sqlite:file, changes), results cache enabled.
-2024-07-01T12:39:22.677117Z  INFO runtime::accelerated_table::refresh_task::changes: Upserting data row for cdc with id=3
-2024-07-01T12:39:22.692018Z  INFO runtime::accelerated_table::refresh_task::changes: Upserting data row for cdc with id=4
+2026-05-06T18:28:22.326698Z  INFO runtime::init::dataset: Dataset cdc registered (debezium:cdc.public.customer_addresses), acceleration (sqlite:file, changes), results cache enabled.
+2026-05-06T18:28:23.828971Z TRACE runtime::accelerated_table::refresh_task::changes: Processing append/change stream batch: dataset=cdc, rows=50, sub-batches=1
+2026-05-06T18:28:23.828986Z TRACE runtime::accelerated_table::refresh_task::changes: Processing upsert batch for cdc with 50 rows
 ...
 ```
 
@@ -105,7 +105,7 @@ VALUES
 Notice that the Spice log shows the change.
 
 ```bash
-2024-08-26T22:29:48.540739Z DEBUG runtime::accelerated_table::refresh_task::changes: Upserting data row for cdc with id=100
+2026-05-06T18:30:24.317690Z TRACE runtime::accelerated_table::refresh_task::changes: Processing upsert batch for cdc with 1 rows
 ```
 
 Querying the data again from the `spice sql` REPL will show the new record.
