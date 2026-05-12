@@ -1,0 +1,4 @@
+articles.parquet
+.env
+__pycache__/
+*.pyc
