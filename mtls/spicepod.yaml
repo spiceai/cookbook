@@ -1,0 +1,17 @@
+version: v1
+kind: Spicepod
+name: mtls
+
+runtime:
+  tls:
+    enabled: true
+    certificate_file: ./server.crt
+    key_file: ./server.key
+    client_auth_mode: required
+    client_auth_ca_file: ./ca.pem
+
+datasets:
+  - from: file:sample_data.csv
+    name: sample_data
+    params:
+      file_format: csv
