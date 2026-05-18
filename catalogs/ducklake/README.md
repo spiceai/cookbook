@@ -6,9 +6,9 @@ The DuckLake Catalog Connector enables Spice to automatically discover and query
 
 ## Prerequisites
 
-- [DuckDB CLI](https://duckdb.org/docs/installation/) v1.3.0–v1.4.4 installed (to create a DuckLake catalog). DuckDB v1.5.x is **not** currently supported. Install the LTS version:
+- [DuckDB CLI](https://duckdb.org/docs/installation/) **v1.5.2 or later** is installed (to create a DuckLake catalog):
   ```bash
-  curl https://install.duckdb.org | DUCKDB_VERSION=1.4.4 sh
+  curl https://install.duckdb.org | sh
   ```
 - Spice v2.0 or later is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation).
 
@@ -26,19 +26,6 @@ Open DuckDB and create a DuckLake catalog with TPC-H sample data:
 
 ```bash
 duckdb
-```
-
-```bash
-SELECT version();
-```
-
-```bash
-┌─────────────┐
-│ "version"() │
-│   varchar   │
-├─────────────┤
-│ v1.4.4      │
-└─────────────┘
 ```
 
 Install and load the DuckLake and TPC-H extensions, then create a catalog and populate it:
