@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """
-Load TPC-H SF1 parquet files into Microsoft SQL Server with
+Generate TPC-H data using DuckDB and load it into Microsoft SQL Server with
 primary keys, proper types, and foreign key constraints.
+
+Uses DuckDB's built-in TPC-H generator (SF=0.1) — no large file downloads.
 
 Creation order respects FK dependencies:
   region → nation → part, supplier, customer
@@ -10,8 +12,7 @@ Creation order respects FK dependencies:
 """
 
 import time
-import pyarrow.parquet as pq
-import pyarrow as pa
+import duckdb
 import pyodbc
 import os
 
@@ -21,9 +22,10 @@ MSSQL_DB       = os.getenv("MSSQL_DB",       "tpch")
 MSSQL_USER     = os.getenv("MSSQL_USER",     "sa")
 MSSQL_PASSWORD = os.getenv("MSSQL_PASSWORD", "SpiceDemo1!")
 
-DATA_DIR = "/data/tpch_sf1"
+# Scale factor: 0.1 → ~600K lineitem rows, fast to load
+TPCH_SF = float(os.getenv("TPCH_SF", "0.1"))
 
-BATCH_SIZE = 500
+BATCH_SIZE = 1000
 
 # ---------------------------------------------------------------------------
 # Connection helpers
@@ -41,28 +43,21 @@ def make_conn_str(database: str) -> str:
 
 
 def wait_for_mssql(max_retries: int = 30, delay: int = 2):
-    """Retry until SQL Server is accepting connections."""
     for attempt in range(max_retries):
         try:
-            conn = pyodbc.connect(make_conn_str("master"), autocommit=True)
+            conn = pyodbc.connect(make_conn_str("master"), autocommit=True, timeout=5)
             conn.close()
             print("SQL Server is ready.")
             return
-        except pyodbc.OperationalError:
+        except Exception:
             print(f"Waiting for SQL Server... ({attempt + 1}/{max_retries})")
             time.sleep(delay)
     raise RuntimeError("SQL Server did not become ready in time.")
 
 
 def create_database():
-    """Create the tpch database if it does not already exist."""
     conn = pyodbc.connect(make_conn_str("master"), autocommit=True)
-    cur = conn.cursor()
-    cur.execute(
-        "IF DB_ID(?) IS NULL CREATE DATABASE tpch",
-        (MSSQL_DB,),
-    )
-    cur.close()
+    conn.cursor().execute("IF DB_ID(?) IS NULL CREATE DATABASE tpch", (MSSQL_DB,))
     conn.close()
     print(f"Database '{MSSQL_DB}' ready.")
 
@@ -72,7 +67,6 @@ def create_database():
 # ---------------------------------------------------------------------------
 
 DDL_STATEMENTS = [
-    # region
     """
     IF OBJECT_ID('dbo.region', 'U') IS NULL
     CREATE TABLE dbo.region (
@@ -82,8 +76,6 @@ DDL_STATEMENTS = [
         CONSTRAINT pk_region PRIMARY KEY (r_regionkey)
     )
     """,
-
-    # nation
     """
     IF OBJECT_ID('dbo.nation', 'U') IS NULL
     CREATE TABLE dbo.nation (
@@ -96,8 +88,6 @@ DDL_STATEMENTS = [
             FOREIGN KEY (n_regionkey) REFERENCES dbo.region (r_regionkey)
     )
     """,
-
-    # part
     """
     IF OBJECT_ID('dbo.part', 'U') IS NULL
     CREATE TABLE dbo.part (
@@ -113,8 +103,6 @@ DDL_STATEMENTS = [
         CONSTRAINT pk_part PRIMARY KEY (p_partkey)
     )
     """,
-
-    # supplier
     """
     IF OBJECT_ID('dbo.supplier', 'U') IS NULL
     CREATE TABLE dbo.supplier (
@@ -130,8 +118,6 @@ DDL_STATEMENTS = [
             FOREIGN KEY (s_nationkey) REFERENCES dbo.nation (n_nationkey)
     )
     """,
-
-    # customer
     """
     IF OBJECT_ID('dbo.customer', 'U') IS NULL
     CREATE TABLE dbo.customer (
@@ -148,8 +134,6 @@ DDL_STATEMENTS = [
             FOREIGN KEY (c_nationkey) REFERENCES dbo.nation (n_nationkey)
     )
     """,
-
-    # partsupp
     """
     IF OBJECT_ID('dbo.partsupp', 'U') IS NULL
     CREATE TABLE dbo.partsupp (
@@ -165,8 +149,6 @@ DDL_STATEMENTS = [
             FOREIGN KEY (ps_suppkey) REFERENCES dbo.supplier (s_suppkey)
     )
     """,
-
-    # orders
     """
     IF OBJECT_ID('dbo.orders', 'U') IS NULL
     CREATE TABLE dbo.orders (
@@ -184,8 +166,6 @@ DDL_STATEMENTS = [
             FOREIGN KEY (o_custkey) REFERENCES dbo.customer (c_custkey)
     )
     """,
-
-    # lineitem
     """
     IF OBJECT_ID('dbo.lineitem', 'U') IS NULL
     CREATE TABLE dbo.lineitem (
@@ -214,7 +194,6 @@ DDL_STATEMENTS = [
     """,
 ]
 
-# Tables in load order (parent tables before child tables)
 TABLES = ["region", "nation", "part", "supplier", "customer", "partsupp", "orders", "lineitem"]
 
 
@@ -222,57 +201,51 @@ TABLES = ["region", "nation", "part", "supplier", "customer", "partsupp", "order
 # Data loading
 # ---------------------------------------------------------------------------
 
-def load_table(conn, table_name: str):
-    path = f"{DATA_DIR}/{table_name}.parquet"
-    print(f"  Reading {path} ...")
-    arrow_table = pq.read_table(path)
-    print(f"  {arrow_table.num_rows:,} rows, schema: {arrow_table.schema}")
+def load_table(duck, mssql_conn, table_name: str):
+    result = duck.execute(f"SELECT * FROM {table_name}")
+    columns = [desc[0] for desc in result.description]
+    rows = result.fetchall()
+    num_rows = len(rows)
+    print(f"  {num_rows:,} rows")
 
-    # Cast decimal columns to float64; pyodbc will insert them as floats and
-    # SQL Server will coerce back to DECIMAL via the table DDL.
-    arrays = []
-    for field in arrow_table.schema:
-        col = arrow_table.column(field.name)
-        if pa.types.is_decimal(field.type):
-            col = col.cast(pa.float64())
-        arrays.append(col)
-    arrow_table = pa.table(dict(zip(arrow_table.schema.names, arrays)))
-
-    columns = arrow_table.schema.names
     placeholders = ", ".join("?" for _ in columns)
     col_list = ", ".join(columns)
     insert_sql = f"INSERT INTO dbo.{table_name} ({col_list}) VALUES ({placeholders})"
 
-    # Convert arrow table to list of Python tuples
-    rows = list(zip(*[arrow_table.column(c).to_pylist() for c in columns]))
-
-    cur = conn.cursor()
+    cur = mssql_conn.cursor()
     for i in range(0, len(rows), BATCH_SIZE):
         cur.executemany(insert_sql, rows[i : i + BATCH_SIZE])
-    conn.commit()
+    mssql_conn.commit()
     cur.close()
-    print(f"  Loaded {arrow_table.num_rows:,} rows into {table_name}.")
+    print(f"  Loaded {num_rows:,} rows into {table_name}.")
 
 
 def main():
     wait_for_mssql()
     create_database()
 
-    conn = pyodbc.connect(make_conn_str(MSSQL_DB), autocommit=False)
+    print(f"Generating TPC-H SF={TPCH_SF} with DuckDB ...")
+    duck = duckdb.connect()
+    duck.execute("INSTALL tpch; LOAD tpch")
+    duck.execute(f"CALL dbgen(sf={TPCH_SF})")
+    print("TPC-H data generated.")
+
+    mssql_conn = pyodbc.connect(make_conn_str(MSSQL_DB), autocommit=False)
 
     print("Creating schema ...")
-    cur = conn.cursor()
+    cur = mssql_conn.cursor()
     for stmt in DDL_STATEMENTS:
         cur.execute(stmt)
-    conn.commit()
+    mssql_conn.commit()
     cur.close()
     print("Schema created.")
 
     for table in TABLES:
         print(f"\nLoading {table} ...")
-        load_table(conn, table)
+        load_table(duck, mssql_conn, table)
 
-    conn.close()
+    duck.close()
+    mssql_conn.close()
     print("\nAll TPC-H tables loaded successfully!")
 
 

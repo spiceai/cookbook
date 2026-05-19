@@ -12,3 +12,4 @@ catalogs:
       mssql_username: sa
       mssql_password: SpiceDemo1!
       mssql_encrypt: disable
+      mssql_trust_server_certificate: "true"

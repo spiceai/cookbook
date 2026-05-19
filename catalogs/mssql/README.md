@@ -11,7 +11,7 @@ The Microsoft SQL Server Catalog Connector enables Spice to automatically discov
 
 ## Step 1. Start the SQL Server database
 
-Clone the cookbook repository and start the database using Docker Compose. The `mssql-init` container downloads the TPC-H SF1 parquet files and loads them into SQL Server, creating all tables with primary keys and foreign keys.
+Clone the cookbook repository and start the database using Docker Compose. The `mssql-init` container generates TPC-H data at Scale Factor 0.1 using DuckDB's built-in generator and loads it into SQL Server with primary keys and foreign keys.
 
 ```bash
 git clone https://github.com/spiceai/cookbook.git
@@ -19,7 +19,7 @@ cd cookbook/catalogs/mssql
 docker compose up -d
 ```
 
-Wait for the init container to finish loading data (it downloads ~700 MB of parquet files on first build):
+Wait for the init container to finish (usually 2–5 minutes):
 
 ```bash
 docker compose logs -f mssql-init
@@ -30,12 +30,13 @@ You should see:
 ```
 tpch-mssql-init  | SQL Server is ready.
 tpch-mssql-init  | Database 'tpch' ready.
+tpch-mssql-init  | Generating TPC-H SF=0.1 with DuckDB ...
+tpch-mssql-init  | TPC-H data generated.
 tpch-mssql-init  | Creating schema ...
 tpch-mssql-init  | Schema created.
 tpch-mssql-init  |
 tpch-mssql-init  | Loading region ...
-tpch-mssql-init  |   Reading /data/tpch_sf1/region.parquet ...
-tpch-mssql-init  |   5 rows, schema: ...
+tpch-mssql-init  |   5 rows
 tpch-mssql-init  |   Loaded 5 rows into region.
 ...
 tpch-mssql-init  | All TPC-H tables loaded successfully!
@@ -76,9 +77,10 @@ catalogs:
       mssql_host: localhost
       mssql_port: 1433
       mssql_database: tpch
-      mssql_user: sa
+      mssql_username: sa
       mssql_password: SpiceDemo1!
       mssql_encrypt: disable
+      mssql_trust_server_certificate: "true"
 ```
 
 ## Step 4. Start the Spice runtime
