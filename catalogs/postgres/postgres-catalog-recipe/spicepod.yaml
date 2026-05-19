@@ -1,0 +1,20 @@
+version: v1
+kind: Spicepod
+name: postgres-catalog-recipe
+runtime:
+  flight:
+    max_message_size: 5GiB
+  auth:
+    api-key:
+      enabled: true
+      keys:
+        - foo:rw
+catalogs:
+  - from: pg
+    name: pg
+    params:
+      pg_host: localhost
+      pg_port: 5432
+      pg_db: tpch
+      pg_user: postgres
+      pg_sslmode: disable
