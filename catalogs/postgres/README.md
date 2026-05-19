@@ -61,7 +61,15 @@ cd postgres-catalog-recipe
 spice init
 ```
 
-## Step 3. Add the PostgreSQL Catalog Connector to `spicepod.yaml`
+## Step 3. Configure credentials
+
+Create a `.env` file with the database credentials:
+
+```bash
+echo "PG_USER=postgres" > .env
+```
+
+## Step 4. Add the PostgreSQL Catalog Connector to `spicepod.yaml`
 
 ```yaml
 version: v1
@@ -75,11 +83,11 @@ catalogs:
       pg_host: localhost
       pg_port: 5432
       pg_db: tpch
-      pg_user: postgres
+      pg_user: ${secrets:PG_USER}
       pg_sslmode: disable
 ```
 
-## Step 4. Start the Spice runtime
+## Step 5. Start the Spice runtime
 
 ```bash
 spice run
@@ -92,7 +100,7 @@ Observe that Spice discovers all schemas and tables in the `tpch` database:
 2025-05-19T10:00:00.500000Z  INFO runtime::init::catalog: Registered catalog 'pg' with 1 schema and 8 tables
 ```
 
-## Step 5. Query the PostgreSQL catalog
+## Step 6. Query the PostgreSQL catalog
 
 In a new terminal, start the Spice SQL REPL:
 
@@ -203,7 +211,7 @@ ORDER BY r.r_name, num_customers DESC;
 Time: 0.045 seconds. 25 rows.
 ```
 
-## Step 6. Clean up
+## Step 7. Clean up
 
 ```bash
 docker compose down --volumes --rmi local

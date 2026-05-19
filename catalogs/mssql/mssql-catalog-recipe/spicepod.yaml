@@ -9,7 +9,7 @@ catalogs:
       mssql_host: localhost
       mssql_port: 1433
       mssql_database: tpch
-      mssql_username: sa
-      mssql_password: SpiceDemo1!
+      mssql_username: ${secrets:MSSQL_USERNAME}
+      mssql_password: ${secrets:MSSQL_PASSWORD}
       mssql_encrypt: disable
       mssql_trust_server_certificate: "true"

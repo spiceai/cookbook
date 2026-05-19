@@ -16,5 +16,5 @@ catalogs:
       pg_host: localhost
       pg_port: 5432
       pg_db: tpch
-      pg_user: postgres
+      pg_user: ${secrets:PG_USER}
       pg_sslmode: disable

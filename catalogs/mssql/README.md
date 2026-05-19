@@ -63,7 +63,22 @@ cd mssql-catalog-recipe
 spice init
 ```
 
-## Step 3. Add the Microsoft SQL Server Catalog Connector to `spicepod.yaml`
+## Step 3. Configure credentials
+
+Create a `.env` file with the database credentials:
+
+```bash
+cp .env.example .env
+```
+
+Or set them directly:
+
+```bash
+echo "MSSQL_USERNAME=sa" > .env
+echo "MSSQL_PASSWORD=SpiceDemo1!" >> .env
+```
+
+## Step 4. Add the Microsoft SQL Server Catalog Connector to `spicepod.yaml`
 
 ```yaml
 version: v1
@@ -77,13 +92,13 @@ catalogs:
       mssql_host: localhost
       mssql_port: 1433
       mssql_database: tpch
-      mssql_username: sa
-      mssql_password: SpiceDemo1!
+      mssql_username: ${secrets:MSSQL_USERNAME}
+      mssql_password: ${secrets:MSSQL_PASSWORD}
       mssql_encrypt: disable
       mssql_trust_server_certificate: "true"
 ```
 
-## Step 4. Start the Spice runtime
+## Step 5. Start the Spice runtime
 
 ```bash
 spice run
@@ -96,7 +111,7 @@ Observe that Spice discovers all schemas and tables in the `tpch` database:
 2025-05-19T10:00:00.500000Z  INFO runtime::init::catalog: Registered catalog 'ms' with 1 schema and 8 tables
 ```
 
-## Step 5. Query the SQL Server catalog
+## Step 6. Query the SQL Server catalog
 
 In a new terminal, start the Spice SQL REPL:
 
@@ -208,7 +223,7 @@ ORDER BY r.r_name, num_customers DESC;
 Time: 0.045 seconds. 25 rows.
 ```
 
-## Step 6. Clean up
+## Step 7. Clean up
 
 ```bash
 docker compose down --volumes --rmi local

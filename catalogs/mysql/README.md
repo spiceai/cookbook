@@ -61,7 +61,15 @@ cd mysql-catalog-recipe
 spice init
 ```
 
-## Step 3. Add the MySQL Catalog Connector to `spicepod.yaml`
+## Step 3. Configure credentials
+
+Create a `.env` file with the database credentials:
+
+```bash
+echo "MYSQL_USER=root" > .env
+```
+
+## Step 4. Add the MySQL Catalog Connector to `spicepod.yaml`
 
 ```yaml
 version: v1
@@ -73,12 +81,12 @@ catalogs:
     name: my
     params:
       mysql_host: localhost
-      mysql_port: 3306
+      mysql_tcp_port: 3306
       mysql_db: tpch
-      mysql_user: root
+      mysql_user: ${secrets:MYSQL_USER}
 ```
 
-## Step 4. Start the Spice runtime
+## Step 5. Start the Spice runtime
 
 ```bash
 spice run
@@ -91,7 +99,7 @@ Observe that Spice discovers all databases and tables in the MySQL server:
 2025-05-19T10:00:00.500000Z  INFO runtime::init::catalog: Registered catalog 'my' with 1 schema and 8 tables
 ```
 
-## Step 5. Query the MySQL catalog
+## Step 6. Query the MySQL catalog
 
 In a new terminal, start the Spice SQL REPL:
 
@@ -203,7 +211,7 @@ ORDER BY r.r_name, num_customers DESC;
 Time: 0.045 seconds. 25 rows.
 ```
 
-## Step 6. Clean up
+## Step 7. Clean up
 
 ```bash
 docker compose down --volumes --rmi local
