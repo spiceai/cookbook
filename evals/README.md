@@ -1,6 +1,6 @@
 # Language Model Evaluations
 
-Works with `v1.0+`
+Deprecated in `v2.0+`. Works with `v1.0+`
 
 Spice can be used to both run language models but also to evaluate their performance on specific tasks.
 
@@ -24,12 +24,27 @@ spice run
 2. Run an evaluation against `my_model`. This will take a moment to complete.
 
 ```shell
-spice eval tetris --model my_model
+curl -XPOST "http://localhost:8090/v1/evals/tetris" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "my_model"
+  }'
 ```
 
-```text
-ID                               CREATEDAT           DATASET     MODEL    STATUS    SCORERS METRICS
-15b8c5351cff98d96db28b8c76ad19dc 2024-12-30T06:14:54 small_tetris my_model Completed [match] map[match/mean:0.375]
+```json
+[
+  {
+    "id": "15b8c5351cff98d96db28b8c76ad19dc",
+    "created_at": "2024-12-30T06:14:54",
+    "dataset": "small_tetris",
+    "model": "my_model",
+    "status": "Completed",
+    "scorers": ["match"],
+    "metrics": {
+      "match/mean": 0.375
+    }
+  }
+]
 ```
 
 3. Inspect the results
