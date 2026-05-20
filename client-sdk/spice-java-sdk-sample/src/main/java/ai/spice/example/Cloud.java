@@ -12,7 +12,7 @@ public class Cloud {
         try (
             SpiceClient client = SpiceClient.builder()
                 .withApiKey("API_KEY")
-                .withHttpAddress(URI.create("grpc+tls://us-east-1-prod-aws-flight.spiceai.io"))
+                .withHttpAddress(URI.create("https://us-east-1-prod-aws-data.spiceai.io"))
                 .withFlightAddress(URI.create("grpc+tls://us-east-1-prod-aws-flight.spiceai.io"))
                 .build()
         ) {
