@@ -45,61 +45,12 @@ Spice.ai runtime starting...
 In another terminal, compile and run:
 
 ```bash
-mvn clean compile
-_JAVA_OPTIONS="--add-opens=java.base/java.nio=ALL-UNNAMED" \
-  mvn exec:java -Dexec.mainClass="ai.spice.example.App"
-```
-
-Sample build logs:
-
-```text
-[INFO] Scanning for projects...
-[INFO]
-[INFO] ------------------< ai.spice.example:taxi-trips-app >-------------------
-[INFO] Building taxi-trips-app 1.0-SNAPSHOT
-[INFO]   from pom.xml
-[INFO] --------------------------------[ jar ]---------------------------------
-[INFO]
-[INFO] --- clean:3.2.0:clean (default-clean) @ taxi-trips-app ---
-[INFO] Deleting /Users/sg/spice/samples/client-sdk/spice-java-sdk-sample/target
-[INFO]
-[INFO] --- resources:3.3.1:resources (default-resources) @ taxi-trips-app ---
-[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
-[INFO] skip non existing resourceDirectory /Users/sg/spice/samples/client-sdk/spice-java-sdk-sample/src/main/resources
-[INFO]
-[INFO] --- compiler:3.13.0:compile (default-compile) @ taxi-trips-app ---
-[INFO] Recompiling the module because of changed source code.
-[WARNING] File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
-[INFO] Compiling 1 source file with javac [debug target 1.8] to target/classes
-[WARNING] bootstrap class path is not set in conjunction with -source 8
-  not setting the bootstrap class path may lead to class files that cannot run on JDK 8
-    --release 8 is recommended instead of -source 8 -target 1.8 because it sets the bootstrap class path automatically
-[WARNING] source value 8 is obsolete and will be removed in a future release
-[WARNING] target value 8 is obsolete and will be removed in a future release
-[WARNING] To suppress warnings about obsolete options, use -Xlint:-options.
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time:  0.712 s
-[INFO] Finished at: 2024-07-16T12:43:33-07:00
-[INFO] ------------------------------------------------------------------------
+mvn clean compile exec:exec
 ```
 
 Sample output:
 
 ```text
-Picked up _JAVA_OPTIONS: --add-opens=java.base/java.nio=ALL-UNNAMED
-[INFO] Scanning for projects...
-[INFO]
-[INFO] ------------------< ai.spice.example:taxi-trips-app >-------------------
-[INFO] Building taxi-trips-app 1.0-SNAPSHOT
-[INFO]   from pom.xml
-[INFO] --------------------------------[ jar ]---------------------------------
-[INFO]
-[INFO] --- exec:3.3.0:java (default-cli) @ taxi-trips-app ---
-[ai.spice.example.App.main()] INFO org.apache.arrow.memory.BaseAllocator - Debug mode disabled. Enable with the VM option -Darrow.memory.debug.allocator=true.
-[ai.spice.example.App.main()] INFO org.apache.arrow.memory.DefaultAllocationManagerOption - allocation manager type not specified, using netty as the default type
-[ai.spice.example.App.main()] INFO org.apache.arrow.memory.CheckAllocator - Using DefaultAllocationManager at memory-netty/16.1.0/arrow-memory-netty-16.1.0.jar!/org/apache/arrow/memory/netty/DefaultAllocationManagerFactory.class
 VendorID        tpep_pickup_datetime    fare_amount
 2       2024-01-14T08:32:55     70.0
 1       2024-01-14T08:13:28     70.0
@@ -124,16 +75,7 @@ export SPICE_API_KEY="your_api_key"
 The cloud snippet keeps an inline API key placeholder by design. Replace the API key placeholder in `src/main/java/ai/spice/example/Cloud.java` with `${SPICE_API_KEY}`, then run:
 
 ```bash
-_JAVA_OPTIONS="--add-opens=java.base/java.nio=ALL-UNNAMED" \
-  mvn exec:java -Dexec.mainClass="ai.spice.example.Cloud"
-```
-
-## Note on Java Flags
-
-Apache Arrow Flight requires:
-
-```bash
-_JAVA_OPTIONS="--add-opens=java.base/java.nio=ALL-UNNAMED"
+mvn exec:exec -Dexec.mainClass="ai.spice.example.Cloud"
 ```
 
 ## Advanced: Gradle Workflow
