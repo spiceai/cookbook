@@ -47,11 +47,13 @@ datasets:
       enabled: true
       refresh_sql: SELECT * FROM github_commits LIMIT 500
 
-# GitHub MCP server — write tools (create issues, comment, search code, etc.)
-# The subprocess inherits GITHUB_PERSONAL_ACCESS_TOKEN from the environment.
+# MCP servers — proxied through Spice's unified /v1/mcp endpoint
 tools:
+  # GitHub MCP server — write tools (create issues, comment, search code, etc.)
   - name: github
     from: mcp:npx
     description: GitHub tools — create and update issues, review PRs, search code and repositories
     params:
       mcp_args: -y @modelcontextprotocol/server-github
+    env:
+      GITHUB_PERSONAL_ACCESS_TOKEN: ${secrets:GITHUB_PERSONAL_ACCESS_TOKEN}

@@ -63,7 +63,7 @@ Edit `.env` and set your GitHub token:
 GITHUB_PERSONAL_ACCESS_TOKEN=ghp_...
 ```
 
-> The same token is used by both the GitHub dataset connector (via `${secrets:}`) and the GitHub MCP server subprocess (which reads `GITHUB_PERSONAL_ACCESS_TOKEN` from the environment).
+> The same token is used by both the GitHub dataset connector and the GitHub MCP server subprocess. Spice injects it via the `env:` block in `spicepod.yaml`.
 
 **Step 3.** Start Spice:
 
@@ -184,3 +184,39 @@ curl -s -XPOST http://127.0.0.1:8090/v1/tools/github/search_code \
   -H "X-API-KEY: foo" \
   -d '{"q": "java repo:spiceai/cookbook"}'
 ```
+
+## Optional: Adding Jira
+
+To expose Jira and Confluence tools through the same MCP endpoint, add credentials to `.env`:
+
+```env
+JIRA_URL=https://your-org.atlassian.net
+JIRA_USERNAME=your@email.com
+JIRA_API_TOKEN=...
+```
+
+Uncomment the `jira` tool block in `spicepod.yaml`:
+
+```yaml
+  - name: jira
+    from: mcp:uvx
+    description: Jira and Confluence tools — query tickets, update status, search projects
+    params:
+      mcp_args: mcp-atlassian
+    env:
+      JIRA_URL: ${secrets:JIRA_URL}
+      JIRA_USERNAME: ${secrets:JIRA_USERNAME}
+      JIRA_API_TOKEN: ${secrets:JIRA_API_TOKEN}
+```
+
+Restart Spice. Jira tools appear in the same catalog alongside GitHub and SQL:
+
+```bash
+curl -s http://127.0.0.1:8090/v1/tools -H "X-API-KEY: foo" | jq '[.[].name | select(startswith("jira"))]'
+```
+
+```json
+["jira/get_issue", "jira/search_issues", "jira/create_issue", "jira/list_projects", ...]
+```
+
+Your AI assistant can now cross-reference GitHub PRs with Jira tickets through a single MCP connection.
