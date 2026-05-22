@@ -186,7 +186,7 @@ Spiced can perform vector search on table that already have the required embeddi
 
 ```shell
 cd child/
-spiced --http 127.0.0.1:8091 --flight 127.0.0.1:50061 --open_telemetry 127.0.0.1:50062
+spiced --http 127.0.0.1:8091 --flight 127.0.0.1:50061
 ```
 
 2. Rerun the search, this time against the child `spiced` (port `8091`)
