@@ -5,6 +5,8 @@ name: postgres-accelerator
 datasets:
   - from: spice.ai/spiceai/quickstart/datasets/taxi_trips
     name: taxi_trips
+    params:
+      spiceai_region: [Region]
     acceleration:
       enabled: true
       refresh_mode: full
