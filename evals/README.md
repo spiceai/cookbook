@@ -1,10 +1,11 @@
 # Language Model Evaluations
 
-Works with `v1.0+`
+Deprecated in `v2.0+`. Works with `v1.0+`
 
 Spice can be used to both run language models but also to evaluate their performance on specific tasks.
 
 This recipe demonstrates how to measure the performance of a language model, configured entirely in the spice runtime.
+
 
 ## Prerequisites
 

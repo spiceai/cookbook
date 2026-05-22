@@ -126,7 +126,7 @@ ai_chat                                     ✅     15417.63ms 8cda3b72ccc32496
 
 ## Connect to Spice over MCP
 
-Spice is an MCP server. It can be connected to like any other MCP server running over HTTP SSE.
+Spice is an MCP server. It can be connected to like any other MCP server running over HTTP.
 
 1. Clone the cookbook, and navigate to the MCP recipe.
 
@@ -169,7 +169,7 @@ kind: Spicepod
 
 tools:
   - name: spice_mcp
-    from: mcp:http://localhost:8090/v1/mcp/sse
+    from: mcp:http://localhost:8090/v1/mcp
 ```
 
 6. Run the second Spice instance on separate ports.
