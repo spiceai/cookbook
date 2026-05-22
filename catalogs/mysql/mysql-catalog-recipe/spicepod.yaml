@@ -1,0 +1,12 @@
+version: v1
+kind: Spicepod
+name: mysql-catalog-recipe
+
+catalogs:
+  - from: mysql
+    name: my
+    params:
+      mysql_host: localhost
+      mysql_tcp_port: 3306
+      mysql_db: tpch
+      mysql_user: ${secrets:MYSQL_USER}

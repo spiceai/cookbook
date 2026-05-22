@@ -1,0 +1,15 @@
+version: v1
+kind: Spicepod
+name: mssql-catalog-recipe
+
+catalogs:
+  - from: mssql
+    name: ms
+    params:
+      mssql_host: localhost
+      mssql_port: 1433
+      mssql_database: tpch
+      mssql_username: ${secrets:MSSQL_USERNAME}
+      mssql_password: ${secrets:MSSQL_PASSWORD}
+      mssql_encrypt: disable
+      mssql_trust_server_certificate: "true"
