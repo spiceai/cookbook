@@ -10,6 +10,7 @@ The DuckLake Catalog Connector enables Spice to automatically discover and query
   ```bash
   curl https://install.duckdb.org | sh
   ```
+  Older DuckDB CLI versions create the catalog at metadata version `0.3`, which Spice rejects at runtime with `DuckLake catalog version mismatch: catalog version is 0.3, but the extension requires version 1.0`. Verify the installed version with `duckdb --version` before running Step 2.
 - Spice v2.0 or later is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation).
 
 ## Step 1. Create a new directory and initialize a Spicepod
