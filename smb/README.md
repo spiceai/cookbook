@@ -24,24 +24,31 @@ cd cookbook/smb
 
 ## Step 2. Set Up an SMB Server (Optional)
 
-If you don't have an existing SMB server, you can start one locally using Docker with Samba:
+If you don't have an existing SMB server, you can start one locally using Docker Compose with Samba:
 
 ```bash
-docker run -d --name samba \
-  -p 445:445 \
-  -v $(pwd)/data:/share \
-  -e USERID=1000 \
-  -e GROUPID=1000 \
-  dperson/samba \
-  -u "testuser;testpass" \
-  -s "data;/share;yes;no;no;testuser"
+docker compose up -d
 ```
 
 This creates a share named `data` accessible with username `testuser` and password `testpass`.
 
+The included `smb.conf` enforces SMB 3.1.1 as the minimum protocol. If you use your own SMB server, ensure it supports SMB 3.1.1.
+
 ---
 
-## Step 3. Add Sample Data
+## Step 3. Test the SMB Connection
+
+Before connecting with Spice, verify the SMB server is accessible using the included client container:
+
+```bash
+docker compose exec smbclient smbclient //samba/data -U testuser%testpass -m SMB3_11 -c ls
+```
+
+You should see a listing of the files in the share. If you see `NT_STATUS_CONNECTION_REFUSED`, the Samba server may still be starting — wait a few seconds and try again.
+
+---
+
+## Step 4. Add Sample Data
 
 Create a `data` directory with sample Parquet files:
 
@@ -53,7 +60,7 @@ You can copy any Parquet or CSV files into the `data` directory, or use the Spic
 
 ---
 
-## Step 4. Configure Spice Credentials
+## Step 5. Configure Spice Credentials
 
 Update the `.env` file with your SMB credentials:
 
@@ -64,7 +71,7 @@ SMB_PASS=testpass
 
 ---
 
-## Step 5. Start the Spice Runtime
+## Step 6. Start the Spice Runtime
 
 ```bash
 spice run
@@ -79,7 +86,7 @@ INFO runtime::init::dataset: Dataset sales registered (smb://localhost/data/), a
 
 ---
 
-## Step 6. Query the SMB Share with the Spice SQL REPL
+## Step 7. Query the SMB Share with the Spice SQL REPL
 
 ```bash
 spice sql
@@ -275,11 +282,11 @@ Acceleration is recommended for frequently queried data, as SMB operations invol
 
 ## Supported SMB Versions
 
-The SMB connector supports SMB protocols 2.0, 2.1, 3.0, and 3.1.1, and is compatible with:
+The SMB connector requires SMB 3.1.1 as the minimum protocol. Older dialects (2.0, 2.1, 3.0) are not supported. It is compatible with:
 
-- Windows Server file shares
-- Samba servers (Linux/Unix)
-- NAS devices (Synology, QNAP, etc.)
+- Windows Server file shares (SMB 3.1.1 enabled)
+- Samba servers (Linux/Unix) configured with `server min protocol = SMB3_11`
+- NAS devices (Synology, QNAP, etc.) supporting SMB 3.1.1
 - Azure Files
 
 ---
@@ -334,13 +341,12 @@ SPICED_LOG="runtime=debug,spice_cloud=debug" spice run
 
 ---
 
-## Step 7. Cleanup
+## Step 8. Cleanup
 
 To stop and remove the Samba container:
 
 ```bash
-docker stop samba
-docker rm samba
+docker compose down
 ```
 
 ---

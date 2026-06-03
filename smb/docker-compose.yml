@@ -1,0 +1,25 @@
+services:
+  samba:
+    image: dockurr/samba
+    container_name: samba
+    ports:
+      - "445:445"
+    volumes:
+      - ./data:/storage
+      - ./smb.conf:/etc/samba/smb.conf
+    environment:
+      USER: testuser
+      PASS: testpass
+      NAME: data
+      UID: "1000"
+      GID: "1000"
+
+  smbclient:
+    image: alpine:latest
+    container_name: smbclient
+    command: >
+      sh -c "apk add --no-cache samba-client &&
+             echo 'SMB client ready. Run: docker compose exec smbclient smbclient //samba/data -U testuser%testpass -m SMB3_11 -c ls' &&
+             sleep infinity"
+    depends_on:
+      - samba
