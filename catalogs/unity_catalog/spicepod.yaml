@@ -1,4 +1,4 @@
-version: v1
+version: v2
 kind: Spicepod
 name: unity-catalog-demo
 
@@ -12,3 +12,4 @@ catalogs:
       unity_catalog_aws_secret_access_key: minio123
       unity_catalog_aws_region: us-east-1
       unity_catalog_aws_endpoint: http://localhost:9000
+      unity_catalog_aws_allow_http: "true"
