@@ -32,6 +32,26 @@ CREATE TABLE IF NOT EXISTS TV_SHOWS (
 );
 ```
 
+> **No worksheet UI access?** You can run the same DDL from the command line using [`snowflake-connector-python`](https://pypi.org/project/snowflake-connector-python/). Note the account identifier must use the dash form (`<org>-<account>`) for this driver, even though the Spice connector accepts the dot form (`<org>.<account>`):
+>
+> ```bash
+> pip install snowflake-connector-python
+> python -c "
+> import snowflake.connector
+> ddl = '''
+> CREATE DATABASE IF NOT EXISTS SPICE_DEMO;
+> CREATE TABLE IF NOT EXISTS SPICE_DEMO.PUBLIC.TV_SHOWS (
+>     id INTEGER NOT NULL, name VARCHAR(255), type VARCHAR(100),
+>     language VARCHAR(100), status VARCHAR(100), runtime INTEGER,
+>     premiered DATE, ended DATE, rating_average FLOAT, PRIMARY KEY (id)
+> );
+> '''
+> with snowflake.connector.connect(account='<org>-<account>', user='<username>', password='<password>') as cn:
+>     for stmt in filter(None, (s.strip() for s in ddl.split(';'))):
+>         cn.cursor().execute(stmt)
+> "
+> ```
+
 ## Step 2. Configure Snowflake credentials
 
 ```bash

@@ -40,6 +40,8 @@ Add the following configuration to your `spicepod.yaml`:
 catalogs:
   - from: spice.ai/spiceai/tpch
     name: scp
+    params:
+      spiceai_region: us-east-1
 ```
 
 This will register the `scp` catalog to connect to the [`spiceai/tpch`](https://spice.ai/spiceai/tpch) app and load all available tables.
@@ -92,6 +94,8 @@ Specify an `include` filter to limit the tables registered in the catalog.
 catalogs:
   - from: spice.ai/spiceai/tpch
     name: scp
+    params:
+      spiceai_region: us-east-1
     include:
       - tpch.part*
       - tpch.supplier
@@ -122,6 +126,8 @@ catalogs:
 
   - from: spice.ai/spiceai/quickstart
     name: quickstart
+    params:
+      spiceai_region: us-east-1
 ```
 
 ```bash

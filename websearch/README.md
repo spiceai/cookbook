@@ -11,7 +11,7 @@ This recipe demonstrates how to configure and use Perplexity web search within S
   - `SPICE_PERPLEXITY_AUTH_TOKEN`: A valid authentication token for the Perplexity API. Obtain it from [Perplexity's Getting Started guide](https://docs.perplexity.ai/guides/getting-started).
   - `SPICE_OPENAI_API_KEY`: A valid OpenAI API key (or equivalent).
 
-## Using Perplexity for internet-informed conversations.
+## Using web search for internet-informed conversations
 
 1. Start the Spice runtime:
 
@@ -25,23 +25,9 @@ spice run
 spice chat
 ```
 
-3. Select `perp`
+3. Ask a question
 
 ```shell
-Use the arrow keys to navigate: ↓ ↑ → ←
-? Select model:
-    openai-w-internet
-  ▸ perp
-```
-
-4. Ask a question
-
-```shell
-spice chat
-```
-
-```shell
-Using model: perp
 chat>  What's the weather in Korea this week?
 Here's a summary of the weather in Seoul, South Korea, for this week:
 
@@ -62,7 +48,7 @@ The weather will transition from cold and snowy to clearer conditions by the wee
 Time: 5.02s (first token 1.50s). Tokens: 345. Prompt: 35. Completion: 310 (88.28/s).
 ```
 
-5. Check the citations used by the model
+4. Check the citations used by the model
 
 ```shell
 spice sql
@@ -117,16 +103,7 @@ spice run
 spice chat
 ```
 
-3. Select `openai-w-internet`
-
-```shell
-Use the arrow keys to navigate: ↓ ↑ → ←
-? Select model:
-  ▸ openai-w-internet
-    perp
-```
-
-4. Ask a question
+3. Ask a question
 
 ```shell
 >>> spice chat
@@ -158,7 +135,7 @@ For more detailed local conditions, you can check:
 Time: 18.28s (first token 10.02s). Tokens: 183. Prompt: 160. Completion: 23 (2.78/s).
 ```
 
-5. Check that the LLM did use the internet
+4. Check that the LLM did use the internet
 
 ```shell
 spice trace ai_chat

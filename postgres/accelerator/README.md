@@ -1,6 +1,6 @@
 # PostgreSQL Data Accelerator
 
-Works with `v1.0+`
+Works with `v1.0+`. As of Spice `v2.0`, the PostgreSQL Data Accelerator is an [Enterprise feature](https://spiceai.org/docs/enterprise) and requires an enterprise build of `spiced`. Community builds will log `The accelerator engine postgres is not available` and refuse to load the dataset.
 
 Follow these steps to get started with PostgreSQL as a Data Accelerator.
 
@@ -94,6 +94,8 @@ name: postgres-demo
 datasets:
   - from: spice.ai/spiceai/quickstart/datasets/taxi_trips
     name: taxi_trips
+    params:
+      spiceai_region: us-east-1
     acceleration:
       enabled: true
       refresh_mode: full
@@ -107,6 +109,8 @@ datasets:
         pg_sslmode: disable
         pg_pass: ${env:PG_PASS}
 ```
+
+The `spiceai_region` parameter selects which Spice Cloud region to source the dataset from. Run `spice cloud regions` to list available regions.
 
 Save the changes to `spicepod.yaml`. The Spice runtime terminal will show that the dataset has been loaded:
 

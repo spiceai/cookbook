@@ -67,9 +67,8 @@ You should see the dataset initialize and begin streaming:
 
 ```bash
 INFO runtime::init::dataset: Dataset orders_stream registered (dynamodb:orders), acceleration (duckdb:file, changes), results cache enabled.
-INFO runtime::dataconnector::dynamodb: No existing checkpoint found for table orders_stream, starting from bootstrap
-INFO runtime::dataconnector::dynamodb: Bootstrapping DynamoDB table orders_stream, records=1
-INFO runtime::dataconnector::dynamodb: Bootstrapping DynamoDB table orders_stream complete, starting changes stream. Table will be marked as Ready once stream lag reaches < '1h'
+INFO runtime::dataconnector::dynamodb: No existing lag found for DynamoDB Streams table, starting initialization
+INFO runtime::dataconnector::dynamodb: DynamoDB Streams table initialization complete, starting to process changes from the Stream
 INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
