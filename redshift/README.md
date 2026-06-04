@@ -22,7 +22,27 @@ aws cloudformation create-stack \
                ParameterKey=DatabaseName,ParameterValue=dev
 ```
 
-## Step 2: Writing Data into Redshift
+## Step 2: Configure connection credentials
+
+Wait for the cluster to finish provisioning (this can take several minutes), then retrieve its endpoint address:
+
+```bash
+aws cloudformation describe-stacks --stack-name redshift-tpc \
+  --query "Stacks[0].Outputs[?OutputKey=='RedshiftClusterEndpoint'].OutputValue" \
+  --output text
+```
+
+Update the `.env` file in **both** the `write/` and `read/` directories with the endpoint and the master credentials you set in Step 1:
+
+```env
+PG_HOST=<your-cluster-endpoint>
+PG_USER=admin
+PG_PASS=hGG3ellothere$$$$
+```
+
+> The spicepods resolve these values via `${secrets:PG_HOST}`, `${secrets:PG_USER}`, and `${secrets:PG_PASS}`; the database (`dev`) and port (`5439`) are already set in `spicepod.yaml`. The committed `.env` files ship with placeholder values (`foo`/`bar`/`baz`) that must be replaced before running Spice.
+
+## Step 3: Writing Data into Redshift
 
 To write data into Redshift, navigate to the `write` directory and start Spice using the following command:
 
@@ -173,7 +193,7 @@ avg_disc       | 0.03
 count_order    | 10
 ```
 
-## Step 3: Reading Data from Redshift
+## Step 4: Reading Data from Redshift
 
 To read data from Redshift, navigate to the `read` directory and start Spice:
 
@@ -309,7 +329,7 @@ limit 2
 +--------------+--------------+---------+----------------+----------------+----------------+-----------+--------------+----------+-------------+
 ```
 
-## Step 4: Tearing Down Infrastructure
+## Step 5: Tearing Down Infrastructure
 
 To delete the Redshift instance, use the same stack name provided during setup:
 
