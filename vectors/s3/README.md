@@ -45,69 +45,65 @@ Search for PRs similar to "bugs in DuckDB":
 SELECT
     url,
     title,
-    score -- this is a computed value (i.e. not in `describe pulls;`).
+    _score -- this is a computed value (i.e. not in `describe pulls;`).
 FROM vector_search(pulls, 'bugs in DuckDB', 4)
-ORDER BY score DESC
+ORDER BY _score DESC
 LIMIT 4;
 ```
 
 Results:
 
 ```sql
-+----------------------------------------------+----------------------------------------------------------------------+---------------------+
-| url                                          | title    | score               |
-+----------------------------------------------+----------------------------------------------------------------------+---------------------+
-| https://github.com/spiceai/spiceai/pull/6496 | Update spiceai/duckdb-rs -> DuckDB 1.3.2 + index fix                 | 0.6213145852088928  |
-| https://github.com/spiceai/spiceai/pull/6491 | Use top-level table in full-text search `JOIN ON`                    | 0.35408276319503784 |
-| https://github.com/spiceai/spiceai/pull/6463 | Add integration tests for partitioning                               | 0.3499426245689392  |
-| https://github.com/spiceai/spiceai/pull/6499 | Add periodic tracing of data loading progress during dataset refresh | 0.3494341969490051  |
-+----------------------------------------------+----------------------------------------------------------------------+---------------------+
++----------------------------------------------+------------------------------------------------------+---------------------+
+|                      url                     |                         title                        |        _score       |
+|                    varchar                   |                        varchar                       |       float64       |
++----------------------------------------------+------------------------------------------------------+---------------------+
+| https://github.com/spiceai/spiceai/pull/6496 | Update spiceai/duckdb-rs -> DuckDB 1.3.2 + index fix | 0.6220794320106506  |
+| https://github.com/spiceai/cookbook/pull/335 | Update DynamoDB cookbook auth                        | 0.3785504102706909  |
+| https://github.com/spiceai/cookbook/pull/233 | fix: Update ODBC cookbook to use SQLite              | 0.37669312953948975 |
+| https://github.com/spiceai/cookbook/pull/329 | Update `unnest_depth` for DynamoDB cookbook          | 0.36396580934524536 |
++----------------------------------------------+------------------------------------------------------+---------------------+
+
+Time: 1.083296234 seconds. 4 rows.
 ```
 
-The `score` column (0-1, higher is more similar) is computed from distances returned by S3 Vectors.
+The `_score` column (0-1, higher is more similar) is computed from distances returned by S3 Vectors.
 
 ### Query Plan
 
 Examine execution:
 
 ```sql
-EXPLAIN SELECT url, title, score FROM vector_search(pulls, 'bugs in DuckDB', 4) ORDER BY score DESC LIMIT 4;
+EXPLAIN SELECT url, title, _score FROM vector_search(pulls, 'bugs in DuckDB', 4) ORDER BY _score DESC LIMIT 4;
 ```
 
 Plan:
 
 ```sql
-+---------------+-----------------------------------------------------------------------------------------------------------------------+
-| plan_type     | plan                                                      |
-+---------------+-----------------------------------------------------------------------------------------------------------------------+
-| logical_plan  | Sort: vector_search().score DESC NULLS FIRST, fetch=4     |
-|               |   Projection: vector_search().url, vector_search().title, vector_search().score                                       |
-|               |     BytesProcessedNode                                    |
-|               |       TableScan: vector_search() projection=[title, url, score]                                                       |
-| physical_plan | SortPreservingMergeExec: [score@2 DESC], fetch=4          |
-|               |   SortExec: TopK(fetch=4), expr=[score@2 DESC], preserve_partitioning=[true]                                          |
-|               |     ProjectionExec: expr=[url@1 as url, title@0 as title, score@2 as score]                                           |
-|               |       BytesProcessedExec                                  |
-|               |         ProjectionExec: expr=[title@1 as title, url@2 as url, score@0 as score]                                       |
-|               |           CoalesceBatchesExec: target_batch_size=8192     |
-|               |             CoalesceBatchesExec: target_batch_size=8192   |
-|               |               HashJoinExec: mode=Partitioned, join_type=Left, on=[(id@0, id@0)], projection=[score@1, title@3, url@4] |
-|               |                 CoalesceBatchesExec: target_batch_size=8192                                                           |
-|               |                   RepartitionExec: partitioning=Hash([id@0], 10), input_partitions=10                                 |
-|               |                     CoalesceBatchesExec: target_batch_size=8192                                                       |
-|               |                       ProjectionExec: expr=[key@0 as id, 1 - distance@1 as score]                                     |
-|               |                         RepartitionExec: partitioning=RoundRobinBatch(10), input_partitions=1                         |
-|               |                           BytesProcessedExec              |
-|               |                             **S3VectorsQueryExec: limit=4**                                                           |
-|               |                 CoalesceBatchesExec: target_batch_size=8192                                                           |
-|               |                   RepartitionExec: partitioning=Hash([id@0], 10), input_partitions=10                                 |
-|               |                     RepartitionExec: partitioning=RoundRobinBatch(10), input_partitions=1                             |
-|               |                       CoalesceBatchesExec: target_batch_size=8192                                                     |
-|               |                         BytesProcessedExec                |
-|               |                           SchemaCastScanExec              |
-|               |                             DataSourceExec: partitions=1, partition_sizes=[6]                                         |
-|               |                                                           |
-+---------------+-----------------------------------------------------------------------------------------------------------------------+
++---------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|   plan_type   |                                                                                                  plan                                                                                                 |
+|    varchar    |                                                                                                varchar                                                                                                |
++---------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| logical_plan  | Sort: vector_search(pulls, Utf8("bugs in DuckDB"), Int64(4))._score DESC NULLS FIRST, fetch=4                                                                                                         |
+|               |   Projection: vector_search(pulls, Utf8("bugs in DuckDB"), Int64(4)).url, vector_search(pulls, Utf8("bugs in DuckDB"), Int64(4)).title, vector_search(pulls, Utf8("bugs in DuckDB"), Int64(4))._score |
+|               |     TableScan: vector_search(pulls, Utf8("bugs in DuckDB"), Int64(4)) projection=[_score, title, url]                                                                                                 |
+| physical_plan | ProjectionExec: expr=[url@3 as url, title@2 as title, _score@1 as _score]                                                                                                                             |
+|               |   SortExec: TopK(fetch=4), expr=[_score@1 DESC NULLS LAST, id@0 ASC], preserve_partitioning=[false]                                                                                                   |
+|               |     HashJoinExec: mode=CollectLeft, join_type=Left, accumulator=MinMaxLeftAccumulator, on=[(id@0, id@0)], projection=[id@0, _score@1, title@3, url@4]                                                 |
+|               |       CoalescePartitionsExec                                                                                                                                                                          |
+|               |         ProjectionExec: expr=[key@0 as id, 1 - distance@1 as _score]                                                                                                                                  |
+|               |           RepartitionExec: partitioning=RoundRobinBatch(16), input_partitions=1                                                                                                                       |
+|               |             CoalescePartitionsExec: fetch=4                                                                                                                                                           |
+|               |               CooperativeExec                                                                                                                                                                         |
+|               |                 BytesProcessedExec                                                                                                                                                                    |
+|               |                   RepartitionExec: partitioning=RoundRobinBatch(16), input_partitions=1                                                                                                               |
+|               |                     CooperativeExec                                                                                                                                                                   |
+|               |                       S3VectorsQueryExec (spiceai-cookbook/pulls-body-my-embedding-model): limit=4                                                                                                    |
+|               |       SchemaCastScanExec                                                                                                                                                                              |
+|               |         BytesProcessedExec                                                                                                                                                                            |
+|               |           DataSourceExec: partitions=1, partition_sizes=[6]                                                                                                                                           |
+|               |                                                                                                                                                                                                       |
++---------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 ```
 
 The plan shows `S3VectorsQueryExec` for similarity search, joined via `HashJoinExec` with `DataSourceExec` to fetch fields like `title` and `url`.
@@ -143,29 +139,32 @@ spice run
 Re-run the `EXPLAIN`:
 
 ```sql
-EXPLAIN SELECT url, title, score FROM vector_search(pulls, 'bugs in DuckDB', 4) ORDER BY score DESC LIMIT 4;
+EXPLAIN SELECT url, title, _score FROM vector_search(pulls, 'bugs in DuckDB', 4) ORDER BY _score DESC LIMIT 4;
 ```
 
 Plan:
 
 ```sql
-+---------------+----------------------------------------------------------------------------------------+
-| plan_type     | plan                       |
-+---------------+----------------------------------------------------------------------------------------+
-| logical_plan  | Sort: vector_search().score DESC NULLS FIRST, fetch=4                                  |
-|               |   Projection: vector_search().url, vector_search().title, vector_search().score        |
-|               |     BytesProcessedNode     |
-|               |       TableScan: vector_search() projection=[title, url, score]                        |
-| physical_plan | SortPreservingMergeExec: [score@2 DESC], fetch=4                                       |
-|               |   SortExec: TopK(fetch=4), expr=[score@2 DESC], preserve_partitioning=[true]           |
-|               |     ProjectionExec: expr=[url@1 as url, title@0 as title, score@2 as score]            |
-|               |       BytesProcessedExec   |
-|               |         ProjectionExec: expr=[title@0 as title, url@1 as url, 1 - distance@2 as score] |
-|               |           RepartitionExec: partitioning=RoundRobinBatch(10), input_partitions=1        |
-|               |             BytesProcessedExec                                                         |
-|               |               **S3VectorsQueryExec: limit=4**                                          |
-|               |                            |
-+---------------+----------------------------------------------------------------------------------------+
++---------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|   plan_type   |                                                                                                  plan                                                                                                 |
+|    varchar    |                                                                                                varchar                                                                                                |
++---------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| logical_plan  | Sort: vector_search(pulls, Utf8("bugs in DuckDB"), Int64(4))._score DESC NULLS FIRST, fetch=4                                                                                                         |
+|               |   Projection: vector_search(pulls, Utf8("bugs in DuckDB"), Int64(4)).url, vector_search(pulls, Utf8("bugs in DuckDB"), Int64(4)).title, vector_search(pulls, Utf8("bugs in DuckDB"), Int64(4))._score |
+|               |     TableScan: vector_search(pulls, Utf8("bugs in DuckDB"), Int64(4)) projection=[_score, title, url]                                                                                                 |
+| physical_plan | SortPreservingMergeExec: [_score@2 DESC], fetch=4                                                                                                                                                     |
+|               |   SortExec: TopK(fetch=4), expr=[_score@2 DESC], preserve_partitioning=[true]                                                                                                                         |
+|               |     ProjectionExec: expr=[url@1 as url, title@0 as title, 1 - distance@3 as _score]                                                                                                                   |
+|               |       RepartitionExec: partitioning=RoundRobinBatch(16), input_partitions=1                                                                                                                           |
+|               |         CoalescePartitionsExec: fetch=4                                                                                                                                                               |
+|               |           CooperativeExec                                                                                                                                                                             |
+|               |             BytesProcessedExec                                                                                                                                                                        |
+|               |               RepartitionExec: partitioning=RoundRobinBatch(16), input_partitions=1                                                                                                                   |
+|               |                 CooperativeExec                                                                                                                                                                       |
+|               |                   S3VectorsQueryExec (spiceai-cookbook/pulls-body-my-embedding-model): limit=4                                                                                                        |
+|               |                                                                                                                                                                                                       |
++---------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
 ```
 
 Now, a single `S3VectorsQueryExec` retrieves all data, avoiding joins.
@@ -300,51 +299,67 @@ The Spice runtime can manage chunking, embedding and reaggregating chunks of dat
 ```SQL
 SELECT
     path,
-    match, -- The matching chunk within `content`
+    _match, -- The matching chunk within `content`
     length(content) as content_length,
-    score
+    _score
 FROM vector_search(spiceai.cookbook_readme, 'data governance and auditing')
-ORDER BY score DESC
+ORDER BY _score DESC
 LIMIT 3;
 ```
 
 ````
-+------------------------------------+------------------------------------------------------------------------------------------------------------+----------------+---------------------+
-| path                               | match                                                                                                      | content_length | score               |
-+------------------------------------+------------------------------------------------------------------------------------------------------------+----------------+---------------------+
-| guides/security-analyzer/README.md |                                                                                                            | 12797          | 0.4742743968963623  |
-|                                    | ```sql                                                                                                     |                |                     |
-|                                    | -- Normal query - single department access                                                                 |                |                     |
-|                                    | INSERT INTO query_audit_logs (user_id, query_text, database_name, schema_name, rows_affected, query_type)  |                |                     |
-|                                    | VALUES                                                                                                     |                |                     |
-|                                    | ('alice', 'SELECT * FROM employees WHERE department_id = 5', 'hr_db', 'public', 10, 'SELECT');             |                |                     |
-|                                    |                                                                                                            |                |                     |
-|                                    | -- Suspicious: Large data extraction                                                                       |                |                     |
-|                                    | INSERT INTO query_audit_logs (user_id, query_text, database_name, schema_name, rows_affected, query_type)  |                |                     |
-|                                    | VALUES                                                                                                     |                |                     |
-|                                    | ('bob', 'SELECT * FROM employees', 'hr_db', 'public', 5000, 'SELECT');                                     |                |                     |
-|                                    |                                                                                                            |                |                     |
-|                                    | -- Suspicious: Cross-schema access                                                                         |                |                     |
-|                                    | INSERT INTO query_audit_logs (user_id, query_text, database_name, schema_name, rows_affected, query_type)  |                |                     |
-|                                    | VALUES                                                                                                     |                |                     |
-|                                    | ('charlie', 'SELECT * FROM finance.salary_data', 'hr_db', 'finance', 100, 'SELECT'),                       |                |                     |
-|                                    | ('charlie', 'SELECT * FROM hr.employee_reviews', 'hr_db', 'hr', 200, 'SELECT'),                            |                |                     |
-|                                    | ('charlie', 'SELECT * FROM security.access_logs', 'hr_db', 'security', 300, 'SELECT');                     |                |                     |
-|                                    |                                                                                                            |                |                     |
-|                                    | -- Suspicious: Sequential data harvesting                                                                  |                |                     |
-|                                    | INSERT INTO query_audit_logs (user_id, query_text, database_name, schema_name, rows_affected, query_type)  |                |                     |
-|                                    | VALUES                                                                                                     |                |                     |
-|                                    | ('dave', 'SELECT email FROM customers WHERE region = ''West''', 'sales_db', 'public', 50, 'SELECT'),       |                |                     |
-|                                    | ('dave', 'SELECT phone FROM customers WHERE region = ''East''', 'sales_db', 'public', 50, 'SELECT'),       |                |                     |
-|                                    | ('dave', 'SELECT address FROM customers WHERE region = ''South''', 'sales_db', 'public', 50, 'SELECT');    |                |                     |
-|                                    | ```                                                                                                        |                |                     |
-|                                    | (truncated for brevity.)                                                                                   |                |                     |
-|                                    |                                                                                                            |                |                     |
-| catalogs/databricks/README.md      |                                                                                                            | 8567           | 0.3918001651763916  |
-|                                    | ```shell                                                                                                   |                |                     |
-|                                    | drop table <CATALOG_NAME>.<SCHEMA_NAME>.test_table_no_v2checkpoint;                                        |                |                     |
-|                                    | ```                                                                                                        |                |                     |
-|                                    | (truncated for brevity.)                                                                                   |                |                     |
++------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------+---------------------+
+|                path                |                                                                                           _match                                                                                           | content_length |        _score       |
+|               varchar              |                                                                                           varchar                                                                                          |      int32     |       float64       |
++------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------+---------------------+
+| guides/security-analyzer/README.md |                                                                                                                                                                                            | 12688          | 0.4630262851715088  |
+|                                    | -- Suspicious: Large data extraction                                                                                                                                                       |                |                     |
+|                                    | INSERT INTO query_audit_logs (user_id, query_text, database_name, schema_name, rows_affected, query_type)                                                                                  |                |                     |
+|                                    | VALUES                                                                                                                                                                                     |                |                     |
+|                                    | ('bob', 'SELECT * FROM employees', 'hr_db', 'public', 5000, 'SELECT');                                                                                                                     |                |                     |
+|                                    |                                                                                                                                                                                            |                |                     |
+|                                    | -- Suspicious: Cross-schema access                                                                                                                                                         |                |                     |
+|                                    | INSERT INTO query_audit_logs (user_id, query_text, database_name, schema_name, rows_affected, query_type)                                                                                  |                |                     |
+|                                    | VALUES                                                                                                                                                                                     |                |                     |
+|                                    | ('charlie', 'SELECT * FROM finance.salary_data', 'hr_db', 'finance', 100, 'SELECT'),                                                                                                       |                |                     |
+|                                    | ('charlie', 'SELECT * FROM hr.employee_reviews', 'hr_db', 'hr', 200, 'SELECT'),                                                                                                            |                |                     |
+|                                    | ('charlie', 'SELECT * FROM security.access_logs', 'hr_db', 'security', 300, 'SELECT');                                                                                                     |                |                     |
+|                                    |                                                                                                                                                                                            |                |                     |
+|                                    | -- Suspicious: Sequential data harvesting                                                                                                                                                  |                |                     |
+|                                    | INSERT INTO query_audit_logs (user_id, query_text, database_name, schema_name, rows_affected, query_type)                                                                                  |                |                     |
+|                                    | VALUES                                                                                                                                                                                     |                |                     |
+|                                    | ('dave', 'SELECT email FROM customers WHERE region = ''West''', 'sales_db', 'public', 50, 'SELECT'),                                                                                       |                |                     |
+|                                    | ('dave', 'SELECT phone FROM customers WHERE region = ''East''', 'sales_db', 'public', 50, 'SELECT'),                                                                                       |                |                     |
+|                                    | ('dave', 'SELECT address FROM customers WHERE region = ''South''', 'sales_db', 'public', 50, 'SELECT');                                                                                    |                |                     |
+|                                    | ```                                                                                                                                                                                        |                |                     |
+|                                    |                                                                                                                                                                                            |                |                     |
+|                                    | Our AI analysis provides rich context about these patterns:                                                                                                                                |                |                     |
+|                                    |                                                                                                                                                                                            |                |                     |
+|                                    | ```plaintext                                                                                                                                                                               |                |                     |
+|                                    | Based on the recent query patterns, several concerning behaviors have been identified:                                                                                                     |                |                     |
+|                                    |                                                                                                                                                                                            |                |                     |
+|                                    | 1. Sequential Data Harvesting (High Severity)                                                                                                                                              |                |                     |
+|                                    |    User 'dave' is systematically extracting customer PII (email, phone, address) across different regions.                                                                                 |                |                     |
+|                                    |    While each query appears legitimate, the pattern suggests a methodical data gathering operation.                                                                                        |                |                     |
+|                                    |                                                                                                                                                                                            |                |                     |
+|                                    |    Recommendations:                                                                                                                                                                        |                |                     |
+|                                    |    - Implement controls to detect cross-region PII access patterns                                                                                                                         |                |                     |
+|                                    |    - Review dave's role requirements for customer data access                                                                                                                              |                |                     |
+|                                    |    - Consider implementing aggregate-only views for customer data                                                                                                                          |                |                     |
+|                                    |                                                                                                                                                                                            |                |                     |
+|                                    | 2. Bulk Data Access (Medium Severity)                                                                                                                                                      |                |                     |
+|                                    |    User 'bob' extracted 5000 employee records in a single query.                                                                                                                           |                |                     |
+|                                    |    This could be legitimate ETL work but requires verification.                                                                                                                            |                |                     |
+|                                    |                                                                                                                                                                                            |                |                     |
+|                                    |    Recommendations:                                                                                                                                                                        |                |                     |
+|                                    |    - Verify if this is a scheduled data export                                                                                                                                             |                |                     |
+|                                    |    - Implement row-level security if bulk access isn't required                                                                                                                            |                |                     |
+|                                    |    - Add rate limiting for large data retrieval                                                                                                                                            |                |                     |
+| vectors/s3/README.md               |    | INSERT INTO query_audit_logs (user_id, query_text, database_name, schema_name, rows_affected, query_type)  |                |                     |                                   | 25486          | 0.44905054569244385 |
+|                                    | |                                    | VALUES                                                                                                     |                |                     | |                |                     |
+|                                    | |                                    | ('dave', 'SELECT email FROM customers WHERE region = ''West''', 'sales_db', 'public', 50, 'SELECT'),       |                |                     | |                |                     |
+|                                    | |                                    | ('dave', 'SELECT phone FROM customers WHERE region = ''East''', 'sales_db', 'public', 50, 'SELECT'),       |                |                     | |                |                     |
+...
 ````
 
 ```shell
