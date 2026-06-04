@@ -47,7 +47,12 @@ def create_summary(summary_input: SummaryInput) -> str:
 
 def get_data(sql: str) -> List[Dict]:
     """Execute SQL query against Spice and return results as list of dicts."""
-    return SpiceClient().query(sql).read_pandas().to_dict(orient="records")
+    df = SpiceClient().query(sql).read_pandas()
+    # Convert non-JSON-serializable types (e.g. pandas.Timestamp) to ISO strings
+    for col in df.columns:
+        if hasattr(df[col], "dt") or str(df[col].dtype).startswith("datetime"):
+            df[col] = df[col].astype(str)
+    return df.to_dict(orient="records")
 
 
 def try_completion(client: OpenAI, model: str, msg: str) -> str:
@@ -81,6 +86,11 @@ def main():
         action="store_true",
         help="Skip generating the data summary"
     )
+    parser.add_argument(
+        "--output-html",
+        metavar="FILE",
+        help="Write a self-contained HTML file with the chart and data embedded"
+    )
     args = parser.parse_args()
 
     user_question = args.question
@@ -108,6 +118,41 @@ def main():
     print("DATA:")
     print("=" * 60)
     print(json.dumps(data, indent=2))
+
+    # Write self-contained HTML if requested
+    if args.output_html:
+        html = result.chart_js_html
+        import re
+        data_json = json.dumps(data)
+        # Inject data into common placeholder patterns used by the model
+        # Pattern 1: const/let/var dataRows = [];
+        html = re.sub(
+            r"(const|let|var)\s+(\w+)\s*=\s*\[\]\s*;",
+            rf"\1 \2 = {data_json};",
+            html,
+            count=1,
+        )
+        # Pattern 2: window.dataFromQuery || []
+        html = re.sub(
+            r"window\.dataFromQuery\s*\|\|\s*\[\]",
+            data_json,
+            html,
+        )
+        # Pattern 3: window.__DATA__ || []
+        html = re.sub(
+            r"window\.__DATA__\s*\|\|\s*\[\]",
+            data_json,
+            html,
+        )
+        # Fallback: if none matched, inject a script tag before </body>
+        if data_json not in html:
+            html = html.replace(
+                "</body>",
+                f"<script>window.__DATA__ = {data_json};</script>\n</body>",
+            )
+        with open(args.output_html, "w", encoding="utf-8") as f:
+            f.write(html)
+        print(f"\nSelf-contained HTML written to {args.output_html}", file=sys.stderr)
 
     # Generate summary
     if not args.no_summary:

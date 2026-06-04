@@ -1,0 +1,12 @@
+[project]
+name = "generative-visualisations"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "dataclasses-json>=0.6.0",
+    "dotenv>=0.9.9",
+    "openai>=2.41.0",
+    "spicepy @ git+https://github.com/spiceai/spicepy.git@v3.1.0",
+]
