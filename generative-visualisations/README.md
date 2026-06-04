@@ -36,10 +36,16 @@ This recipe demonstrates how to build an AI-powered data analyst that generates 
 
 4. **Set up Python environment:**
 
+   This recipe uses [`uv`](https://docs.astral.sh/uv/) for dependency management. If you don't have it installed:
+
    ```bash
-   python -m venv .venv
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-   pip install -r requirements.txt
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   ```
+
+   Then install dependencies (this will create the virtual environment automatically):
+
+   ```bash
+   uv sync
    ```
 
 ## How It Works
@@ -79,11 +85,10 @@ You should see output indicating that Spice is loading datasets and models:
 
 ### Step 2: Run the Visualization Generator
 
-In a new terminal, activate your virtual environment and run the main script:
+In a new terminal, run the main script via `uv`:
 
 ```bash
-source .venv/bin/activate
-python main.py "How has per month sales trended?"
+uv run main.py "How has per month sales trended?"
 ```
 
 The script will:
@@ -104,7 +109,7 @@ The script outputs a Chart.js HTML snippet. To view it:
 Or use this one-liner to open the visualization directly:
 
 ```bash
-python main.py "How has sales changed over time?" 2>/dev/null | head -n 50 > chart.html && open chart.html
+uv run main.py "How has sales changed over time?" 2>/dev/null | head -n 50 > chart.html && open chart.html
 ```
 
 ## Example Queries
@@ -113,13 +118,13 @@ Try these sample questions:
 
 ```bash
 # Sales trends
-python main.py "How has per month sales trended?"
-python main.py "What are the top 5 products by total sales?"
-python main.py "Show me quarterly revenue breakdown"
+uv run main.py "How has per month sales trended?"
+uv run main.py "What are the top 5 products by total sales?"
+uv run main.py "Show me quarterly revenue breakdown"
 
 # Product analysis
-python main.py "Which product lines have the highest sales?"
-python main.py "Compare sales between different countries"
+uv run main.py "Which product lines have the highest sales?"
+uv run main.py "Compare sales between different countries"
 ```
 
 ## Example Output
