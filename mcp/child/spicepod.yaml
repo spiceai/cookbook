@@ -2,9 +2,18 @@ name: spicepod
 version: v1
 kind: Spicepod
 
+runtime:
+  auth:
+    api_key:
+      enabled: true
+      keys:
+        - ${ secrets:API_KEY }
+
 tools:
   - name: spice_mcp
     from: mcp:http://localhost:8090/v1/mcp
+    params:
+      mcp_headers: "x-api-key: foobar"
 
 models:
   - name: openai-with-spice

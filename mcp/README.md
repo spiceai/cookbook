@@ -21,6 +21,7 @@ cd cookbook/mcp
 2. Update the `.env` file with the required secrets.
 
 ```bash
+API_KEY="foobar"
 SPICE_OPENAI_API_KEY="{OpenAI API key}"
 SPICE_ALLOWED_DIR="{directory the fs MCP tool is allowed to access}"
 ```
@@ -36,7 +37,7 @@ spice run
 4. Show the available tools.
 
 ```bash
-curl http://127.0.0.1:8090/v1/tools | jq '.[].name'
+curl -H 'x-api-key: foobar' http://127.0.0.1:8090/v1/tools | jq '.[].name'
 ```
 
 ```bash
@@ -68,7 +69,7 @@ This shows both the built in tools (e.g. `sql`) and all the tools listed by the 
 5. List the files from the current directory using the `fs/list_directory` MCP tool.
 
 ```bash
-curl -XPOST http://127.0.0.1:8090/v1/tools/fs/list_directory \
+curl -XPOST -H 'x-api-key: foobar' http://127.0.0.1:8090/v1/tools/fs/list_directory \
     -d '{"path": "./"}' | jq -r '.[0].text'
 ```
 
@@ -82,7 +83,7 @@ curl -XPOST http://127.0.0.1:8090/v1/tools/fs/list_directory \
 6. Use the `fs` MCP server from a model.
 
 ```bash
-spice chat
+spice chat --api-key foobar
 ```
 
 ```bash
@@ -104,24 +105,16 @@ The README.md for the Spice.ai OSS Cookbook serves as a comprehensive guide to c
 7. Make sure the LLM called the MCP tool (and didn't hallucinate)
 
 ```bash
->>> spice trace ai_chat
-Spice.ai OSS CLI v1.5.0-build.2cfdba8f2
+>>> spice trace ai_chat --api-key foobar
+Spice.ai OSS CLI v2.0.0-unstable (c771b74aa)
+ Tree                                   Status  Duration    Span ID
+ ai_chat                                OK       9953.36ms  d051f9effec60261
+ ai_completion                          OK       9953.06ms  6ccd967faf4dfa1a
+ tool_use::fs/list_allowed_directories  OK          1.51ms  0091894899b22e4c
+ ai_completion                          OK       9053.25ms  1e9fb1c8408c3ac0
+ tool_use::fs/read_text_file            OK          2.96ms  5b3f4b2982e89d0b
+ ai_completion                          OK       7731.02ms  9bb53d8608cd4791
 
-TREE                                        STATUS DURATION   SPANID
-ai_chat                                     ✅     15417.63ms 8cda3b72ccc32496
-  ├── ai_completion                         ✅     15417.17ms bc1394533a450527
-  ├── tool_use::fs/list_allowed_directories ✅         0.96ms 9d35bf23821b5424
-  ├── ai_completion                         ✅     14358.63ms aefd3b7427c754b4
-  ├── tool_use::fs/list_directory           ✅         1.92ms 7ffc1df4306a0cfa
-  ├── ai_completion                         ✅     13449.41ms f35ee6853530564b
-  ├── tool_use::fs/read_file                ✅         2.93ms 18ecb464a8d9ccfd
-  ├── ai_completion                         ✅     11879.71ms 9947f2e57c714ffc
-  ├── tool_use::fs/read_file                ✅         5.54ms bbb43a3db56c960e
-  ├── ai_completion                         ✅      8724.63ms 2ef5f01ed9381fc4
-  ├── tool_use::fs/read_file                ✅         2.01ms d88a5b80a52c06ef
-  ├── ai_completion                         ✅      7404.46ms 553e03a7d10adab1
-  ├── tool_use::fs/read_file                ✅         2.81ms f5e0d68dfc21a268
-  └── ai_completion                         ✅      6002.60ms f8e85290f31bb581
 ```
 
 ## Connect to Spice over MCP
@@ -138,6 +131,7 @@ cd cookbook/mcp
 2. Update the `.env` file with the required secrets.
 
 ```bash
+API_KEY=foobar
 SPICE_OPENAI_API_KEY="{OpenAI API key}"
 SPICE_ALLOWED_DIR="{directory the fs MCP tool is allowed to access}"
 ```
@@ -170,6 +164,8 @@ kind: Spicepod
 tools:
   - name: spice_mcp
     from: mcp:http://localhost:8090/v1/mcp
+    params:
+      mcp_headers: "x-api-key: foobar"
 ```
 
 6. Run the second Spice instance on separate ports.
@@ -181,7 +177,7 @@ spice run --http-endpoint 127.0.0.1:8091 --flight-endpoint 127.0.0.1:50061 --met
 7.  Show the tools available in the second Spice instance (note the different port).
 
 ```bash
-curl http://127.0.0.1:8091/v1/tools | jq '.[].name'
+curl -H 'x-api-key: foobar' http://127.0.0.1:8091/v1/tools | jq '.[].name'
 ```
 
 ```bash
@@ -236,7 +232,7 @@ Now you will see the following tools:
 8. Use the SQL tool of the first Spice server, over MCP.
 
 ```bash
-curl -XPOST http://127.0.0.1:8091/v1/tools/spice_mcp/sql \
+curl -H 'x-api-key: foobar' -XPOST http://127.0.0.1:8091/v1/tools/spice_mcp/sql \
     -d '{"query": "SELECT * FROM taxi_trips LIMIT 1"}'
 ```
 
@@ -252,7 +248,7 @@ curl -XPOST http://127.0.0.1:8091/v1/tools/spice_mcp/sql \
 9. Similarily to above, Use the `fs` MCP server from a model. In this case, the runtime will call the first spice instance, which subsequently, calls the `fs` MCP server.
 
 ```bash
-spice chat --http-endpoint http://127.0.0.1:8091
+spice chat --api-key foobar --http-endpoint http://127.0.0.1:8091
 ```
 
 ```bash
