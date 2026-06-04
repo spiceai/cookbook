@@ -94,13 +94,13 @@ You should see the new record:
 
 ---
 
-## Step 8. Update a Record and See the Change
+## Step 7. Update a Record and See the Change
 
-Update the order status:
+Update the order status to `shipped`. Re-running `put-item` with the same `id` overwrites the existing item:
 
 ```bash
 aws dynamodb put-item --table-name orders --item \
-  '{"id": {"S": "order-002"}, "customer": {"S": "Bob"}, "amount": {"N": "149.99"}, "status": {"S": "pending"}}' \
+  '{"id": {"S": "order-001"}, "customer": {"S": "Alice"}, "amount": {"N": "99.99"}, "status": {"S": "shipped"}}' \
   --region $AWS_REGION
 ```
 
@@ -113,17 +113,16 @@ SELECT * FROM orders_stream;
 The status should now be updated:
 
 ```console
-+-----------+----------+---------+---------+
-| id        | customer | amount  | status  |
-+-----------+----------+---------+---------+
-| order-001 | Alice    | 99.99   | pending |
-| order-002 | Bob      | 199.99  | pending |
-+-----------+----------+---------+---------+
++-----------+----------+--------+---------+
+| id        | customer | amount | status  |
++-----------+----------+--------+---------+
+| order-001 | Alice    | 99.99  | shipped |
++-----------+----------+--------+---------+
 ```
 
 ---
 
-## Step 9. Cleanup
+## Step 8. Cleanup
 
 To delete the DynamoDB table:
 
