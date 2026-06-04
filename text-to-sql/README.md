@@ -117,9 +117,12 @@ For programmatic access or integration into applications, use the HTTP API:
 curl -XPOST "http://localhost:8090/v1/nsql" \
   -H "Content-Type: application/json" \
   -d '{
-    "query": "Which vendors have made the most trips in 2024?"
+    "query": "Which vendors have made the most trips in 2024?",
+    "sample_data_enabled": true
   }' | jq
 ```
+
+> **Note:** Data sampling is disabled by default. This request sets `"sample_data_enabled": true` so Spice samples the dataset when generating SQL — this is the `sample_data` step shown in the execution trace below.
 
 **Response:**
 
@@ -280,24 +283,25 @@ curl -XPOST "http://localhost:8090/v1/nsql" \
 
 **Trade-off:** Faster execution but potentially less accurate SQL for complex queries.
 
-### Restrict to Specific Tables
+### Focus Sampling on Specific Datasets
 
-For better performance and accuracy in multi-table databases, specify which tables to query:
+When data sampling is enabled, use the `datasets` parameter to control which datasets Spice samples when building the model's context. This is a sampling hint — it focuses the sampled context on the listed datasets but does not restrict which tables the generated SQL can reference:
 
 ```shell
 curl -XPOST "http://localhost:8090/v1/nsql" \
   -H "Content-Type: application/json" \
   -d '{
     "query": "Which vendors have made the most trips in 2024?",
-    "tables": ["taxi_trips"]
+    "sample_data_enabled": true,
+    "datasets": ["taxi_trips"]
   }'
 ```
 
-**Use case:** Essential when:
+**Use case:** Useful when:
 
-- Your database has many tables
-- You know which tables contain relevant data
-- You want to avoid the AI considering irrelevant tables
+- Your database has many datasets and you want to focus sampling
+- You know which datasets contain the relevant data
+- You want to reduce sampling latency and cost
 
 ## (Optional) Using a Local AI Model
 
@@ -416,13 +420,13 @@ Now that you understand text-to-SQL with Spice, explore:
 
 **Slow queries:**
 
-- Try disabling data sampling with `"sample_data_enabled": false`
-- Specify tables explicitly with the `"tables"` parameter
+- Keep data sampling off with `"sample_data_enabled": false` (the default)
+- Focus sampling on specific datasets with the `"datasets"` parameter
 - Use a more powerful model (e.g., GPT-4 instead of GPT-3.5)
 
 **Inaccurate SQL generation:**
 
-- Enable data sampling (it's on by default)
+- Enable data sampling with `"sample_data_enabled": true` (it's off by default)
 - Make your natural language queries more specific
 - Inspect the generated SQL and refine your question
 
