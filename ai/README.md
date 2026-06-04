@@ -240,7 +240,7 @@ LIMIT 10;
 
 ### Limits
 
-- Maximum batch size: 100 rows per query
+- Maximum batch size: 1000 rows per query
 - Maximum message size: 1 MB per message
 
 ### Error Handling
