@@ -143,8 +143,8 @@ curl --cacert ca.pem https://localhost:8090/v1/sql -d 'SELECT 1'
 
 Expected output:
 
-```json
-{"message":"Valid client TLS certificate required"}
+```text
+client certificate required
 ```
 
 ### Rejected request (untrusted client certificate)

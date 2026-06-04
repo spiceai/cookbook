@@ -85,9 +85,9 @@ show tables;
 Search for files containing specific keywords:
 
 ```sql
-SELECT path, score
+SELECT path, _score
 FROM text_search(cookbook_files, 'vector search', content)
-ORDER BY score DESC
+ORDER BY _score DESC
 LIMIT 5;
 ```
 
@@ -95,7 +95,7 @@ Results (scores may vary):
 
 ```
 +-------------------------------+--------------------+
-| path                          | score              |
+| path                          | _score              |
 +-------------------------------+--------------------+
 | vectors/README.md             | 6.82               |
 | search/README.md              | 6.51               |
@@ -108,9 +108,9 @@ Results (scores may vary):
 Find all cookbooks mentioning a particular technology:
 
 ```sql
-SELECT path, score
+SELECT path, _score
 FROM text_search(cookbook_files, 'DuckDB acceleration', content)
-ORDER BY score DESC
+ORDER BY _score DESC
 LIMIT 5;
 ```
 
@@ -119,10 +119,10 @@ LIMIT 5;
 Full-text search results can be filtered using standard SQL:
 
 ```sql
-SELECT path, score
+SELECT path, _score
 FROM text_search(cookbook_files, 'kubernetes', content)
 WHERE path LIKE 'kubernetes/%'
-ORDER BY score DESC
+ORDER BY _score DESC
 LIMIT 10;
 ```
 
@@ -138,7 +138,7 @@ text_search(
   limit INTEGER,             -- Maximum results returned (optional, defaults to 1000)
   include_score BOOLEAN      -- Include relevance scores in results (optional, defaults to TRUE)
 )
-RETURNS TABLE                -- Original table columns plus a FLOAT column `score`
+RETURNS TABLE                -- Original table columns plus a FLOAT column `_score`
 ```
 
 ## Search with HTTP API
@@ -171,7 +171,7 @@ Response (truncated):
       "primary_key": {
         "path": "postgres/rds/README.md"
       },
-      "score": 1.41,
+      "_score": 1.41,
       "dataset": "cookbook_files"
     }
   ],

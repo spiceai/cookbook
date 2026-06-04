@@ -109,6 +109,14 @@ sudo chmod 600 postgres.key
 sudo chcon -Rt svirt_sandbox_file_t postgres.key
 ```
 
+## macOS: Tighten key file permissions
+
+`openssl ecparam -genkey` writes `postgres.key` as `0644` by default. Postgres 18 refuses to start with `FATAL: private key file "/var/lib/postgresql/postgres.key" has group or world access`. Tighten the mode before starting the container; Docker Desktop will bind-mount the file into the container with the same permissions:
+
+```bash
+chmod 600 postgres.key
+```
+
 ### Start `postgres`
 
 Start a `postgres` instance with TLS enabled using Docker compose.

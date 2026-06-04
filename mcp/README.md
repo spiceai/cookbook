@@ -119,7 +119,7 @@ Spice.ai OSS CLI v2.0.0-unstable (c771b74aa)
 
 ## Connect to Spice over MCP
 
-Spice is an MCP server. It can be connected to like any other MCP server running over HTTP SSE.
+Spice is an MCP server. It can be connected to like any other MCP server running over HTTP.
 
 1. Clone the cookbook, and navigate to the MCP recipe.
 
