@@ -48,7 +48,7 @@ spice run
 In a separate terminal, start a chat session against the Spice runtime with the Responses API enabled:
 
 ```
-spice chat --responses
+spice chat
 ```
 
 Ask the model to retrieve today's news via web search, one of OpenAI's hosted tools.
