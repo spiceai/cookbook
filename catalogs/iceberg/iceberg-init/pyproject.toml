@@ -5,6 +5,6 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13,<3.14"
 dependencies = [
-    "pyarrow==20.0.0",
+    "pyarrow==23.0.1",
     "pyiceberg==0.9.1",
 ]
