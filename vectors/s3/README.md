@@ -10,7 +10,7 @@ Spice.ai integrates Amazon S3 Vectors, launched in public preview at AWS Summit 
 - Create `.env` file with:
   - `GITHUB_TOKEN`: GitHub personal access token ([guide](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic)).
   - `SPICE_OPENAI_API_KEY`: OpenAI API key.
-  - `S3_VECTORS_AWS_ACCESS_KEY_ID`, `S3_VECTORS_AWS_SECRET_ACCESS_KEY` (and `S3_VECTORS_AWS_SESSION_TOKEN` if using temporary credentials): AWS credentials for S3 Vectors access. For alternatives, see [S3 Vectors documentation](https://spiceai.org/docs/components/vectors/s3_vectors).
+  - `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` (and `AWS_SESSION_TOKEN` if using temporary credentials): AWS credentials for S3 Vectors access. For alternatives, see [S3 Vectors documentation](https://spiceai.org/docs/components/vectors/s3_vectors).
 - AWS account with an S3 Vectors-enabled bucket (e.g., `spiceai-cookbook` in `us-east-2`).
 
 ## Configuration
