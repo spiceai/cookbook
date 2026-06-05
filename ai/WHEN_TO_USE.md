@@ -319,7 +319,7 @@ execute("""
    - Use pre-computed results or caching
 
 2. **Processing millions of rows**
-   - 100 row batch limit
+   - 1000 row batch limit
    - Consider batch processing offline
 
 3. **Simple text operations**
