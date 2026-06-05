@@ -56,19 +56,19 @@ FROM taxi_zones;
 -- ==============================================
 
 -- 7. Analyze customer feedback
-SELECT 
-  id,
+SELECT
+  feedback_id,
   feedback,
   ai('Classify as positive, negative, or neutral: ' || feedback, 'gpt-4o-mini') as sentiment
 FROM customer_feedback;
 
 -- 8. Extract key points from feedback
-SELECT 
-  id,
+SELECT
+  feedback_id,
   feedback,
   ai('What is the main point in 3 words: ' || feedback, 'gpt-4o-mini') as key_point
 FROM customer_feedback
-WHERE id <= 3;
+WHERE feedback_id <= 3;
 
 
 -- ==============================================

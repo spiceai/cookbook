@@ -16,7 +16,7 @@ Follow these steps to get started with federated SQL query against AWS RDS Auror
 ```bash
 aws cloudformation create-stack \
   --stack-name aurora-cookbook \
-  --template-body file://cloudformation.yaml
+  --template-body file://aurora-test-cluster.yaml
 ```
 
 **Step 2.** Navigate to your AWS RDS Aurora instance in the AWS Management Console.
