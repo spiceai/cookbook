@@ -1,6 +1,8 @@
 # Web Search Using Perplexity
 
-Works with `v1.0+`
+Deprecated in `v2.0+`. Works with `v1.0+`
+
+> **Note:** This recipe relies on the built-in `websearch` tool with the Perplexity engine. Perplexity support — both the model provider and the `websearch` tool — was removed in Spice `v2.0`, so this recipe only runs against `v1.x` releases (e.g. the current stable `v1.11.6`).
 
 This recipe demonstrates how to configure and use Perplexity web search within Spice AI.
 
