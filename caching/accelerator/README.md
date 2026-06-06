@@ -74,7 +74,7 @@ spice sql
 Run a query to fetch the current time through the cache:
 
 ```sql
-SELECT request_path, content, fetched_at FROM time WHERE request_path = '/time';
+SELECT request_path, content, _fetched_at FROM time WHERE request_path = '/time';
 ```
 
 ## Understanding the Configuration
@@ -116,7 +116,7 @@ datasets:
 1. **First Query (Cache Miss)**: Run the query - it will take ~1 second (the server's default delay)
 
    ```sql
-   SELECT request_path, content, fetched_at FROM time WHERE request_path = '/time';
+   SELECT request_path, content, _fetched_at FROM time WHERE request_path = '/time';
    ```
 
 2. **Immediate Repeat (Cache Hit)**: Run the same query again - it returns instantly from cache
@@ -140,12 +140,12 @@ Query different paths to create separate cache entries:
 
 ```sql
 -- These create separate cache entries
-SELECT request_path, content, fetched_at FROM time WHERE request_path = '/time/1';
-SELECT request_path, content, fetched_at FROM time WHERE request_path = '/time/2';
-SELECT request_path, content, fetched_at FROM time WHERE request_path = '/time/3';
+SELECT request_path, content, _fetched_at FROM time WHERE request_path = '/time/1';
+SELECT request_path, content, _fetched_at FROM time WHERE request_path = '/time/2';
+SELECT request_path, content, _fetched_at FROM time WHERE request_path = '/time/3';
 
 -- View all cached entries
-SELECT request_path, content, fetched_at FROM time ORDER BY fetched_at DESC;
+SELECT request_path, content, _fetched_at FROM time ORDER BY _fetched_at DESC;
 ```
 
 ### Testing Response Delays
@@ -167,7 +167,7 @@ The caching accelerator automatically adds metadata fields to cached data:
 | `request_query` | String    | Query parameters from the request |
 | `request_body`  | String    | Request body (for POST requests)  |
 | `content`       | String    | The response content              |
-| `fetched_at`    | Timestamp | When the data was fetched         |
+| `_fetched_at`    | Timestamp | When the data was fetched         |
 
 ## Use Cases
 
