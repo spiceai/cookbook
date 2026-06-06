@@ -77,6 +77,8 @@ Run a query to fetch the current time through the cache:
 SELECT request_path, content, _fetched_at FROM time WHERE request_path = '/time';
 ```
 
+> **Version note:** The fetch-timestamp column is named `_fetched_at` (leading underscore) on Spice `v2.0+`. On `v1.x` it is `fetched_at` (no underscore) — use that name if you are running a `v1.x` release.
+
 ## Understanding the Configuration
 
 The `spicepod.yaml` configures the caching accelerator:
@@ -167,7 +169,7 @@ The caching accelerator automatically adds metadata fields to cached data:
 | `request_query` | String    | Query parameters from the request |
 | `request_body`  | String    | Request body (for POST requests)  |
 | `content`       | String    | The response content              |
-| `_fetched_at`    | Timestamp | When the data was fetched         |
+| `_fetched_at`   | Timestamp | When the data was fetched (named `fetched_at` on Spice `v1.x`) |
 
 ## Use Cases
 
