@@ -157,6 +157,8 @@ Result
 }
 ```
 
+> **Version note:** The relevance score is returned in the `_score` field (leading underscore) on Spice `v2.0+`. On `v1.x` it was returned as `score` (no underscore).
+
 ## Utilizing a natural language query
 
 Use `spice chat` CLI command to query information using natural language
