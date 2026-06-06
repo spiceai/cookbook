@@ -39,7 +39,7 @@ curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json"
 
 Now the Debezium connector is registered and will start capturing changes from the `customer_addresses` table in the Postgres database. Open http://<localhost:8080/topics> and see the topic `cdc.public.customer_addresses` created.
 
-This spicepod.yaml shows the config needed to configure Spice to connect to the Kafka topic and consume the Debezium changes:
+This spicepod.yaml shows the config needed to configure Spice to connect to the Kafka topic and consume the Debezium changes. The Redpanda broker started by `docker compose` has SASL authentication enabled, so the connection uses `SASL_PLAINTEXT` with the `SCRAM-SHA-256` mechanism; the `KAFKA_USERNAME` and `KAFKA_PASSWORD` secrets are provided in `cdc-debezium/.env`:
 
 ```yaml
 version: v1
@@ -53,7 +53,10 @@ datasets:
       debezium_transport: kafka
       debezium_message_format: json
       kafka_bootstrap_servers: localhost:19092
-      kafka_security_protocol: PLAINTEXT
+      kafka_security_protocol: SASL_PLAINTEXT
+      kafka_sasl_mechanism: SCRAM-SHA-256
+      kafka_sasl_username: ${secrets:KAFKA_USERNAME}
+      kafka_sasl_password: ${secrets:KAFKA_PASSWORD}
     acceleration:
       enabled: true
       engine: sqlite
