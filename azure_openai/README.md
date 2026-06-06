@@ -168,6 +168,8 @@ Result:
 }
 ```
 
+> **Version note:** The relevance score is returned in the `_score` field (leading underscore) on Spice `v2.0+`. On `v1.x` it was returned as `score` (no underscore).
+
 Vector-based search could also be performed using `spice search` CLI command:
 
 ```shell
