@@ -136,7 +136,7 @@ Result
       "matches": {
         "content": "# Metrics Naming\n\n## TL;DR\n\n**Metric Naming Guide**: Prioritize Developer Experience (DX) with intuitive, ..."
       },
-      "score": 0.7941223368131454,
+      "_score": 0.7941223368131454,
       "dataset": "spiceai.docs",
       "data": {
         "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/dev/metrics.md"
@@ -146,7 +146,7 @@ Result
       "matches": {
         "content": "# Criteria Definitions\n\n## RC\n\nAcronym for \"Release Candidate\". Identifies a version that is eligible for ..."
       },
-      "score": 0.7145749783070606,
+      "_score": 0.7145749783070606,
       "dataset": "spiceai.docs",
       "data": {
         "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/criteria/definitions.md"
