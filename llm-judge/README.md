@@ -1,6 +1,8 @@
 # LLM as a Judge
 
-Works with `v1.0+`
+Deprecated in `v2.0+`. Works with `v1.0+`
+
+> **Note:** The evaluation subsystem this recipe relies on — the `spice eval` command, the `evals:` / `scorers:` spicepod config, the `eval.results` table, and `eval_run` traces — was removed in Spice `v2.0.0`. Run this recipe with a Spice `v1.x` release.
 
 Spice can be used to run language models (LLM) but also to evaluate their performance on specific tasks. Sometimes it's useful to use another language model to judge the performance of another LLM. This is often called an [LLM judge](https://spiceai.org/docs/features/large-language-models/evals#llm-judge).
 
