@@ -147,7 +147,7 @@ Result:
       "primary_key": {
         "path": "docs/dev/metrics.md"
       },
-      "score": 0.7269563689871208,
+      "_score": 0.7269563689871208,
       "dataset": "spiceai.files"
     },
     {
@@ -160,7 +160,7 @@ Result:
       "primary_key": {
         "path": "docs/criteria/definitions.md"
       },
-      "score": 0.6737559856782607,
+      "_score": 0.6737559856782607,
       "dataset": "spiceai.files"
     }
   ],
