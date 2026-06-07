@@ -1,6 +1,6 @@
 # Oracle Data Connector
 
-Works with `v1.0+`
+Works with `v1.5.0+`
 
 This cookbook demonstrates how to use Spice.ai to connect to and accelerate data from an Oracle database.
 
