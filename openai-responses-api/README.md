@@ -45,10 +45,10 @@ spice run
 
 ## Using OpenAI-hosted tools
 
-In a separate terminal, start a chat session against the Spice runtime with the Responses API enabled:
+In a separate terminal, start a chat session against the Spice runtime. The Responses API is enabled by the model's `responses_api: enabled` param in `spicepod.yaml`, so no extra flag is needed:
 
 ```
-spice chat --responses
+spice chat --model gpt-4o-responses
 ```
 
 Ask the model to retrieve today's news via web search, one of OpenAI's hosted tools.
