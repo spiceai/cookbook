@@ -181,7 +181,7 @@ curl -X POST http://localhost:8090/v1/search \
       "matches": {
         "description": "A Beautiful Story of a Dog And a Technical Writer who must Outgun a Student in A Balloon"
       },
-      "score": 0.8974827855112448,
+      "_score": 0.8974827855112448,
       "dataset": "spice.public.films",
       "data": {
         "rental_rate": 2.99,
@@ -193,7 +193,7 @@ curl -X POST http://localhost:8090/v1/search \
       "matches": {
         "description": "A Epic Documentary of a Hunter And a Dog who must Outgun a Dog in A Balloon Factory"
       },
-      "score": 0.8941260610769606,
+      "_score": 0.8941260610769606,
       "dataset": "spice.public.films",
       "data": {
         "title": "IGBY MAKER",
@@ -205,7 +205,7 @@ curl -X POST http://localhost:8090/v1/search \
       "matches": {
         "description": "A Boring Display of a Man And a Dog who must Redeem a Girl in A U-Boat"
       },
-      "score": 0.8896955774714774,
+      "_score": 0.8896955774714774,
       "dataset": "spice.public.films",
       "data": {
         "rental_rate": 0.99,
@@ -217,6 +217,8 @@ curl -X POST http://localhost:8090/v1/search \
   "duration_ms": 30
 }
 ```
+
+> **Version note:** The relevance score is returned in the `_score` field (leading underscore) on Spice `v2.0+`. On `v1.x` it was returned as `score` (no underscore).
 
 ### Using Language Model
 
