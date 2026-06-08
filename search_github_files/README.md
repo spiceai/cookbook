@@ -85,7 +85,7 @@ Result:
       "primary_key": {
         "path": "docs/EXTENSIBILITY.md"
       },
-      "score": 0.9217255119459336,
+      "_score": 0.9217255119459336,
       "dataset": "spiceai.files"
     },
     {
@@ -98,13 +98,15 @@ Result:
       "primary_key": {
         "path": "docs/dev/style_guide.md"
       },
-      "score": 0.8344974606243043,
+      "_score": 0.8344974606243043,
       "dataset": "spiceai.files"
     }
   ],
   "duration_ms": 86
 }
 ```
+
+> **Version note:** The relevance score is returned in the `_score` field (leading underscore) on Spice `v2.0+`. On `v1.x` it was returned as `score` (no underscore).
 
 4. Rerun the search, and retrieve the full document by adding `content` column to `additional_columns`).
 
@@ -136,7 +138,7 @@ Result:
       "primary_key": {
         "path": "docs/EXTENSIBILITY.md"
       },
-      "score": 0.9320302128251334,
+      "_score": 0.9320302128251334,
       "dataset": "spiceai.files"
     },
     {
@@ -150,7 +152,7 @@ Result:
       "primary_key": {
         "path": "docs/criteria/models/beta.md"
       },
-      "score": 0.8549700824464589,
+      "_score": 0.8549700824464589,
       "dataset": "spiceai.files"
     }
   ],
@@ -218,7 +220,7 @@ Result:
       "primary_key": {
         "path": "docs/EXTENSIBILITY.md"
       },
-      "score": 0.9320302128251334,
+      "_score": 0.9320302128251334,
       "dataset": "spiceai.files"
     },
     {
@@ -231,7 +233,7 @@ Result:
       "primary_key": {
         "path": "docs/criteria/models/beta.md"
       },
-      "score": 0.8549700824464589,
+      "_score": 0.8549700824464589,
       "dataset": "spiceai.files"
     }
   ],
