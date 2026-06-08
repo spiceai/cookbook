@@ -325,7 +325,7 @@ Note: A dataset can be accelerated when configured by specifying yes (y) to `loc
    Time: 0.035188167 seconds. 2 rows.
    ```
 
-6. Query against the Databricks table connected with `mode: spark_connect`
+6. Query against the Databricks table connected with `mode: sql_warehouse`
 
    ```shell
    sql> select * from customer limit 1;
