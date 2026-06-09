@@ -150,7 +150,7 @@ Sample output:
 
 ## Using Acceleration for Better Performance
 
-Since ScyllaDB queries fetch all data for processing (filter pushdown is not supported), enabling acceleration is recommended for frequently queried tables:
+ScyllaDB pushes down partition-key equality filters (and clustering-key comparisons when a partition-key filter is also present); queries without a partition-key filter fetch all data and filter locally. Enabling acceleration is therefore recommended for frequently queried tables:
 
 ```yaml
 datasets:
@@ -230,7 +230,7 @@ The following SQL operations cannot be pushed down to ScyllaDB and are performed
 - **Aggregations**: COUNT, SUM, AVG, etc. are computed locally
 - **Subqueries**: Nested queries are not supported in CQL
 - **Window functions**: RANK, ROW_NUMBER, etc. not supported
-- **Complex WHERE clauses**: CQL requires partition key in WHERE; Spice fetches all data
+- **WHERE clauses without a partition key**: Partition-key equality and clustering-key comparison (`=`, `<`, `<=`, `>`, `>=`) filters are pushed down to CQL; queries without a partition-key filter fetch all data and filter locally
 - **ORDER BY**: Sorting is done locally
 
 ### Connector Limitations
