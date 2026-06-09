@@ -123,4 +123,4 @@ Time: 0.03241875 seconds. 7 rows.
 ```
 
 **Next Steps**
-This recipe accelerates query performance using [Spice Data Accelerators](https://docs.spiceai.org/data-accelerators). Experiment with different acceleration options by editing the dataset.yaml file or removing acceleration altogether to have the Spice runtime federate the query to Dremio directly.
+This recipe accelerates query performance using [Spice Data Accelerators](https://docs.spiceai.org/components/data-accelerators). Experiment with different acceleration options by editing the dataset.yaml file or removing acceleration altogether to have the Spice runtime federate the query to Dremio directly.
