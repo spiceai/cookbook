@@ -74,7 +74,7 @@ INFO runtime: All components are loaded. Spice runtime is ready!
 
 ---
 
-## Step 6. Insert Records and Watch Them Stream
+## Step 6. Query the Streamed Record
 
 In the Spice SQL REPL (run `spice sql` in another terminal), query the table:
 
@@ -94,9 +94,9 @@ You should see the new record:
 
 ---
 
-## Step 8. Update a Record and See the Change
+## Step 7. Insert Another Record and See the Change
 
-Update the order status:
+Insert a second order — it will stream into the table:
 
 ```bash
 aws dynamodb put-item --table-name orders --item \
@@ -110,20 +110,20 @@ Query again in the SQL REPL:
 SELECT * FROM orders_stream;
 ```
 
-The status should now be updated:
+The new record should now appear:
 
 ```console
 +-----------+----------+---------+---------+
 | id        | customer | amount  | status  |
 +-----------+----------+---------+---------+
 | order-001 | Alice    | 99.99   | pending |
-| order-002 | Bob      | 199.99  | pending |
+| order-002 | Bob      | 149.99  | pending |
 +-----------+----------+---------+---------+
 ```
 
 ---
 
-## Step 9. Cleanup
+## Step 8. Cleanup
 
 To delete the DynamoDB table:
 
