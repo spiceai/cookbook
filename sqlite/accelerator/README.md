@@ -6,7 +6,7 @@ Follow this recipe to configure dataset acceleration using SQLite.
 
 _Tip: Open and refer to the [SQLite Data Accelerator](https://spiceai.org/docs/components/data-accelerators/sqlite) documentation while completing this recipe._
 
-_Tip: Follow the [Advanced Data Refresh Recipe](../data-refresh/README.md) to learn more about advanced data refresh scenarios, such as programmatically updating `refresh_sql` and triggering data refreshes._
+_Tip: Follow the [Advanced Data Refresh Recipe](../../acceleration/data-refresh/README.md) to learn more about advanced data refresh scenarios, such as programmatically updating `refresh_sql` and triggering data refreshes._
 
 ## Step 1. Initialize the Spice app
 
