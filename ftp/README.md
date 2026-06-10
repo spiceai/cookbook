@@ -82,4 +82,4 @@ Time: 0.011731833 seconds. 5 rows.
 make clean
 ```
 
-[Learn more](https://docs.spiceai.org/data-connectors/ftp) about Spice FTP/SFTP Data Connector.
+[Learn more](https://docs.spiceai.org/components/data-connectors/ftp) about Spice FTP/SFTP Data Connector.
