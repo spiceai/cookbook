@@ -1,6 +1,6 @@
 # Dataset Partitioning
 
-Works with `v1.8+`
+Works with `v1.11.0+`
 
 This recipe demonstrates how to partition accelerated datasets to improve query performance by enabling partition pruning for queries. Partitioning groups rows into separate files based on an expression, allowing Spice to skip reading unnecessary partitions during queries.
 
