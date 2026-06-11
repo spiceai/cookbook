@@ -53,7 +53,6 @@ services:
       MPS: "1" # messages per second
     volumes:
       - ./producer.py:/app/producer.py:ro
-      - ./data_generator.py:/app/data_generator.py:ro
     entrypoint: >
       sh -c "pip install -q confluent-kafka && python -u /app/producer.py"
   
