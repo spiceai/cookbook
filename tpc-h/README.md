@@ -30,7 +30,6 @@ The following output is shown in the Spice runtime terminal:
 2024/12/31 09:36:45 INFO Spice.ai runtime starting...
 2024-12-31T00:36:46.690599Z  INFO runtime::init::dataset: No datasets were configured. If this is unexpected, check the Spicepod configuration.
 2024-12-31T00:36:46.690681Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2024-12-31T00:36:46.690713Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
 2024-12-31T00:36:46.691410Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2024-12-31T00:36:46.692600Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2024-12-31T00:36:46.887621Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
@@ -77,7 +76,6 @@ show tables;
 | table_catalog | table_schema | table_name   | table_type |
 +---------------+--------------+--------------+------------+
 | spice         | runtime      | task_history | BASE TABLE |
-| spice         | runtime      | metrics      | BASE TABLE |
 | spice         | public       | customer     | BASE TABLE |
 | spice         | public       | region       | BASE TABLE |
 | spice         | public       | lineitem     | BASE TABLE |
