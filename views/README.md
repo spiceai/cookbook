@@ -2,7 +2,7 @@
 
 Works with `v1.0+`
 
-This recipe demonstrates how to use accelerated [Views](https://spiceai.org/docs/components/views) to pre-calculate and materialize data derived from one or more underlying datasets. By defining views that aggregate, join, or transform source data in advance, you can significantly improve the performance of analytical queries. In this recipe, we will create a locally accelerated view for the [TPC-H Q21 - Suppliers Who Kept Orders Waiting](https://github.com/spiceai/cookbook/tree/trunk/tpc-h) report.
+This recipe demonstrates how to use accelerated [Views](https://spiceai.org/docs/reference/spicepod/views) to pre-calculate and materialize data derived from one or more underlying datasets. By defining views that aggregate, join, or transform source data in advance, you can significantly improve the performance of analytical queries. In this recipe, we will create a locally accelerated view for the [TPC-H Q21 - Suppliers Who Kept Orders Waiting](https://github.com/spiceai/cookbook/tree/trunk/tpc-h) report.
 
 ---
 
@@ -290,4 +290,4 @@ Example output:
 
 ## Additional Resources
 
-- [Views Documentation](https://spiceai.org/docs/components/views)
+- [Views Documentation](https://spiceai.org/docs/reference/spicepod/views)
