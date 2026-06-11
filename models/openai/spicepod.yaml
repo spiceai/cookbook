@@ -1,6 +1,6 @@
 version: v1
 kind: Spicepod
-name: azure_openai
+name: openai
 
 datasets:
   - from: github:github.com/spiceai/spiceai/files/trunk
