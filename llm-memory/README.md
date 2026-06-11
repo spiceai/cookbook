@@ -106,16 +106,29 @@ You are Alice, and you work as a software engineer.
 
 ### Using Memory Tools Directly
 
+> **Note (Spice `v2.0+`):** Tool-invocation endpoints (`/v1/tools/*`) require an authentication provider to be configured on the runtime. Without `runtime.auth` these routes return `401 Unauthorized`. To call them, add an API-key provider to `spicepod.yml`:
+>
+> ```yaml
+> runtime:
+>   auth:
+>     api-key:
+>       enabled: true
+>       keys:
+>         - ${ secrets:SPICE_API_KEY }
+> ```
+>
+> and pass the key as an `x-api-key` header (shown below). Enabling `runtime.auth` applies to all endpoints, so the earlier `spice chat` step then also needs credentials (`spice chat --api-key <key>`). See the [api_key recipe](https://github.com/spiceai/cookbook/tree/trunk/api_key) for the full flow.
+
 **Step 1.** Store a memory directly
 
 ```shell
-curl -XPOST http://127.0.0.1:8090/v1/tool/store_memory -d '{"thoughts": ["Alice deserves a promotion"]}'
+curl -XPOST http://127.0.0.1:8090/v1/tools/store_memory -H "x-api-key: $SPICE_API_KEY" -d '{"thoughts": ["Alice deserves a promotion"]}'
 ```
 
 **Step 2.** Load stored memories
 
 ```shell
-curl -XPOST http://127.0.0.1:8090/v1/tool/load_memory -d '{"last": "10m"}'
+curl -XPOST http://127.0.0.1:8090/v1/tools/load_memory -H "x-api-key: $SPICE_API_KEY" -d '{"last": "10m"}'
 ```
 
 Output:
