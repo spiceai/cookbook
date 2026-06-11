@@ -49,8 +49,6 @@ Spice is configured to load the model from the `phi-3-mini` folder (downloaded i
 models:
   - from: file:phi-3-mini
     name: local_model
-    params:
-      model_type: phi3
 ```
 
 Run Spice
