@@ -214,7 +214,7 @@ spice query list --status running
 ```
 
 ```console
-QUERY ID                STATUS    CREATED                    SQL PREVIEW
+QUERY ID                STATE     CREATED                    SQL PREVIEW
 01ABC-DEF-456-7890AB    RUNNING   2026-03-02T12:00:00+00:00  SELECT * FROM data
 
 Total: 1 queries
