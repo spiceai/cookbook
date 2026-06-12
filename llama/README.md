@@ -108,7 +108,7 @@ Follow the [CUDA Toolkit installation guide](https://developer.nvidia.com/cuda-d
 ```sh
 git clone git@github.com:spiceai/spiceai.git
 cd spiceai
-make install-with-models-cuda
+make install-cuda
 ```
 
 ### For Apple M-series (Metal)
@@ -122,5 +122,5 @@ make install-with-models-cuda
 ```sh
 git clone git@github.com:spiceai/spiceai.git
 cd spiceai
-make install-with-models-metal
+make install-metal
 ```
