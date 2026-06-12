@@ -173,10 +173,10 @@ Filter pushdown example:
 
 ```sql
 EXPLAIN
-SELECT url, title, score
+SELECT url, title, _score
 FROM vector_search(pulls, 'bugs in DuckDB', 4)
 WHERE state = 'OPEN'
-ORDER BY score DESC
+ORDER BY _score DESC
 LIMIT 4;
 ```
 
@@ -186,15 +186,15 @@ Plan:
 +---------------+----------------------------------------------------------------------------------------------------------------------+
 | plan_type     | plan                                                      |
 +---------------+----------------------------------------------------------------------------------------------------------------------+
-| logical_plan  | Sort: vector_search().score DESC NULLS FIRST, fetch=4     |
-|               |   Projection: vector_search().url, vector_search().title, vector_search().score                                       |
+| logical_plan  | Sort: vector_search()._score DESC NULLS FIRST, fetch=4     |
+|               |   Projection: vector_search().url, vector_search().title, vector_search()._score                                       |
 |               |     BytesProcessedNode                                    |
-|               |       TableScan: vector_search() projection=[title, url, score], full_filters=[vector_search().state = Utf8("OPEN")]  |
-| physical_plan | SortPreservingMergeExec: [score@2 DESC], fetch=4          |
-|               |   SortExec: TopK(fetch=4), expr=[score@2 DESC], preserve_partitioning=[true]                                          |
-|               |     ProjectionExec: expr=[url@1 as url, title@0 as title, score@2 as score]                                           |
+|               |       TableScan: vector_search() projection=[title, url, _score], full_filters=[vector_search().state = Utf8("OPEN")]  |
+| physical_plan | SortPreservingMergeExec: [_score@2 DESC], fetch=4          |
+|               |   SortExec: TopK(fetch=4), expr=[_score@2 DESC], preserve_partitioning=[true]                                          |
+|               |     ProjectionExec: expr=[url@1 as url, title@0 as title, _score@2 as _score]                                           |
 |               |       BytesProcessedExec                                  |
-|               |         ProjectionExec: expr=[title@0 as title, url@1 as url, 1 - distance@2 as score]                                |
+|               |         ProjectionExec: expr=[title@0 as title, url@1 as url, 1 - distance@2 as _score]                                |
 |               |           RepartitionExec: partitioning=RoundRobinBatch(10), input_partitions=1                                       |
 |               |             BytesProcessedExec                            |
 |               |               **S3VectorsQueryExec: filter={state:{$eq:"OPEN"}} limit=4**                                             |
@@ -242,7 +242,7 @@ Response:
       "primary_key": {
         "id": "PR_kwDOF31SUc6fp25h"
       },
-      "score": 0.6213145852088928,
+      "_score": 0.6213145852088928,
       "dataset": "pulls"
     },
     {
@@ -256,7 +256,7 @@ Response:
       "primary_key": {
         "id": "PR_kwDOF31SUc6fpWVh"
       },
-      "score": 0.2575995922088623,
+      "_score": 0.2575995922088623,
       "dataset": "pulls"
     },
     {
@@ -270,7 +270,7 @@ Response:
       "primary_key": {
         "id": "PR_kwDOF31SUc6fy91T"
       },
-      "score": 0.2575995922088623,
+      "_score": 0.2575995922088623,
       "dataset": "pulls"
     },
     {
@@ -284,7 +284,7 @@ Response:
       "primary_key": {
         "id": "PR_kwDOF31SUc6fT_8S"
       },
-      "score": 0.24210351705551147,
+      "_score": 0.24210351705551147,
       "dataset": "pulls"
     }
   ],
@@ -385,7 +385,7 @@ curl --request POST \
       "primary_key": {
         "path": "guides/security-analyzer/README.md"
       },
-      "score": 0.4742351770401001,
+      "_score": 0.4742351770401001,
       "dataset": "spiceai.cookbook_readme"
     },
     {
@@ -395,7 +395,7 @@ curl --request POST \
       "primary_key": {
         "path": "catalogs/databricks/README.md"
       },
-      "score": 0.3918114900588989,
+      "_score": 0.3918114900588989,
       "dataset": "spiceai.cookbook_readme"
     }
   ],
