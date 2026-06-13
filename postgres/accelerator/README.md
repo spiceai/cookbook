@@ -55,7 +55,7 @@ spice init postgres-demo
 cd postgres-demo
 ```
 
-**Step 3.** [Login](https://docs.spiceai.org/cli/reference/login) to use the [Spice.ai Data Connector](https://docs.spiceai.org/data-connectors/spiceai).
+**Step 3.** [Login](https://docs.spiceai.org/cli/reference/login) to use the [Spice.ai Data Connector](https://docs.spiceai.org/components/data-connectors/spiceai).
 
 ```bash
 spice login
