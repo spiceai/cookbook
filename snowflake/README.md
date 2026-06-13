@@ -153,7 +153,7 @@ Output:
 Time: 1.398187833 seconds. 4 rows.
 ```
 
-**Step 7. (Optional)** Enable [Data Acceleration](https://docs.spiceai.org/data-accelerators)
+**Step 7. (Optional)** Enable [Data Acceleration](https://docs.spiceai.org/components/data-accelerators)
 
 Use text editor to update `spicepod.yaml`
 
