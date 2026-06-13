@@ -162,7 +162,7 @@ A Intrepid Reflection of a Waitress And a A Shark who must Kill a Squirrel in Th
 Time: 32ms. 10 results.
 ```
 
-Or using API: https://docs.spiceai.org/api/http/search
+Or using API: https://docs.spiceai.org/api/HTTP/post-search
 
 ```shell
 curl -X POST http://localhost:8090/v1/search \
