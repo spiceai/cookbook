@@ -182,5 +182,5 @@ The caching accelerator is ideal for:
 
 ## Learn More
 
-- [Caching Accelerator Documentation](https://docs.spiceai.org/features/data-accelerators/refresh-modes/caching)
+- [Caching Accelerator Documentation](https://docs.spiceai.org/features/data-acceleration/refresh-modes/caching)
 - [HTTPS Connector Documentation](https://docs.spiceai.org/components/data-connectors/https)
