@@ -11,7 +11,7 @@ The Elasticsearch connector can also power `vector_search`, `text_search`, and `
 
 ## Prerequisites
 
-- [Spice CLI](https://docs.spiceai.org/getting-started) installed
+- **Spice with Elasticsearch support**: the Elasticsearch connector is not included in the released binaries. Build and run Spice with the `elasticsearch` feature enabled, e.g. `cargo run --release --features elasticsearch -p spiced`. See the [Elasticsearch Data Connector documentation](https://spiceai.org/docs/components/data-connectors/elasticsearch) for details.
 - Docker installed
 
 ## Getting Started
