@@ -37,7 +37,7 @@ datasets:
 spice run
 ```
 
-Confirm in the terminal output the `taxi_trips` dataset has been loaded:
+Confirm in the terminal output the `taxi_trips` dataset has been registered:
 
 ```bash
 2025/07/14 08:50:13 INFO Checking for latest Spice runtime release...
@@ -45,13 +45,10 @@ Confirm in the terminal output the `taxi_trips` dataset has been loaded:
 2025-07-14T15:50:15.370061Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
 2025-07-14T15:50:15.370199Z  INFO runtime::init::caching: Initialized search results cache;
 2025-07-14T15:50:15.732242Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-07-14T15:50:15.732235Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2025-07-14T15:50:15.734062Z  INFO runtime::init::dataset: Initializing dataset taxi_trips
 2025-07-14T15:50:15.738931Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2025-07-14T15:50:16.608896Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled.
-2025-07-14T15:50:16.610030Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
-2025-07-14T15:50:29.423673Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (399.41 MiB) for dataset taxi_trips in 12s 813ms.
-2025-07-14T15:50:29.494757Z  INFO runtime: All components are loaded. Spice runtime is ready!
+2025-07-14T15:50:16.608896Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), results cache enabled.
+2025-07-14T15:50:16.610030Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
 **Step 4.** Run queries against the dataset using the Spice SQL REPL.
