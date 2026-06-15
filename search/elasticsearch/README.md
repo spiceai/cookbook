@@ -201,7 +201,7 @@ Time: 0.274407607 seconds. 3 rows.
 
 ### Hybrid Search with RRF
 
-Fuse BM25 and vector results with [Reciprocal Rank Fusion (RRF)](https://spiceai.org/docs/next/features/search#hybrid-search-with-rrf) for the best of both search modes:
+Fuse BM25 and vector results with [Reciprocal Rank Fusion (RRF)](https://spiceai.org/docs/features/search#hybrid-search-with-rrf) for the best of both search modes:
 
 ```sql
 SELECT id, title, category, _fused_score
@@ -421,7 +421,7 @@ This means a single Elasticsearch cluster serves all search modalities, keeping 
 
 - [Elasticsearch Documentation](https://spiceai.org/docs/components/vectors/elasticsearch)
 
-- [Full-Text Search Documentation](https://spiceai.org/docs/features/search/full-text-search)
+- [Full-Text Search Documentation](https://spiceai.org/docs/features/search/full-text)
 - [Vector Search Documentation](https://spiceai.org/docs/features/search/vector-search)
 - [Hybrid Search with RRF](https://spiceai.org/docs/features/search#hybrid-search-with-rrf)
 - [Datasets Reference](https://spiceai.org/docs/reference/spicepod/datasets)
