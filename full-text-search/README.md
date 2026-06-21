@@ -1,6 +1,6 @@
 # Full-Text Search with Spice
 
-Works with `v1.0+`
+Works with `v2.0+`
 
 Full-text search uses BM25 scoring to retrieve records matching keywords in indexed columns. This cookbook demonstrates how to configure and query full-text search indexes on markdown files from the Spice cookbook repository.
 
