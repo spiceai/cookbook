@@ -1,6 +1,6 @@
 # MongoDB Data Connector
 
-Works with `v1.0+`
+Works with `v1.6.0+`
 
 This recipe will use a demo instance of MongoDB with a generated dataset. Follow the recipe to create MongoDB instance and get started with MongoDB as a Data Connector.
 
@@ -130,10 +130,8 @@ Confirm in the terminal output the `sample_data` dataset has been loaded:
 ```bash
 2025/01/13 11:52:51 INFO Spice.ai runtime starting...
 2025-01-13T19:52:51.473621Z  INFO runtime::init::dataset: Initializing dataset sample_data
-2025-01-13T19:52:51.474059Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
 2025-01-13T19:52:51.474795Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-01-13T19:52:51.474869Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-01-13T19:52:51.481201Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2025-01-13T19:52:51.491591Z  INFO runtime::init::dataset: Dataset sample_data registered (mongodb:sample_data).
 2025-01-13T19:52:51.673260Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
 ```
@@ -177,7 +175,7 @@ Time: 0.011687958 seconds. 10 rows.
 
 For more information on using `spice sql`, see the [CLI reference](https://docs.spiceai.org/cli/reference/sql).
 
-**Step 6.** Cleanup
+**Step 7.** Cleanup
 
 ```bash
 docker rm -f mongodb-cookbook
