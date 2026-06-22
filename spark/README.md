@@ -205,7 +205,7 @@ docker compose down --volumes --rmi local
 
 ### Spark 4
 
-1. Navigate to `spark-4` folder and start the Docker Compose stack, which includes a Spark 4.0.0 instance and init notebook to load the NYC taxi trip parquet data:
+1. Navigate to `spark-4` folder and start the Docker Compose stack, which includes a Spark 4.0.2 instance and init notebook to load the NYC taxi trip parquet data:
 
 ```shell
 docker compose up -d
