@@ -1,6 +1,6 @@
 # Microsoft SQL Server Catalog Connector
 
-Works with `v1.0+`
+Works with `v2.0+`
 
 The Microsoft SQL Server Catalog Connector enables Spice to automatically discover and query all schemas and tables in an MSSQL database. This recipe demonstrates the connector using the standard TPC-H benchmark dataset (Scale Factor 1) with full foreign key constraints defined between tables.
 
