@@ -1,6 +1,6 @@
 # MongoDB Data Connector
 
-Works with `v1.0+`
+Works with `v1.6+`
 
 This recipe will use a demo instance of MongoDB with a generated dataset. Follow the recipe to create MongoDB instance and get started with MongoDB as a Data Connector.
 
@@ -177,7 +177,7 @@ Time: 0.011687958 seconds. 10 rows.
 
 For more information on using `spice sql`, see the [CLI reference](https://docs.spiceai.org/cli/reference/sql).
 
-**Step 6.** Cleanup
+**Step 7.** Cleanup
 
 ```bash
 docker rm -f mongodb-cookbook
