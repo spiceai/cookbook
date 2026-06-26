@@ -1,6 +1,6 @@
 # Model Context Protocol with Spice
 
-Works with `v1.0+`
+Works with `v2.0+`
 
 ## Prerequisties
 
