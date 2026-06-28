@@ -21,7 +21,7 @@ wget https://public-data.spiceai.org/large_eth_traces.parquet
 
 **Step 2.** Start Spice
 
-Spice will start and load the dataset into sqlite. **This may take several minutes.**
+Spice will start and load the dataset into DuckDB. **This may take several minutes.**
 
 ```bash
 spice run
