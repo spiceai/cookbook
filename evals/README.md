@@ -2,6 +2,8 @@
 
 Deprecated in `v2.0+`. Works with `v1.0+`
 
+> **Note:** The evaluation subsystem this recipe relies on — the `evals:` / `scorers:` spicepod config, the `POST /v1/evals/{eval}` endpoint, and the `eval.results` table — was removed in Spice `v2.0.0`. Run this recipe with a Spice `v1.x` release.
+
 Spice can be used to both run language models but also to evaluate their performance on specific tasks.
 
 This recipe demonstrates how to measure the performance of a language model, configured entirely in the spice runtime.
