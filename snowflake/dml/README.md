@@ -84,10 +84,9 @@ Spice.ai runtime starting...
 2026-05-10T22:03:07.237660Z  INFO runtime::init::worker: Scheduler for worker [ingest_tvmaze_shows] created successfully
 2026-05-10T22:03:07.246890Z  INFO runtime::init::dataset: Dataset tvmaze_shows_raw registered (https://api.tvmaze.com/shows), results cache enabled. duration_ms=0
 2026-05-10T22:03:07.250581Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2026-05-10T22:03:10.209492Z  INFO runtime::init::dataset: Dataset tv_shows_ro registered (snowflake:SPICE_DEMO.PUBLIC."TV_SHOWS"), results cache enabled. duration_ms=0
 2026-05-10T22:03:11.936902Z  INFO runtime::init::dataset: Dataset tv_shows registered (snowflake:SPICE_DEMO.PUBLIC."TV_SHOWS"), results cache enabled. duration_ms=1865
 2026-05-10T22:03:12.039156Z  INFO runtime: All components are loaded. Spice runtime is ready!
-2026-05-10T22:03:37.238925Z  INFO runtime::init::dataset: Dataset load summary (after 30s): 4/4 ready, 0 unhealthy, 0 still initializing.
+2026-05-10T22:03:37.238925Z  INFO runtime::init::dataset: Dataset load summary (after 30s): 2/2 ready, 0 unhealthy, 0 still initializing.
 ```
 
 ## Step 4. Wait for the ingestion worker to run
