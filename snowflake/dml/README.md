@@ -6,7 +6,7 @@ Works with `v2.0+`
 
 ## Pre-requisites
 
-- Spice `v2.0+` — [Install Spice](https://docs.spiceai.org/getting-started/installation)
+- Spice `v2.0+` — [Install Spice](https://docs.spiceai.org/getting-started)
 - [A Snowflake account](https://signup.snowflake.com/)
 
 ## Step 1. Create the destination table in Snowflake
