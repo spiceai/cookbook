@@ -1,6 +1,6 @@
 # Using OpenAI's Responses API with Spice
 
-Works with `v1.10+`
+Works with `v1.6+`
 
 This recipe shows how Spice integrates with [OpenAI's Responses API](https://platform.openai.com/docs/api-reference/responses), OpenAI's most advanced interface for generating model responses, supporting both hosted and custom tool calls. This recipe also covers how to use the OpenAI SDK's support for the Responses API to connect to compatible models running on Spice.
 
