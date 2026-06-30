@@ -114,7 +114,6 @@ show tables;
 +---------------+--------------+---------------+------------+
 | spice         | public       | taxi_trips    | BASE TABLE |
 | spice         | runtime      | task_history  | BASE TABLE |
-| spice         | runtime      | metrics       | BASE TABLE |
 +---------------+--------------+---------------+------------+
 
 Time: 0.010070708 seconds. 2 rows.
@@ -205,7 +204,7 @@ SPICE_S3_KEY=<aws_access_key_id>
 SPICE_S3_SECRET=<aws_secret_access_key>
 ```
 
-**Step 6.** Configure spicepod to contain correct s3_region
+**Step 5.** Configure spicepod to contain correct s3_region
 
 s3_region parameter [defaults to us-east-1](https://docs.spiceai.org/components/data-connectors/s3). Update the spicepod to include s3_region parameter if the s3 bucket used in this recipe is not in `us-east-1`
 
