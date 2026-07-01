@@ -72,27 +72,27 @@ embeddings:
 
 #         **Basic hybrid search:**
 #         ```sql
-#         SELECT fused_score, text, created_at
+#         SELECT _fused_score, text, created_at
 #         FROM rrf(
 #             text_search(bluesky_posts, 'breaking news'),
 #             vector_search(bluesky_posts, 'latest updates')
 #         )
-#         ORDER BY fused_score DESC LIMIT 10;
+#         ORDER BY _fused_score DESC LIMIT 10;
 #         ```
 
 #         **With rank weighting (within individual searches):**
 #         ```sql
-#         SELECT fused_score, text, rkey
+#         SELECT _fused_score, text, rkey
 #         FROM rrf(
 #             text_search(bluesky_posts, 'climate change', rank_weight => 300.0),
 #             vector_search(bluesky_posts, 'environmental crisis', rank_weight => 100.0)
 #         )
-#         ORDER BY fused_score DESC LIMIT 15;
+#         ORDER BY _fused_score DESC LIMIT 15;
 #         ```
 
 #         **With recency boosting (exponential decay):**
 #         ```sql
-#         SELECT fused_score, text, created_at
+#         SELECT _fused_score, text, created_at
 #         FROM rrf(
 #             text_search(bluesky_posts, 'market crash'),
 #             vector_search(bluesky_posts, 'financial crisis'),
@@ -101,12 +101,12 @@ embeddings:
 #             decay_constant => 0.1,
 #             decay_scale_secs => 3600
 #         )
-#         ORDER BY fused_score DESC LIMIT 10;
+#         ORDER BY _fused_score DESC LIMIT 10;
 #         ```
 
 #         **With linear decay and custom join key:**
 #         ```sql
-#         SELECT fused_score, text, rkey, created_at
+#         SELECT _fused_score, text, rkey, created_at
 #         FROM rrf(
 #             text_search(bluesky_posts, 'election results'),
 #             vector_search(bluesky_posts, 'voting outcomes'),
@@ -115,18 +115,18 @@ embeddings:
 #             recency_decay => 'linear',
 #             decay_window_secs => 86400
 #         )
-#         ORDER BY fused_score DESC LIMIT 20;
+#         ORDER BY _fused_score DESC LIMIT 20;
 #         ```
 
 #         **With custom k parameter:**
 #         ```sql
-#         SELECT fused_score, text, langs
+#         SELECT _fused_score, text, langs
 #         FROM rrf(
 #             text_search(bluesky_posts, 'technology trends'),
 #             vector_search(bluesky_posts, 'tech innovation'),
 #             k => 20.0
 #         )
-#         ORDER BY fused_score DESC LIMIT 12;
+#         ORDER BY _fused_score DESC LIMIT 12;
 #         ```
 
 #         When answering questions:
