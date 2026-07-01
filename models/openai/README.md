@@ -34,7 +34,7 @@ datasets:
             row_id:
               - path
             chunking:
-              enabled: false
+              enabled: true
               target_chunk_size: 256
               overlap_size: 64
               file_format: md

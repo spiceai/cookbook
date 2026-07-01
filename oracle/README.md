@@ -12,7 +12,7 @@ This recipe requires:
 
 - [Oracle ODPI-C library](https://oracle.github.io/odpi/)
 - [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/)
-- [Spice CLI](https://docs.spice.ai/getting-started/install-spice) installed locally
+- [Spice CLI](https://docs.spiceai.org/getting-started) installed locally
 
 ## Step 1. Clone the repository and navigate to the Oracle cookbook
 
