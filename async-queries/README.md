@@ -29,6 +29,12 @@ git clone https://github.com/spiceai/cookbook.git
 cd cookbook/async-queries
 ```
 
+This recipe stores scheduler/job state at the absolute local path `/tmp/spiceai-async-queries/scheduler-state`. To reset local async query state between runs, remove the directory:
+
+```bash
+rm -rf /tmp/spiceai-async-queries
+```
+
 ### Step 2: Generate Development mTLS Certificates
 
 Generate mTLS certificates for the scheduler and executor:
@@ -41,7 +47,7 @@ spice cluster tls add executor1
 
 ### Step 3: Start the Spice Scheduler
 
-Start the scheduler with cluster mode and the `scheduler.state_location` configured in the `spicepod.yaml`:
+Start the scheduler with cluster mode and the absolute `scheduler.state_location` configured in the `spicepod.yaml`:
 
 ```bash
 ~/.spice/bin/spiced --role scheduler \
