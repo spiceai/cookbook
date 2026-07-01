@@ -37,7 +37,7 @@ spice run
 
 ```bash
 MAVEN_OPTS="--add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED" \
-mvn exec:java \
+mvn exec:exec \
   -Dexec.mainClass="MessagingServiceApp"
 ```
 
