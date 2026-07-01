@@ -59,6 +59,10 @@ version: v1
 kind: Spicepod
 name: distributed-query
 
+runtime:
+  scheduler:
+    state_location: file:///tmp/spice-cluster
+
 datasets:
   - from: s3://spiceai-public-datasets/hive_partitioned_data/
     name: data

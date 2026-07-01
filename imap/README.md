@@ -6,7 +6,7 @@ Follow these steps to get started with the IMAP Data Connector, connecting to an
 
 ## Pre-requisites
 
-- The latest version of Spice. [Install Spice](https://docs.spiceai.org/getting-started/installation).
+- The latest version of Spice. [Install Spice](https://docs.spiceai.org/getting-started).
 - An IMAP server with configured mailboxes, to login using a username (email) and password.
 
 ## Steps

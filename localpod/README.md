@@ -14,7 +14,7 @@ datasets:
     name: time_series
     description: taxi trips in s3
     params:
-      file_format: parquet
+      file_format: csv
     acceleration:
       enabled: true
       refresh_check_interval: 15s
