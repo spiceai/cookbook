@@ -6,7 +6,7 @@ Follow these steps to get started with Clickhouse as a Data Connector.
 
 ## Preparation
 
-- Install the [Spice.ai CLI](https://docs.spiceai.org/getting-started/installation)
+- Install the [Spice.ai CLI](https://docs.spiceai.org/getting-started)
 - Install [Clickhouse](https://clickhouse.com/docs/en/install#quick-install)
   - `curl https://clickhouse.com/ | sh`
 - Start a Clickhouse instance (`clickhouse server`)
