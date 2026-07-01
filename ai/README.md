@@ -292,7 +292,7 @@ Add to `spicepod.yaml`:
 ```yaml
 models:
   - name: sonnet-4-5
-    from: anthropic:claude-4-5-sonnet
+    from: anthropic:claude-sonnet-4-5
     params:
       anthropic_api_key: ${secrets:ANTHROPIC_API_KEY}
 ```
@@ -313,7 +313,7 @@ Then use in queries:
 SELECT
   ai('Hello!', 'gpt-4o-mini') as openai_response,
   ai('Hello!', 'sonnet-4-5') as claude_response,
-  ai('Hello!', 'grok-4-1-fast-non-reasoning') as grok_response;
+  ai('Hello!', 'grok-4-1-fast') as grok_response;
 ```
 
 ## Real-World Use Cases
@@ -387,6 +387,6 @@ Check the Spice logs for error messages:
 ## Next Steps
 
 - Explore the [text-to-sql](../text-to-sql) cookbook for natural language to SQL
-- Check out [vector search](../vectors) for semantic search capabilities
+- Check out [vector search](../vectors/s3) for semantic search capabilities
 - Try [embeddings](../search) for similarity search
 - Learn about [LLM tools](https://docs.spiceai.org/features/large-language-models/tools) for more advanced AI integration
