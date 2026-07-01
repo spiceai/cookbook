@@ -1,6 +1,6 @@
 # Live Orders Analytics with Apache Kafka Data Connector
 
-Works with `v1.0+`
+Works with `v1.6.0+`
 
 In this recipe, you'll learn how to combine real-time data streaming from Kafka with other datasets using federated queries. The setup uses Apache Kafka with a test producer generating order events to the `orders_events` topic. The Spice runtime consumes these events, keeping an accelerated `orders` dataset updated in real time, enabling you to join this live data with other sources (such as S3 TPC-H benchmark data) for powerful analytics.
 
@@ -70,7 +70,6 @@ Observe that Spice loads data from the configured Kafka topic into the `orders` 
 2025-08-24T05:06:40.086387Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
 2025-08-24T05:06:40.086548Z  INFO runtime::init::caching: Initialized search results cache;
 2025-08-24T05:06:40.525189Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-08-24T05:06:40.534247Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2025-08-24T05:06:40.538475Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-08-24T05:06:40.575784Z  INFO runtime::init::dataset: Dataset nation initializing...
 2025-08-24T05:06:40.575784Z  INFO runtime::init::dataset: Dataset supplier initializing...
