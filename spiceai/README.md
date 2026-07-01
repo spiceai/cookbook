@@ -135,6 +135,6 @@ Time: 0.852775583 seconds. 10 rows.
 ```
 
 **Next Steps**
-This recipe queries the Spice.ai Cloud Platform directly without any acceleration. Experiment with different acceleration options using [Spice Data Accelerators](https://docs.spiceai.org/data-accelerators).
+This recipe queries the Spice.ai Cloud Platform directly without any acceleration. Experiment with different acceleration options using [Spice Data Accelerators](https://docs.spiceai.org/components/data-accelerators).
 
 View the [Spice.ai documentation](https://docs.spice.ai/building-blocks/datasets) and search on [spicerack.org](https://spicerack.org/) to explore and experiment with retrieving and accelerating multiple datasets to use with Spice.
