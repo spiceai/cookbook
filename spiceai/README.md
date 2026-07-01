@@ -89,7 +89,11 @@ cat datasets/taxi_trips/dataset.yaml
 from: spice.ai/spiceai/quickstart/datasets/taxi_trips
 name: taxi_trips
 description: Taxi trips in New York City
+params:
+  spiceai_region: us-east-1
 ```
+
+The `spiceai_region` parameter selects which Spice Cloud region to source the dataset from. Run `spice cloud regions` to list available regions.
 
 The Spice runtime terminal will show that the dataset has been loaded:
 
