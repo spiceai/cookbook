@@ -1,6 +1,6 @@
 # GitHub Data Connector
 
-Works with `v1.0+`
+Works with `v1.6+`
 
 This recipe will use the [spiceai/spiceai](https://github.com/spiceai/spiceai) repo for a demo.
 
