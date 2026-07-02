@@ -1,6 +1,6 @@
 # HTTP Data Connector
 
-Works with `v1.0+`
+Works with `v2.0+`
 
 The HTTP(s) data connector enables querying data from HTTP(s) endpoints such as REST APIs. The connector supports dynamic query construction and data refresh through SQL-based filtering, making it ideal for integrating external APIs and web-hosted datasets into your Spice application.
 
@@ -8,7 +8,7 @@ This recipe demonstrates how to use the HTTP connector with the [TVMaze API](htt
 
 ## Pre-requisites
 
-- The latest version of Spice. [Install Spice](https://docs.spiceai.org/getting-started/installation)
+- The latest version of Spice. [Install Spice](https://docs.spiceai.org/getting-started)
 - An HTTP(s) endpoint that returns data in a [supported file format](https://docs.spiceai.org/components/data-connectors#object-store-file-formats)
 
 ## Configuration
@@ -159,7 +159,7 @@ Time: 0.336182833 seconds. 40 rows.
 
 ### Processing JSON Responses
 
-TVMaze API responses contain nested JSON. Use [JSON functions](/docs/reference/sql/json) to extract specific fields:
+TVMaze API responses contain nested JSON. Use [JSON functions](https://docs.spiceai.org/reference/sql/json) to extract specific fields:
 
 ```sql
 -- Extract show details from JSON response
