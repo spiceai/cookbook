@@ -75,8 +75,8 @@ $ spice pods
 ```bash
 $ spice pods --api-key foobar
 
-VERSION NAME    DATASETSCOUNT MODELSCOUNT DEPENDENCIESCOUNT
-v1      api_key 0             0           0
+NAME    VERSION DATASETS MODELS DEPENDENCIES
+api_key v1      0        0      0
 ```
 
 ## SQL REPL
