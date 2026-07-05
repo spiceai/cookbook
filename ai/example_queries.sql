@@ -2,16 +2,8 @@
 -- Copy and paste these into the Spice SQL REPL (spice sql)
 
 -- ==============================================
--- BASIC-- 18. Use AI in WHERE clause (expensive - use sparingly!)
--- SELECT Zone 
--- FROM taxi_zones
--- WHERE ai(concat('Is ', Zone, ' a residential area? Answer yes or no'), 'gpt-4o-mini') = 'yes'
--- LIMIT 5;
-
--- 19. Generate structured data
-SELECT 
-  'Product Analysis' as task,
-  ai('List 3 features of a smartphone, separated by commas', 'gpt-4o-mini') as features;-- ==============================================
+-- BASIC
+-- ==============================================
 
 -- 1. Simple greeting
 SELECT ai('Say hello!', 'gpt-4o-mini') as greeting;
@@ -166,7 +158,7 @@ LIMIT 3;
 -- WHERE ai(concat('Is ', Zone, ' a residential area? Answer yes or no'), 'gpt-4o-mini') = 'yes'
 -- LIMIT 5;
 
--- 18. Generate structured data
+-- 19. Generate structured data
 SELECT 
   'Product Analysis' as task,
   ai('List 3 features of a smartphone, separated by commas', 'gpt-4o-mini') as features;
@@ -187,12 +179,12 @@ SELECT
 -- ==============================================
 
 -- 21. View recent AI tasks
-SELECT 
-  task_id,
+SELECT
+  trace_id,
   task,
-  execution_time,
+  execution_duration_ms,
   left(captured_output, 50) as output_preview
 FROM runtime.task_history
 WHERE task = 'ai'
-ORDER BY captured_at DESC
+ORDER BY start_time DESC
 LIMIT 10;
