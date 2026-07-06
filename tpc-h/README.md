@@ -76,14 +76,14 @@ show tables;
 | table_catalog | table_schema | table_name   | table_type |
 +---------------+--------------+--------------+------------+
 | spice         | runtime      | task_history | BASE TABLE |
-| spice         | public       | customer     | BASE TABLE |
-| spice         | public       | region       | BASE TABLE |
-| spice         | public       | lineitem     | BASE TABLE |
-| spice         | public       | partsupp     | BASE TABLE |
-| spice         | public       | part         | BASE TABLE |
-| spice         | public       | nation       | BASE TABLE |
-| spice         | public       | orders       | BASE TABLE |
-| spice         | public       | supplier     | BASE TABLE |
+| spice         | tpch         | customer     | BASE TABLE |
+| spice         | tpch         | region       | BASE TABLE |
+| spice         | tpch         | lineitem     | BASE TABLE |
+| spice         | tpch         | partsupp     | BASE TABLE |
+| spice         | tpch         | part         | BASE TABLE |
+| spice         | tpch         | nation       | BASE TABLE |
+| spice         | tpch         | orders       | BASE TABLE |
+| spice         | tpch         | supplier     | BASE TABLE |
 +---------------+--------------+--------------+------------+
 
 Time: 0.006163958 seconds. 9 rows.
