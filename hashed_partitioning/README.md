@@ -108,5 +108,5 @@ In this case, only one partitioned file is relevant for scanning and remains in 
 
 ## Learn more
 
-[DuckDB Partitioning Documentation](https://spiceai.org/docs/components/data-accelerators/duckdb#partitioning)
+[DuckDB Partitioning Documentation](https://spiceai.org/docs/components/data-accelerators/duckdb)
 [Data Acceleration](https://spiceai.org/docs/features/data-acceleration)
