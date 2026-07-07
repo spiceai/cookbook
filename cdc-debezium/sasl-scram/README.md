@@ -53,7 +53,7 @@ kind: Spicepod
 name: cdc-debezium-sasl-scram
 
 datasets:
-  - from: debezium:cdc.public.customer_addresses
+  - from: debezium:cdc.inventory.customer_addresses
     name: cdc
     params:
       debezium_transport: kafka
@@ -87,7 +87,7 @@ spice run
 Observe that it consumes all of the changes. It should look like:
 
 ```bash
-2024-07-01T12:39:22.207145Z  INFO runtime: Dataset cdc registered (debezium:cdc.public.customer_addresses), acceleration (duckdb:file, changes), results cache enabled.
+2024-07-01T12:39:22.207145Z  INFO runtime: Dataset cdc registered (debezium:cdc.inventory.customer_addresses), acceleration (sqlite:file, changes), results cache enabled.
 2024-07-01T12:39:22.677117Z  INFO runtime::accelerated_table::refresh_task::changes: Upserting data row for cdc with id=3
 2024-07-01T12:39:22.692018Z  INFO runtime::accelerated_table::refresh_task::changes: Upserting data row for cdc with id=4
 ...
@@ -128,7 +128,7 @@ SELECT * FROM cdc;
 Now let's see what happens when we stop Spice and restart it. The data should still be there and it should not replay all of the changes from the beginning.
 
 ```bash
-2024-08-26T22:30:16.715586Z  INFO runtime: Dataset cdc registered (debezium:cdc.public.customer_addresses), acceleration (sqlite:file, changes), results cache enabled.
+2024-08-26T22:30:16.715586Z  INFO runtime: Dataset cdc registered (debezium:cdc.inventory.customer_addresses), acceleration (sqlite:file, changes), results cache enabled.
 ```
 
 Stop spice with `Ctrl+C`
@@ -144,7 +144,7 @@ Spice.ai runtime starting...
 2024-07-29T23:22:04.304011Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2024-07-29T23:22:04.303850Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
 2024-07-29T23:22:04.306271Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2024-07-29T23:22:04.331209Z  INFO runtime: Dataset cdc registered (debezium:cdc.public.customer_addresses), acceleration (duckdb:file, changes), results cache enabled.
+2024-07-29T23:22:04.331209Z  INFO runtime: Dataset cdc registered (debezium:cdc.inventory.customer_addresses), acceleration (sqlite:file, changes), results cache enabled.
 ```
 
 ## Clean up
