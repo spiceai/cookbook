@@ -1,0 +1,24 @@
+version: v1
+kind: Spicepod
+name: postgres-cdc
+
+datasets:
+  - from: postgres:orders
+    name: orders
+    params:
+      pg_host: localhost
+      pg_port: 5434
+      pg_db: spice_demo
+      pg_sslmode: disable
+      pg_user: postgres
+      pg_pass: ${secrets:PG_PASS}
+      pg_replication_slot: spice_orders
+      pg_replication_initial_snapshot: 'true'
+    acceleration:
+      enabled: true
+      engine: duckdb
+      mode: file
+      refresh_mode: changes
+      primary_key: id
+      on_conflict:
+        id: upsert

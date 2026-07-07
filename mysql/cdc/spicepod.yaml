@@ -1,0 +1,22 @@
+version: v1
+kind: Spicepod
+name: mysql-cdc
+
+datasets:
+  - from: mysql:spice_demo.orders
+    name: orders
+    params:
+      mysql_host: localhost
+      mysql_tcp_port: 3308
+      mysql_db: spice_demo
+      mysql_sslmode: disabled
+      mysql_user: spice
+      mysql_pass: ${secrets:MYSQL_PASS}
+    acceleration:
+      enabled: true
+      engine: duckdb
+      mode: file
+      refresh_mode: changes
+      primary_key: id
+      on_conflict:
+        id: upsert
