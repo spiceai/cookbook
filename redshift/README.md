@@ -44,6 +44,8 @@ PG_PASS=hGG3ellothere$$$$
 
 ## Step 3: Writing Data into Redshift
 
+> **Note:** The `write` spicepod accelerates data into Redshift using the PostgreSQL data accelerator (`engine: postgresql`). This accelerator is _not_ included in the released Spice binaries — tagged releases are built without the `postgres-accel` feature, so a stock-installed runtime rejects it with `Unknown engine: postgres`. Build and run Spice with the feature enabled, e.g. `cargo run --release --features release,models,postgres-accel -p spiced`. (The `read` spicepod in Step 4 uses the default in-memory `arrow` accelerator and runs on the standard binary.)
+
 To write data into Redshift, navigate to the `write` directory and start Spice using the following command:
 
 ```bash
