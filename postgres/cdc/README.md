@@ -4,7 +4,9 @@ Works with `v2.0+`
 
 This recipe demonstrates how to stream real-time changes from a PostgreSQL table into Spice using native Change Data Capture (CDC) over [logical replication](https://www.postgresql.org/docs/current/logical-replication.html) (WAL streaming). Inserts, updates, and deletes propagate automatically to the Spice accelerator — no Debezium or Kafka required.
 
-Spice reads the write-ahead log (WAL) through a replication slot and applies row-level changes by primary key. The dataset first bootstraps from a consistent snapshot, then streams live changes from the slot so replication resumes from where it left off after a restart.
+Through a replication slot, PostgreSQL streams decoded WAL changes to Spice, which applies them by primary key. The dataset first bootstraps from a consistent snapshot, then follows the slot so replication resumes from where it left off after a restart.
+
+> **Note:** Each replication slot runs a dedicated `walsender` process on the PostgreSQL server and holds back WAL until Spice has consumed it, so every streamed dataset adds some load on the source. Keep this in mind when streaming many tables from one server.
 
 ## Prerequisites
 
