@@ -13,7 +13,7 @@ datasets:
 
 models:
   - from: openai:gpt-4o-mini
-    name: nql
+    name: nsql
     params:
       openai_api_key: ${ secrets:SPICE_OPENAI_API_KEY }
   # - name: local
