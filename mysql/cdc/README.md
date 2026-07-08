@@ -1,6 +1,6 @@
 # MySQL CDC (Binlog Replication)
 
-Works with `v2.0+`
+Works with `v2.2.0+`
 
 This recipe demonstrates how to stream real-time changes from a MySQL table into Spice using native Change Data Capture (CDC) over the MySQL [binary log](https://dev.mysql.com/doc/refman/8.0/en/binary-log.html). Inserts, updates, and deletes propagate automatically to the Spice accelerator — no Debezium or Kafka required.
 
