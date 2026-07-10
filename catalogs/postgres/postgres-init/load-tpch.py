@@ -1,12 +1,18 @@
 #!/usr/bin/env python3
 """
 Download TPC-H SF1 parquet files and load them into PostgreSQL with
-primary keys, proper types, and foreign key constraints.
+primary keys, proper types, foreign key constraints, and the standard
+TPC-H secondary indexes.
 
 Creation order respects FK dependencies:
   region → nation → part, supplier, customer
   supplier + part → partsupp
   customer → orders → lineitem
+
+Secondary indexes are created after the bulk load (faster than maintaining
+them during COPY). Without the composite lineitem(l_partkey, l_suppkey) index,
+correlated-subquery queries such as TPC-H Q20 fall back to full 6M-row scans
+and are effectively unrunnable.
 """
 
 import time
@@ -139,6 +145,31 @@ CREATE TABLE IF NOT EXISTS lineitem (
 );
 """
 
+# ---------------------------------------------------------------------------
+# Secondary indexes – created after the bulk load. These mirror the standard
+# TPC-H index set; the lineitem(l_partkey)/l_suppkey indexes in particular are
+# required for correlated-subquery queries like Q20 to run in reasonable time.
+# ---------------------------------------------------------------------------
+
+INDEXES = """
+CREATE INDEX IF NOT EXISTS idx_region_name               ON region(r_name);
+CREATE INDEX IF NOT EXISTS idx_nation_region             ON nation(n_regionkey);
+CREATE INDEX IF NOT EXISTS idx_supplier_nation           ON supplier(s_nationkey);
+CREATE INDEX IF NOT EXISTS idx_customer_nation           ON customer(c_nationkey);
+CREATE INDEX IF NOT EXISTS idx_orders_custkey_orderdate  ON orders(o_custkey, o_orderdate);
+-- Composite (l_partkey, l_suppkey): required for the Q20 correlated subquery to
+-- resolve via an index lookup instead of a full lineitem scan. Also serves
+-- l_partkey-prefix lookups, so a standalone l_partkey index is unnecessary. A
+-- single-column l_partkey index alone leaves Q20 effectively unrunnable
+-- (observed ~1h49m vs ~0.1s with the composite) on a modestly-resourced host.
+CREATE INDEX IF NOT EXISTS idx_lineitem_partkey_suppkey  ON lineitem(l_partkey, l_suppkey);
+CREATE INDEX IF NOT EXISTS idx_lineitem_suppkey          ON lineitem(l_suppkey);
+CREATE INDEX IF NOT EXISTS idx_lineitem_orderkey         ON lineitem(l_orderkey);
+CREATE INDEX IF NOT EXISTS idx_partsupp_part             ON partsupp(ps_partkey);
+CREATE INDEX IF NOT EXISTS idx_partsupp_supplier         ON partsupp(ps_suppkey);
+CREATE INDEX IF NOT EXISTS idx_part_brand_container      ON part(p_brand, p_container);
+"""
+
 # Tables in load order (parent tables before child tables)
 TABLES = ["region", "nation", "part", "supplier", "customer", "partsupp", "orders", "lineitem"]
 
@@ -223,6 +254,12 @@ def main():
     for table in TABLES:
         print(f"\nLoading {table} ...")
         load_table(conn, table)
+
+    print("\nCreating secondary indexes ...")
+    with conn.cursor() as cur:
+        cur.execute(INDEXES)
+    conn.commit()
+    print("Secondary indexes created.")
 
     conn.close()
     print("\nAll TPC-H tables loaded successfully!")
