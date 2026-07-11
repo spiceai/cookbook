@@ -23,7 +23,7 @@ models:
       tools: sql, list_datasets, table_schema
       system_prompt: |
         Your job is to make a chart.js scripts and the SQL query needed for the given question a user asks. Use the `list_datasets` and `table_schema` tools to ensure the SQL query is correct. Before you return the SQL query, make sure it works by running `EXPLAIN <query>`.
-      openai_response_format:
+      response_format:
         type: json_schema
         json_schema:
           name: visualisation_and_sql
