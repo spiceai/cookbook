@@ -184,7 +184,7 @@ Verify this output by, in a separate terminal, starting an interactive SQL query
 spice sql
 ```
 
-Then, query using SQL the `taxi_trips` dataset for the titles of the five most recently created PRs.
+Then, query the `taxi_trips` dataset using SQL for the five highest-fare trips.
 
 ```sql
 SELECT fare_amount, tpep_pickup_datetime, tpep_dropoff_datetime, passenger_count, VendorID FROM taxi_trips ORDER BY fare_amount DESC LIMIT 5;
