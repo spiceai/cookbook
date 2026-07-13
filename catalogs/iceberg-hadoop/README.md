@@ -1,6 +1,6 @@
 # Iceberg Hadoop Catalog Connector
 
-Works with `v1.0+`
+Works with `v1.6.0+`
 
 The Iceberg Catalog Connector supports connecting to Hadoop catalogs, locally or on S3-compatible object storage.
 
