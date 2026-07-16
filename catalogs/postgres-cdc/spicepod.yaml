@@ -1,0 +1,21 @@
+version: v1
+kind: Spicepod
+name: postgres-cdc-catalog-recipe
+
+catalogs:
+  - from: pg
+    name: pg
+    include:
+      - 'public.*'
+    params:
+      pg_host: localhost
+      pg_port: 5432
+      pg_db: tpch
+      pg_user: ${secrets:PG_USER}
+      pg_pass: ${secrets:PG_PASS}
+      pg_sslmode: disable
+    # Bootstrap and CDC-accelerate every discovered table with zero per-table
+    # configuration. Each table is snapshotted once, then kept live from the
+    # PostgreSQL WAL through a single shared replication slot.
+    acceleration:
+      refresh_mode: changes
