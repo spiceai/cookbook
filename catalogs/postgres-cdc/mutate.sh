@@ -5,6 +5,9 @@
 # below runs directly against PostgreSQL (never against Spice) -- Spice picks
 # the changes up from the write-ahead log through its shared replication slot.
 #
+# Each step prints the exact command it runs against PostgreSQL before running
+# it, so it's clear what the source mutation is.
+#
 # After each step, re-run the matching query from the Spice SQL REPL:
 #
 #     SELECT c_custkey, c_name, c_mktsegment, c_acctbal
@@ -17,26 +20,27 @@ set -euo pipefail
 
 PSQL=(docker exec -i tpch-cdc-postgres psql -U postgres -d tpch -v ON_ERROR_STOP=1)
 
+# Print the exact PostgreSQL command, then run it against the source database.
+run_sql() {
+  local label=$1 sql=$2
+  echo "==> ${label}"
+  echo "    \$ docker exec -i tpch-cdc-postgres psql -U postgres -d tpch -c \"${sql}\""
+  "${PSQL[@]}" -c "${sql}"
+}
+
 insert() {
-  echo "==> INSERT customer 9999999 into PostgreSQL"
-  "${PSQL[@]}" <<'SQL'
-INSERT INTO customer (c_custkey, c_name, c_address, c_nationkey, c_phone, c_acctbal, c_mktsegment, c_comment)
-VALUES (9999999, 'Customer#CDC-DEMO', '1 Change Data Capture Way', 0, '00-000-000-0000', 100.00, 'BUILDING', 'inserted via CDC demo');
-SQL
+  run_sql "INSERT customer 9999999 into PostgreSQL" \
+    "INSERT INTO customer (c_custkey, c_name, c_address, c_nationkey, c_phone, c_acctbal, c_mktsegment, c_comment) VALUES (9999999, 'Customer#CDC-DEMO', '1 Change Data Capture Way', 0, '00-000-000-0000', 100.00, 'BUILDING', 'inserted via CDC demo');"
 }
 
 update() {
-  echo "==> UPDATE customer 9999999 acctbal in PostgreSQL"
-  "${PSQL[@]}" <<'SQL'
-UPDATE customer SET c_acctbal = 999999.99 WHERE c_custkey = 9999999;
-SQL
+  run_sql "UPDATE customer 9999999 acctbal in PostgreSQL" \
+    "UPDATE customer SET c_acctbal = 999999.99 WHERE c_custkey = 9999999;"
 }
 
 delete() {
-  echo "==> DELETE customer 9999999 from PostgreSQL"
-  "${PSQL[@]}" <<'SQL'
-DELETE FROM customer WHERE c_custkey = 9999999;
-SQL
+  run_sql "DELETE customer 9999999 from PostgreSQL" \
+    "DELETE FROM customer WHERE c_custkey = 9999999;"
 }
 
 case "${1:-all}" in
