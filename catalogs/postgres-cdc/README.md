@@ -267,6 +267,27 @@ source through the WAL.
 docker compose down --volumes --rmi local
 ```
 
+## Troubleshooting
+
+**`Failed to setup the catalog pg (pg). PostgreSQL connection failed.`**
+
+Another PostgreSQL is already listening on `localhost:5432` — commonly a
+host-local install (Homebrew `postgresql@16`, Postgres.app, or another
+container). Because it binds the loopback address directly, it shadows this
+recipe's Docker container for connections from the host, so Spice connects to
+the wrong server (which has no `tpch` database) and fails.
+
+Confirm what's on the port:
+
+```bash
+lsof -nP -iTCP:5432 -sTCP:LISTEN
+```
+
+Then either free the port — e.g. `brew services stop postgresql@16`, or stop
+the other container — **or** run this recipe on a different port by changing
+the published port in `compose.yaml` (e.g. `"5433:5432"`) and `pg_port` in
+`spicepod.yaml` to match.
+
 ## References
 
 - [Spice.ai PostgreSQL Catalog Connector documentation](https://docs.spiceai.org/components/catalogs/postgres)
