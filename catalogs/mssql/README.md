@@ -138,7 +138,6 @@ SHOW TABLES;
 | ms            | dbo          | orders       | BASE TABLE |
 | ms            | dbo          | lineitem     | BASE TABLE |
 | spice         | runtime      | task_history | BASE TABLE |
-| spice         | runtime      | metrics      | BASE TABLE |
 +---------------+--------------+--------------+------------+
 ```
 

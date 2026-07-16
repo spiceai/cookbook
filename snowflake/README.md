@@ -105,7 +105,6 @@ sql> show tables;
 +---------------+--------------+---------------+------------+
 | spice         | public       | lineitem      | BASE TABLE |
 | spice         | runtime      | task_history  | BASE TABLE |
-| spice         | runtime      | metrics       | BASE TABLE |
 +---------------+--------------+---------------+------------+
 
 Time: 0.032075708 seconds. 3 rows.

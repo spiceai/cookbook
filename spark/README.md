@@ -131,7 +131,6 @@ sql> show tables;
 | table_catalog | table_schema | table_name   | table_type |
 +---------------+--------------+--------------+------------+
 | spice         | runtime      | task_history | BASE TABLE |
-| spice         | runtime      | metrics      | BASE TABLE |
 | spice         | public       | nyc_taxis    | BASE TABLE |
 +---------------+--------------+--------------+------------+
 
