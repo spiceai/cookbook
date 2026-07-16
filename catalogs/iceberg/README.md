@@ -81,7 +81,6 @@ sql> show tables;
 | ice           | tpch_sf1     | region       | BASE TABLE |
 | ice           | tpch_sf1     | part         | BASE TABLE |
 | spice         | runtime      | task_history | BASE TABLE |
-| spice         | runtime      | metrics      | BASE TABLE |
 +---------------+--------------+--------------+------------+
 ```
 
