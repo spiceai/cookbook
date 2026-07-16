@@ -12,7 +12,6 @@ catalogs:
       pg_port: 5432
       pg_db: tpch
       pg_user: ${secrets:PG_USER}
-      pg_pass: ${secrets:PG_PASS}
       pg_sslmode: disable
     # Bootstrap and CDC-accelerate every discovered table with zero per-table
     # configuration. Each table is snapshotted once, then kept live from the

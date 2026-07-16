@@ -4,10 +4,6 @@ services:
     container_name: tpch-cdc-postgres
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
-      # CDC replication connections authenticate with a password (pg_pass),
-      # even though local connections are trusted. Set one so the replication
-      # slot can be created.
-      POSTGRES_PASSWORD: postgres
       POSTGRES_DB: tpch
     # Catalog-level CDC acceleration streams changes from the PostgreSQL
     # write-ahead log. Logical decoding must be enabled, and the server must

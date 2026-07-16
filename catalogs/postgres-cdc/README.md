@@ -74,12 +74,10 @@ spice init
 
 ## Step 3. Configure credentials
 
-Create a `.env` file with the database credentials. Catalog-level CDC
-acceleration opens a replication connection, which authenticates with a
-password, so both `PG_USER` and `PG_PASS` are required:
+Create a `.env` file with the database credentials:
 
 ```bash
-printf 'PG_USER=postgres\nPG_PASS=postgres\n' > .env
+echo "PG_USER=postgres" > .env
 ```
 
 ## Step 4. Add the accelerated PostgreSQL catalog to `spicepod.yaml`
@@ -102,7 +100,6 @@ catalogs:
       pg_port: 5432
       pg_db: tpch
       pg_user: ${secrets:PG_USER}
-      pg_pass: ${secrets:PG_PASS}
       pg_sslmode: disable
     acceleration:
       refresh_mode: changes
