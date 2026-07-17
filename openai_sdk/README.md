@@ -6,7 +6,7 @@ One of Spice's best features is to act in place of the OpenAI API. Even better, 
 
 ## Prerequisites
 
-1. Python >= 3.10
+1. Python >= 3.12
 2. Python package manager (`pip` or `uv`)
 3. Spice [installed](https://docs.spiceai.org/getting-started)
 4. OpenAI API Key
