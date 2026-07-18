@@ -8,7 +8,7 @@ This recipe shows how Spice integrates with [OpenAI's Responses API](https://pla
 
 - Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation)
 - `OPENAI_API_KEY` is set in `.env`. To acquire an OpenAI API Key, see [OpenAI's Guide](https://platform.openai.com/account/api-keys).
-- Python >= 3.10
+- Python >= 3.12
 - Python package manager (`pip` or `uv`)
 
 ## How to run
