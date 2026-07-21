@@ -17,7 +17,11 @@ show up automatically — no polling, no per-table `refresh_sql`, no manual
 dataset definitions.
 
 This recipe uses the standard TPC-H benchmark dataset (Scale Factor 1). Every
-TPC-H table has a primary key, which catalog-level CDC acceleration requires.
+TPC-H table has a primary key, so all eight are eligible for CDC acceleration.
+You can point a catalog at any PostgreSQL database, though: each table is
+accelerated according to its `REPLICA IDENTITY` — a primary key, or a unique
+index via `REPLICA IDENTITY USING INDEX` — and any table with no usable replica
+identity is skipped with a warning rather than failing the whole catalog.
 
 ## How it differs from the [PostgreSQL Catalog Connector](../postgres) recipe
 
@@ -27,7 +31,7 @@ TPC-H table has a primary key, which catalog-level CDC acceleration requires.
 | Query path | Federated (each query hits PostgreSQL) | Local accelerated copy (Cayenne) |
 | Freshness | Live (source is queried directly) | Live via CDC from the WAL |
 | Requires `wal_level=logical` | ❌ | ✅ |
-| Requires a primary key on every included table | ❌ | ✅ |
+| Each accelerated table needs a usable `REPLICA IDENTITY` (primary key or unique index); others are skipped | ❌ | ✅ |
 
 ## Prerequisites
 
@@ -106,10 +110,15 @@ catalogs:
 ```
 
 > `refresh_mode: changes` is the only supported catalog-level acceleration mode,
-> and the engine defaults to `cayenne`. Every included table must have a primary
-> key; catalog setup fails and names any table that doesn't. Use
-> `include`/`exclude` to scope out tables (or whole schemas) you don't want
-> accelerated.
+> and the engine defaults to `cayenne`. Each discovered table is accelerated
+> according to its PostgreSQL `REPLICA IDENTITY`: a primary key (`DEFAULT`) or a
+> unique index (`USING INDEX`) becomes the CDC key, and `REPLICA IDENTITY FULL`
+> also works (heavier — the full old-row image is written to the WAL on every
+> change). A table with no usable replica identity — `NOTHING`, or `DEFAULT`/`FULL`
+> with no key — is skipped with a warning and left out of the catalog, rather than
+> failing catalog setup. Use `include`/`exclude` to scope out tables (or whole
+> schemas) you don't want accelerated, which also silences the skip warning for
+> known-ineligible tables.
 
 ## Step 5. Start the Spice runtime
 
@@ -121,7 +130,7 @@ Spice discovers all tables, snapshots each into Cayenne, and opens a single
 shared replication slot to keep them live:
 
 ```
-INFO runtime::catalogconnector::postgres_accelerated: Catalog 'pg': accelerating 8 tables via CDC (shared replication slot 'spice_pg_f0da15_3f484bfe'); 0 tables excluded by include/exclude filters.
+INFO runtime::catalogconnector::postgres_accelerated: Catalog 'pg': accelerating 8 tables via CDC (shared replication slot 'spice_pg_f0da15_3f484bfe'); 0 tables excluded by include/exclude filters; 0 tables skipped (no usable replica identity -- see warnings).
 INFO runtime::init::catalog: Registered catalog 'pg' with 1 schema and 8 tables
 INFO data_components::postgres_replication::slot: Created new replication slot slot=spice_pg_f0da15_3f484bfe publication=spice_pg_f0da15_3f484bfe_pub
 INFO data_components::postgres_replication::shared: dataset joined shared replication slot table=public.customer slot=spice_pg_f0da15_3f484bfe members=2
