@@ -1,6 +1,6 @@
 # Using OpenAI's Responses API with Spice
 
-Works with `v1.10+`
+Works with `v1.6+`
 
 This recipe shows how Spice integrates with [OpenAI's Responses API](https://platform.openai.com/docs/api-reference/responses), OpenAI's most advanced interface for generating model responses, supporting both hosted and custom tool calls. This recipe also covers how to use the OpenAI SDK's support for the Responses API to connect to compatible models running on Spice.
 
@@ -8,7 +8,7 @@ This recipe shows how Spice integrates with [OpenAI's Responses API](https://pla
 
 - Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation)
 - `OPENAI_API_KEY` is set in `.env`. To acquire an OpenAI API Key, see [OpenAI's Guide](https://platform.openai.com/account/api-keys).
-- Python >= 3.10
+- Python >= 3.12
 - Python package manager (`pip` or `uv`)
 
 ## How to run
@@ -184,7 +184,7 @@ Verify this output by, in a separate terminal, starting an interactive SQL query
 spice sql
 ```
 
-Then, query using SQL the `taxi_trips` dataset for the titles of the five most recently created PRs.
+Then, query the `taxi_trips` dataset using SQL for the five highest-fare trips.
 
 ```sql
 SELECT fare_amount, tpep_pickup_datetime, tpep_dropoff_datetime, passenger_count, VendorID FROM taxi_trips ORDER BY fare_amount DESC LIMIT 5;

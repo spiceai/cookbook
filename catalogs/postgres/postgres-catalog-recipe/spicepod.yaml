@@ -1,14 +1,7 @@
 version: v1
 kind: Spicepod
 name: postgres-catalog-recipe
-runtime:
-  flight:
-    max_message_size: 5GiB
-  auth:
-    api-key:
-      enabled: true
-      keys:
-        - foo:rw
+
 catalogs:
   - from: pg
     name: pg

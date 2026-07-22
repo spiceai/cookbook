@@ -54,7 +54,7 @@ Create a keyspace and table with sample data:
 ```sql
 -- Create keyspace
 CREATE KEYSPACE IF NOT EXISTS demo
-WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+WITH replication = {'class': 'NetworkTopologyStrategy', 'replication_factor': 1};
 
 -- Use the keyspace
 USE demo;

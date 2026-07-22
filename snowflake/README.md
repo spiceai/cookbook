@@ -105,10 +105,9 @@ sql> show tables;
 +---------------+--------------+---------------+------------+
 | spice         | public       | lineitem      | BASE TABLE |
 | spice         | runtime      | task_history  | BASE TABLE |
-| spice         | runtime      | metrics       | BASE TABLE |
 +---------------+--------------+---------------+------------+
 
-Time: 0.032075708 seconds. 2 rows.
+Time: 0.032075708 seconds. 3 rows.
 ```
 
 Run _Pricing Summary Report Query (Q1)_. More information about TPC-H and all the queries involved can be found in the official [TPC Benchmark H Standard Specification](https://www.tpc.org/tpc_documents_current_versions/pdf/tpc-h_v2.17.1.pdf).
@@ -153,7 +152,7 @@ Output:
 Time: 1.398187833 seconds. 4 rows.
 ```
 
-**Step 7. (Optional)** Enable [Data Acceleration](https://docs.spiceai.org/data-accelerators)
+**Step 7. (Optional)** Enable [Data Acceleration](https://docs.spiceai.org/components/data-accelerators)
 
 Use text editor to update `spicepod.yaml`
 

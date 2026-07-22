@@ -57,12 +57,7 @@ RUN cd ${SPARK_HOME} \
 
 ENV SPARK_VERSION=3.5.6
 RUN cd ${SPARK_HOME} && \
-    wget https://repo1.maven.org/maven2/org/apache/spark/spark-connect_2.12/${SPARK_VERSION}/spark-connect_2.12-${SPARK_VERSION}.jar -P jars/ && \
-    wget https://repo1.maven.org/maven2/org/apache/spark/spark-connect-client-jvm_2.12/${SPARK_VERSION}/spark-connect-client-jvm_2.12-${SPARK_VERSION}.jar -P jars/ && \
-    wget https://repo1.maven.org/maven2/io/grpc/grpc-all/1.47.0/grpc-all-1.47.0.jar -P jars/ && \
-    wget https://repo1.maven.org/maven2/io/grpc/grpc-netty/1.47.0/grpc-netty-1.47.0.jar -P jars/ && \
-    wget https://repo1.maven.org/maven2/io/netty/netty-codec-http2/4.1.77.Final/netty-codec-http2-4.1.77.Final.jar -P jars/ && \
-    wget https://repo1.maven.org/maven2/io/netty/netty-handler-proxy/4.1.77.Final/netty-handler-proxy-4.1.77.Final.jar -P jars/
+    curl -fL https://repo1.maven.org/maven2/org/apache/spark/spark-connect_2.12/${SPARK_VERSION}/spark-connect_2.12-${SPARK_VERSION}.jar -o jars/spark-connect_2.12-${SPARK_VERSION}.jar
 
 RUN mkdir -p /home/spark/data \
     && curl https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2022-04.parquet -o /home/spark/data/yellow_tripdata_2022-04.parquet \

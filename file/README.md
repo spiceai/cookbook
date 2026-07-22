@@ -149,15 +149,14 @@ select location from docs;
 Expected output:
 
 ```text
-+---------------------------------------------+
-| location                                    |
-+---------------------------------------------+
-| Users/lukim/dev/cookbook/file/debezium.md   |
-| Users/lukim/dev/cookbook/file/databricks.md |
-| Users/lukim/dev/cookbook/file/README.md     |
-| Users/lukim/dev/cookbook/file/clickhouse.md |
-| Users/lukim/dev/cookbook/file/delta-lake.md |
-+---------------------------------------------+
++----------------------------+
+| location                   |
++----------------------------+
+| path/to/file/clickhouse.md |
+| path/to/file/databricks.md |
+| path/to/file/debezium.md   |
+| path/to/file/delta-lake.md |
++----------------------------+
 ```
 
 ### Step 5: Terminate the Spice Runtime

@@ -79,7 +79,7 @@ show tables;
 +---------------+--------------+---------------+------------+
 ```
 
-**Step 6.** Create a `values.yaml` file to configure the Spice deployment. See [Spice Helm Values](https://spiceai.org/docs/deployment/kubernetes#values) for more deails.
+**Step 6.** Create a `values.yaml` file to configure the Spice deployment. See [Spice Helm Values](https://spiceai.org/docs/deployment/kubernetes/helm) for more details.
 
 ```bash
 cat <<EOF > values.yaml

@@ -1,6 +1,6 @@
 # Spice on Databricks - Delta Lake and Spark Connect
 
-Works with `v1.0+`
+Works with `v1.4.0+`
 
 Spice can read data straight from a Databricks instance. This recipe will create an app, configure Databricks, load and query a dataset directly from Delta Lake Tables through `mode: delta_lake` and from Databricks instance through `mode: spark_connect`. It assumes:
 
@@ -38,7 +38,6 @@ Spice can read data straight from a Databricks instance. This recipe will create
    >>> spice run
    2024-03-27T05:27:52.696536Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
    2024-03-27T05:27:52.696543Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-   2024-03-27T05:27:52.696606Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
    ```
 
 4. Configure a Databricks dataset into the spicepod. The table provided must be a reference to a table in the Databricks unity catalog.
@@ -155,8 +154,8 @@ To improve the query performance, the Databricks dataset can be accelerated.
    ```shell
    >>> spice datasets
 
-   FROM                                       NAME     REPLICATION ACCELERATION DEPENDSON STATUS
-   databricks:spice_data.public.awesome_table my_table false       true                   Ready
+   NAME     FROM                                       REPLICATION ACCELERATION STATUS
+   my_table databricks:spice_data.public.awesome_table false       true         Ready
    ```
 
 3. Rerun the query
@@ -224,9 +223,7 @@ Note: A dataset can be accelerated when configured by specifying yes (y) to `loc
    >>> spice run
    2025-01-15T04:44:40.207555Z  INFO runtime::init::dataset: Initializing dataset my_table
    2025-01-15T04:44:40.208013Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-   2025-01-15T04:44:40.208015Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
    2025-01-15T04:44:40.208823Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-   2025-01-15T04:44:40.211694Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
    2025-01-15T04:44:40.238106Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
    2025-01-15T04:44:41.299484Z  INFO runtime::init::dataset: Dataset my_table registered (databricks:<catalog>.<schema>.<table>), results cache enabled.
    ```
@@ -299,7 +296,6 @@ Note: A dataset can be accelerated when configured by specifying yes (y) to `loc
    ```shell
    >>> spice run
    2025-05-16T17:29:08.062816Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-   2025-05-16T17:29:08.063208Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
    2025-05-16T17:29:08.065607Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
    2025-05-16T17:29:08.068465Z  INFO runtime::init::dataset: Initializing dataset customer
    2025-05-16T17:29:08.084175Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
@@ -379,9 +375,7 @@ Create a Databricks service principal by following the [Databricks documentation
    >>> spice run
    2025-01-15T04:44:40.207555Z  INFO runtime::init::dataset: Initializing dataset my_table
    2025-01-15T04:44:40.208013Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-   2025-01-15T04:44:40.208015Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
    2025-01-15T04:44:40.208823Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-   2025-01-15T04:44:40.211694Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
    2025-01-15T04:44:40.238106Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
    2025-01-15T04:44:41.299484Z  INFO runtime::init::dataset: Dataset my_table registered (databricks:<catalog>.<schema>.<table>), results cache enabled.
    ```

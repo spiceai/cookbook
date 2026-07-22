@@ -1,6 +1,6 @@
 # Hashed Partitioning with DuckDB
 
-Works with `v1.0+`
+Works with `v1.9.0+`
 
 Accelerate queries on terabyte and petabyte-scale datasets using hashed partitioning, which prunes irrelevant data during filters on categorical columns like IDs.
 
@@ -108,5 +108,5 @@ In this case, only one partitioned file is relevant for scanning and remains in 
 
 ## Learn more
 
-[DuckDB Partitioning Documentation](https://spiceai.org/docs/components/data-accelerators/duckdb#partitioning)
+[DuckDB Partitioning Documentation](https://spiceai.org/docs/components/data-accelerators/duckdb)
 [Data Acceleration](https://spiceai.org/docs/features/data-acceleration)

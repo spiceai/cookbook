@@ -13,6 +13,7 @@ This recipe demonstrates using Elasticsearch as a unified backend for both **ful
 ## Prerequisites
 
 - [Spice CLI](https://docs.spiceai.org/getting-started) installed
+- **Spice built with Elasticsearch support**: the Elasticsearch search/index engine is _not_ included in the released binaries. Build and run Spice with the `elasticsearch` feature enabled, e.g. `cargo run --release --features elasticsearch -p spiced`. Without it, Spice silently falls back to its built-in local full-text/vector index and this recipe will not use Elasticsearch. See the [Elasticsearch documentation](https://spiceai.org/docs/components/data-connectors/elasticsearch) for details.
 - Docker and Docker Compose installed
 - Python 3 installed
 - OpenAI API key

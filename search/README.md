@@ -1,6 +1,6 @@
 # Hybrid Search & Real Time Indexing
 
-Works with `v1.0+`. The fusion-score column emitted by `rrf(...)` was renamed from `fused_score` (Spice `v1.x`) to `_fused_score` (Spice `v2.0+`). The examples below use the `v2.0+` name; replace `_fused_score` with `fused_score` if you are running a `v1.x` build.
+Works with `v1.6+`. This recipe embeds text with a Model2Vec model (`model2vec:minishlab/potion-multilingual-128M`), and Model2Vec embedding support was added in Spice `v1.6.0`. The fusion-score column emitted by `rrf(...)` was renamed from `fused_score` (Spice `v1.x`) to `_fused_score` (Spice `v2.0+`). The examples below use the `v2.0+` name; replace `_fused_score` with `fused_score` if you are running a `v1.x` build.
 
 In today's hyper-connected digital ecosystem, social media represents an untapped goldmine of actionable intelligence for organizations. Beyond traditional metrics, these platforms offer unprecedented visibility into market dynamics, consumer sentiment trajectories, demographic clustering patterns, and emergent behavioral signals that can fundamentally transform go-to-market strategies and competitive positioning.
 

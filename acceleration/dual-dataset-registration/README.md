@@ -50,13 +50,13 @@ name: dual-dataset-registration
 
 datasets:
   # Federated table — available immediately at startup
-  - from: s3://spiceai-public-datasets/taxi_trips/
+  - from: s3://spiceai-demo-datasets/taxi_trips/2024/
     name: taxi_trips
     params:
       file_format: parquet
 
   # Accelerated copy — loads in the background
-  - from: s3://spiceai-public-datasets/taxi_trips/
+  - from: s3://spiceai-demo-datasets/taxi_trips/2024/
     name: taxi_trips_accelerated
     params:
       file_format: parquet
@@ -85,8 +85,8 @@ spice run
 Shortly after startup you will see both datasets register. The federated table is ready immediately, while the accelerated copy begins loading:
 
 ```bash
-2025-03-24T10:00:01.123456Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-public-datasets/taxi_trips/), results cache enabled.
-2025-03-24T10:00:01.234567Z  INFO runtime::init::dataset: Dataset taxi_trips_accelerated registered (s3://spiceai-public-datasets/taxi_trips/), acceleration (duckdb:file), results cache enabled.
+2025-03-24T10:00:01.123456Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), results cache enabled.
+2025-03-24T10:00:01.234567Z  INFO runtime::init::dataset: Dataset taxi_trips_accelerated registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (duckdb:file), results cache enabled.
 2025-03-24T10:00:01.234890Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips_accelerated
 ```
 
@@ -108,7 +108,7 @@ SELECT COUNT(*) AS total_trips FROM taxi_trips;
 +-------------+
 | total_trips |
 +-------------+
-| 1547741     |
+| 2964624     |
 +-------------+
 ```
 
@@ -127,12 +127,12 @@ While still loading:
 ```json
 [
   {
-    "from": "s3://spiceai-public-datasets/taxi_trips/",
+    "from": "s3://spiceai-demo-datasets/taxi_trips/2024/",
     "name": "taxi_trips",
     "status": "Ready"
   },
   {
-    "from": "s3://spiceai-public-datasets/taxi_trips/",
+    "from": "s3://spiceai-demo-datasets/taxi_trips/2024/",
     "name": "taxi_trips_accelerated",
     "status": "Refreshing"
   }
@@ -144,12 +144,12 @@ When the acceleration finishes:
 ```json
 [
   {
-    "from": "s3://spiceai-public-datasets/taxi_trips/",
+    "from": "s3://spiceai-demo-datasets/taxi_trips/2024/",
     "name": "taxi_trips",
     "status": "Ready"
   },
   {
-    "from": "s3://spiceai-public-datasets/taxi_trips/",
+    "from": "s3://spiceai-demo-datasets/taxi_trips/2024/",
     "name": "taxi_trips_accelerated",
     "status": "Ready"
   }
@@ -159,7 +159,7 @@ When the acceleration finishes:
 The Spice runtime logs also confirm when the load completes:
 
 ```bash
-2025-03-24T10:03:45.678901Z  INFO runtime::accelerated_table::refresh_task: Loaded 1,547,741 rows () for dataset taxi_trips_accelerated in 3m 44s.
+2025-03-24T10:03:45.678901Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows () for dataset taxi_trips_accelerated in 3m 44s.
 ```
 
 ## Step 6. Switch to the accelerated table
@@ -174,7 +174,7 @@ SELECT COUNT(*) AS total_trips FROM taxi_trips_accelerated;
 +-------------+
 | total_trips |
 +-------------+
-| 1547741     |
+| 2964624     |
 +-------------+
 ```
 

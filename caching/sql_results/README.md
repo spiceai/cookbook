@@ -2,7 +2,7 @@
 
 Works with `v1.10+`
 
-> Spice.ai OSS supports in-memory caching of query results to improve performance for bursts of requests and non-accelerated results, such as refresh data returned [on zero results](https://docs.spiceai.org/data-accelerators/data-refresh#behavior-on-zero-results).
+> Spice.ai OSS supports in-memory caching of query results to improve performance for bursts of requests and non-accelerated results, such as refresh data returned [on zero results](https://docs.spiceai.org/features/data-acceleration/data-refresh#behavior-on-zero-results).
 >
 > [Spice.ai OSS Docs: Results Caching](https://docs.spiceai.org/features/caching)
 
@@ -33,7 +33,7 @@ Observe the Spice runtime terminal for cache initialization. Example output:
 
 ```bash
 2024-08-05T05:25:10.627005Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
-2024-08-05T05:25:10.628875Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2024-08-05T05:25:10.628875Z  INFO runtime: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2024-08-05T05:26:50.262092Z  INFO runtime: Dataset customer registered (s3://spiceai-demo-datasets/tpch/customer/), results cache enabled.
 2024-08-05T05:26:51.569841Z  INFO runtime: Dataset lineitem registered (s3://spiceai-demo-datasets/tpch/lineitem/), results cache enabled.
 2024-08-05T05:26:52.871013Z  INFO runtime: Dataset nation registered (s3://spiceai-demo-datasets/tpch/nation/), results cache enabled.
@@ -47,7 +47,7 @@ Observe the Spice runtime terminal for cache initialization. Example output:
 Notice the following line confirming the default cache configuration with cached items expiration time of 1 second is loaded.
 
 ```bash
-2024-08-05T05:25:10.628875Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2024-08-05T05:25:10.628875Z  INFO runtime: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 ```
 
 ## Step 3: Update Cache Configuration
@@ -89,11 +89,11 @@ Restart the Spice runtime:
 spice run
 ```
 
-Verify the following output is shown in the Spice runtime terminal, confirming that the updated in-memory caching settings (`Initialized results cache; max size: 128.00 MiB, item ttl: 300s`) were applied:
+Verify the following output is shown in the Spice runtime terminal, confirming that the updated in-memory caching settings (`Initialized sql results cache; max size: 128.00 MiB, item ttl: 300s`) were applied:
 
 ```bash
 2024-08-05T05:29:06.876281Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
-2024-08-05T05:29:06.876579Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 300s, hashing algorithm: XXH3, encoding: none
+2024-08-05T05:29:06.876579Z  INFO runtime: Initialized sql results cache; max size: 128.00 MiB, item ttl: 300s, hashing algorithm: XXH3, encoding: none
 2024-08-05T05:29:08.395163Z  INFO runtime: Dataset region registered (s3://spiceai-demo-datasets/tpch/region/), results cache enabled.
 2024-08-05T05:29:08.399137Z  INFO runtime: Dataset nation registered (s3://spiceai-demo-datasets/tpch/nation/), results cache enabled.
 2024-08-05T05:29:08.399887Z  INFO runtime: Dataset supplier registered (s3://spiceai-demo-datasets/tpch/supplier/), results cache enabled.
@@ -197,7 +197,7 @@ Observe the Spice runtime terminal for cache initialization. Example output:
 
 ```console
 2024-08-05T05:25:10.627005Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
-2024-08-05T05:25:10.628875Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 300s, hashing algorithm: Ahash, encoding: none
+2024-08-05T05:25:10.628875Z  INFO runtime: Initialized sql results cache; max size: 128.00 MiB, item ttl: 300s, hashing algorithm: Ahash, encoding: none
 2024-08-05T05:26:50.262092Z  INFO runtime: Dataset customer registered (s3://spiceai-demo-datasets/tpch/customer/), results cache enabled.
 2024-08-05T05:26:51.569841Z  INFO runtime: Dataset lineitem registered (s3://spiceai-demo-datasets/tpch/lineitem/), results cache enabled.
 2024-08-05T05:26:52.871013Z  INFO runtime: Dataset nation registered (s3://spiceai-demo-datasets/tpch/nation/), results cache enabled.

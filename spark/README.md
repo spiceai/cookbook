@@ -24,7 +24,7 @@ cd cookbook/spark
 1. Navigate to `spark-3.5` folder and start the Docker Compose stack, which includes a Spark 3.5.6 instance and init notebook to load the NYC taxi trip parquet data:
 
 ```shell
-docker compose up -d
+docker compose up -d --build
 ```
 
 It will take about about 30 seconds to start the Spark instance and load the sample dataset.
@@ -131,7 +131,6 @@ sql> show tables;
 | table_catalog | table_schema | table_name   | table_type |
 +---------------+--------------+--------------+------------+
 | spice         | runtime      | task_history | BASE TABLE |
-| spice         | runtime      | metrics      | BASE TABLE |
 | spice         | public       | nyc_taxis    | BASE TABLE |
 +---------------+--------------+--------------+------------+
 
@@ -205,10 +204,10 @@ docker compose down --volumes --rmi local
 
 ### Spark 4
 
-1. Navigate to `spark-4` folder and start the Docker Compose stack, which includes a Spark 4.0.0 instance and init notebook to load the NYC taxi trip parquet data:
+1. Navigate to `spark-4` folder and start the Docker Compose stack, which includes a Spark 4.0.3 instance and init notebook to load the NYC taxi trip parquet data:
 
 ```shell
-docker compose up -d
+docker compose up -d --build
 ```
 
 It will take about about 30 seconds to start the Spark instance and load the sample dataset.

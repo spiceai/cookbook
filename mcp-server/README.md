@@ -1,6 +1,6 @@
 # Spice as MCP Server
 
-Works with `v1.0+`
+Works with `v2.0+`
 
 Run Spice as an MCP server and connect your AI assistant (Claude Desktop, Cursor, VS Code, or any MCP client) to it. This recipe loads GitHub issues, pull requests, and commits as accelerated, in-memory datasets and exposes the [GitHub MCP server](https://github.com/modelcontextprotocol/servers/tree/main/src/github) through a single unified endpoint at `/v1/mcp`.
 

@@ -1,6 +1,6 @@
 # Distributed Query
 
-Works with `v1.9+`
+Works with `v2.0+`
 
 This recipe demonstrates how to run Spice.ai OSS in a distributed mode, for maximum performance in queries on large datasets across multiple nodes. It shows how to:
 
@@ -59,6 +59,10 @@ version: v1
 kind: Spicepod
 name: distributed-query
 
+runtime:
+  scheduler:
+    state_location: file:///tmp/spice-cluster
+
 datasets:
   - from: s3://spiceai-public-datasets/hive_partitioned_data/
     name: data
@@ -77,7 +81,6 @@ The Spice scheduler will now start:
 2025-12-15T23:14:50.185608Z  INFO ballista_scheduler::scheduler_process: Starting Scheduler grpc server with task scheduling policy of PullStaged
 2025-12-15T23:14:50.185612Z  INFO runtime::init::task_history: Task history enabled: retention_period=28800s, retention_check_interval=900s
 2025-12-15T23:14:50.185719Z  INFO ballista_scheduler::scheduler_server::query_stage_scheduler: Starting QueryStageScheduler
-2025-12-15T23:14:50.185866Z  WARN runtime: Distributed Query (Alpha) is in preview and should not be used in production.
 2025-12-15T23:14:50.186108Z  INFO runtime::init::dataset: Dataset data initializing...
 2025-12-15T23:14:50.186157Z  INFO ballista_core::event_loop: Starting the event loop query_stage
 2025-12-15T23:14:50.186890Z  INFO runtime::cluster::servers: Cluster mTLS enabled for internal cluster server
@@ -113,7 +116,6 @@ The Spice executor will now start:
 2025-12-15T23:16:55.202032Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s
 2025-12-15T23:16:55.202128Z  INFO runtime::init::caching: Initialized embeddings cache; max size: 128.00 MiB, item ttl: 1s
 2025-12-15T23:16:56.023942Z  INFO runtime::init::task_history: Task history enabled: retention_period=28800s, retention_check_interval=900s
-2025-12-15T23:16:56.053505Z  WARN runtime: Distributed Query (Alpha) is in preview and should not be used in production.
 2025-12-15T23:16:56.053559Z  INFO ballista_executor::execution_loop: Starting poll work loop with scheduler
 2025-12-15T23:16:56.053746Z  INFO runtime::cluster::servers: Cluster mTLS enabled for executor flight server
 2025-12-15T23:16:56.053952Z  INFO runtime::cluster::servers: Spice Runtime executor Flight listening on [::1]:50053

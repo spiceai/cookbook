@@ -89,7 +89,11 @@ cat datasets/taxi_trips/dataset.yaml
 from: spice.ai/spiceai/quickstart/datasets/taxi_trips
 name: taxi_trips
 description: Taxi trips in New York City
+params:
+  spiceai_region: us-east-1
 ```
+
+The `spiceai_region` parameter selects which Spice Cloud region to source the dataset from. Run `spice cloud regions` to list available regions.
 
 The Spice runtime terminal will show that the dataset has been loaded:
 
@@ -131,6 +135,6 @@ Time: 0.852775583 seconds. 10 rows.
 ```
 
 **Next Steps**
-This recipe queries the Spice.ai Cloud Platform directly without any acceleration. Experiment with different acceleration options using [Spice Data Accelerators](https://docs.spiceai.org/data-accelerators).
+This recipe queries the Spice.ai Cloud Platform directly without any acceleration. Experiment with different acceleration options using [Spice Data Accelerators](https://docs.spiceai.org/components/data-accelerators).
 
-View the [Spice.ai documentation](https://docs.spice.ai/building-blocks/datasets) and search on [spicerack.org](https://spicerack.org/) to explore and experiment with retrieving and accelerating multiple datasets to use with Spice.
+View the [Spice.ai datasets documentation](https://docs.spiceai.org/reference/spicepod/datasets) and search on [spicerack.org](https://spicerack.org/) to explore and experiment with retrieving and accelerating multiple datasets to use with Spice.

@@ -1,6 +1,6 @@
 # Amazon S3 Vectors Engine with Spice.ai
 
-Works with `v1.8+`
+Works with `v2.0+`
 
 Spice.ai integrates Amazon S3 Vectors, launched in public preview at AWS Summit New York 2025, as a scalable vector index backend for embedding storage and similarity search. This recipe configures a dataset of GitHub pull requests from the `spiceai/spiceai` repository, embeds the `body` column using OpenAI, stores embeddings in S3 Vectors, and demonstrates semantic search via SQL and HTTP. Spice manages index creation, data synchronization, and query execution, enabling sub-second similarity queries on large datasets at ~$0.02/GB, reducing costs by up to 90% versus traditional vector databases.
 
