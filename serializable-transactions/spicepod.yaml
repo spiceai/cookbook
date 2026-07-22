@@ -1,0 +1,63 @@
+version: v1
+kind: Spicepod
+name: serializable-transactions
+
+# Two Postgres-backed accounts tables accelerated by Cayenne with durable write-back.
+# Both datasets use the DEFAULT Cayenne metastore (no cayenne_metadata_dir override), so
+# they share one catalog — the precondition for committing a multi-table transaction
+# (debit `checking` + credit `savings`) atomically in a single metastore transaction.
+#
+#   * refresh_mode: changes  -> Cayenne mirrors Postgres via CDC (logical replication).
+#   * write_mode: write_back -> gated writes commit to the accelerator first, then a
+#                               per-table worker reconciles them back to Postgres.
+#   * replication.enabled    -> required opt-in for asynchronous source durability.
+#   * on_conflict upsert      -> routes writes through the Cayenne staged-commit path.
+
+datasets:
+  - from: postgres:checking
+    name: checking
+    access: read_write
+    params:
+      pg_host: localhost
+      pg_port: "5432"
+      pg_db: spice_demo
+      pg_user: postgres
+      pg_pass: ${secrets:PG_PASS}
+      pg_sslmode: disable
+      pg_replication_slot: spice_checking
+      pg_replication_initial_snapshot: "true"
+    replication:
+      enabled: true
+    acceleration:
+      enabled: true
+      engine: cayenne
+      mode: file
+      refresh_mode: changes
+      write_mode: write_back
+      primary_key: id
+      on_conflict:
+        id: upsert
+
+  - from: postgres:savings
+    name: savings
+    access: read_write
+    params:
+      pg_host: localhost
+      pg_port: "5432"
+      pg_db: spice_demo
+      pg_user: postgres
+      pg_pass: ${secrets:PG_PASS}
+      pg_sslmode: disable
+      pg_replication_slot: spice_savings
+      pg_replication_initial_snapshot: "true"
+    replication:
+      enabled: true
+    acceleration:
+      enabled: true
+      engine: cayenne
+      mode: file
+      refresh_mode: changes
+      write_mode: write_back
+      primary_key: id
+      on_conflict:
+        id: upsert
