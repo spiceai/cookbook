@@ -37,6 +37,10 @@ identity is skipped with a warning rather than failing the whole catalog.
 
 - [Docker](https://docs.docker.com/get-docker/) installed
 - Spice installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation)
+- **PostgreSQL 13 or newer.** Catalog CDC creates its publication
+  `WITH (publish_via_partition_root = true)` so that a partitioned table's
+  changes are published under the parent relation; that publication option was
+  introduced in PostgreSQL 13.
 
 ## Step 1. Start the PostgreSQL database
 
@@ -130,7 +134,7 @@ Spice discovers all tables, snapshots each into Cayenne, and opens a single
 shared replication slot to keep them live:
 
 ```
-INFO runtime::catalogconnector::postgres_accelerated: Catalog 'pg': accelerating 8 table(s) via CDC (8 via primary key, 0 via REPLICA IDENTITY USING INDEX, 0 via REPLICA IDENTITY FULL; shared replication slot 'spice_pg_f0da15_3f484bfe'); 0 table(s) excluded by include/exclude filters; 0 table(s) skipped (no usable replica identity -- see warnings).
+INFO runtime::catalogconnector::postgres_accelerated: Catalog 'pg': accelerating 8 table(s) via CDC (8 via primary key, 0 via REPLICA IDENTITY USING INDEX, 0 via REPLICA IDENTITY FULL; shared replication slot 'spice_pg_f0da15_3f484bfe'); 0 table(s) excluded by include/exclude filters; 0 table(s) skipped (no usable replica identity -- see warnings); tables are discovered once at startup -- tables added to the source afterward are not picked up until spice restarts.
 INFO runtime::init::catalog: Registered catalog 'pg' with 1 schema and 8 tables
 INFO data_components::postgres_replication::slot: Created new replication slot slot=spice_pg_f0da15_3f484bfe publication=spice_pg_f0da15_3f484bfe_pub
 INFO data_components::postgres_replication::shared: dataset joined shared replication slot table=public.customer slot=spice_pg_f0da15_3f484bfe members=2
@@ -276,6 +280,44 @@ source through the WAL.
 docker compose down --volumes --rmi local
 ```
 
+## How it works: slots, publications, and restarts
+
+**One slot and one publication per catalog.** All eligible tables in a catalog
+share a single replication slot and a single publication, so a multi-table
+catalog decodes the WAL once and opens one replication connection — not one per
+table. The names are derived deterministically from the catalog (e.g.
+`spice_pg_f0da15_3f484bfe` above).
+
+**The publication lists only the eligible tables.** Spice builds the publication
+explicitly with `FOR TABLE ... ` / `ADD TABLE ...` over the tables it
+accelerates — never `FOR ALL TABLES`. This means:
+
+- Tables with no usable `REPLICA IDENTITY` (keyless, `NOTHING`), views,
+  materialized views, and foreign tables are **never** publication members, so
+  the source never has to log changes Spice would only discard.
+- Views and materialized views are not CDC-accelerable (they have no replica
+  identity). Each one is reported with a "not replicated" warning and left out
+  of the accelerated catalog — it is not an error, and it does not stop the
+  eligible tables from replicating.
+- Because membership is an explicit table list, a table added to the source
+  **after** startup is not automatically picked up. Catalog discovery runs once
+  at startup; restart Spice to discover new tables.
+
+**Restart vs. re-snapshot.** The replication slot persists on the PostgreSQL
+server across a Spice restart. When the same Spice instance restarts, it resumes
+from the slot's `restart_lsn` and replays only the WAL accumulated while it was
+down — it does **not** re-snapshot tables from scratch. The slot name is
+deterministic for a given instance, which is what lets it find and reuse its own
+slot on restart.
+
+**Multiple Spice instances.** Two instances pointed at the same catalog get
+distinct slot names, so they do not fight over one physical slot (PostgreSQL
+permits a single consumer per slot). Rescheduling the same logical service onto a
+different node is a distinct concern tracked by the slot-lifecycle enhancement
+([#12018](https://github.com/spiceai/spiceai/issues/12018)), which covers making
+the slot identity independent of the host and cleaning up slots that are no
+longer used.
+
 ## Troubleshooting
 
 **`Failed to setup the catalog pg (pg). PostgreSQL connection failed.`**
@@ -297,12 +339,13 @@ the other container — **or** run this recipe on a different port by changing
 the published port in `compose.yaml` (e.g. `"5433:5432"`) and `pg_port` in
 `spicepod.yaml` to match.
 
-**`... no tables are eligible for CDC acceleration ...`**
+**`... 0 of N discovered table(s) are eligible for CDC acceleration ...`**
 
 The catalog matched no CDC-eligible tables, so it fails to load rather than
-registering an empty catalog. The error reports how many tables were excluded by
-`include`/`exclude` and how many were skipped for lacking a usable `REPLICA
-IDENTITY`. Common causes: an `include`/`exclude` pattern that matches nothing (it
+registering an empty catalog. The error reports how many of the discovered
+tables were skipped for lacking a usable `REPLICA IDENTITY` and how many were
+excluded by `include`/`exclude`. Common causes: an `include`/`exclude` pattern
+that matches nothing (it
 is matched against `schema.table`, e.g. `public.*`), or a database whose tables
 have no primary key and no `REPLICA IDENTITY USING INDEX`/`FULL`. Fix the
 patterns, or give the tables a usable replica identity (a primary key, or a
