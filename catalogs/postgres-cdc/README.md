@@ -134,7 +134,7 @@ Spice discovers all tables, snapshots each into Cayenne, and opens a single
 shared replication slot to keep them live:
 
 ```
-INFO runtime::catalogconnector::postgres_accelerated: Catalog 'pg': accelerating 8 table(s) via CDC (8 via primary key, 0 via REPLICA IDENTITY USING INDEX, 0 via REPLICA IDENTITY FULL; shared replication slot 'spice_pg_f0da15_3f484bfe'); 0 table(s) excluded by include/exclude filters; 0 table(s) skipped (no usable replica identity -- see warnings); tables are discovered once at startup -- tables added to the source afterward are not picked up until spice restarts.
+INFO runtime::catalogconnector::postgres_accelerated: Catalog 'pg': accelerating 8 table(s) via CDC (8 via primary key, 0 via REPLICA IDENTITY USING INDEX, 0 via REPLICA IDENTITY FULL; shared replication slot 'spice_pg_f0da15_3f484bfe'); 0 table(s) excluded by include/exclude filters; 0 table(s) skipped (no usable replica identity -- see warnings); tables are discovered once at startup -- tables added to the source afterward are not picked up until the Spice runtime (spiced) is restarted.
 INFO runtime::init::catalog: Registered catalog 'pg' with 1 schema and 8 tables
 INFO data_components::postgres_replication::slot: Created new replication slot slot=spice_pg_f0da15_3f484bfe publication=spice_pg_f0da15_3f484bfe_pub
 INFO data_components::postgres_replication::shared: dataset joined shared replication slot table=public.customer slot=spice_pg_f0da15_3f484bfe members=2
