@@ -415,4 +415,4 @@ curl --request POST \
 
 - [S3 Vectors documentation](https://spiceai.org/docs/components/vectors/s3_vectors)
 - [Spice.ai S3 Vectors blog post](https://spiceai.org/blog/amazon-s3-vectors-with-spice)
-- [Amazon S3 Vectors](https://aws.amazon.com/s3/vectors/)
+- [Amazon S3 Vectors](https://aws.amazon.com/s3/features/vectors/)

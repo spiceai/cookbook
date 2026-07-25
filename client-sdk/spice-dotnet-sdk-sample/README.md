@@ -85,6 +85,6 @@ The cloud snippet keeps an inline API key placeholder by design. Replace the API
 ## Links
 
 - [Spice .NET SDK](https://github.com/spiceai/spice-dotnet)
-- [NuGet package](https://www.nuget.org/packages/SpiceAI.Client)
+- [NuGet package](https://www.nuget.org/packages/SpiceAI)
 - [Spice.ai Cloud](https://spice.ai)
 - [Spice.ai documentation](https://docs.spiceai.org)
