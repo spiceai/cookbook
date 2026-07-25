@@ -173,5 +173,5 @@ Time: 0.678913675 seconds. 10 rows.
 
 - [Snowflake Data Connector](https://spiceai.org/docs/components/data-connectors/snowflake)
 - [HTTP(s) Data Connector](https://docs.spiceai.org/components/data-connectors/https)
-- [Spice Workers](https://docs.spiceai.org/components/workers)
+- [Spice Workers](https://docs.spiceai.org/features/workers)
 - [TVMaze API](https://www.tvmaze.com/api)
