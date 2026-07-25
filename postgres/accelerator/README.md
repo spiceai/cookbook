@@ -1,6 +1,6 @@
 # PostgreSQL Data Accelerator
 
-Works with `v1.0+`. As of Spice `v2.0`, the PostgreSQL Data Accelerator is an [Enterprise feature](https://spiceai.org/docs/enterprise) and requires an enterprise build of `spiced`. Community builds will log `The accelerator engine postgres is not available` and refuse to load the dataset.
+Works with `v1.0+`. As of Spice `v2.0`, the PostgreSQL Data Accelerator is an [Enterprise feature](https://spiceai.org/docs/components/data-accelerators/postgres) and requires an enterprise build of `spiced`. Community builds will log `The accelerator engine postgres is not available` and refuse to load the dataset.
 
 Follow these steps to get started with PostgreSQL as a Data Accelerator.
 
