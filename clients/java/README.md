@@ -61,4 +61,4 @@ addon10
 ## Learn more
 
 - [Spice OSS Documentation](https://docs.spiceai.org/)
-- [Apache Arrow Flight SQL JDBC](https://arrow.apache.org/docs/java/reference/org/apache/arrow/flight/sql/FlightSqlClient.html)
+- [Apache Arrow Flight SQL JDBC](https://arrow.apache.org/java/current/flight_sql_jdbc_driver.html)
