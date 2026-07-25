@@ -2,7 +2,9 @@
 
 Works with `v2.0+`
 
-Run Spice as an MCP server and connect your AI assistant (Claude Desktop, Cursor, VS Code, or any MCP client) to it. This recipe loads GitHub issues, pull requests, and commits as accelerated, in-memory datasets and exposes the [GitHub MCP server](https://github.com/modelcontextprotocol/servers/tree/main/src/github) through a single unified endpoint at `/v1/mcp`.
+Run Spice as an MCP server and connect your AI assistant (Claude Desktop, Cursor, VS Code, or any MCP client) to it. This recipe loads GitHub issues, pull requests, and commits as accelerated, in-memory datasets and exposes the [GitHub MCP server](https://github.com/modelcontextprotocol/servers-archived/tree/main/src/github) through a single unified endpoint at `/v1/mcp`.
+
+> **Note:** This recipe proxies the reference `@modelcontextprotocol/server-github` package, which has been moved to [`modelcontextprotocol/servers-archived`](https://github.com/modelcontextprotocol/servers-archived/tree/main/src/github) and is marked deprecated on npm. It still installs and runs via `npx`, so the recipe works as written. For new work, GitHub now maintains [`github/github-mcp-server`](https://github.com/github/github-mcp-server) as the supported replacement.
 
 Your AI assistant gets one connection point that gives it:
 
