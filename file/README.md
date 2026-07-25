@@ -97,9 +97,9 @@ base_url="https://raw.githubusercontent.com/spiceai/docs/refs/heads/trunk/websit
 
 files=(
   "clickhouse.md"
-  "databricks.md"
   "debezium.md"
-  "delta-lake.md"
+  "ducklake.md"
+  "iceberg.md"
 )
 
 for file in "${files[@]}"; do
@@ -153,9 +153,9 @@ Expected output:
 | location                   |
 +----------------------------+
 | path/to/file/clickhouse.md |
-| path/to/file/databricks.md |
 | path/to/file/debezium.md   |
-| path/to/file/delta-lake.md |
+| path/to/file/ducklake.md   |
+| path/to/file/iceberg.md    |
 +----------------------------+
 ```
 
