@@ -107,7 +107,7 @@ sql> show tables;
 | spice         | runtime      | task_history  | BASE TABLE |
 +---------------+--------------+---------------+------------+
 
-Time: 0.032075708 seconds. 3 rows.
+Time: 0.032075708 seconds. 2 rows.
 ```
 
 Run _Pricing Summary Report Query (Q1)_. More information about TPC-H and all the queries involved can be found in the official [TPC Benchmark H Standard Specification](https://www.tpc.org/tpc_documents_current_versions/pdf/tpc-h_v2.17.1.pdf).
