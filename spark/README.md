@@ -134,7 +134,7 @@ sql> show tables;
 | spice         | public       | nyc_taxis    | BASE TABLE |
 +---------------+--------------+--------------+------------+
 
-Time: 0.031211 seconds. 3 rows.
+Time: 0.031211 seconds. 2 rows.
 ```
 
 7. Check the table structure of `nyc_taxis`.

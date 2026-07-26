@@ -186,7 +186,7 @@ show tables;
 | spice         | public       | sample_data  | BASE TABLE |
 +---------------+--------------+--------------+------------+
 
-Time: 0.004413208 seconds. 3 rows.
+Time: 0.004413208 seconds. 2 rows.
 ```
 
 You can now now query `sample_data` in the runtime.
