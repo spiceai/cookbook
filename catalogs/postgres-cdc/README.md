@@ -134,7 +134,7 @@ Spice discovers all tables, snapshots each into Cayenne, and opens a single
 shared replication slot to keep them live:
 
 ```
-INFO runtime::catalogconnector::postgres_accelerated: Catalog 'pg': accelerating 8 table(s) via CDC (8 via primary key, 0 via REPLICA IDENTITY USING INDEX, 0 via REPLICA IDENTITY FULL; shared replication slot 'spice_pg_f0da15_3f484bfe'); 0 table(s) excluded by include/exclude filters; 0 table(s) skipped (no usable replica identity -- see warnings); tables are discovered once at startup -- tables added to the source afterward are not picked up until the Spice runtime (spiced) is restarted.
+INFO runtime::catalogconnector::postgres_accelerated: Catalog 'pg': accelerating 8 table(s) via CDC (8 via primary key, 0 via REPLICA IDENTITY USING INDEX, 0 via REPLICA IDENTITY FULL; shared replication slot 'spice_pg_f0da15_3f484bfe'); 0 table(s) excluded by include/exclude filters; 0 table(s) skipped (no usable replica identity -- see warnings); tables added to these schema(s) later are picked up on the periodic catalog refresh; schema changes to existing tables, and renamed or dropped tables, are not tracked.
 INFO runtime::init::catalog: Registered catalog 'pg' with 1 schema and 8 tables
 INFO data_components::postgres_replication::slot: Created new replication slot slot=spice_pg_f0da15_3f484bfe publication=spice_pg_f0da15_3f484bfe_pub
 INFO data_components::postgres_replication::shared: dataset joined shared replication slot table=public.customer slot=spice_pg_f0da15_3f484bfe members=2
@@ -299,9 +299,10 @@ accelerates — never `FOR ALL TABLES`. This means:
   identity). Each one is reported with a "not replicated" warning and left out
   of the accelerated catalog — it is not an error, and it does not stop the
   eligible tables from replicating.
-- Because membership is an explicit table list, a table added to the source
-  **after** startup is not automatically picked up. Catalog discovery runs once
-  at startup; restart Spice to discover new tables.
+- Discovery re-runs on the catalog's periodic refresh, so a table added to a
+  selected schema **after** startup is picked up and accelerated on the next
+  refresh. Schema changes to existing tables, and renamed or dropped tables, are
+  not tracked.
 
 **Restart vs. re-snapshot.** The replication slot persists on the PostgreSQL
 server across a Spice restart. When the same Spice instance restarts, it resumes
@@ -350,7 +351,8 @@ is matched against `schema.table`, e.g. `public.*`), or a database whose tables
 have no primary key and no `REPLICA IDENTITY USING INDEX`/`FULL`. Fix the
 patterns, or give the tables a usable replica identity (a primary key, or a
 `UNIQUE NOT NULL` index set via `ALTER TABLE ... REPLICA IDENTITY USING INDEX
-...`), then restart — catalog discovery runs once at startup.
+...`), then restart — a catalog that discovers zero eligible tables fails to
+load, so it won't pick them up until Spice is restarted.
 
 ## References
 
