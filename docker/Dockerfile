@@ -1,4 +1,4 @@
-FROM spiceai/spiceai:latest-models
+FROM spiceai/spiceai:latest
 
 # Copy the Spicepod configuration file
 COPY spicepod.yaml /app/spicepod.yaml
