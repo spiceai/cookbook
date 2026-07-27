@@ -1,6 +1,6 @@
 # Running in Docker
 
-Works with `v1.0+`
+Works with `v2.0+`
 
 This recipe demonstrates how to run Spice.ai OSS in a container using the official [spiceai/spiceai](https://hub.docker.com/r/spiceai/spiceai) Docker image. It shows how to:
 
@@ -25,7 +25,7 @@ cat Dockerfile
 Output:
 
 ```shell
-FROM spiceai/spiceai:latest-models
+FROM spiceai/spiceai:latest
 
 # Copy the Spicepod configuration file
 COPY spicepod.yaml /app/spicepod.yaml
@@ -43,6 +43,8 @@ EXPOSE 50051
 # Start the Spicepod
 
 ```
+
+> **Note:** Model and embedding support is built into the default `spiceai/spiceai` image from Spice `v2.0.0` onwards, which this recipe needs for the local `hf_minilm` embedding. Spice `v1.x` published this support as a separate `-models` image variant instead (for example `spiceai/spiceai:1.11.6-models`); that variant is no longer published for `v2.x`, so use the plain `latest` tag.
 
 Use Docker Compose to build and run the Docker image:
 
