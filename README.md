@@ -100,7 +100,6 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 - [Apache Spark Data Connector](./spark/README.md) - Read data from an Apache Spark instance.
 - [Apache Kafka Data Connector](./kafka/README.md) - Stream data from Kafka with federated queries.
 - [IMAP Data Connector](./imap/README.md) - Connect to an IMAP email server.
-  - [Connecting to an Outlook mailbox](./imap/outlook.md)
 
 ### Connecting to Data Sources with Catalog Connectors
 
@@ -113,7 +112,7 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 
 ### Using Vector Engines
 
-- [Amazon S3 Vectors](./vectors/s3-vectors/README.md) - Use S3 as a vector engine for embeddings and similarity search.
+- [Amazon S3 Vectors](./vectors/s3/README.md) - Use S3 as a vector engine for embeddings and similarity search.
 
 ## Search
 
