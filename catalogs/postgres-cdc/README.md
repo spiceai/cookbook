@@ -117,11 +117,14 @@ catalogs:
 > and the engine defaults to `cayenne`. Each discovered table is accelerated
 > according to its PostgreSQL `REPLICA IDENTITY`: a primary key (`DEFAULT`) or a
 > unique index (`USING INDEX`) becomes the CDC key, and `REPLICA IDENTITY FULL`
-> also works (heavier — the full old-row image is written to the WAL on every
-> change). A table with no usable replica identity — `NOTHING`, or `DEFAULT`/`FULL`
-> with no key — is skipped with a warning and left out of the catalog, rather than
-> failing catalog setup. Use `include`/`exclude` to scope out tables (or whole
-> schemas) you don't want accelerated, which also silences the skip warning for
+> works too **as long as the table also has a primary key** (it is heavier — the
+> full old-row image is written to the WAL on every change). Note that `FULL`
+> alone is **not** enough: `FULL` still needs a primary key (or a `USING INDEX`
+> key) to route upserts, so a `FULL` table with no key is **still skipped**, just
+> like `NOTHING` and a keyless `DEFAULT`. A skipped table gets a warning and is
+> left out of the catalog rather than failing catalog setup. Use `include`/`exclude`
+> to scope out tables (or whole schemas) you don't want accelerated, which also
+> silences the skip warning for
 > known-ineligible tables.
 
 ## Step 5. Start the Spice runtime
