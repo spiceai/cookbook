@@ -25,6 +25,7 @@ datasets:
     params:
       github_token: ${secrets:GITHUB_TOKEN}
       include: "docs/**/*.md"
+      file_format: md
     acceleration:
       enabled: true
     columns:
@@ -37,7 +38,6 @@ datasets:
               enabled: true
               target_chunk_size: 256
               overlap_size: 64
-              file_format: md
 
 embeddings:
   - from: openai:text-embedding-3-small
