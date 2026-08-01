@@ -129,37 +129,13 @@ Run `spice search`
 
 ```shell
 search> animals
-Rank 1, Score: 89.7, Datasets [spice.public.films]
-A Beautiful Story of a Dog And a Technical Writer who must Outgun a Student in A Balloon
+ Rank  Match                                                                                     Score   Dataset
+ 1     A Beautiful Story of a Dog And a Technical Writer who must Outgun a Student in A Balloon  0.8975  spice.public.films
+ 2     A Epic Documentary of a Hunter And a Dog who must Outgun a Dog in A Balloon Factory       0.8941  spice.public.films
+ 3     A Boring Display of a Man And a Dog who must Redeem a Girl in A U-Boat                    0.8897  spice.public.films
+ ...
 
-Rank 2, Score: 89.4, Datasets [spice.public.films]
-A Epic Documentary of a Hunter And a Dog who must Outgun a Dog in A Balloon Factory
-
-Rank 3, Score: 89.0, Datasets [spice.public.films]
-A Boring Display of a Man And a Dog who must Redeem a Girl in A U-Boat
-
-Rank 4, Score: 88.7, Datasets [spice.public.films]
-A Insightful Story of a Boy And a Dog who must Redeem a Boy in Australia
-
-Rank 5, Score: 88.6, Datasets [spice.public.films]
-A Boring Story of a Womanizer And a Pioneer who must Face a Dog in California
-
-Rank 6, Score: 88.5, Datasets [spice.public.films]
-A Intrepid Saga of a Man And a Lumberjack who must Vanquish a Husband in The Outback
-
-Rank 7, Score: 88.4, Datasets [spice.public.films]
-A Thrilling Yarn of a Dog And a Dog who must Build a Husband in A Balloon
-
-Rank 8, Score: 88.3, Datasets [spice.public.films]
-A Fateful Story of a Husband And a Moose who must Vanquish a Boy in California
-
-Rank 9, Score: 88.0, Datasets [spice.public.films]
-A Intrepid Yarn of a Frisbee And a Dog who must Build a Astronaut in A Balloon Factory
-
-Rank 10, Score: 87.9, Datasets [spice.public.films]
-A Intrepid Reflection of a Waitress And a A Shark who must Kill a Squirrel in The Outback
-
-Time: 32ms. 10 results.
+Time: 0.032 seconds. 10 results.
 ```
 
 Or using API: https://docs.spiceai.org/api/HTTP/post-search
