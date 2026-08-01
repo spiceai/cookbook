@@ -158,52 +158,52 @@ spice trace nsql --include-input --truncate=40
 **Result:**
 
 ```shell
-TREE                         STATUS DURATION   SPANID           INPUT
-nsql                         ✅      1824.15ms 12f07906aaf5da28 Which vendors have made the most trips i... (7 characters omitted)
-  ├── tool_use::table_schema ✅         0.17ms ccd6c135f476b667 {"tables":["spice.public.taxi_trips"],"o... (14 characters omitted)
-  ├── tool_use::sample_data  ✅        59.85ms ed37435e258ca21a DistinctColumns({"dataset":"spice.public... (36 characters omitted)
-  │ ├── sql_query            ✅        20.64ms d2e7e3164690c7a8 SELECT "VendorID" FROM (
-                                                                               ... (317 characters omitted)
-  │ ├── sql_query            ✅        29.04ms 13c911276c86bf00 SELECT tpep_pickup_datetime FROM (
-                                                                     ... (367 characters omitted)
-  │ ├── sql_query            ✅        28.99ms 9d46a93ff038b8da SELECT tpep_dropoff_datetime FROM (
-                                                                    ... (372 characters omitted)
-  │ ├── sql_query            ✅        16.05ms 5b7cd9fe77fe9b2a SELECT passenger_count FROM (
-                                                                          ... (342 characters omitted)
-  │ ├── sql_query            ✅        13.48ms 3681e7f855a7fe37 SELECT trip_distance FROM (
-                                                                            ... (332 characters omitted)
-  │ ├── sql_query            ✅         8.34ms 297ec1b7e1459834 SELECT "RatecodeID" FROM (
-                                                                             ... (327 characters omitted)
-  │ ├── sql_query            ✅         8.56ms 72784b4e2e5558b6 SELECT store_and_fwd_flag FROM (
-                                                                       ... (357 characters omitted)
-  │ ├── sql_query            ✅         9.85ms 90df43952c18ef05 SELECT "PULocationID" FROM (
-                                                                           ... (337 characters omitted)
-  │ ├── sql_query            ✅         7.97ms 2712e68354273151 SELECT "DOLocationID" FROM (
-                                                                           ... (337 characters omitted)
-  │ ├── sql_query            ✅         3.85ms 1bf083de2fc8cb6b SELECT payment_type FROM (
-                                                                             ... (327 characters omitted)
-  │ ├── sql_query            ✅         4.98ms b005cf6b9ad59b97 SELECT fare_amount FROM (
-                                                                              ... (322 characters omitted)
-  │ ├── sql_query            ✅         9.29ms 0e5d432e33d78842 SELECT extra FROM (
-                                                                                SELE... (292 characters omitted)
-  │ ├── sql_query            ✅         6.51ms 4fdec9d696879881 SELECT mta_tax FROM (
-                                                                                SE... (302 characters omitted)
-  │ ├── sql_query            ✅         9.66ms 839e94d954ed47ae SELECT tip_amount FROM (
-                                                                               ... (317 characters omitted)
-  │ ├── sql_query            ✅         8.11ms d8f10a738e0d9f5b SELECT tolls_amount FROM (
-                                                                             ... (327 characters omitted)
-  │ ├── sql_query            ✅         5.80ms 49f029f6589b0a81 SELECT improvement_surcharge FROM (
-                                                                    ... (372 characters omitted)
-  │ ├── sql_query            ✅         4.02ms 3cd2bf1818a6f2c8 SELECT total_amount FROM (
-                                                                             ... (327 characters omitted)
-  │ ├── sql_query            ✅         3.04ms 5323aea0774302a1 SELECT congestion_surcharge FROM (
-                                                                     ... (367 characters omitted)
-  │ └── sql_query            ✅         2.38ms fcd8e6da9bbbd069 SELECT "Airport_fee" FROM (
-                                                                            ... (332 characters omitted)
-  ├── tool_use::sample_data  ✅         9.90ms 1ff95d7d9c447640 RandomSample({"dataset":"spice.public.ta... (21 characters omitted)
-  │ └── sql_query            ✅        11.09ms 360a4251c2a21af0 SELECT * FROM spice.public.taxi_trips LI... (5 characters omitted)
-  ├── ai_completion          ✅      1756.85ms 09e7b05de4071457 {"messages":[{"role":"system","content":... (6934 characters omitted)
-  └── sql_query              ✅         6.40ms ea2f648224bbd773 SELECT "VendorID", COUNT(*) AS "trip_cou... (140 characters omitted)
+ Tree                    Status  Duration    Span ID           Input
+ nsql                    OK       1824.15ms  12f07906aaf5da28  Which vendors have made the most trips i... (7 characters omitted)
+ tool_use::table_schema  OK          0.17ms  ccd6c135f476b667  {"tables":["spice.public.taxi_trips"],"o... (14 characters omitted)
+ tool_use::sample_data   OK         59.85ms  ed37435e258ca21a  DistinctColumns({"dataset":"spice.public... (36 characters omitted)
+ sql_query               OK         20.64ms  d2e7e3164690c7a8  SELECT "VendorID" FROM (
+                                                                              ... (317 characters omitted)
+ sql_query               OK         29.04ms  13c911276c86bf00  SELECT tpep_pickup_datetime FROM (
+                                                                    ... (367 characters omitted)
+ sql_query               OK         28.99ms  9d46a93ff038b8da  SELECT tpep_dropoff_datetime FROM (
+                                                                   ... (372 characters omitted)
+ sql_query               OK         16.05ms  5b7cd9fe77fe9b2a  SELECT passenger_count FROM (
+                                                                         ... (342 characters omitted)
+ sql_query               OK         13.48ms  3681e7f855a7fe37  SELECT trip_distance FROM (
+                                                                           ... (332 characters omitted)
+ sql_query               OK          8.34ms  297ec1b7e1459834  SELECT "RatecodeID" FROM (
+                                                                            ... (327 characters omitted)
+ sql_query               OK          8.56ms  72784b4e2e5558b6  SELECT store_and_fwd_flag FROM (
+                                                                      ... (357 characters omitted)
+ sql_query               OK          9.85ms  90df43952c18ef05  SELECT "PULocationID" FROM (
+                                                                          ... (337 characters omitted)
+ sql_query               OK          7.97ms  2712e68354273151  SELECT "DOLocationID" FROM (
+                                                                          ... (337 characters omitted)
+ sql_query               OK          3.85ms  1bf083de2fc8cb6b  SELECT payment_type FROM (
+                                                                            ... (327 characters omitted)
+ sql_query               OK          4.98ms  b005cf6b9ad59b97  SELECT fare_amount FROM (
+                                                                             ... (322 characters omitted)
+ sql_query               OK          9.29ms  0e5d432e33d78842  SELECT extra FROM (
+                                                                               SELE... (292 characters omitted)
+ sql_query               OK          6.51ms  4fdec9d696879881  SELECT mta_tax FROM (
+                                                                               SE... (302 characters omitted)
+ sql_query               OK          9.66ms  839e94d954ed47ae  SELECT tip_amount FROM (
+                                                                              ... (317 characters omitted)
+ sql_query               OK          8.11ms  d8f10a738e0d9f5b  SELECT tolls_amount FROM (
+                                                                            ... (327 characters omitted)
+ sql_query               OK          5.80ms  49f029f6589b0a81  SELECT improvement_surcharge FROM (
+                                                                   ... (372 characters omitted)
+ sql_query               OK          4.02ms  3cd2bf1818a6f2c8  SELECT total_amount FROM (
+                                                                            ... (327 characters omitted)
+ sql_query               OK          3.04ms  5323aea0774302a1  SELECT congestion_surcharge FROM (
+                                                                    ... (367 characters omitted)
+ sql_query               OK          2.38ms  fcd8e6da9bbbd069  SELECT "Airport_fee" FROM (
+                                                                           ... (332 characters omitted)
+ tool_use::sample_data   OK          9.90ms  1ff95d7d9c447640  RandomSample({"dataset":"spice.public.ta... (21 characters omitted)
+ sql_query               OK         11.09ms  360a4251c2a21af0  SELECT * FROM spice.public.taxi_trips LI... (5 characters omitted)
+ ai_completion           OK       1756.85ms  09e7b05de4071457  {"messages":[{"role":"system","content":... (6934 characters omitted)
+ sql_query               OK          6.40ms  ea2f648224bbd773  SELECT "VendorID", COUNT(*) AS "trip_cou... (140 characters omitted)
 ```
 
 **What's happening here:**
