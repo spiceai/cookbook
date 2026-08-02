@@ -64,7 +64,7 @@ The scheduler starts and registers the `data` dataset:
 
 ```console
 2026-03-02T12:00:00.000000Z  INFO spiced: Starting runtime
-2026-03-02T12:00:01.000000Z  INFO runtime::cluster: Starting Ballista scheduler on 0.0.0.0:50052
+2026-03-02T12:00:01.000000Z  INFO runtime::cluster: Starting Ballista scheduler on 127.0.0.1:50052 (shuffle_format=arrow_ipc, shuffle_location=disk (temp_directory))
 2026-03-02T12:00:01.000000Z  INFO runtime::init::dataset: Dataset data initializing...
 2026-03-02T12:00:01.000000Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2026-03-02T12:00:01.000000Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
@@ -109,11 +109,13 @@ The API returns immediately with a query ID and status URLs:
 {
   "query_id": "01ABC-DEF-456-7890AB",
   "status": "PENDING",
-  "error": null,
   "status_url": "/v1/queries/01ABC-DEF-456-7890AB/status",
   "results_url": "/v1/queries/01ABC-DEF-456-7890AB/results"
 }
 ```
+
+Optional fields are omitted rather than returned as `null`, so an `error` field only
+appears when a query actually fails.
 
 ### Step 6: Poll for Completion
 
@@ -127,8 +129,7 @@ While still running:
 
 ```json
 {
-  "status": "RUNNING",
-  "error": null
+  "status": "RUNNING"
 }
 ```
 
@@ -136,8 +137,7 @@ Once completed:
 
 ```json
 {
-  "status": "SUCCEEDED",
-  "error": null
+  "status": "SUCCEEDED"
 }
 ```
 
@@ -153,15 +153,17 @@ curl -s http://127.0.0.1:8090/v1/queries/01ABC-DEF-456-7890AB/results | jq .
 {
   "chunk_index": 0,
   "row_offset": 0,
-  "row_count": 100,
-  "next_chunk_index": null,
-  "next_chunk_url": null,
+  "row_count": 50,
   "data_array": [
     { "id": 30, "value": "value_0" },
     { "id": 31, "value": "value_1" }
   ]
 }
 ```
+
+The `data` dataset holds 50 rows, so `LIMIT 100` returns all 50 in a single chunk. Results
+are written in chunks of 10,000 rows; because this result fits in one chunk, the
+`next_chunk_index` and `next_chunk_url` fields are omitted.
 
 For queries with more than 10,000 rows, follow the `next_chunk_url` to paginate through results:
 
@@ -182,23 +184,24 @@ spice query "SELECT * FROM data LIMIT 10;"
 ```console
 Submitted query: 01ABC-DEF-456-7890AB (PENDING)
 Waiting for completion... (Ctrl+C to stop waiting)
-✓ SUCCEEDED (3.2s)
-+----+---------+
-| id | value   |
-+----+---------+
-| 30 | value_0 |
-| 31 | value_1 |
-| 32 | value_2 |
-| 33 | value_3 |
-| 34 | value_4 |
-| 35 | value_5 |
-| 36 | value_6 |
-| 37 | value_7 |
-| 38 | value_8 |
-| 39 | value_9 |
-+----+---------+
+✓ SUCCEEDED (1.5s)
++-------+---------+
+|   id  |  value  |
+| int64 | varchar |
++-------+---------+
+| 0     | value_0 |
+| 1     | value_1 |
+| 2     | value_2 |
+| 3     | value_3 |
+| 4     | value_4 |
+| 5     | value_5 |
+| 6     | value_6 |
+| 7     | value_7 |
+| 8     | value_8 |
+| 9     | value_9 |
++-------+---------+
 
-Time: 3.20000000 seconds. 10 rows.
+Time: 1.50488558 seconds. 10 rows.
 ```
 
 ### Submit Without Waiting
@@ -220,8 +223,8 @@ spice query list --status running
 ```
 
 ```console
-QUERY ID                STATE     CREATED                    SQL PREVIEW
-01ABC-DEF-456-7890AB    RUNNING   2026-03-02T12:00:00+00:00  SELECT * FROM data
+ QUERY ID              STATE    CREATED                        SQL PREVIEW
+ 01ABC-DEF-456-7890AB  RUNNING  2026-03-02T12:00:00.000+00:00  SELECT * FROM data;
 
 Total: 1 queries
 ```
@@ -251,33 +254,36 @@ Type SQL to submit a query, or .help for commands.
 query> SELECT COUNT(*) FROM data;
 Submitted query: 01ABC-DEF-456-7890AB (PENDING)
 Press Ctrl+C to stop waiting (query continues in background)
-✓ SUCCEEDED (2.8s)
+✓ SUCCEEDED (1.0s)
 +----------+
 | count(*) |
+|   int64  |
 +----------+
-| 100      |
+| 50       |
 +----------+
 
-Time: 2.80000000 seconds. 1 rows.
+Time: 1.00419104 seconds. 1 rows.
 
 query> .list
-QUERY ID                STATUS      SUBMITTED  SQL
-01ABC-DEF-456-7890AB    SUCCEEDED   3s ago     SELECT COUNT(*) FROM data;
+ QUERY ID              STATUS     SUBMITTED  SQL
+ 01ABC-DEF-456-7890AB  SUCCEEDED  1s ago     SELECT COUNT(*) FROM data;
 
 query> .exit
 ```
 
 ### REPL Commands
 
-| Command         | Description                            |
-| --------------- | -------------------------------------- |
-| `.list`         | List tracked queries from this session |
-| `.status <id>`  | Show query status                      |
-| `.results <id>` | Fetch and display results              |
-| `.wait <id>`    | Resume waiting for a query             |
-| `.cancel <id>`  | Cancel a running query                 |
-| `.help`         | Show all commands                      |
-| `.exit`         | Exit the REPL                          |
+| Command             | Description                            |
+| ------------------- | -------------------------------------- |
+| `.list`             | List tracked queries from this session |
+| `.status <id>`      | Show query status                      |
+| `.results <id>`     | Fetch and display results              |
+| `.wait <id>`        | Resume waiting for a query             |
+| `.cancel <id>`      | Cancel a running query                 |
+| `.clear`            | Clear tracked queries from local list  |
+| `.clear history`    | Clear command history                  |
+| `.help`             | Show all commands                      |
+| `.exit`, `.quit`, `.q` | Exit the REPL                       |
 
 Partial query IDs are supported — `01ABC` resolves to the full ID if it uniquely matches one tracked query.
 
@@ -290,8 +296,23 @@ curl -s http://127.0.0.1:8090/v1/queries \
   -H "Content-Type: application/json" \
   -d '{
     "sql": "SELECT * FROM data WHERE id > $1 LIMIT $2",
-    "parameters": [50, 10]
+    "parameters": [40, 10]
   }' | jq .
+```
+
+Fetching the results of that query shows the bound values applied — ids above `40`, capped
+at 10 rows:
+
+```json
+{
+  "chunk_index": 0,
+  "row_offset": 0,
+  "row_count": 9,
+  "data_array": [
+    { "id": 41, "value": "value_1" },
+    { "id": 42, "value": "value_2" }
+  ]
+}
 ```
 
 ## Advanced: Timeouts and Size Limits
