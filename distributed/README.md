@@ -73,22 +73,25 @@ datasets:
 The Spice scheduler will now start:
 
 ```console
-2025-12-15T23:14:49.338208Z  INFO spiced: Starting runtime v1.10.1-unstable-build.0877656da-dev
-2025-12-15T23:14:49.344851Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
-2025-12-15T23:14:49.345065Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s
-2025-12-15T23:14:49.345164Z  INFO runtime::init::caching: Initialized embeddings cache; max size: 128.00 MiB, item ttl: 1s
-2025-12-15T23:14:50.185537Z  INFO runtime::cluster: Starting Ballista scheduler on 0.0.0.0:50052
-2025-12-15T23:14:50.185608Z  INFO ballista_scheduler::scheduler_process: Starting Scheduler grpc server with task scheduling policy of PullStaged
-2025-12-15T23:14:50.185612Z  INFO runtime::init::task_history: Task history enabled: retention_period=28800s, retention_check_interval=900s
-2025-12-15T23:14:50.185719Z  INFO ballista_scheduler::scheduler_server::query_stage_scheduler: Starting QueryStageScheduler
-2025-12-15T23:14:50.186108Z  INFO runtime::init::dataset: Dataset data initializing...
-2025-12-15T23:14:50.186157Z  INFO ballista_core::event_loop: Starting the event loop query_stage
-2025-12-15T23:14:50.186890Z  INFO runtime::cluster::servers: Cluster mTLS enabled for internal cluster server
-2025-12-15T23:14:50.186996Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-12-15T23:14:50.187124Z  INFO runtime::cluster::servers: Spice Runtime internal cluster server listening on 0.0.0.0:50052
-2025-12-15T23:14:50.194372Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2025-12-15T23:14:52.097222Z  INFO runtime::init::dataset: Dataset data registered (s3://spiceai-public-datasets/hive_partitioned_data/), results cache enabled.
-2025-12-15T23:14:52.199645Z  INFO runtime: All components are loaded. Spice runtime is ready!
+2026-08-02T12:08:34.498489Z  INFO spiced: Starting runtime v2.1.2+models
+2026-08-02T12:08:34.500314Z  INFO runtime::cluster::pki: Cluster mTLS configured with CA CN=Spice.ai CLI Root CA - DO NOT USE IN PRODUCTION, OU=unknown and node certificate CN scheduler1
+2026-08-02T12:08:34.501762Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2026-08-02T12:08:34.501811Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
+2026-08-02T12:08:34.501832Z  INFO runtime::init::caching: Initialized embeddings cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
+2026-08-02T12:08:34.503488Z  INFO runtime::cluster: Scheduler using shared object-store job state state_location=file:///tmp/spice-cluster
+2026-08-02T12:08:34.503505Z  INFO runtime::init::task_history: Task history enabled: retention_period=28800s, retention_check_interval=900s
+2026-08-02T12:08:34.503592Z  INFO runtime::init::dataset: Dataset data initializing...
+2026-08-02T12:08:34.503770Z  INFO runtime::cluster: Starting Ballista scheduler on 127.0.0.1:50052 (shuffle_format=arrow_ipc, shuffle_location=disk (temp_directory))
+2026-08-02T12:08:34.503790Z  INFO ballista_scheduler::scheduler_process: Starting Scheduler grpc server with task scheduling policy of PullStaged
+2026-08-02T12:08:34.503818Z  INFO ballista_scheduler::scheduler_server::query_stage_scheduler: Starting QueryStageScheduler
+2026-08-02T12:08:34.503839Z  INFO ballista_core::event_loop: Starting the event loop query_stage
+2026-08-02T12:08:34.503958Z  INFO runtime::cluster::servers: Cluster mTLS enabled for internal cluster server
+2026-08-02T12:08:34.504057Z  INFO runtime::cluster::scheduler_registry: Initialized async SQL jobs API with state location: file:///tmp/spice-cluster
+2026-08-02T12:08:34.504088Z  INFO runtime::cluster::servers: Spice Runtime internal cluster server listening on 127.0.0.1:50052
+2026-08-02T12:08:34.504479Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2026-08-02T12:08:34.504962Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2026-08-02T12:08:39.554871Z  INFO runtime::init::dataset: Dataset data registered (s3://spiceai-public-datasets/hive_partitioned_data/), results cache enabled. duration_ms=0
+2026-08-02T12:08:39.658898Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
 ### Step 4: Start the Spice Executor
@@ -111,75 +114,81 @@ A Spice executor does not require a `spicepod.yaml`, as the scheduler will sync 
 The Spice executor will now start:
 
 ```console
-2025-12-15T23:16:55.196064Z  INFO spiced: Starting runtime v1.10.1-unstable-build.0877656da-dev
-2025-12-15T23:16:55.201816Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
-2025-12-15T23:16:55.202032Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s
-2025-12-15T23:16:55.202128Z  INFO runtime::init::caching: Initialized embeddings cache; max size: 128.00 MiB, item ttl: 1s
-2025-12-15T23:16:56.023942Z  INFO runtime::init::task_history: Task history enabled: retention_period=28800s, retention_check_interval=900s
-2025-12-15T23:16:56.053559Z  INFO ballista_executor::execution_loop: Starting poll work loop with scheduler
-2025-12-15T23:16:56.053746Z  INFO runtime::cluster::servers: Cluster mTLS enabled for executor flight server
-2025-12-15T23:16:56.053952Z  INFO runtime::cluster::servers: Spice Runtime executor Flight listening on [::1]:50053
-2025-12-15T23:16:56.092402Z  INFO runtime::cluster: Configured object storage for Dataset data
-2025-12-15T23:16:56.128100Z  INFO runtime: All components are loaded. Spice runtime is ready!
+2026-08-02T12:09:07.161124Z  INFO spiced: Starting runtime v2.1.2+models
+2026-08-02T12:09:07.161567Z  INFO runtime::cluster::pki: Cluster mTLS configured with CA CN=Spice.ai CLI Root CA - DO NOT USE IN PRODUCTION, OU=unknown and node certificate CN executor1
+2026-08-02T12:09:07.162939Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2026-08-02T12:09:07.162988Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
+2026-08-02T12:09:07.163007Z  INFO runtime::init::caching: Initialized embeddings cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
+2026-08-02T12:09:07.164357Z  INFO runtime::init::task_history: Task history enabled: retention_period=28800s, retention_check_interval=900s
+2026-08-02T12:09:07.192869Z  INFO runtime::cluster: Scheduler membership: ["127.0.0.1:50052"]
+2026-08-02T12:09:07.193318Z  INFO runtime::cluster: Executor shuffle configuration: shuffle_format=arrow_ipc, shuffle_location=disk (temp_directory), work_dir=/var/folders/0g/y7w681p562s3wqh76kkvm_1h0000gn/T/
+2026-08-02T12:09:07.193487Z  INFO runtime::cluster::servers: Cluster mTLS enabled for executor flight server
+2026-08-02T12:09:07.193495Z  INFO runtime::http: Spice Runtime HTTP health endpoint listening on 127.0.0.1:9090
+2026-08-02T12:09:07.267046Z  INFO runtime: All components are loaded. Spice runtime is ready!
+2026-08-02T12:09:07.348071Z  INFO ballista_executor::execution_loop: Starting poll work loop with scheduler
+2026-08-02T12:09:07.393588Z  INFO runtime::cluster::servers: Spice Runtime executor Flight listening on 127.0.0.1:50062
 ```
 
-### Step 5: Perform a query
+### Step 5: Perform a distributed query
 
-Start the Spice SQL REPL and perform a query against the distributed dataset:
+> **Note:** From `v2.0` onwards, queries are distributed across the cluster when they are
+> submitted as **async queries** — via `spice query` or `POST /v1/queries`. Ordinary
+> Flight SQL queries (`spice sql`, `spice -sql`) are executed locally by the scheduler and
+> do not create cluster jobs.
+
+Submit a query with `spice query`. The CLI submits the query to the scheduler and polls until
+it completes:
 
 ```bash
-spice sql
-```
-
-```sql
-select * from data limit 10;
-```
-
-Observing the logs from the scheduler and executor shows the scheduler queuing the job, and the executor receiving and executing it:
-
-```console
-2025-12-15T23:18:12.527307Z  INFO ballista_scheduler::scheduler_server::grpc: execution query - session_id: c4e24be7-23e1-427f-963b-fa43e0e3e5c7, operation_id: 019b244e-a513-70c0-b1eb-d3cace68f45e, job_name: , job_id: obUkdkM
-2025-12-15T23:18:12.528591Z  INFO ballista_scheduler::scheduler_server::query_stage_scheduler: Job dyHURMz queued with name ""
-2025-12-15T23:18:12.530719Z  INFO ballista_core::execution_plans::distributed_query: Job dyHURMz is queued...
-2025-12-15T23:18:14.179762Z  INFO ballista_scheduler::planner: planning query stages for job dyHURMz
+spice query "select * from data limit 10;"
 ```
 
 ```console
-2025-12-15T23:18:15.936693Z  INFO ballista_executor::execution_loop: Received task: [TID 2 dyHURMz/2.0/0.0]
-2025-12-15T23:18:15.943448Z  INFO ballista_core::execution_plans::shuffle_writer: Executed partition 0 in 0 seconds. Statistics: numBatches=Some(1), numRows=Some(10), numBytes=Some(454)
-2025-12-15T23:18:15.943509Z  INFO ballista_executor::metrics: === [dyHURMz/2/0] Physical plan with metrics ===
-DefaultQueryStageExec: (write_time{partition=0}=3.050939ms, repart_time{partition=0}=NOT RECORDED, input_rows{partition=0}=10, output_rows{partition=0}=10)
-ShuffleWriterExec: job=dyHURMz stage=2 work_dir=/tmp partitioning=None plan:
- CoalescePartitionsExec: fetch=10, statistics=[Rows=Exact(10), Bytes=Absent, [(Col[0]:),(Col[1]:)]]
-  ShuffleReaderExec: partitioning=UnknownPartitioning(2), statistics=[Rows=Exact(20), Bytes=Exact(1104), [(Col[0]:),(Col[1]:)]]
+Submitted query: 019FC-263-30F-124214 (RUNNING)
+Waiting for completion... (Ctrl+C to stop waiting)
+✓ SUCCEEDED (1.5s)
++-------+---------+
+|   id  |  value  |
+| int64 | varchar |
++-------+---------+
+| 0     | value_0 |
+| 1     | value_1 |
+| 2     | value_2 |
+| 3     | value_3 |
+| 4     | value_4 |
+| 5     | value_5 |
+| 6     | value_6 |
+| 7     | value_7 |
+| 8     | value_8 |
+| 9     | value_9 |
++-------+---------+
 
-
-2025-12-15T23:18:15.943625Z  INFO ballista_executor::execution_loop: Done with task TID 2 dyHURMz/2.0/0.0
-2025-12-15T23:18:15.943663Z  INFO ballista_executor: Task 2 finished with operator_metrics array size 3
+Time: 1.50428063 seconds. 10 rows.
 ```
 
-The query will complete and return results to the Spice SQL REPL:
+Observing the logs from the scheduler and executor shows the scheduler queuing and planning the
+job, and the executor receiving and executing its tasks:
 
 ```console
-+----+---------+
-| id | value   |
-+----+---------+
-| 30 | value_0 |
-| 31 | value_1 |
-| 32 | value_2 |
-| 33 | value_3 |
-| 34 | value_4 |
-| 35 | value_5 |
-| 36 | value_6 |
-| 37 | value_7 |
-| 38 | value_8 |
-| 39 | value_9 |
-+----+---------+
+2026-08-02T12:11:48.340741Z  INFO ballista_scheduler::scheduler_server::query_stage_scheduler: Job 019FC-263-30F-124214 queued with name "019FC-263-30F-124214"
+2026-08-02T12:11:48.722226Z  INFO ballista_scheduler::planner: planning query stages for job 019FC-263-30F-124214
+2026-08-02T12:11:49.251477Z  INFO ballista_scheduler::state::execution_graph: Job 019FC-263-30F-124214 is success, finalizing output partitions
+2026-08-02T12:11:49.251561Z  INFO ballista_scheduler::scheduler_server::query_stage_scheduler: Job 019FC-263-30F-124214 success
+```
 
-Time: 3.623779129 seconds. 10 rows.
+```console
+2026-08-02T12:11:48.728085Z  INFO ballista_executor::execution_loop: Received task: [TID 0 019FC-263-30F-124214/1.0/0.0]
+2026-08-02T12:11:48.728685Z  INFO ballista_executor::execution_loop: Received task: [TID 1 019FC-263-30F-124214/1.0/1.0]
+2026-08-02T12:11:49.047274Z  INFO ballista_executor::execution_loop: Done with task TID 0 019FC-263-30F-124214/1.0/0.0
+2026-08-02T12:11:49.074492Z  INFO ballista_executor::execution_loop: Done with task TID 1 019FC-263-30F-124214/1.0/1.0
+2026-08-02T12:11:49.146964Z  INFO ballista_executor::execution_loop: Received task: [TID 2 019FC-263-30F-124214/2.0/0.0]
+2026-08-02T12:11:49.148574Z  INFO ballista_core::execution_plans::shuffle_writer: Executed partition 0 in 0 seconds. Statistics: numBatches=Some(1), numRows=Some(10), numBytes=Some(65910)
+2026-08-02T12:11:49.148640Z  INFO ballista_executor::execution_loop: Done with task TID 2 019FC-263-30F-124214/2.0/0.0
+2026-08-02T12:11:49.148703Z  INFO ballista_executor: Task 2 finished with operator_metrics array size 3
 ```
 
 ## Learn More
 
 - [Distributed Query Documentation](https://spiceai.org/docs/features/distributed-query)
+- [Async Queries Recipe](../async-queries/README.md) — the async queries API, pagination, and the `spice query` REPL
 - [S3 Connector Documentation](https://spiceai.org/docs/components/data-connectors/s3)
