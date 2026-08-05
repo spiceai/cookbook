@@ -27,14 +27,12 @@ The Spice runtime will start and the `taxi_trips` dataset included in the `spice
 
 ```bash
 Spice.ai runtime starting...
-2024-08-26T18:43:28.915833Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
-2024-08-26T18:43:28.915869Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2024-08-26T18:43:28.915925Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2024-08-26T18:43:28.921589Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2024-08-26T18:43:29.115877Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2024-08-26T18:43:29.636542Z  INFO runtime: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow, 10s refresh), results cache enabled.
-2024-08-26T18:43:29.637779Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
-2024-08-26T18:43:33.695650Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (421.71 MiB) for dataset taxi_trips in 4s 57ms.
+2026-08-05T12:06:14.195427Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2026-08-05T12:06:14.412746Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2026-08-05T12:06:14.415936Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2026-08-05T12:06:19.784484Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled.
+2026-08-05T12:06:19.785986Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
+2026-08-05T12:06:23.126886Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 3s 340ms.
 ```
 
 **In a new terminal window**, run `spice sql` to start the Spice SQL REPL.
@@ -49,7 +47,8 @@ Note the output is:
 
 ```bash
 +---------------------------------+
-| AVG(taxi_trips.passenger_count) |
+| avg(taxi_trips.passenger_count) |
+|             float64             |
 +---------------------------------+
 | 1.3392808966805005              |
 +---------------------------------+
@@ -61,8 +60,10 @@ In a code or text editor, open `spicepods/spiceai/quickstart/spicepod.yaml`.
 
 In the `acceleration` section:
 
-1. Add Refresh SQL below the `refresh_mode` setting to filter the dataset to a passenger_count of two.
-2. Remove the line `refresh_check_interval: 10s` to prevent automated refreshes.
+1. Add `refresh_mode: full`.
+2. Add a `refresh_sql` below it to filter the dataset to a passenger_count of two.
+
+The `spiceai/quickstart` Spicepod does not set `refresh_check_interval`, so the dataset only refreshes when the configuration changes or a refresh is triggered — there are no automated refreshes to disable.
 
 The `spicepod.yaml` should be as below:
 
@@ -85,10 +86,9 @@ datasets:
 Save the file and note that the dataset has been updated:
 
 ```console
-2024-08-26T18:45:40.157775Z  INFO runtime: Updating accelerated dataset taxi_trips...
-2024-08-26T18:45:40.619285Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
-2024-08-26T18:45:45.620097Z  INFO runtime::accelerated_table::refresh_task: Loaded 405,103 rows (54.93 MiB) for dataset taxi_trips in 5s.
-2024-08-26T18:45:46.139435Z  INFO runtime: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled.
+2026-08-05T12:07:15.397249Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
+2026-08-05T12:07:17.674699Z  INFO runtime::accelerated_table::refresh_task: Loaded 405,103 rows (55.13 MiB) for dataset taxi_trips in 2s 277ms.
+2026-08-05T12:07:18.827981Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled.
 ```
 
 Swap to the Spice SQL REPL and enter:
@@ -101,7 +101,8 @@ Note, the output is now:
 
 ```bash
 +---------------------------------+
-| AVG(taxi_trips.passenger_count) |
+| avg(taxi_trips.passenger_count) |
+|             float64             |
 +---------------------------------+
 | 2.0                             |
 +---------------------------------+
@@ -125,10 +126,10 @@ curl -i -X PATCH \
 ```
 
 ```bash
-2024-08-26T18:49:50.591517Z  INFO runtime::accelerated_table: [refresh] Updated refresh SQL for taxi_trips to SELECT * FROM taxi_trips WHERE passenger_count = 3
+2026-08-05T12:07:57.314898Z  INFO runtime::accelerated_table: [refresh] Updated refresh SQL for taxi_trips to SELECT * FROM taxi_trips WHERE passenger_count = 3
 ```
 
-The updated `refresh_sql` will be applied on the _next_ refresh (as determined by `refresh_check_interval`).
+The updated `refresh_sql` will be applied on the _next_ refresh. With no `refresh_check_interval` configured, that refresh has to be triggered.
 
 Make an additional call to trigger a refresh now:
 
@@ -137,8 +138,8 @@ curl -i -H "Content-Type: application/json" -X POST localhost:8090/v1/datasets/t
 ```
 
 ```bash
-2024-08-26T18:50:32.364290Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
-2024-08-26T18:50:35.037819Z  INFO runtime::accelerated_table::refresh_task: Loaded 91,262 rows (12.43 MiB) for dataset taxi_trips in 2s 673ms.
+2026-08-05T12:07:57.325903Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
+2026-08-05T12:07:59.150212Z  INFO runtime::accelerated_table::refresh_task: Loaded 91,262 rows (13.19 MiB) for dataset taxi_trips in 1s 824ms.
 ```
 
 Swap to the Spice SQL REPL and enter:
@@ -151,7 +152,8 @@ Note, the output is now:
 
 ```bash
 +---------------------------------+
-| AVG(taxi_trips.passenger_count) |
+| avg(taxi_trips.passenger_count) |
+|             float64             |
 +---------------------------------+
 | 3.0                             |
 +---------------------------------+
