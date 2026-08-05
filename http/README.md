@@ -139,7 +139,7 @@ WHERE request_path = '/search/people'
   AND request_query IN ('q=michael', 'q=luke');
 ```
 
-This executes two separate API calls (one for each query parameter) and combines the results:
+This executes two separate API calls (one for each query parameter) and combines the results — 10 results per search term, for 20 rows in total:
 
 ```console
 +----------------+---------------+--------------+------------------------------------+
@@ -152,7 +152,7 @@ This executes two separate API calls (one for each query parameter) and combines
 | /search/people | q=luke        |              | {"score":0.5,"person":{...}}       |
 +----------------+---------------+--------------+------------------------------------+
 
-Time: 0.336182833 seconds. 40 rows.
+Time: 0.336182833 seconds. 20 rows.
 ```
 
 ## Advanced Usage
