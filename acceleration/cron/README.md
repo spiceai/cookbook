@@ -27,14 +27,12 @@ The Spice Runtime will start and the `taxi_trips` dataset included in the `spice
 
 ```console
 Spice.ai runtime starting...
-2024-08-26T18:43:28.915833Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
-2024-08-26T18:43:28.915869Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2024-08-26T18:43:28.915925Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2024-08-26T18:43:28.921589Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2024-08-26T18:43:29.115877Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2024-08-26T18:43:29.636542Z  INFO runtime: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow, 10s refresh), results cache enabled.
-2024-08-26T18:43:29.637779Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
-2024-08-26T18:43:33.695650Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (421.71 MiB) for dataset taxi_trips in 4s 57ms.
+2026-08-05T12:06:14.195427Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2026-08-05T12:06:14.412746Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2026-08-05T12:06:14.415936Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2026-08-05T12:06:19.784484Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled.
+2026-08-05T12:06:19.785986Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
+2026-08-05T12:06:23.126886Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 3s 340ms.
 ```
 
 ## Step 2. Configure a cron refresh schedule
