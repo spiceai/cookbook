@@ -26,37 +26,30 @@ spice add spiceai/tpch
 The following output is shown in the Spice runtime terminal:
 
 ```bash
-2024/12/31 09:36:45 INFO Checking for latest Spice runtime release...
-2024/12/31 09:36:45 INFO Spice.ai runtime starting...
-2024-12-31T00:36:46.690599Z  INFO runtime::init::dataset: No datasets were configured. If this is unexpected, check the Spicepod configuration.
-2024-12-31T00:36:46.690681Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2024-12-31T00:36:46.691410Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2024-12-31T00:36:46.692600Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2024-12-31T00:36:46.887621Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2024-12-31T00:36:59.368743Z  INFO runtime::init::dataset: Dataset tpch.customer registered (s3://spiceai-demo-datasets/tpch/customer/), acceleration (arrow), results cache enabled.
-2024-12-31T00:36:59.373278Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset tpch.customer
-2024-12-31T00:37:01.613375Z  INFO runtime::init::dataset: Dataset tpch.lineitem registered (s3://spiceai-demo-datasets/tpch/lineitem/), acceleration (arrow), results cache enabled.
-2024-12-31T00:37:01.616682Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset tpch.lineitem
-2024-12-31T00:37:03.657908Z  INFO runtime::init::dataset: Dataset tpch.nation registered (s3://spiceai-demo-datasets/tpch/nation/), acceleration (arrow), results cache enabled.
-2024-12-31T00:37:03.661211Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset tpch.nation
-2024-12-31T00:37:04.555006Z  INFO runtime::accelerated_table::refresh_task: Loaded 150,000 rows (102.50 MiB) for dataset tpch.customer in 5s 181ms.
-2024-12-31T00:37:05.550729Z  INFO runtime::accelerated_table::refresh_task: Loaded 25 rows (3.80 kiB) for dataset tpch.nation in 1s 889ms.
-2024-12-31T00:37:05.986097Z  INFO runtime::init::dataset: Dataset tpch.orders registered (s3://spiceai-demo-datasets/tpch/orders/), acceleration (arrow), results cache enabled.
-2024-12-31T00:37:05.988902Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset tpch.orders
-2024-12-31T00:37:08.124169Z  INFO runtime::init::dataset: Dataset tpch.part registered (s3://spiceai-demo-datasets/tpch/part/), acceleration (arrow), results cache enabled.
-2024-12-31T00:37:08.125948Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset tpch.part
-2024-12-31T00:37:10.331999Z  INFO runtime::init::dataset: Dataset tpch.partsupp registered (s3://spiceai-demo-datasets/tpch/partsupp/), acceleration (arrow), results cache enabled.
-2024-12-31T00:37:10.333913Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset tpch.partsupp
-2024-12-31T00:37:12.375223Z  INFO runtime::init::dataset: Dataset tpch.region registered (s3://spiceai-demo-datasets/tpch/region/), acceleration (arrow), results cache enabled.
-2024-12-31T00:37:12.377626Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset tpch.region
-2024-12-31T00:37:12.526294Z  INFO runtime::accelerated_table::refresh_task: Loaded 200,000 rows (76.59 MiB) for dataset tpch.part in 4s 400ms.
-2024-12-31T00:37:14.225651Z  INFO runtime::accelerated_table::refresh_task: Loaded 5 rows (1016.00 B) for dataset tpch.region in 1s 848ms.
-2024-12-31T00:37:14.598651Z  INFO runtime::init::dataset: Dataset tpch.supplier registered (s3://spiceai-demo-datasets/tpch/supplier/), acceleration (arrow), results cache enabled.
-2024-12-31T00:37:14.599904Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset tpch.supplier
-2024-12-31T00:37:17.423852Z  INFO runtime::accelerated_table::refresh_task: Loaded 10,000 rows (3.46 MiB) for dataset tpch.supplier in 2s 823ms.
-2024-12-31T00:37:20.287682Z  INFO runtime::accelerated_table::refresh_task: Loaded 800,000 rows (227.25 MiB) for dataset tpch.partsupp in 9s 953ms.
-2024-12-31T00:37:26.427600Z  INFO runtime::accelerated_table::refresh_task: Loaded 1,500,000 rows (366.86 MiB) for dataset tpch.orders in 20s 438ms.
-2024-12-31T00:37:32.034745Z  INFO runtime::accelerated_table::refresh_task: Loaded 6,001,215 rows (1.83 GiB) for dataset tpch.lineitem in 30s 418ms.
+2026-08-05T12:12:47.811362Z  INFO runtime::init::dataset: Dataset tpch.customer registered (s3://spiceai-demo-datasets/tpch/customer/), acceleration (duckdb), results cache enabled.
+2026-08-05T12:12:47.812658Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset tpch.customer
+2026-08-05T12:12:49.605443Z  INFO runtime::init::dataset: Dataset tpch.lineitem registered (s3://spiceai-demo-datasets/tpch/lineitem/), acceleration (duckdb), results cache enabled.
+2026-08-05T12:12:49.606500Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset tpch.lineitem
+2026-08-05T12:12:50.409819Z  INFO runtime::init::dataset: Dataset tpch.nation registered (s3://spiceai-demo-datasets/tpch/nation/), acceleration (duckdb), results cache enabled.
+2026-08-05T12:12:50.410648Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset tpch.nation
+2026-08-05T12:12:50.524894Z  INFO runtime::accelerated_table::refresh_task: Loaded 150,000 rows (33.76 MiB) for dataset tpch.customer in 2s 712ms.
+2026-08-05T12:12:50.970014Z  INFO runtime::accelerated_table::refresh_task: Loaded 25 rows (3.35 kiB) for dataset tpch.nation in 559ms.
+2026-08-05T12:12:51.591911Z  INFO runtime::init::dataset: Dataset tpch.orders registered (s3://spiceai-demo-datasets/tpch/orders/), acceleration (duckdb), results cache enabled.
+2026-08-05T12:12:51.592095Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset tpch.orders
+2026-08-05T12:12:52.822669Z  INFO runtime::init::dataset: Dataset tpch.part registered (s3://spiceai-demo-datasets/tpch/part/), acceleration (duckdb), results cache enabled.
+2026-08-05T12:12:52.823043Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset tpch.part
+2026-08-05T12:12:53.982557Z  INFO runtime::init::dataset: Dataset tpch.partsupp registered (s3://spiceai-demo-datasets/tpch/partsupp/), acceleration (duckdb), results cache enabled.
+2026-08-05T12:12:53.983000Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset tpch.partsupp
+2026-08-05T12:12:54.160528Z  INFO runtime::accelerated_table::refresh_task: Loaded 200,000 rows (35.80 MiB) for dataset tpch.part in 1s 337ms.
+2026-08-05T12:12:54.829053Z  INFO runtime::init::dataset: Dataset tpch.region registered (s3://spiceai-demo-datasets/tpch/region/), acceleration (duckdb), results cache enabled.
+2026-08-05T12:12:54.829967Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset tpch.region
+2026-08-05T12:12:55.402071Z  INFO runtime::accelerated_table::refresh_task: Loaded 5 rows (1008.00 B) for dataset tpch.region in 572ms.
+2026-08-05T12:12:56.036613Z  INFO runtime::init::dataset: Dataset tpch.supplier registered (s3://spiceai-demo-datasets/tpch/supplier/), acceleration (duckdb), results cache enabled.
+2026-08-05T12:12:56.036896Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset tpch.supplier
+2026-08-05T12:12:56.397026Z  INFO runtime::accelerated_table::refresh_task: Loaded 800,000 rows (141.48 MiB) for dataset tpch.partsupp in 2s 414ms.
+2026-08-05T12:12:57.340627Z  INFO runtime::accelerated_table::refresh_task: Loaded 10,000 rows (1.87 MiB) for dataset tpch.supplier in 1s 303ms.
+2026-08-05T12:13:12.771851Z  INFO runtime::accelerated_table::refresh_task: Loaded 6,001,215 rows (1.07 GiB) for dataset tpch.lineitem in 23s 165ms.
+2026-08-05T12:13:16.294713Z  INFO runtime::accelerated_table::refresh_task: Loaded 1,500,000 rows (212.28 MiB) for dataset tpch.orders in 24s 702ms.
 ```
 
 **Step 3.** Run queries against the dataset using the Spice SQL REPL.
@@ -120,10 +113,10 @@ order by
 +--------------+--------------+-------------+-----------------+-------------------+---------------------+-----------+--------------+----------+-------------+
 | l_returnflag | l_linestatus | sum_qty     | sum_base_price  | sum_disc_price    | sum_charge          | avg_qty   | avg_price    | avg_disc | count_order |
 +--------------+--------------+-------------+-----------------+-------------------+---------------------+-----------+--------------+----------+-------------+
-| A            | F            | 37734107.00 | 56586554400.73  | 53758257134.8700  | 55909065222.827692  | 25.522005 | 38273.129734 | 0.049985 | 1478493     |
-| N            | F            | 991417.00   | 1487504710.38   | 1413082168.0541   | 1469649223.194375   | 25.516471 | 38284.467760 | 0.050093 | 38854       |
-| N            | O            | 73416597.00 | 110112303006.41 | 104608220776.3836 | 108796375788.183317 | 25.502437 | 38249.282778 | 0.049996 | 2878807     |
-| R            | F            | 37719753.00 | 56568041380.90  | 53741292684.6040  | 55889619119.831932  | 25.505793 | 38250.854626 | 0.050009 | 1478870     |
+| A            | F            | 37734107.00 | 56586554400.73  | 53758257134.8700  | 55909065222.827692  | 25.522006 | 38273.129735 | 0.049985 | 1478493     |
+| N            | F            | 991417.00   | 1487504710.38   | 1413082168.0541   | 1469649223.194375   | 25.516472 | 38284.467761 | 0.050093 | 38854       |
+| N            | O            | 73416597.00 | 110112303006.41 | 104608220776.3836 | 108796375788.183317 | 25.502438 | 38249.282778 | 0.049996 | 2878807     |
+| R            | F            | 37719753.00 | 56568041380.90  | 53741292684.6040  | 55889619119.831932  | 25.505794 | 38250.854626 | 0.050009 | 1478870     |
 +--------------+--------------+-------------+-----------------+-------------------+---------------------+-----------+--------------+----------+-------------+
 
 Time: 0.127478459 seconds. 4 rows.
