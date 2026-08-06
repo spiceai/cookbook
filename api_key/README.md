@@ -52,8 +52,9 @@ Output:
 ```shell
 curl -H "x-api-key: foobar" -H 'Content-Type: text/plain' -XPOST -i http://localhost:8090/v1/sql -d 'SELECT 1'
 HTTP/1.1 200 OK
-content-type: text/plain; charset=utf-8
+content-type: application/json
 x-cache: Miss from spiceai
+results-cache-status: MISS
 content-length: 16
 date: Thu, 07 Nov 2024 01:53:20 GMT
 
@@ -67,7 +68,7 @@ date: Thu, 07 Nov 2024 01:53:20 GMT
 
 ```bash
 $ spice pods
-2025/06/16 12:45:49 ERROR listing spiced pods error="unauthorized: invalid or missing Spice API key"
+ERROR unauthorized: invalid or missing Spice API key. Run `spice login` or set SPICE_API_KEY.
 ```
 
 1. Now, run `spice pods` with the API key
@@ -88,7 +89,7 @@ api_key v1      0        0      0
 $ spice sql
 
 sql> select 1;
-Authentication Error Access denied. Invalid credentials.
+Authentication Failed: Invalid credentials. Verify credentials and try again.
 ```
 
 1. Re-open the SQL REPL with the API key and try the query again:
@@ -99,6 +100,7 @@ $ spice sql --api-key foobar
 sql> select 1;
 +----------+
 | Int64(1) |
+|   int64  |
 +----------+
 | 1        |
 +----------+
