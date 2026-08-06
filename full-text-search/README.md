@@ -73,10 +73,11 @@ show tables;
 
 ```
 +---------------+--------------+----------------+------------+
-| table_catalog | table_schema | table_name     | table_type |
+| table_catalog | table_schema |   table_name   | table_type |
+|    varchar    |    varchar   |     varchar    |   varchar  |
 +---------------+--------------+----------------+------------+
-| spice         | public       | cookbook_files | BASE TABLE |
 | spice         | runtime      | task_history   | BASE TABLE |
+| spice         | public       | cookbook_files | BASE TABLE |
 +---------------+--------------+----------------+------------+
 ```
 
@@ -91,16 +92,19 @@ ORDER BY _score DESC
 LIMIT 5;
 ```
 
-Results (scores may vary):
+Results (paths and scores vary as the cookbook changes):
 
 ```
-+-------------------------------+--------------------+
-| path                          | _score              |
-+-------------------------------+--------------------+
-| vectors/README.md             | 6.82               |
-| search/README.md              | 6.51               |
-| search_github_files/README.md | 6.47               |
-+-------------------------------+--------------------+
++--------------------------------+-------------------+
+|              path              |       _score      |
+|             varchar            |      float64      |
++--------------------------------+-------------------+
+| search/elasticsearch/README.md | 7.372053146362305 |
+| vectors/s3/README.md           | 7.359576225280762 |
+| search/README.md               | 7.14163875579834  |
+| ai/WHEN_TO_USE.md              | 7.056568145751953 |
+| full-text-search/README.md     | 6.641867637634277 |
++--------------------------------+-------------------+
 ```
 
 ### Search for Specific Topics
@@ -163,21 +167,31 @@ Response (truncated):
   "results": [
     {
       "matches": {
-        "content": "... Follow these steps to get started with ..."
-      },
-      "data": {
-        "path": "postgres/rds/README.md"
+        "content": ["# AWS RDS for PostgreSQL\n\nWorks with `v1.0+`\n\nFollow these steps to ge..."]
       },
       "primary_key": {
         "path": "postgres/rds/README.md"
       },
-      "_score": 1.41,
+      "_score": 1.12,
       "dataset": "cookbook_files"
     }
   ],
-  "duration_ms": 12
+  "duration_ms": 4
 }
 ```
+
+Each result contains:
+
+- **`matches`**: the indexed column(s) that matched, mapping column name to an array of matching text.
+- **`primary_key`**: the `full_text_search.row_id` column(s) — `path` for this dataset.
+- **`_score`**: the BM25 relevance score.
+- **`data`**: any `additional_columns` that are _not_ part of the primary key. Requesting only
+  `path` (the row_id) returns no `data` object, because that value is already in `primary_key`.
+  Requesting `["name", "size"]` instead adds:
+
+  ```json
+  "data": { "name": "README.md", "size": 2437 }
+  ```
 
 ## When to Use Full-Text Search
 
