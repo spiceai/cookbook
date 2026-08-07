@@ -120,7 +120,7 @@ Spice can read data straight from a Databricks instance. This recipe will create
    >>> spice sql
    sql> SELECT avg(total_amount), avg(tip_amount), count(1), passenger_count FROM my_table  GROUP BY passenger_count ORDER BY passenger_count ASC;
    +----------------------------+--------------------------+-----------------+-----------------+
-   | AVG(my_table.total_amount) | AVG(my_table.tip_amount) | COUNT(Int64(1)) | passenger_count |
+   | avg(my_table.total_amount) | avg(my_table.tip_amount) | count(Int64(1)) | passenger_count |
    +----------------------------+--------------------------+-----------------+-----------------+
    | 25.327816939456696         | 3.072259971396788        | 31465           | 0               |
    | 26.20523044549061          | 3.3712622884681065       | 2188739         | 1               |
@@ -164,7 +164,7 @@ To improve the query performance, the Databricks dataset can be accelerated.
    >>> spice sql
    sql> select avg(total_amount), avg(tip_amount), count(1), passenger_count from my_table  group by passenger_count order by passenger_count asc;
    +----------------------------+--------------------------+-----------------+-----------------+
-   | AVG(my_table.total_amount) | AVG(my_table.tip_amount) | COUNT(Int64(1)) | passenger_count |
+   | avg(my_table.total_amount) | avg(my_table.tip_amount) | count(Int64(1)) | passenger_count |
    +----------------------------+--------------------------+-----------------+-----------------+
    | 25.32781693945653          | 3.072259971396793        | 31465           | 0               |
    | 26.205230445474996         | 3.3712622884680052       | 2188739         | 1               |
