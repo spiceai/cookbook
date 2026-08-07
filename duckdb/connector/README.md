@@ -68,7 +68,7 @@ Output:
 └──────────┘
 ```
 
-Quit the DuckDB CLI by excuting `.exit`.
+Quit the DuckDB CLI by executing `.exit`.
 
 **Step 3.** Configure the dataset to use the DuckDB database file. Copy and paste the YAML below to `duckdb-qs/spicepod.yaml`.
 
