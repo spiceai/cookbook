@@ -19,13 +19,12 @@ spice run
 Example output:
 
 ```bash
-2025-05-18T19:55:04.208627Z  INFO spiced: Starting runtime v1.2.2+models.metal
-2025-05-18T19:55:04.720993Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2025-05-18T19:55:04.721098Z  INFO runtime::init::dataset: No datasets were configured. If this is unexpected, check the Spicepod configuration.
-2025-05-18T19:55:04.721210Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2025-05-18T19:55:04.208627Z  INFO spiced: Starting runtime v2.1.4+models.metal
+2025-05-18T19:55:04.720993Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2025-05-18T19:55:04.721098Z  INFO runtime: No datasets or catalogs were configured. If this is unexpected, check the Spicepod configuration.
+2025-05-18T19:55:04.721210Z  INFO runtime: All components are loaded. Spice runtime is ready!
 2025-05-18T19:55:04.721306Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-05-18T19:55:04.721346Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2025-05-18T19:55:04.823688Z  INFO runtime: All components are loaded. Spice runtime is ready!
+2025-05-18T19:55:04.823688Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 ```
 
 ## Step 2: Add the TPC-H Benchmark Spicepod
@@ -281,7 +280,7 @@ spice run
 Example output:
 
 ```bash
-2025-05-18T20:20:11.150665Z  INFO runtime::datafusion: View supplier_order_waits registered, acceleration (duckdb, 3600s refresh).
+2025-05-18T20:20:11.150665Z  INFO runtime::datafusion: View supplier_order_waits registered, acceleration (duckdb).
 2025-05-18T20:20:11.151971Z  INFO runtime::accelerated_table::refresh_task: Loading data for view supplier_order_waits
 2025-05-18T20:20:12.414223Z  INFO runtime::accelerated_table::refresh_task: Loaded 10,000 rows (481.43 kiB) for view supplier_order_waits in 1s 262ms.
 2025-05-18T20:21:00.151971Z  INFO runtime::accelerated_table::refresh_task: Loading data for view supplier_order_waits
