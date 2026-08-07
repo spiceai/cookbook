@@ -172,17 +172,20 @@ LIMIT 5;
 ```
 
 ```text
-+---------+---------------+-------------+
-|  nation | num_customers | avg_balance |
-| varchar |     int64     |   float64   |
-+---------+---------------+-------------+
-| MOROCCO | 72            | 5484.47     |
-| IRAN    | 72            | 4206.76     |
-| CANADA  | 69            | 4116.12     |
-| BRAZIL  | 68            | 3635.3      |
-| JAPAN   | 67            | 4962.46     |
-+---------+---------------+-------------+
++---------+---------------+---------------+
+|  nation | num_customers |  avg_balance  |
+| varchar |     int64     | decimal(19,6) |
++---------+---------------+---------------+
+| MOROCCO | 72            | 5484.470000   |
+| IRAN    | 72            | 4206.760000   |
+| CANADA  | 69            | 4116.120000   |
+| BRAZIL  | 68            | 3635.300000   |
+| JAPAN   | 67            | 4962.460000   |
++---------+---------------+---------------+
 ```
+
+`c_acctbal` is a `decimal(15,2)` column, so `AVG` and `ROUND` return a decimal
+rather than a float — the values print with the full decimal scale.
 
 ## Step 6. Enable read-write access (optional)
 
@@ -205,6 +208,12 @@ Restart Spice and insert data:
 spice run
 ```
 
+Spice logs a warning noting that catalog write access is a preview feature:
+
+```bash
+2026-03-02T10:00:00.000000Z  WARN runtime::datafusion: Access mode 'read_write' is enabled for catalog my_lakehouse. This feature is currently in preview.
+```
+
 ```bash
 spice sql
 ```
@@ -215,11 +224,12 @@ VALUES (5, 'ANTARCTICA', 'A cold and remote region');
 ```
 
 ```text
-+-------+
-| count |
-+-------+
-| 1     |
-+-------+
++--------+
+|  count |
+| uint64 |
++--------+
+| 1      |
++--------+
 ```
 
 Verify the insert:
