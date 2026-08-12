@@ -9,6 +9,14 @@ This recipe will use the [spiceai/spiceai](https://github.com/spiceai/spiceai) r
 - Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation).
 - GitHub personal access token, [Learn more](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic) how to create one.
 
+  Grant the token both of these scopes:
+
+  - `repo` — for the `files`, `issues`, `pulls`, and `commits` datasets.
+  - `read:user` (or `user:email`) — the `stargazers` and `members` datasets select
+    the user `email` field, which GitHub only returns for tokens with one of these
+    scopes. Without it those two datasets fail to load with `Your token has not
+    been granted the required scopes to execute this query`.
+
   [![Watch the Spice.ai local GitHub connector demo](https://img.youtube.com/vi/mxwt0HEF1VQ/hqdefault.jpg)](https://www.youtube.com/embed/mxwt0HEF1VQ)
 
 **Step 0.** Clone the repository if not already cloned.
@@ -24,7 +32,7 @@ cd cookbook/github
 GITHUB_TOKEN=<your_github_token>
 ```
 
-**Setp 2.** Run the Spice runtime with `spice run` from the directory with the `spicepod.yaml` file.
+**Step 2.** Run the Spice runtime with `spice run` from the directory with the `spicepod.yaml` file.
 
 ```bash
 spice run
