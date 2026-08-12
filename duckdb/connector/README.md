@@ -89,15 +89,16 @@ datasets:
 spice run
 ```
 
-Confirm in the terminal output the `tpch_customer` dataset has been loaded:
+Confirm in the terminal output the `tpch_customer` dataset has been registered:
 
 ```bash
 Spice.ai runtime starting...
-2024-04-29T18:23:18.055782Z  INFO spiced: Metrics listening on 127.0.0.1:9090
-2024-04-29T18:23:18.059972Z  INFO runtime: Loaded dataset: tpch_customer
-2024-04-29T18:23:18.060005Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2024-04-29T18:23:18.062230Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2024-04-29T18:23:18.062249Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2026-08-12T12:08:20.649413Z  INFO spiced: Starting runtime v2.1.4+models.metal
+2026-08-12T12:08:20.651520Z  INFO runtime::init::dataset: Dataset tpch_customer initializing...
+2026-08-12T12:08:20.660420Z  INFO runtime::init::dataset: Dataset tpch_customer registered (duckdb:customer), results cache enabled. duration_ms=0
+2026-08-12T12:08:20.764115Z  INFO runtime: All components are loaded. Spice runtime is ready!
+2026-08-12T12:08:20.851410Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2026-08-12T12:08:20.851788Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 ```
 
 **Step 5.** Run queries against the dataset using the Spice SQL REPL.
@@ -115,22 +116,23 @@ select c_name, c_address, c_acctbal, c_mktsegment from tpch_customer limit 10;
 ```
 
 ```sql
-+--------------------+---------------------------------------+-----------+--------------+
-| c_name             | c_address                             | c_acctbal | c_mktsegment |
-+--------------------+---------------------------------------+-----------+--------------+
-| Customer#000000001 | j5JsirBM9PsCy0O1m                     | 711.56    | BUILDING     |
-| Customer#000000002 | 487LW1dovn6Q4dMVymKwwLE9OKf3QG        | 121.65    | AUTOMOBILE   |
-| Customer#000000003 | fkRGN8nY4pkE                          | 7498.12   | AUTOMOBILE   |
-| Customer#000000004 | 4u58h fqkyE                           | 2866.83   | MACHINERY    |
-| Customer#000000005 | hwBtxkoBF qSW4KrIk5U 2B1AU7H          | 794.47    | HOUSEHOLD    |
-| Customer#000000006 |  g1s,pzDenUEBW3O,2 pxu0f9n2g64rJrt5E  | 7638.57   | AUTOMOBILE   |
-| Customer#000000007 | 8OkMVLQ1dK6Mbu6WG9 w4pLGQ n7MQ        | 9561.95   | AUTOMOBILE   |
-| Customer#000000008 | j,pZ,Qp,qtFEo0r0c 92qobZtlhSuOqbE4JGV | 6819.74   | BUILDING     |
-| Customer#000000009 | vgIql8H6zoyuLMFNdAMLyE7 H9            | 8324.07   | FURNITURE    |
-| Customer#000000010 | Vf mQ6Ug9Ucf5OKGYq fsaX AtfsO7,rwY    | 2753.54   | HOUSEHOLD    |
-+--------------------+---------------------------------------+-----------+--------------+
++--------------------+---------------------------------------+---------------+--------------+
+|       c_name       |               c_address               |   c_acctbal   | c_mktsegment |
+|       varchar      |                varchar                | decimal(15,2) |    varchar   |
++--------------------+---------------------------------------+---------------+--------------+
+| Customer#000000001 | j5JsirBM9PsCy0O1m                     | 711.56        | BUILDING     |
+| Customer#000000002 | 487LW1dovn6Q4dMVymKwwLE9OKf3QG        | 121.65        | AUTOMOBILE   |
+| Customer#000000003 | fkRGN8nY4pkE                          | 7498.12       | AUTOMOBILE   |
+| Customer#000000004 | 4u58h fqkyE                           | 2866.83       | MACHINERY    |
+| Customer#000000005 | hwBtxkoBF qSW4KrIk5U 2B1AU7H          | 794.47        | HOUSEHOLD    |
+| Customer#000000006 |  g1s,pzDenUEBW3O,2 pxu0f9n2g64rJrt5E  | 7638.57       | AUTOMOBILE   |
+| Customer#000000007 | 8OkMVLQ1dK6Mbu6WG9 w4pLGQ n7MQ        | 9561.95       | AUTOMOBILE   |
+| Customer#000000008 | j,pZ,Qp,qtFEo0r0c 92qobZtlhSuOqbE4JGV | 6819.74       | BUILDING     |
+| Customer#000000009 | vgIql8H6zoyuLMFNdAMLyE7 H9            | 8324.07       | FURNITURE    |
+| Customer#000000010 | Vf mQ6Ug9Ucf5OKGYq fsaX AtfsO7,rwY    | 2753.54       | HOUSEHOLD    |
++--------------------+---------------------------------------+---------------+--------------+
 
-Time: 0.003510375 seconds. 10 rows.
+Time: 0.004229833 seconds. 10 rows.
 ```
 
 ## Learn more
