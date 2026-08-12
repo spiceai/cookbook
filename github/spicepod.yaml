@@ -27,7 +27,7 @@ datasets:
       github_query_mode: search
       github_token: ${secrets:GITHUB_TOKEN}
       github_include_comments: all
-      github_max_comments_fetched: 100
+      github_max_comments_fetched: 75 # 75 is the maximum; higher values are clamped
     time_column: updated_at
     acceleration:
       enabled: true
