@@ -37,7 +37,7 @@ spice run
 2025-01-27T19:29:50.859210Z  INFO runtime::init::dataset: Dataset llm_memory registered (memory:store).
 2025-01-27T19:29:50.865516Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-01-27T19:29:50.869294Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2025-01-27T19:29:51.058851Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2025-01-27T19:29:51.058851Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-01-27T19:29:52.248966Z  INFO runtime::init::model: Model [chat_model] deployed, ready for inferencing
 ```
 

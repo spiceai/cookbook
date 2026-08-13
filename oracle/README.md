@@ -53,8 +53,8 @@ This will start the Spice runtime, which will connect to Oracle and load the TPC
 ```bash
 2025/07/07 13:41:42 INFO Spice.ai runtime starting...
 2025-07-07T20:41:42.882796Z  INFO spiced: Starting runtime v1.5.0-unstable-build.2187f22e7+models
-2025-07-07T20:41:42.884157Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2025-07-07T20:41:42.884197Z  INFO runtime::init::caching: Initialized search results cache;
+2025-07-07T20:41:42.884157Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2025-07-07T20:41:42.884197Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
 2025-07-07T20:41:43.431896Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2025-07-07T20:41:43.431929Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2025-07-07T20:41:43.432215Z  INFO runtime::init::dataset: Initializing dataset lineitem

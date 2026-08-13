@@ -27,7 +27,7 @@ The following output is shown in the terminal:
 2024-11-27T23:00:11.850338Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2024-11-27T23:00:11.850888Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2024-11-27T23:00:11.858487Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2024-11-27T23:00:12.052740Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2024-11-27T23:00:12.052740Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 ```
 
 **Step 2.** Configure the dataset to connect to S3:
@@ -280,7 +280,7 @@ If the login credentials were entered correctly, the dataset will have loaded in
 Spice.ai runtime starting...
 2024-07-23T00:33:50.544366Z  INFO spiced: Metrics listening on 127.0.0.1:9090
 2024-07-23T00:33:50.547612Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2024-07-23T00:33:50.549731Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2024-07-23T00:33:50.549731Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2024-07-23T00:33:50.552016Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2024-07-23T00:33:50.552044Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2024-07-23T00:35:42.716736Z  INFO runtime: Dataset taxi_trips registered (s3://yourcompany-bucketname-datasets/taxi_trips/), acceleration (arrow, 10s refresh), results cache enabled.

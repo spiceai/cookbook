@@ -31,8 +31,8 @@ Sample runtime logs:
 
 ```text
 2025-08-28T21:08:10.674387Z  INFO spiced: Starting runtime v1.7.0-unstable-build.246c46c4d-dev+models
-2025-08-28T21:08:10.675513Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2025-08-28T21:08:10.675671Z  INFO runtime::init::caching: Initialized search results cache;
+2025-08-28T21:08:10.675513Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2025-08-28T21:08:10.675671Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
 2025-08-28T21:08:11.148956Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2025-08-28T21:08:11.149031Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2025-08-28T21:08:11.151175Z  INFO runtime::init::dataset: Dataset taxi_trips initializing...

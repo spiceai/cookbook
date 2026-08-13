@@ -35,8 +35,8 @@ Output:
 
 ```console
 2025-06-09T17:59:19.959978Z  INFO spiced: Starting runtime v1.4.0-rc.1+models
-2025-06-09T17:59:19.961855Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2025-06-09T17:59:19.962011Z  INFO runtime::init::caching: Initialized search results cache;
+2025-06-09T17:59:19.961855Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2025-06-09T17:59:19.962011Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
 2025-06-09T17:59:21.486798Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2025-06-09T17:59:21.486881Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2025-06-09T17:59:21.491284Z  INFO runtime::init::dataset: Initializing dataset customers

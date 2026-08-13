@@ -28,8 +28,8 @@ spice run
 
 ```console
 2025-08-25T23:34:30.324620Z  INFO spiced: Starting runtime v1.6.0-unstable-build.54c06a350-dev+models
-2025-08-25T23:34:30.325913Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2025-08-25T23:34:30.326072Z  INFO runtime::init::caching: Initialized search results cache;
+2025-08-25T23:34:30.325913Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2025-08-25T23:34:30.326072Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
 2025-08-25T23:34:31.163684Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2025-08-25T23:34:31.164965Z  INFO runtime::init::dataset: Dataset taxi_trips initializing...
 2025-08-25T23:34:31.165957Z  INFO runtime::init::model: Loading model [gpt-4o-responses] from openai:gpt-4o...

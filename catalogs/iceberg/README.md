@@ -60,7 +60,7 @@ spice run
 2025-01-27T19:08:37.499174Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2025-01-27T19:08:37.500689Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-01-27T19:08:37.503376Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2025-01-27T19:08:37.696469Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2025-01-27T19:08:37.696469Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-01-27T19:08:37.697178Z  INFO runtime::init::catalog: Registered catalog 'ice' with 1 schema and 8 tables
 ```
 

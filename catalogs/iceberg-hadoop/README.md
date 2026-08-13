@@ -39,8 +39,8 @@ The Runtime should start and register the TPCH catalog. Example output:
 
 ```console
 2025-08-07T02:51:43.378364Z  INFO spiced: Starting runtime v1.6.0-unstable-build.9286c3f6c-dev
-2025-08-07T02:51:43.379862Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2025-08-07T02:51:43.380067Z  INFO runtime::init::caching: Initialized search results cache;
+2025-08-07T02:51:43.379862Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2025-08-07T02:51:43.380067Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
 2025-08-07T02:51:44.179771Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2025-08-07T02:51:44.179840Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2025-08-07T02:51:44.181135Z  INFO runtime::init::catalog: Registering catalog 'hadoop' for iceberg

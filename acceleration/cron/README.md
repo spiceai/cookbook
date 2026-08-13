@@ -68,8 +68,8 @@ spice run
 After the initial load, observe that the `taxi_trips` dataset refreshes on every 30th second:
 
 ```console
-2025-06-09T06:27:32.836137Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2025-06-09T06:27:32.836265Z  INFO runtime::init::caching: Initialized search results cache;
+2025-06-09T06:27:32.836137Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2025-06-09T06:27:32.836265Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
 2025-06-09T06:27:33.626524Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2025-06-09T06:27:33.626530Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2025-06-09T06:27:33.627071Z  INFO runtime::init::dataset: Initializing dataset taxi_trips

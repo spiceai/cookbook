@@ -79,7 +79,7 @@ You should see this output:
 
 ```bash
 2025-09-26T15:21:38.154354Z  INFO spiced: Starting runtime v1.8.0-unstable-build.71ac09ff2+models.metal
-2025-09-26T15:21:38.225135Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2025-09-26T15:21:38.225135Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-09-26T15:21:38.229824Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s
 2025-09-26T15:21:38.230575Z  INFO runtime::init::caching: Initialized embeddings cache; max size: 128.00 MiB, item ttl: 1s
 2025-09-26T15:21:38.658824Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052

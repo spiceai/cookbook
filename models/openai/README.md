@@ -72,7 +72,7 @@ Result:
 2025-01-20T16:19:45.061178Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2025-01-20T16:19:45.544466Z  INFO runtime::init::embedding: Embedding [embeddings-model] ready to embed
 2025-01-20T16:19:45.544649Z  INFO runtime::init::dataset: Initializing dataset spiceai.docs
-2025-01-20T16:19:45.544669Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2025-01-20T16:19:45.544669Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-01-20T16:19:45.544761Z  INFO runtime::init::model: Loading model [chat-model] from openai:gpt-4o...
 2025-01-20T16:19:46.164600Z  INFO runtime::init::dataset: Dataset spiceai.docs registered (github:github.com/spiceai/spiceai/files/trunk), acceleration (arrow), results cache enabled.
 2025-01-20T16:19:46.165929Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset spiceai.docs

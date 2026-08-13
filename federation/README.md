@@ -49,7 +49,7 @@ spice run
 2025-01-27T19:36:43.201625Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
 2025-01-27T19:36:43.205435Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-01-27T19:36:43.209349Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2025-01-27T19:36:43.401179Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2025-01-27T19:36:43.401179Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-01-27T19:36:43.624011Z  INFO runtime::init::dataset: Dataset dremio_source_accelerated registered (dremio:datasets.taxi_trips), acceleration (arrow), results cache enabled.
 2025-01-27T19:36:43.625619Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset dremio_source_accelerated
 2025-01-27T19:36:43.776300Z  INFO runtime::init::dataset: Dataset dremio_source registered (dremio:datasets.taxi_trips), results cache enabled.
