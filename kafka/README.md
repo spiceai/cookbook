@@ -67,8 +67,8 @@ Observe that Spice loads data from the configured Kafka topic into the `orders` 
 
 ```bash
 2025-08-24T05:06:40.084870Z  INFO spiced: Starting runtime v1.6.0-unstable-build.d7fadb4c2-dev+models
-2025-08-24T05:06:40.086387Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2025-08-24T05:06:40.086548Z  INFO runtime::init::caching: Initialized search results cache;
+2025-08-24T05:06:40.086387Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2025-08-24T05:06:40.086548Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
 2025-08-24T05:06:40.525189Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2025-08-24T05:06:40.538475Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-08-24T05:06:40.575784Z  INFO runtime::init::dataset: Dataset nation initializing...

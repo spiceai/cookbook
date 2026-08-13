@@ -57,8 +57,8 @@ You should see this output in your terminal window:
 
 ```bash
 2025-08-01T01:15:06.019931Z  INFO spiced: Starting runtime v1.6.0-unstable-build.184ebb772
-2025-08-01T01:15:06.022725Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2025-08-01T01:15:06.022949Z  INFO runtime::init::caching: Initialized search results cache;
+2025-08-01T01:15:06.022725Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2025-08-01T01:15:06.022949Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
 2025-08-01T01:15:06.438166Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2025-08-01T01:15:06.438359Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2025-08-01T01:15:06.441831Z  INFO runtime::init::dataset: Dataset region initializing...
@@ -208,8 +208,8 @@ You should see this output in your terminal window:
 
 ```bash
 2025-08-01T01:15:40.066625Z  INFO spiced: Starting runtime v1.6.0-unstable-build.184ebb772
-2025-08-01T01:15:40.069247Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2025-08-01T01:15:40.069468Z  INFO runtime::init::caching: Initialized search results cache;
+2025-08-01T01:15:40.069247Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2025-08-01T01:15:40.069468Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
 2025-08-01T01:15:40.306607Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2025-08-01T01:15:40.306719Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2025-08-01T01:15:40.308188Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090

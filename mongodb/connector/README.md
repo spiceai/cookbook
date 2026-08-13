@@ -133,7 +133,7 @@ Confirm in the terminal output the `sample_data` dataset has been loaded:
 2025-01-13T19:52:51.474795Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-01-13T19:52:51.474869Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2025-01-13T19:52:51.491591Z  INFO runtime::init::dataset: Dataset sample_data registered (mongodb:sample_data).
-2025-01-13T19:52:51.673260Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2025-01-13T19:52:51.673260Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 ```
 
 Follow the [getting started guide](https://docs.spiceai.org/getting-started) to get started with the Spice.ai runtime.

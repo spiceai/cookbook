@@ -36,7 +36,7 @@ instances are accessible from within Spice to demonstrate that you can query acr
    2024-09-23T19:43:29.074284Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
    2024-09-23T19:43:29.075193Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
    2024-09-23T19:43:29.091737Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-   2024-09-23T19:43:29.274085Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+   2024-09-23T19:43:29.274085Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
    2024-09-23T19:43:29.280949Z  WARN tiberius::client::tls_stream::rustls_tls_stream: Trusting the server certificate without validation.
    2024-09-23T19:43:29.281023Z  WARN tiberius::client::tls_stream::rustls_tls_stream: Trusting the server certificate without validation.
    2024-09-23T19:43:29.281987Z  WARN tiberius::client::tls_stream::rustls_tls_stream: Trusting the server certificate without validation.

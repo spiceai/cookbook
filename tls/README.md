@@ -136,7 +136,7 @@ spice run -- --tls-enabled true --tls-certificate-file ./spiced.crt --tls-key-fi
 ```bash
 2024-08-05T19:59:09.203647Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
 2024-08-05T19:59:09.203554Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2024-08-05T19:59:09.204194Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2024-08-05T19:59:09.204194Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2024-08-05T19:59:09.205240Z  INFO runtime: Endpoints secured with TLS using certificate: CN=spiced.localhost, OU=IT, O=Widgets, Inc., L=Seattle, S=Washington, C=US
 2024-08-05T19:59:09.205622Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2024-08-05T19:59:09.211074Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052

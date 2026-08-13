@@ -90,7 +90,7 @@ spice run
 2025-01-13T17:53:00.181420Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
 2025-01-13T17:53:00.185632Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-01-13T17:53:00.185712Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2025-01-13T17:53:00.196585Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2025-01-13T17:53:00.196585Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 ```
 
 4. Configure a Spark dataset into the spicepod. Copy and paste the following `spicepod.yaml` configuration into your Spicepod.
@@ -233,8 +233,8 @@ Spice.ai OSS CLI v1.4.0-unstable-build.8eee8ad4b
 2025/06/10 10:46:32 INFO Checking for latest Spice runtime release...
 2025/06/10 10:46:32 INFO Spice.ai runtime starting...
 2025-06-10T01:46:32.725076Z  INFO spiced: Starting runtime v1.4.0-unstable-build.8eee8ad4b+models
-2025-06-10T01:46:32.742491Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2025-06-10T01:46:32.744098Z  INFO runtime::init::caching: Initialized search results cache;
+2025-06-10T01:46:32.742491Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2025-06-10T01:46:32.744098Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
 2025-06-10T01:46:33.592583Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2025-06-10T01:46:33.592555Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2025-06-10T01:46:33.599924Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090

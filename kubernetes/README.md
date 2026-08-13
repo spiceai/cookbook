@@ -55,7 +55,7 @@ Output:
 2024-11-27T21:55:48.116119Z  INFO runtime::flight: Spice Runtime Flight listening on 0.0.0.0:50051
 2024-11-27T21:55:48.116053Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 0.0.0.0:50052
 2024-11-27T21:55:48.116548Z  INFO runtime::http: Spice Runtime HTTP listening on 0.0.0.0:8090
-2024-11-27T21:55:48.116578Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2024-11-27T21:55:48.116578Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 ```
 
 **Step 4.** Run the Spice SQL REPL inside the running pod:
