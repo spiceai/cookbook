@@ -40,15 +40,17 @@ spice run
 Confirm in the terminal output the `taxi_trips` dataset has been registered:
 
 ```bash
-2025/07/14 08:50:13 INFO Checking for latest Spice runtime release...
-2025/07/14 08:50:15 INFO Spice.ai runtime starting...
-2025-07-14T15:50:15.370061Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2025-07-14T15:50:15.370199Z  INFO runtime::init::caching: Initialized search results cache;
-2025-07-14T15:50:15.732242Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-07-14T15:50:15.734062Z  INFO runtime::init::dataset: Initializing dataset taxi_trips
-2025-07-14T15:50:15.738931Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2025-07-14T15:50:16.608896Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), results cache enabled.
-2025-07-14T15:50:16.610030Z  INFO runtime: All components are loaded. Spice runtime is ready!
+2026/08/13 12:18:39 INFO Checking for latest Spice runtime release...
+2026/08/13 12:18:39 INFO Spice.ai runtime starting...
+2026-08-13T12:18:39.774775Z  INFO spiced: Starting runtime v2.1.5+models.metal
+2026-08-13T12:18:39.775655Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2026-08-13T12:18:39.775701Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
+2026-08-13T12:18:39.775720Z  INFO runtime::init::caching: Initialized embeddings cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
+2026-08-13T12:18:39.776955Z  INFO runtime::init::dataset: Dataset taxi_trips initializing...
+2026-08-13T12:18:39.777562Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2026-08-13T12:18:39.777944Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2026-08-13T12:18:40.981333Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), results cache enabled. duration_ms=0
+2026-08-13T12:18:41.084720Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
 **Step 4.** Run queries against the dataset using the Spice SQL REPL.
@@ -68,21 +70,24 @@ select "VendorID", tpep_pickup_datetime, tpep_dropoff_datetime, passenger_count 
 ```console
 +----------+----------------------+-----------------------+-----------------+
 | VendorID | tpep_pickup_datetime | tpep_dropoff_datetime | passenger_count |
+|   int32  |     timestamp[us]    |     timestamp[us]     |      int64      |
 +----------+----------------------+-----------------------+-----------------+
-| 2        | 2024-01-29T19:28:41  | 2024-01-29T19:36:46   | 2               |
-| 1        | 2024-01-29T19:22:21  | 2024-01-29T19:28:45   | 2               |
-| 1        | 2024-01-29T19:50:24  | 2024-01-29T20:09:21   | 2               |
-| 1        | 2024-01-29T19:43:52  | 2024-01-29T20:01:40   | 2               |
-| 1        | 2024-01-29T19:09:57  | 2024-01-29T19:55:36   | 2               |
-| 1        | 2024-01-29T19:51:28  | 2024-01-29T20:09:16   | 2               |
-| 1        | 2024-01-29T19:23:46  | 2024-01-29T19:31:06   | 2               |
-| 2        | 2024-01-29T19:01:27  | 2024-01-29T19:09:07   | 2               |
-| 1        | 2024-01-29T19:13:53  | 2024-01-29T19:23:09   | 2               |
-| 1        | 2024-01-29T19:53:55  | 2024-01-29T20:06:56   | 2               |
+| 2        | 2024-01-25T09:27:43  | 2024-01-25T09:37:09   | 1               |
+| 2        | 2024-01-25T09:41:18  | 2024-01-25T09:56:19   | 1               |
+| 1        | 2024-01-25T09:24:36  | 2024-01-25T10:03:59   | 1               |
+| 2        | 2024-01-25T09:04:15  | 2024-01-25T09:16:53   | 1               |
+| 2        | 2024-01-25T09:26:17  | 2024-01-25T09:42:50   | 1               |
+| 2        | 2024-01-25T09:50:27  | 2024-01-25T10:09:28   | 1               |
+| 1        | 2024-01-25T09:29:58  | 2024-01-25T09:37:14   | 1               |
+| 1        | 2024-01-25T09:53:55  | 2024-01-25T10:25:37   | 1               |
+| 1        | 2024-01-25T09:18:38  | 2024-01-25T09:43:35   | 1               |
+| 1        | 2024-01-25T09:55:55  | 2024-01-25T10:05:55   | 1               |
 +----------+----------------------+-----------------------+-----------------+
 
-Time: 1.081530375 seconds. 10 rows.
+Time: 1.072190667 seconds. 10 rows.
 ```
+
+> **Note:** The query has no `ORDER BY`, so which ten rows come back varies between runs — expect different trips than shown here.
 
 **Step 5.** Update the `spicepod.yaml` to enable In-Memory Arrow acceleration.
 
@@ -103,10 +108,10 @@ datasets:
 **Step 6.** Save the changes in Spice app and observe the dataset updating and accelerating.
 
 ```bash
-2024-10-22T19:28:24.204608Z  INFO runtime: Updating accelerated dataset taxi_trips...
-2024-10-22T19:28:25.202828Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
-2024-10-22T19:29:07.729346Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (398.86 MiB) for dataset taxi_trips in 42s 525ms.
-2024-10-22T19:29:09.217425Z  INFO runtime: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled.
+2026-08-13T12:19:22.038848Z  INFO runtime::init::dataset: Accelerated Dataset taxi_trips updating...
+2026-08-13T12:19:23.118534Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
+2026-08-13T12:19:25.902457Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 2s 783ms.
+2026-08-13T12:19:26.977420Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled. duration_ms=0
 ```
 
 **Step 7.** Run a query against the `taxi_trips` dataset again, observing the fast query time.
@@ -118,20 +123,21 @@ select "VendorID", tpep_pickup_datetime, tpep_dropoff_datetime, passenger_count 
 ```console
 +----------+----------------------+-----------------------+-----------------+
 | VendorID | tpep_pickup_datetime | tpep_dropoff_datetime | passenger_count |
+|   int32  |     timestamp[us]    |     timestamp[us]     |      int64      |
 +----------+----------------------+-----------------------+-----------------+
-| 1        | 2024-01-12T19:14:53  | 2024-01-12T19:28:34   | 2               |
-| 2        | 2024-01-12T19:03:12  | 2024-01-12T19:17:19   | 2               |
-| 2        | 2024-01-12T19:34:22  | 2024-01-12T19:38:11   | 2               |
-| 2        | 2024-01-12T19:44:51  | 2024-01-12T19:49:40   | 2               |
-| 1        | 2024-01-12T19:31:54  | 2024-01-12T19:38:43   | 2               |
-| 2        | 2024-01-12T19:54:37  | 2024-01-12T19:59:55   | 2               |
-| 1        | 2024-01-12T19:02:32  | 2024-01-12T19:12:25   | 2               |
-| 1        | 2024-01-12T19:22:38  | 2024-01-12T19:37:30   | 2               |
-| 2        | 2024-01-12T19:34:30  | 2024-01-12T20:31:18   | 2               |
-| 2        | 2024-01-12T19:54:06  | 2024-01-12T20:07:29   | 2               |
+| 1        | 2024-01-03T10:42:24  | 2024-01-03T10:53:32   | 2               |
+| 2        | 2024-01-03T10:53:30  | 2024-01-03T11:12:09   | 2               |
+| 2        | 2024-01-03T10:56:10  | 2024-01-03T11:07:08   | 2               |
+| 1        | 2024-01-03T10:49:00  | 2024-01-03T11:08:07   | 2               |
+| 2        | 2024-01-03T10:08:43  | 2024-01-03T10:18:24   | 2               |
+| 2        | 2024-01-03T10:30:50  | 2024-01-03T10:37:26   | 2               |
+| 2        | 2024-01-03T10:58:54  | 2024-01-03T11:07:38   | 2               |
+| 2        | 2024-01-03T10:17:19  | 2024-01-03T10:41:15   | 2               |
+| 2        | 2024-01-03T10:03:09  | 2024-01-03T10:07:16   | 2               |
+| 2        | 2024-01-03T10:39:29  | 2024-01-03T10:57:56   | 2               |
 +----------+----------------------+-----------------------+-----------------+
 
-Time: 0.004575584 seconds. 10 rows.
+Time: 0.003522625 seconds. 10 rows.
 ```
 
 ## Learn more
