@@ -45,10 +45,8 @@ Confirm in the terminal output the `taxi_trips` dataset has been loaded and acce
 
 ```bash
 Spice.ai runtime starting...
-2024-09-16T21:25:43.305988Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
 2024-09-16T21:25:43.306009Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2024-09-16T21:25:43.309474Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2024-09-16T21:25:43.311587Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2024-09-16T21:25:43.507974Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2024-09-16T21:25:44.101055Z  INFO runtime: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (cayenne:file), results cache enabled.
 2024-09-16T21:25:45.310382Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
@@ -125,10 +123,8 @@ The `bucket(50, PULocationID)` function hashes the `PULocationID` column and dis
 
 ```bash
 2024-09-12T23:08:53.964728Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2024-09-12T23:08:53.964845Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
 2024-09-12T23:08:53.965420Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2024-09-12T23:08:53.965471Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
-2024-09-12T23:08:53.966168Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2024-09-12T23:08:55.308963Z  INFO runtime: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (cayenne:file), results cache enabled.
 2024-09-12T23:08:55.310382Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
 2024-09-12T23:09:11.477553Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (421.71 MiB) for dataset taxi_trips in 24s 380ms.

@@ -56,7 +56,6 @@ This will start the Spice runtime, which will connect to Oracle and load the TPC
 2025-07-07T20:41:42.884157Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-07-07T20:41:42.884197Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
 2025-07-07T20:41:43.431896Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-07-07T20:41:43.431929Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2025-07-07T20:41:43.432215Z  INFO runtime::init::dataset: Initializing dataset lineitem
 2025-07-07T20:41:43.432253Z  INFO runtime::init::dataset: Initializing dataset orders
 2025-07-07T20:41:43.432218Z  INFO runtime::init::dataset: Initializing dataset customer

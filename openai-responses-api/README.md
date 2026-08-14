@@ -33,7 +33,6 @@ spice run
 2025-08-25T23:34:31.163684Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2025-08-25T23:34:31.164965Z  INFO runtime::init::dataset: Dataset taxi_trips initializing...
 2025-08-25T23:34:31.165957Z  INFO runtime::init::model: Loading model [gpt-4o-responses] from openai:gpt-4o...
-2025-08-25T23:34:31.163684Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2025-08-25T23:34:31.177013Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-08-25T23:34:31.992304Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow, 10s refresh), results cache enabled.
 2025-08-25T23:34:31.993720Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips

@@ -34,7 +34,6 @@ Sample runtime logs:
 2025-08-28T21:08:10.675513Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-08-28T21:08:10.675671Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
 2025-08-28T21:08:11.148956Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-08-28T21:08:11.149031Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2025-08-28T21:08:11.151175Z  INFO runtime::init::dataset: Dataset taxi_trips initializing...
 2025-08-28T21:08:11.162604Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-08-28T21:08:12.336410Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow, 10s refresh), results cache enabled.

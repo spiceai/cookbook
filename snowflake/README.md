@@ -54,10 +54,8 @@ The following output is shown in the Spice runtime terminal:
 
 ```bash
 Spice.ai runtime starting...
-2024-07-23T00:20:01.012063Z  INFO spiced: Metrics listening on 127.0.0.1:9090
 2024-07-23T00:20:01.044050Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2024-07-23T00:20:01.044108Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2024-07-23T00:20:01.045430Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2024-07-23T00:20:01.047970Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 ```
 

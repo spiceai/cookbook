@@ -43,7 +43,6 @@ spice run
 2025/07/16 08:17:13 INFO Spice.ai runtime starting...
 2025-07-16T15:17:13.713677Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-07-16T15:17:13.713846Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
-2025-07-16T15:17:14.160058Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2025-07-16T15:17:14.160281Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2025-07-16T15:17:14.162142Z  INFO runtime::init::dataset: Initializing dataset spiceai.issues
 2025-07-16T15:17:14.162164Z  INFO runtime::init::dataset: Initializing dataset spiceai.pulls
