@@ -23,10 +23,8 @@ The following output is shown in the terminal:
 2024/11/27 15:00:11 INFO Checking for latest Spice runtime release...
 2024/11/27 15:00:11 INFO Spice.ai runtime starting...
 2024-11-27T23:00:11.849307Z  INFO runtime::init::dataset: No datasets were configured. If this is unexpected, check the Spicepod configuration.
-2024-11-27T23:00:11.850273Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
 2024-11-27T23:00:11.850338Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2024-11-27T23:00:11.850888Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2024-11-27T23:00:11.858487Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2024-11-27T23:00:12.052740Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 ```
 
@@ -278,8 +276,6 @@ If the login credentials were entered correctly, the dataset will have loaded in
 
 ```bash
 Spice.ai runtime starting...
-2024-07-23T00:33:50.544366Z  INFO spiced: Metrics listening on 127.0.0.1:9090
-2024-07-23T00:33:50.547612Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2024-07-23T00:33:50.549731Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2024-07-23T00:33:50.552016Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2024-07-23T00:33:50.552044Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051

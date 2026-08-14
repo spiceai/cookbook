@@ -42,7 +42,6 @@ IMAP_PASSWORD=my_password
 Once started, the mailbox should be registered in the Spice Runtime logs:
 
 ```console
-2025-02-02T23:25:23.876322Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2025-02-02T23:25:23.876386Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2025-02-02T23:25:23.877307Z  INFO runtime::init::dataset: Initializing dataset awesome_mailbox
 2025-02-02T23:25:23.877477Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none

@@ -25,10 +25,8 @@ spice run
 2024/11/27 12:46:10 INFO Checking for latest Spice runtime release...
 2024/11/27 12:46:10 INFO Spice.ai runtime starting...
 2024-11-27T20:46:11.343825Z  INFO runtime::init::dataset: Initializing dataset taxi_trips
-2024-11-27T20:46:11.346211Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
 2024-11-27T20:46:11.346574Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2024-11-27T20:46:11.346653Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2024-11-27T20:46:11.353386Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2024-11-27T20:46:11.544488Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2024-11-27T20:46:12.286180Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow, 10s refresh), results cache enabled.
 2024-11-27T20:46:12.287391Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips

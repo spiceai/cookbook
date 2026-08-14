@@ -63,10 +63,8 @@ spice run
 2025-01-31T07:53:12.600614Z  INFO runtime::init::dataset: No datasets were configured. If this is unexpected, check the Spicepod configuration.
 2025-01-31T07:53:12.600965Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-01-31T07:53:12.601384Z  INFO runtime::init::model: Loading model [local_model] from file:phi-3-mini...
-2025-01-31T07:53:12.601668Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
 2025-01-31T07:53:12.601718Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2025-01-31T07:53:12.604584Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2025-01-31T07:53:12.610797Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2025-01-31T07:53:20.388313Z  INFO runtime::init::model: Model [local_model] deployed, ready for inferencing
 ```
 

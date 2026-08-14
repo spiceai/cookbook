@@ -67,9 +67,7 @@ Result:
 2024/12/12 14:10:00 INFO Checking for latest Spice runtime release...
 2024/12/12 14:10:00 INFO Spice.ai runtime starting...
 2024-12-12T22:10:00.770177Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2024-12-12T22:10:00.770235Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
 2024-12-12T22:10:00.770385Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2024-12-12T22:10:00.771411Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2024-12-12T22:10:01.248755Z  INFO runtime::init::embedding: Embedding [embeddings-model] ready to embed
 2024-12-12T22:10:01.248915Z  INFO runtime::init::dataset: Initializing dataset spiceai.files
 2024-12-12T22:10:01.248921Z  INFO runtime::init::dataset: Initializing dataset taxi_trips

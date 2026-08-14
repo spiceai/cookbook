@@ -56,9 +56,7 @@ Result:
 2025-01-21T22:48:40.569250Z  INFO runtime::init::dataset: Initializing dataset taxi_trips
 2025-01-21T22:48:40.569580Z  INFO runtime::init::model: Loading model [deepseek] from openai:deepseek-chat...
 2025-01-21T22:48:40.569646Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-01-21T22:48:40.569701Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
 2025-01-21T22:48:40.570139Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2025-01-21T22:48:40.572365Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2025-01-21T22:48:40.769265Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-01-21T22:48:41.380306Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled.
 2025-01-21T22:48:41.381620Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips

@@ -82,7 +82,6 @@ You should see this output:
 2025-09-26T15:21:38.225135Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-09-26T15:21:38.229824Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s
 2025-09-26T15:21:38.230575Z  INFO runtime::init::caching: Initialized embeddings cache; max size: 128.00 MiB, item ttl: 1s
-2025-09-26T15:21:38.658824Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2025-09-26T15:21:38.658888Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2025-09-26T15:21:38.678694Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-09-26T15:21:47.550688Z  INFO runtime::init::embedding: Embedding Model potion_128m ready

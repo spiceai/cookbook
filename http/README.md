@@ -87,7 +87,6 @@ Example output:
 2025-11-09T22:51:05.792981Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s
 2025-11-09T22:51:05.793020Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s
 2025-11-09T22:51:05.793031Z  INFO runtime::init::caching: Initialized embeddings cache; max size: 128.00 MiB, item ttl: 1s
-2025-11-09T22:51:06.136639Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2025-11-09T22:51:06.137090Z  INFO runtime::init::task_history: Task history enabled: retention_period=28800s, retention_check_interval=900s
 2025-11-09T22:51:06.137446Z  INFO runtime::init::dataset: Dataset tvmaze initializing...
 2025-11-09T22:51:06.137756Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090

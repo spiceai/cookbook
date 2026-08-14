@@ -28,10 +28,8 @@ spice run
 Output:
 
 ```bash
-2024-09-10T06:54:36.184935Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
 2024-09-10T06:54:36.185086Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2024-09-10T06:54:36.187305Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2024-09-10T06:54:36.193225Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2024-09-10T06:54:36.385124Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2024-09-10T06:54:37.020990Z  INFO runtime: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), results cache enabled.
 ```

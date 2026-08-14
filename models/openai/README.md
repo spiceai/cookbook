@@ -66,10 +66,8 @@ Result:
 ```shell
 2025/01/21 01:19:43 INFO Checking for latest Spice runtime release...
 2025/01/21 01:19:44 INFO Spice.ai runtime starting...
-2025-01-20T16:19:45.056778Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
 2025-01-20T16:19:45.057495Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-01-20T16:19:45.057562Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-01-20T16:19:45.061178Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2025-01-20T16:19:45.544466Z  INFO runtime::init::embedding: Embedding [embeddings-model] ready to embed
 2025-01-20T16:19:45.544649Z  INFO runtime::init::dataset: Initializing dataset spiceai.docs
 2025-01-20T16:19:45.544669Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
