@@ -68,7 +68,6 @@ spiceai-mysql-sakila  | 2024-12-19T01:36:24.416215Z 0 [System] [MY-015015] [Serv
 spiceai-mysql-sakila  | 2024-12-19T01:36:24.544874Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.1.0) starting as process 7
 spiceai-mysql-sakila  | 2024-12-19T01:36:24.547827Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
 ...
-spiced-container      | 2024-12-19T01:36:24.772197Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 spiced-container      | 2024-12-19T01:36:24.772246Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 0.0.0.0:9090
 spiced-container      | 2024-12-19T01:36:24.772267Z  INFO runtime::flight: Spice Runtime Flight listening on 0.0.0.0:50051
 spiced-container      | 2024-12-19T01:36:24.772389Z  INFO runtime::http: Spice Runtime HTTP listening on 0.0.0.0:8090
@@ -90,12 +89,13 @@ Dataset films registered (mysql:film), acceleration (arrow), results cache enabl
 You now have Spice running as a Docker container with Flight and HTTP ports exposed on ports `50051` and `8090`. Run `spice status` to access Spice.ai runtime information.
 
 ```shell
-NAME          ENDPOINT        STATUS
-http          0.0.0.0:8090    Ready
-flight        0.0.0.0:50051   Ready
-metrics       0.0.0.0:9090    Ready
-opentelemetry 127.0.0.1:50052 Ready
+http                 0.0.0.0:8090                   Ready
+flight               0.0.0.0:50051                  Ready
+metrics              0.0.0.0:9090                   Ready
+opentelemetry        0.0.0.0:50051                  Ready
 ```
+
+> **Note:** OpenTelemetry is served on the same gRPC port as Flight, so both rows report the Flight endpoint.
 
 ### SQL Search
 
