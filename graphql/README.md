@@ -77,7 +77,7 @@ Example output:
 2025-07-07T18:32:50.374154Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-07-07T18:32:50.374183Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
 2025-07-07T18:32:50.761270Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-07-07T18:32:50.761704Z  INFO runtime::init::dataset: Initializing dataset stargazers
+2025-07-07T18:32:50.761704Z  INFO runtime::init::dataset: Dataset stargazers initializing...
 2025-07-07T18:32:50.761790Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-07-07T18:32:52.129189Z  INFO runtime::init::dataset: Dataset stargazers registered (graphql:https://api.github.com/graphql), acceleration (arrow), results cache enabled.
 2025-07-07T18:32:52.130877Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset stargazers

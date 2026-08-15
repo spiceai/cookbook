@@ -150,7 +150,7 @@ spice run
 
 ```bash
 2025-03-31T18:58:04.713696Z  INFO spiced: Starting runtime v1.1.0-build.ff1d3fec2+models.metal
-2025-03-31T18:58:05.268188Z  INFO runtime::init::dataset: Initializing dataset sample_data
+2025-03-31T18:58:05.268188Z  INFO runtime::init::dataset: Dataset sample_data initializing...
 2025-03-31T18:58:05.269626Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-03-31T18:58:05.272079Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2025-03-31T18:58:05.278168Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090

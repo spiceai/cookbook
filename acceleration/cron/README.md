@@ -71,7 +71,7 @@ After the initial load, observe that the `taxi_trips` dataset refreshes on every
 2025-06-09T06:27:32.836137Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-06-09T06:27:32.836265Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
 2025-06-09T06:27:33.626530Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-06-09T06:27:33.627071Z  INFO runtime::init::dataset: Initializing dataset taxi_trips
+2025-06-09T06:27:33.627071Z  INFO runtime::init::dataset: Dataset taxi_trips initializing...
 2025-06-09T06:27:33.630576Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-06-09T06:27:35.928527Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled.
 2025-06-09T06:27:35.929924Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips

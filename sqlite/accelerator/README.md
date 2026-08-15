@@ -31,7 +31,7 @@ Output:
 2024-09-10T06:54:36.185086Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2024-09-10T06:54:36.187305Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2024-09-10T06:54:36.385124Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
-2024-09-10T06:54:37.020990Z  INFO runtime: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), results cache enabled.
+2024-09-10T06:54:37.020990Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), results cache enabled.
 ```
 
 ## Step 2. Run query against the dataset using the Spice SQL REPL
@@ -113,7 +113,7 @@ The following output is shown in the Spice runtime terminal confirming new confi
 
 ```bash
 2024-09-10T06:59:21.908667Z  INFO runtime: Unloaded dataset taxi_trips
-2024-09-10T06:59:22.524295Z  INFO runtime: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (sqlite:file), results cache enabled.
+2024-09-10T06:59:22.524295Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (sqlite:file), results cache enabled.
 2024-09-10T06:59:22.525789Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
 2024-09-10T06:59:39.244473Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (421.71 MiB) for dataset taxi_trips in 16s 718ms.
 ```
