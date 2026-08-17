@@ -36,19 +36,30 @@ echo "cloud-connect-dev validation"
 echo
 
 # --- The CLI is new enough to have the flow this recipe documents. ----------
+#
+# An older CLI still has a `spice connect` command, but it is the superseded
+# one: every assertion below would fail for the same single reason. Report that
+# reason once and stop, with exit code 2 so a caller can tell "not validated
+# here" from "validated and broken".
 echo "CLI"
 version="$(spice version 2>/dev/null | sed -n 's/^CLI version: *//p' | head -1)"
 if [ -z "$version" ]; then
-  no "spice version reports a CLI version"
-else
-  major_minor="$(printf '%s' "$version" | sed -n 's/^v\{0,1\}\([0-9]\{1,\}\)\.\([0-9]\{1,\}\).*/\1 \2/p')"
-  set -- $major_minor
-  if [ $# -eq 2 ] && { [ "$1" -gt 2 ] || { [ "$1" -eq 2 ] && [ "$2" -ge 2 ]; }; }; then
-    ok "CLI is $version (v2.2+)"
-  else
-    no "CLI is $version; this recipe needs v2.2 or later"
-  fi
+  printf '  FAIL spice version reports no CLI version\n\nTEST FAILED\n'
+  exit 1
 fi
+read -r cli_major cli_minor <<EOF
+$(printf '%s' "$version" | sed -n 's/^v\{0,1\}\([0-9]\{1,\}\)\.\([0-9]\{1,\}\).*/\1 \2/p')
+EOF
+if [ -z "${cli_major:-}" ] || [ -z "${cli_minor:-}" ]; then
+  printf '  FAIL could not read a version number from "%s"\n\nTEST FAILED\n' "$version"
+  exit 1
+fi
+if [ "$cli_major" -lt 2 ] || { [ "$cli_major" -eq 2 ] && [ "$cli_minor" -lt 2 ]; }; then
+  printf '  skip CLI is %s; this recipe needs v2.2 or later\n' "$version"
+  printf '\nNot validated: install Spice CLI v2.2+ and re-run.\nTEST SKIPPED\n'
+  exit 2
+fi
+ok "CLI is $version (v2.2+)"
 
 help="$(spice connect --help 2>&1)"
 case "$help" in
@@ -167,12 +178,38 @@ case "$tracked" in
 *.spice/*) no "files under .spice/ are tracked by git" ;;
 *) ok "no .spice/ file is tracked by git" ;;
 esac
-# The recipe's own files must not carry a key, a token, or an identity.
-if [ -n "$tracked" ] &&
-  printf '%s\n' "$tracked" | xargs grep -l -E 'spice-enroll-[A-Za-z0-9]|"private_key"|BEGIN [A-Z ]*PRIVATE KEY' 2>/dev/null | grep -q .; then
-  no "a tracked recipe file contains credential-shaped material"
+
+# The recipe's own files must not carry a key, a token, or an identity. Scan
+# what git tracks; outside a git checkout, scan the recipe directory instead,
+# so the check is never vacuously true.
+# This script is excluded: it is the one file in the recipe whose content is
+# credential *patterns*, which would match themselves.
+scan_files="$(printf '%s\n' "$tracked" | grep -v '^validate\.sh$')"
+scan_source="tracked"
+if [ -z "$tracked" ]; then
+  scan_files="$(find . -type f -not -path './.spice/*' -not -name validate.sh 2>/dev/null)"
+  scan_source="recipe"
+fi
+# An enrollment key is long and opaque. Requiring both length and a letter is
+# what separates a real key from the documented `spice-enroll-…` placeholder
+# and from the all-digit value used above to prove positional refusal.
+key_shaped='spice-enroll-[A-Za-z0-9]{16,}'
+has_letter='spice-enroll-[0-9]*[A-Za-z]'
+if [ -n "$scan_files" ] &&
+  printf '%s\n' "$scan_files" |
+  xargs grep -h -o -E "$key_shaped" 2>/dev/null |
+  grep -q -E "$has_letter"; then
+  no "a $scan_source file contains an enrollment-key-shaped value"
 else
-  ok "no tracked recipe file contains credential-shaped material"
+  ok "no $scan_source file contains an enrollment-key-shaped value"
+fi
+if [ -n "$scan_files" ] &&
+  printf '%s\n' "$scan_files" |
+  xargs grep -l -E '"private_key_pem"|"identity_cert_pem"|BEGIN [A-Z ]*PRIVATE KEY|BEGIN CERTIFICATE' 2>/dev/null |
+  grep -q .; then
+  no "a $scan_source file contains an identity or private key"
+else
+  ok "no $scan_source file contains an identity or private key"
 fi
 echo
 
