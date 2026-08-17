@@ -261,7 +261,7 @@ Spice Cloud Connect: not connected (<path>/cloud-connect-dev)
 - **Nothing is committed.** `.spice/` is gitignored: the issued identity, the cloud-managed Spicepod, and the delivered-secrets cache all live there. `validate.sh` checks it.
 - **`spice connect` needs a terminal.** It is interactive; on a non-interactive stdin it exits and points at `spiced --token <enrollment-key>` for [headless enrollment](https://spiceai.org/docs/deployment/cloud-connect/headless).
 - **Cancelling is safe.** `Esc` or `Ctrl-C` at any prompt is a clean exit. An interrupted enrollment resumes on the next run rather than creating a duplicate instance or project.
-- **This recipe is foreground only.** To keep the instance running across reboots on Linux, see [Cloud Connect as a persistent service](https://spiceai.org/docs/deployment/cloud-connect/service). The managed service lifecycle does not yet support macOS or Windows; there, the foreground flow in this recipe is the development story.
+- **This recipe is foreground only.** To keep the instance running across reboots, install the managed service — systemd on Linux, launchd on macOS. See [Cloud Connect as a persistent service](https://spiceai.org/docs/deployment/cloud-connect/service). Windows has no managed service; there, the foreground flow in this recipe is the development story.
 
 ## Learn more
 
