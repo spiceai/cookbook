@@ -1,0 +1,3 @@
+# Cloud Connect writes the enrolled instance identity and the cloud-managed
+# Spicepod here. Neither belongs in version control.
+.spice/

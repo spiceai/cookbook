@@ -1,0 +1,37 @@
+name: Validate cloud-connect-dev
+
+# Deterministic checks only: the cloud-connect-dev validation needs no Spice
+# Cloud account and no credentials, so it runs on forks and pull requests.
+# The cloud-backed steps of the recipe (enrollment, project creation,
+# deployment) are covered by the credentialed release gate, not here.
+
+on:
+  push:
+    branches:
+      - trunk
+    paths:
+      - 'cloud-connect-dev/**'
+      - '.github/workflows/validate-cloud-connect-dev.yml'
+  pull_request:
+    paths:
+      - 'cloud-connect-dev/**'
+      - '.github/workflows/validate-cloud-connect-dev.yml'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+      - name: Install the Spice CLI
+        run: |
+          curl -fsSL https://install.spiceai.org | /bin/bash
+          echo "$HOME/.spice/bin" >> "$GITHUB_PATH"
+
+      - name: Validate the recipe
+        run: ./cloud-connect-dev/validate.sh
