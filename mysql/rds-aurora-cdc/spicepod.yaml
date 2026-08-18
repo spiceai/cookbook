@@ -1,0 +1,22 @@
+version: v1
+kind: Spicepod
+name: aurora-mysql-cdc
+
+datasets:
+  - from: mysql:spicedemo.orders
+    name: orders
+    params:
+      mysql_host: ${env:AURORA_WRITER_ENDPOINT}
+      mysql_tcp_port: '3306'
+      mysql_db: spicedemo
+      mysql_sslmode: preferred
+      mysql_user: spice
+      mysql_pass: ${secrets:MYSQL_PASS}
+    acceleration:
+      enabled: true
+      engine: cayenne
+      mode: file
+      refresh_mode: changes
+      primary_key: id
+      on_conflict:
+        id: upsert
