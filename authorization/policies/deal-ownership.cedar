@@ -5,10 +5,11 @@
 // equals the caller's user id (the `sub` claim, exposed to SQL as
 // current_user_id()). It does NOT apply to the `admin` role (the `unless`).
 //
-// The second policy grants the `admin` role an unfiltered read, so an admin
-// sees every deal across all tenants. This mirrors the PII-officer override in
+// The second policy grants the `admin` role a read filtered only by tenant, so
+// an admin sees every deal in their own org — not just the ones they own, but
+// still not another tenant's. This mirrors the PII-officer override in
 // pii-masking.cedar: a role is excluded from the restrictive policy and granted
-// by a separate, annotation-free policy, so no row filter is collected for it.
+// by a separate policy, so the owner filter is not collected for it.
 //
 // This is finer-grained than tenant isolation: two non-admin users in the SAME
 // tenant see different rows, because ownership is per-user, not per-org.
@@ -23,7 +24,8 @@ permit(
 )
 unless { principal in Spice::Role::"admin" };
 
-@id("deals_admin_all")
+@id("deals_admin_tenant")
+@row_filter("tenant_id = current_org_id()")
 permit(
     principal in Spice::Role::"admin",
     action == Spice::Action::"read",

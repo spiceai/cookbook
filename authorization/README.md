@@ -13,7 +13,7 @@ pattern is a distinct rule:
 | Pattern | Rule | Demonstrated by |
 | --- | --- | --- |
 | **Multi-tenancy** | `tenant_id = current_org_id()` | Acme and Globex users see different rows of `customers` |
-| **Row-level security (RLS)** | `owner = current_user_id()` | Two users in the *same* tenant see different rows of `deals` |
+| **Row-level security (RLS)** | `owner = current_user_id()` | Two users in the *same* tenant see different rows of `deals`; an `admin` sees its whole tenant |
 | **PII masking** | `@mask_email` / `@mask_ssn`, by role | Analysts see masked PII; a PII officer sees real values |
 | **RBAC** | Role-gated dataset + deny-by-default | Only the `hr` role may read `salaries` |
 
@@ -143,7 +143,8 @@ echo 'select id, tenant_id, owner, name, amount from deals order by id;' \
 ```
 
 `morgan` holds the `admin` role, which is exempt from the ownership filter and
-granted an unfiltered read - an admin sees every deal, across all tenants:
+granted a tenant-scoped read - an admin sees every deal in their own tenant
+(`acme`), not just the ones they own, but still not another tenant's:
 
 ```bash
 echo 'select id, tenant_id, owner, name, amount from deals order by id;' \
@@ -151,15 +152,14 @@ echo 'select id, tenant_id, owner, name, amount from deals order by id;' \
 ```
 
 ```text
-+----+-----------+------------+------------------+--------+
-| id | tenant_id | owner      | name             | amount |
-+----+-----------+------------+------------------+--------+
-| 1  | acme      | alice@acme | Acme Renewal     | 50000  |
-| 2  | acme      | alice@acme | Acme Upsell      | 20000  |
-| 3  | acme      | dana@acme  | Acme Expansion   | 75000  |
-| 4  | globex    | sam@globex | Globex Migration | 90000  |
-| 5  | acme      | hebe@acme  | Acme Onboarding  | 30000  |
-+----+-----------+------------+------------------+--------+
++----+-----------+------------+-----------------+--------+
+| id | tenant_id | owner      | name            | amount |
++----+-----------+------------+-----------------+--------+
+| 1  | acme      | alice@acme | Acme Renewal    | 50000  |
+| 2  | acme      | alice@acme | Acme Upsell     | 20000  |
+| 3  | acme      | dana@acme  | Acme Expansion  | 75000  |
+| 5  | acme      | hebe@acme  | Acme Onboarding | 30000  |
++----+-----------+------------+-----------------+--------+
 ```
 
 ## Step 6: Role-conditional PII
