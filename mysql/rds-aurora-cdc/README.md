@@ -4,7 +4,7 @@ Works with `v2.2.0+`
 
 This recipe demonstrates how to stream real-time changes from an AWS-hosted **Amazon Aurora MySQL-Compatible** cluster into Spice using native Change Data Capture (CDC) over the MySQL [binary log](https://spiceai.org/docs/next/features/cdc/mysql-replication). Inserts, updates, and deletes propagate automatically to the Spice accelerator — no Debezium or Kafka required.
 
-Spice reads the binlog directly and applies row-level changes by primary key. The current binlog file and position are checkpointed in a client-side sidecar table so streaming resumes from where it left off after a restart.
+Spice reads the binlog directly and applies row-level changes by primary key. The current binlog position is checkpointed in a client-side sidecar table so streaming resumes from where it left off after a restart. This cluster runs with **GTID mode enabled**, so that checkpoint is a global transaction ID set rather than a raw binlog file + offset - the position that survives an Aurora failover, since a promoted replica inherits the same GTID history.
 
 > **Note:** Aurora only produces a binary log on the **writer** instance. Spice must connect to the cluster's **writer (cluster) endpoint**, not the reader endpoint — the reader endpoint routes to Aurora Replicas, which serve reads from shared storage and do not expose their own binlog stream.
 
@@ -39,11 +39,13 @@ export AWS_REGION=<your-region>
 
 ## Step 3. Deploy an Aurora MySQL cluster with binlog enabled
 
-The included CloudFormation template provisions a VPC, a publicly-reachable Aurora MySQL cluster, and a custom **DB cluster parameter group** with `binlog_format=ROW` and `binlog_row_image=FULL` — the settings binlog CDC requires. Binlog format is a cluster-level parameter on Aurora MySQL, so it must be set before the cluster starts serving traffic.
+The included CloudFormation template provisions a VPC, a publicly-reachable Aurora MySQL cluster, and a custom **DB cluster parameter group** with `binlog_format=ROW` and `binlog_row_image=FULL` — the settings binlog CDC requires. These are cluster-level parameters on Aurora MySQL, so they must be set before the cluster starts serving traffic.
+
+GTID mode is enabled in a separate step (Step 5) after the cluster exists, rather than in the template — `gtid_mode`/`enforce_gtid_consistency` are *static* parameters, and CloudFormation applies `DBClusterParameterGroup` parameters with an implicit "immediate" apply method that static parameters reject, failing the whole stack. AWS's own documented procedure for enabling GTID mode is a post-creation parameter group modification plus a reboot, which is what Step 5 does.
 
 ```bash
 aws cloudformation create-stack \
-  --stack-name aurora-cdc-cookbook \
+  --stack-name spice-aurora-cdc-cookbook \
   --template-body file://aurora-mysql-cdc-cluster.yaml \
   --region $AWS_REGION
 ```
@@ -52,17 +54,15 @@ Wait for the cluster to finish provisioning (this typically takes 10-15 minutes)
 
 ```bash
 aws cloudformation wait stack-create-complete \
-  --stack-name aurora-cdc-cookbook \
+  --stack-name spice-aurora-cdc-cookbook \
   --region $AWS_REGION
 ```
-
-> Ensure your IP (or `0.0.0.0/0` for testing) is allowed by passing `--parameters ParameterKey=AllowedCIDR,ParameterValue=<your-cidr>` if you don't want the default open ingress rule.
 
 ## Step 4. Fetch the writer endpoint and master credentials
 
 ```bash
 export AURORA_WRITER_ENDPOINT=$(aws cloudformation describe-stacks \
-  --stack-name aurora-cdc-cookbook \
+  --stack-name spice-aurora-cdc-cookbook \
   --region $AWS_REGION \
   --query "Stacks[0].Outputs[?OutputKey=='WriterEndpoint'].OutputValue" \
   --output text)
@@ -72,21 +72,51 @@ echo $AURORA_WRITER_ENDPOINT
 
 The default master username is `admin` and the default master password is `TestPassword123!` (set via the `MasterUsername`/`MasterPassword` template parameters — change these for anything beyond local testing).
 
-## Step 5. Confirm binlog is active
+---
+
+## Step 5. Enable GTID mode
+
+Set `gtid_mode` and `enforce_gtid_consistency` on the cluster parameter group the template already created (`spice-aurora-cdc-cookbook-params`). Both are static parameters, so they're applied with `pending-reboot` rather than immediately.
+
+```bash
+aws rds modify-db-cluster-parameter-group \
+  --db-cluster-parameter-group-name spice-aurora-cdc-cookbook-params \
+  --parameters "ParameterName=enforce_gtid_consistency,ParameterValue=ON,ApplyMethod=pending-reboot" \
+               "ParameterName=gtid-mode,ParameterValue=ON,ApplyMethod=pending-reboot" \
+  --region $AWS_REGION
+```
+
+Reboot the writer instance to apply them, then wait for it to come back:
+
+```bash
+aws rds reboot-db-instance \
+  --db-instance-identifier spice-aurora-cdc-cookbook-instance \
+  --region $AWS_REGION
+
+aws rds wait db-instance-available \
+  --db-instance-identifier spice-aurora-cdc-cookbook-instance \
+  --region $AWS_REGION
+```
+
+---
+
+## Step 6. Confirm binlog and GTID mode are active
 
 ```bash
 docker run --rm -e MYSQL_PWD=TestPassword123! mysql:8.0 mysql -h $AURORA_WRITER_ENDPOINT -u admin \
-  -e "SHOW VARIABLES WHERE Variable_name IN ('log_bin','binlog_format','binlog_row_image');"
+  -e "SHOW VARIABLES WHERE Variable_name IN ('log_bin','binlog_format','binlog_row_image','gtid_mode','enforce_gtid_consistency');"
 ```
 
 ```console
-+-------------------+-------+
-| Variable_name     | Value |
-+-------------------+-------+
-| binlog_format     | ROW   |
-| binlog_row_image  | FULL  |
-| log_bin           | ON    |
-+-------------------+-------+
++---------------------------+-------+
+| Variable_name             | Value |
++---------------------------+-------+
+| binlog_format             | ROW   |
+| binlog_row_image          | FULL  |
+| enforce_gtid_consistency  | ON    |
+| gtid_mode                 | ON    |
+| log_bin                   | ON    |
++---------------------------+-------+
 ```
 
 Aurora purges binlogs on its own retention schedule, which by default can be shorter than a standalone MySQL server's. Give Spice enough headroom to survive a restart by explicitly setting the retention window:
@@ -98,7 +128,7 @@ docker run --rm -e MYSQL_PWD=TestPassword123! mysql:8.0 mysql -h $AURORA_WRITER_
 
 ---
 
-## Step 6. Create a replication user and seed the table
+## Step 7. Create a replication user and seed the table
 
 Spice connects with a user that can read the binlog. The minimum privileges are `REPLICATION SLAVE`, `REPLICATION CLIENT`, and `SELECT`.
 
@@ -126,14 +156,14 @@ EOF
 
 ---
 
-## Step 7. Configure Spice with the Aurora connection details
+## Step 8. Configure Spice with the Aurora connection details
 
 ```bash
 echo "AURORA_WRITER_ENDPOINT=$AURORA_WRITER_ENDPOINT
 MYSQL_PASS=spice" > .env
 ```
 
-## Step 8. Start the Spice runtime
+## Step 9. Start the Spice runtime
 
 ```bash
 spice run
@@ -143,7 +173,7 @@ You should see the dataset bootstrap from a consistent snapshot and then transit
 
 ```
 2025-01-13T12:00:00Z  INFO runtime::init::dataset: Initializing dataset orders
-2025-01-13T12:00:00Z  INFO runtime::init::dataset: Dataset orders registered (mysql:spicedemo.orders), acceleration (duckdb:file, changes).
+2025-01-13T12:00:00Z  INFO runtime::init::dataset: Dataset orders registered (mysql:spicedemo.orders), acceleration (cayenne:file, changes).
 2025-01-13T12:00:00Z  INFO runtime::dataconnector::mysql: Bootstrapping MySQL table orders, records=3
 2025-01-13T12:00:00Z  INFO runtime::dataconnector::mysql: Bootstrap complete for orders. Streaming binlog changes.
 2025-01-13T12:00:00Z  INFO runtime: All components are loaded. Spice runtime is ready!
@@ -151,7 +181,7 @@ You should see the dataset bootstrap from a consistent snapshot and then transit
 
 ---
 
-## Step 9. Query the initial snapshot
+## Step 10. Query the initial snapshot
 
 In a new terminal, open the Spice SQL REPL:
 
@@ -177,7 +207,7 @@ Time: 0.008 seconds. 3 rows.
 
 ---
 
-## Step 10. Insert a record and see it stream
+## Step 11. Insert a record and see it stream
 
 ```bash
 docker run --rm -e MYSQL_PWD=TestPassword123! mysql:8.0 mysql -h $AURORA_WRITER_ENDPOINT -u admin -e \
@@ -205,7 +235,7 @@ Time: 0.006 seconds. 4 rows.
 
 ---
 
-## Step 11. Update a record and see the change
+## Step 12. Update a record and see the change
 
 ```bash
 docker run --rm -e MYSQL_PWD=TestPassword123! mysql:8.0 mysql -h $AURORA_WRITER_ENDPOINT -u admin -e \
@@ -228,7 +258,7 @@ Time: 0.005 seconds. 1 rows.
 
 ---
 
-## Step 12. Delete a record and see it removed
+## Step 13. Delete a record and see it removed
 
 ```bash
 docker run --rm -e MYSQL_PWD=TestPassword123! mysql:8.0 mysql -h $AURORA_WRITER_ENDPOINT -u admin -e \
@@ -253,13 +283,13 @@ Time: 0.006 seconds. 3 rows.
 
 ---
 
-## Step 13. Cleanup
+## Step 14. Cleanup
 
 Tear down the Aurora cluster and all associated resources:
 
 ```bash
-aws cloudformation delete-stack --stack-name aurora-cdc-cookbook --region $AWS_REGION
-aws cloudformation wait stack-delete-complete --stack-name aurora-cdc-cookbook --region $AWS_REGION
+aws cloudformation delete-stack --stack-name spice-aurora-cdc-cookbook --region $AWS_REGION
+aws cloudformation wait stack-delete-complete --stack-name spice-aurora-cdc-cookbook --region $AWS_REGION
 ```
 
 ---

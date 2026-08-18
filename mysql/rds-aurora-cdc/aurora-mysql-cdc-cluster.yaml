@@ -142,9 +142,18 @@ Resources:
   # Cluster parameter group: binlog CDC requires row-based binary logging.
   # binlog_format/binlog_row_image are cluster-level parameters on Aurora MySQL,
   # not instance-level, so they must be set here rather than on the DB instance.
+  #
+  # GTID mode (gtid_mode/enforce_gtid_consistency) is deliberately NOT set here:
+  # both are static parameters, and CloudFormation applies DBClusterParameterGroup
+  # parameters with an implicit "immediate" apply method, which static parameters
+  # reject outright (CREATE_FAILED: "Invalid / Unmodifiable / Unsupported DB
+  # Parameter"). AWS's own procedure for enabling GTID mode is instead to modify
+  # the parameter group post-creation with ApplyMethod=pending-reboot and reboot
+  # the instance - see the README's GTID step.
   AuroraClusterParameterGroup:
     Type: AWS::RDS::DBClusterParameterGroup
     Properties:
+      DBClusterParameterGroupName: !Sub '${AWS::StackName}-params'
       Description: Enables row-based binlog for Spice CDC
       Family: aurora-mysql8.0
       Parameters:
@@ -155,6 +164,7 @@ Resources:
   AuroraCluster:
     Type: AWS::RDS::DBCluster
     Properties:
+      DBClusterIdentifier: !Ref AWS::StackName
       Engine: aurora-mysql
       DatabaseName: !Ref DatabaseName
       MasterUsername: !Ref MasterUsername
@@ -178,6 +188,7 @@ Resources:
   AuroraInstance:
     Type: AWS::RDS::DBInstance
     Properties:
+      DBInstanceIdentifier: !Sub '${AWS::StackName}-instance'
       Engine: aurora-mysql
       DBClusterIdentifier: !Ref AuroraCluster
       DBInstanceClass: db.t3.medium
