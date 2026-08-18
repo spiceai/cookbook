@@ -35,10 +35,10 @@ need spice
 echo "cloud-connect-dev validation"
 echo
 
-# The checks are ordered so that the ones needing no CLI run first and always
-# report. An older CLI stops the flow-specific assertions below, but it says
-# nothing about whether this recipe's files agree with each other — and those
-# are exactly the checks CI can enforce before the release ships.
+# Ordering is deliberate: the checks needing no CLI run first and always report.
+# A CLI too old for this flow stops the assertions below it, and says nothing
+# about whether the recipe's own files agree with each other — so those are
+# checked before the version gate, and a broken file fails rather than skips.
 
 # --- The project-name default comes from this directory, not from a random
 # --- fallback. The suggestion is the directory's final component, slugified.
