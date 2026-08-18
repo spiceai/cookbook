@@ -80,9 +80,9 @@ docker compose exec postgres \
 
 In the project **Secrets** page, add this secret:
 
-| Name          | Value                                  |
-| ------------- | -------------------------------------- |
-| `pg_password` | Value of `$SPICE_DEMO_PG_PASSWORD`     |
+| Name          | Value                              |
+| ------------- | ---------------------------------- |
+| `pg_password` | Value of `$SPICE_DEMO_PG_PASSWORD` |
 
 Add this dataset to the project Spicepod:
 
@@ -114,12 +114,35 @@ The query returns:
 ```text
 +----------+-------------+
 | customer | total_cents |
+|  varchar |    int32    |
 +----------+-------------+
 | acme     | 12900       |
 | globex   | 4550        |
 | initech  | 31875       |
 +----------+-------------+
+
+Time: 0.003107 seconds. 3 rows.
 ```
+
+Confirm the delivery:
+
+```shell
+spice connect status
+```
+
+```text
+  secrets:     1 delivered: pg_password
+```
+
+Status reports secret names. Values stay in the runtime process.
+
+Three properties of a delivered secret:
+
+- The Spicepod declares no `secrets:` section. Delivered secrets are a built-in store, so the same Spicepod runs unchanged as a managed app and on a self-hosted instance.
+- A local value wins. The built-in store has the lowest precedence, so an `env` or `.env.local` value for `PG_PASSWORD` overrides the delivered one. Unset it to use the delivered value.
+- Only the first delivery applies live. Rotating a secret that a component already resolved requires a restart, like a `runtime` change.
+
+If you deploy the dataset before adding the secret, the runtime names the unresolved reference and that dataset fails to load. Add the secret and deploy again.
 
 ## 4. Deploy a change that requires a restart
 
