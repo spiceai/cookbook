@@ -1,0 +1,2 @@
+# The demo signing key is generated on demand and must never be committed.
+keys/*.pem

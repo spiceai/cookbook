@@ -1,0 +1,6 @@
+id,tenant_id,owner,name,amount
+1,acme,alice@acme,Acme Renewal,50000
+2,acme,alice@acme,Acme Upsell,20000
+3,acme,dana@acme,Acme Expansion,75000
+4,globex,sam@globex,Globex Migration,90000
+5,acme,hebe@acme,Acme Onboarding,30000
