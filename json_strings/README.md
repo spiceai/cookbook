@@ -90,14 +90,14 @@ Run `spice sql` in another window and review the `products` dataset structure. Y
 
 ```console
 sql> describe products;
-+--------------+-------------+-----------+-------------+
-| table_schema | column_name | data_type | is_nullable |
-|    varchar   |   varchar   |  varchar  |   varchar   |
-+--------------+-------------+-----------+-------------+
-| public       | id          | Int64     | YES         |
-| public       | name        | Utf8      | YES         |
-| public       | properties  | Utf8      | YES         |
-+--------------+-------------+-----------+-------------+
++-------------+-----------+-------------+
+| column_name | data_type | is_nullable |
+|   varchar   |  varchar  |   varchar   |
++-------------+-----------+-------------+
+| id          | Int64     | YES         |
+| name        | Utf8      | YES         |
+| properties  | Utf8      | YES         |
++-------------+-----------+-------------+
 ```
 
 ```console
@@ -224,15 +224,15 @@ Query products and their colors using the created view:
 
 ```console
 sql> describe products_with_color;
-+--------------+-------------+-----------+-------------+
-| table_schema | column_name | data_type | is_nullable |
-|    varchar   |   varchar   |  varchar  |   varchar   |
-+--------------+-------------+-----------+-------------+
-| public       | id          | Int64     | YES         |
-| public       | name        | Utf8      | YES         |
-| public       | properties  | Utf8      | YES         |
-| public       | color       | Utf8      | YES         |
-+--------------+-------------+-----------+-------------+
++-------------+-----------+-------------+
+| column_name | data_type | is_nullable |
+|   varchar   |  varchar  |   varchar   |
++-------------+-----------+-------------+
+| id          | Int64     | YES         |
+| name        | Utf8      | YES         |
+| properties  | Utf8      | YES         |
+| color       | Utf8      | YES         |
++-------------+-----------+-------------+
 ```
 
 ```console
