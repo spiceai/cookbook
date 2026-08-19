@@ -205,11 +205,11 @@ unset SPICE_DEMO_PG_PASSWORD
 
 ## Run as a service
 
-To keep the instance running after you close the terminal, see [Cloud Connect as a service](https://spiceai.org/docs/deployment/cloud-connect/service).
+To keep the instance running after you close the terminal, see [Cloud Connect as a service](https://spiceai.org/docs/deployment/cloud/cloud-connect/service).
 
 Windows does not support the managed service.
 
 ## Learn more
 
-- [Cloud Connect](https://spiceai.org/docs/deployment/cloud-connect)
+- [Cloud Connect](https://spiceai.org/docs/deployment/cloud/cloud-connect)
 - [`spice connect` reference](https://spiceai.org/docs/cli/reference/connect)
