@@ -41,7 +41,9 @@ spice connect status
 
 ## 2. Deploy a live change
 
-In the Spice Cloud portal, add this view to the project Spicepod:
+A deployment replaces the Spicepod the instance runs. In the Spice Cloud portal, open the project Spicepod and paste in the contents of this recipe's local `spicepod.yaml`, so the deployed Spicepod still defines the `data` dataset.
+
+Add this view to the project Spicepod, below the datasets:
 
 ```yaml
 views:
@@ -78,13 +80,15 @@ docker compose exec postgres \
   -c 'SELECT count(*) FROM public.orders;'
 ```
 
-In the project **Secrets** page, add this secret:
+In the portal, open the project's **Settings → Secrets** and add:
 
 | Name          | Value                              |
 | ------------- | ---------------------------------- |
-| `pg_password` | Value of `$SPICE_DEMO_PG_PASSWORD` |
+| `PG_PASSWORD` | Value of `$SPICE_DEMO_PG_PASSWORD` |
 
-Add this dataset to the project Spicepod:
+Secret names are matched exactly. A Spicepod that references a name the project does not define is rejected when you deploy it, and the portal names the closest match it holds.
+
+Add this dataset to the project Spicepod in the portal — not to the local `spicepod.yaml`:
 
 ```yaml
 datasets:
@@ -95,7 +99,7 @@ datasets:
       pg_port: "55432"
       pg_db: spice_demo
       pg_user: spice_reader
-      pg_pass: ${secrets:pg_password}
+      pg_pass: ${secrets:PG_PASSWORD}
       pg_sslmode: disable
 ```
 
@@ -120,8 +124,6 @@ The query returns:
 | globex   | 4550        |
 | initech  | 31875       |
 +----------+-------------+
-
-Time: 0.003107 seconds. 3 rows.
 ```
 
 Confirm the delivery:
@@ -131,7 +133,7 @@ spice connect status
 ```
 
 ```text
-  secrets:     1 delivered: pg_password
+  secrets:     1 delivered: PG_PASSWORD
 ```
 
 Status reports secret names. Values stay in the runtime process.

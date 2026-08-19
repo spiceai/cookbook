@@ -121,10 +121,17 @@ echo
 # refuses to start without one, and that the three places naming the database
 # agree with each other.
 echo "Secrets sync"
-if grep -q '\${secrets:pg_password}' README.md; then
-  ok "the deployed Spicepod resolves the password from \${secrets:pg_password}"
+# The name must match what the project defines, and Spice Cloud rejects a
+# deployment that references one it does not hold.
+if grep -q '\${secrets:PG_PASSWORD}' README.md; then
+  ok "the deployed Spicepod resolves the password from \${secrets:PG_PASSWORD}"
 else
-  no "the README's Spicepod does not use \${secrets:pg_password}"
+  no "the README's Spicepod does not use \${secrets:PG_PASSWORD}"
+fi
+if grep -q 'secrets:pg_password' README.md; then
+  no "a lowercase secret reference remains" "Spice Cloud matches secret names exactly"
+else
+  ok "no lowercase secret reference remains"
 fi
 if grep -q 'secrets:' spicepod.yaml; then
   no "the local spicepod declares a secrets: section" "delivered secrets are a built-in store; declaring one makes the Spicepod unportable"
