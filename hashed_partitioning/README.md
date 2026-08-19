@@ -1,4 +1,4 @@
-# Hashed Partitioning with DuckDB
+# Hashed Partitioning with Cayenne
 
 Works with `v1.9.0+`
 
@@ -6,7 +6,7 @@ Accelerate queries on terabyte and petabyte-scale datasets using hashed partitio
 
 Hashed partitioning divides data into fixed buckets using a hash expression for even distribution. It can significantly improve query performance for large datasets by reducing the volume of data required when processing a query. It works well for unpredictable categorical data, such as location IDs in geospatial workloads, distinct from range partitioning suited to sequential fields like dates.
 
-This cookbook demonstrates accelerating and querying NYC taxi trip Parquet files from S3 using hashed partitioning with the `bucket` function and DuckDB acceleration.
+This cookbook demonstrates accelerating and querying NYC taxi trip Parquet files from S3 using hashed partitioning with the `bucket` function and Cayenne acceleration.
 
 ## Step 1. Clone the repository and navigate to the Hashed Partitioning cookbook
 
@@ -130,5 +130,5 @@ Time: 0.002814084 seconds. 2 rows.
 
 ## Learn more
 
-[DuckDB Partitioning Documentation](https://spiceai.org/docs/components/data-accelerators/duckdb)
+[Cayenne Partitioning Documentation](https://spiceai.org/docs/components/data-accelerators/cayenne)
 [Data Acceleration](https://spiceai.org/docs/features/data-acceleration)
