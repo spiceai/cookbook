@@ -121,6 +121,7 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 
 ### Deployment and Installation
 
+- [Cloud Connect on a Development Machine](./cloud-connect-dev/README.md) - Connect a directory to Spice Cloud with one command, deploy without restarting, and reconnect.
 - [Deploying to Kubernetes](./kubernetes/README.md)
 - [Running in Docker](./docker/README.md)
 - [Sidecar Deployment Architecture](./architectures/sidecar/README.md)
