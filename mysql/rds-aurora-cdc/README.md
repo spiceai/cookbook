@@ -169,14 +169,18 @@ MYSQL_PASS=spice" > .env
 spice run
 ```
 
-You should see the dataset bootstrap from a consistent snapshot and then transition to live binlog streaming:
+You should see GTID auto-positioning confirmed, the dataset bootstrap from a consistent snapshot, and the stream transition to live binlog changes:
 
 ```
-2025-01-13T12:00:00Z  INFO runtime::init::dataset: Initializing dataset orders
-2025-01-13T12:00:00Z  INFO runtime::init::dataset: Dataset orders registered (mysql:spicedemo.orders), acceleration (cayenne:file, changes).
-2025-01-13T12:00:00Z  INFO runtime::dataconnector::mysql: Bootstrapping MySQL table orders, records=3
-2025-01-13T12:00:00Z  INFO runtime::dataconnector::mysql: Bootstrap complete for orders. Streaming binlog changes.
-2025-01-13T12:00:00Z  INFO runtime: All components are loaded. Spice runtime is ready!
+2026-08-19T18:22:41.317523Z  INFO runtime::init::dataset: Dataset orders initializing...
+2026-08-19T18:22:41.392667Z  INFO runtime::init::dataset: Dataset orders registered (mysql:spicedemo.orders), acceleration (cayenne:file, changes), results cache enabled. duration_ms=75
+2026-08-19T18:22:41.396202Z  INFO data_components::mysql_replication::shared: MySQL replication: GTID auto-positioning active. dataset=orders
+2026-08-19T18:22:41.397269Z  INFO data_components::mysql_replication::shared: dataset joined shared mysql binlog group dataset=orders connection=spice-aurora-cdc-cookbook.cluster-abcdefghijkl.us-east-1.rds.amazonaws.com:3306 snapshot=true rejoining=false members=1
+2026-08-19T18:22:41.802719Z  INFO data_components::mysql_replication::bootstrap: mysql replication: starting initial snapshot dataset=orders
+2026-08-19T18:22:42.104727Z  INFO data_components::mysql_replication::bootstrap: mysql replication: initial snapshot complete dataset=orders rows=3
+2026-08-19T18:22:42.491325Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2026-08-19T18:22:42.492029Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2026-08-19T18:22:44.042282Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
 ---
