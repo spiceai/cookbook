@@ -156,19 +156,13 @@ runtime:
     captured_output: truncated
 ```
 
-Deploy the Spicepod. Check the instance:
-
-```shell
-spice connect status
-```
-
-The status includes this line:
+Deploy the Spicepod. The runtime names the sections that need a start, in the terminal running the instance:
 
 ```text
-restart: required for runtime
+INFO Spice Cloud Connect: applied the deployed spicepod (1 datasets, 0 models, 0 catalogs, 1 views); runtime takes effect when this instance next starts
 ```
 
-The instance continues to serve queries until you restart it.
+The project in Spice Cloud reports the same pending sections. The instance continues to serve queries until you restart it.
 
 ## 5. Restart and reconnect
 
@@ -180,11 +174,7 @@ spice run
 
 You do not need to run `spice connect` again. The existing identity reconnects the instance.
 
-Confirm that the restart is no longer required:
-
-```shell
-spice connect status
-```
+The instance now serves the deployed `runtime` settings, and the deployment reports nothing pending.
 
 > **Warning:** Spice Cloud invalidates the identity if the instance stays offline for more than 30 days. Enroll the instance again to reconnect it.
 
