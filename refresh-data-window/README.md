@@ -31,6 +31,7 @@ datasets:
     time_column: tpep_pickup_datetime
     params:
       file_format: parquet
+      s3_auth: public
     acceleration:
       enabled: true
 ```
