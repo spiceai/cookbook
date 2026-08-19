@@ -9,7 +9,7 @@ datasets:
       file_format: parquet
     acceleration:
       enabled: true
-      engine: duckdb
+      engine: cayenne
       mode: file
       partition_by:
         - bucket(10, PULocationID)
