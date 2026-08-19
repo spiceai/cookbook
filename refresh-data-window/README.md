@@ -104,6 +104,7 @@ datasets:
     time_column: tpep_pickup_datetime
     params:
       file_format: parquet
+      s3_auth: public
     acceleration:
       enabled: true
       refresh_data_window: 35040h # 4 years, this will evict 5 rows of data from the dataset
