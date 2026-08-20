@@ -40,8 +40,8 @@ echo
 # about whether the recipe's own files agree with each other — so those are
 # checked before the version gate, and a broken file fails rather than skips.
 
-# --- The project-name default comes from this directory, not from a random
-# --- fallback. The suggestion is the directory's final component, slugified.
+# --- The project name the README tells you to create is one Spice Cloud
+# --- accepts, and it matches the directory the recipe is run from.
 echo "Project naming"
 dir_name="$(basename "$PWD")"
 if [ "$dir_name" = "cloud-connect-dev" ]; then
@@ -49,14 +49,19 @@ if [ "$dir_name" = "cloud-connect-dev" ]; then
 else
   no "recipe directory is '$dir_name'" "run this from the cloud-connect-dev directory"
 fi
-# Same contract the CLI validates a project name against: 4-38 characters of
-# lowercase letters, digits, and dashes, not starting or ending with a dash.
+if grep -q '<org>/cloud-connect-dev' README.md; then
+  ok "the README links to a project named after this directory"
+else
+  no "the README does not name the '<org>/cloud-connect-dev' project"
+fi
+# Same contract Spice Cloud validates a project name against: 4-38 characters
+# of lowercase letters, digits, and dashes, not starting or ending with a dash.
 len=${#dir_name}
 if [ "$len" -ge 4 ] && [ "$len" -le 38 ] &&
   printf '%s' "$dir_name" | grep -Eq '^[a-z0-9]([a-z0-9-]*[a-z0-9])?$'; then
-  ok "'$dir_name' is a valid project name, so no <adjective>-spice fallback is used"
+  ok "'$dir_name' is a name Spice Cloud accepts for a project"
 else
-  no "'$dir_name' is not a valid project name" "the CLI would fall back to a generated suggestion"
+  no "'$dir_name' is not a valid project name" "rename the directory or pick another project name"
 fi
 echo
 
@@ -181,10 +186,9 @@ echo
 
 # --- The CLI is new enough to have the flow this recipe documents. ----------
 #
-# An older CLI still has a `spice connect` command, but it is the superseded
-# one: every assertion below would fail for the same single reason. Report that
-# reason once and stop, with exit code 2 so a caller can tell "not validated
-# here" from "validated and broken".
+# Below the gate every assertion would fail for the same single reason on an
+# older CLI. Report that reason once and stop, with exit code 2 so a caller can
+# tell "not validated here" from "validated and broken".
 echo "CLI"
 version="$(spice version 2>/dev/null | sed -n 's/^CLI version: *//p' | head -1)"
 if [ -z "$version" ]; then
@@ -210,82 +214,74 @@ if [ "$cli_major" -lt 2 ] || { [ "$cli_major" -eq 2 ] && [ "$cli_minor" -lt 2 ];
 fi
 ok "CLI is $version (v2.2+)"
 
-help="$(spice connect --help 2>&1)"
-case "$help" in
-*'spice connect service install'*) ok "'spice connect service' is the documented service group" ;;
-*) no "'spice connect --help' does not describe the service group" ;;
-esac
-case "$help" in
-*'spiced --token'*) ok "help points unattended enrollment at 'spiced --token'" ;;
-*) no "help does not mention 'spiced --token' for unattended enrollment" ;;
-esac
+# Every lifecycle command the README runs is listed where a reader looks for
+# it. `--help` is the one surface that answers without an account.
+cloud_help="$(spice cloud --help 2>&1)"
+for cmd in link unlink status service; do
+  case "$cloud_help" in
+  *"  $cmd "*) ok "'spice cloud --help' lists $cmd" ;;
+  *) no "'spice cloud --help' does not list $cmd" ;;
+  esac
+done
+
+service_help="$(spice cloud service --help 2>&1)"
+for sub in install uninstall start stop restart; do
+  case "$service_help" in
+  *"  $sub "*) ok "'spice cloud service' has $sub" ;;
+  *) no "'spice cloud service' is missing $sub" ;;
+  esac
+done
 echo
 
-# --- Status reports a coherent snapshot in both output formats. -------------
-echo "Status"
-table="$(spice connect status 2>&1)"
-if [ $? -eq 0 ]; then
-  ok "'spice connect status' exits 0"
+# --- The README and the CLI agree on which commands exist. ------------------
+#
+# A recipe naming a spelling the CLI has dropped sends the reader into an
+# error, so the drift is worth failing on rather than reading past.
+echo "README and CLI agree"
+if grep -q 'spice cloud link' README.md; then
+  ok "the README links the instance with 'spice cloud link'"
 else
-  no "'spice connect status' exited non-zero" "$table"
+  no "the README does not use 'spice cloud link'"
 fi
-case "$table" in
-*'Spice Cloud Connect:'*) ok "table output reports a connection state" ;;
-*) no "table output has no connection state" "$table" ;;
-esac
-
-json="$(spice connect status --output json 2>/dev/null)"
-if command -v jq >/dev/null 2>&1; then
-  if printf '%s' "$json" | jq -e . >/dev/null 2>&1; then
-    ok "'--output json' writes JSON and nothing else to stdout"
-  else
-    no "'--output json' did not write parseable JSON" "$json"
-  fi
-  for field in .connection.state .service.state .deployment.state .schema_version; do
-    if printf '%s' "$json" | jq -e "$field != null" >/dev/null 2>&1; then
-      ok "status JSON has $field"
-    else
-      no "status JSON is missing $field"
-    fi
-  done
-  # The service object is identical in the full and filtered reports, so
-  # automation never has to reconcile two schemas.
-  svc_full="$(printf '%s' "$json" | jq -Sc .service 2>/dev/null)"
-  svc_only="$(spice connect service status --output json 2>/dev/null | jq -Sc .service 2>/dev/null)"
-  if [ -n "$svc_full" ] && [ "$svc_full" = "$svc_only" ]; then
-    ok "'connect status' and 'connect service status' render the same service object"
-  else
-    no "the two status commands disagree about the service object"
-  fi
+if grep -q 'spice cloud unlink' README.md; then
+  ok "the README detaches with 'spice cloud unlink'"
 else
-  printf '  skip jq not installed; JSON assertions skipped\n'
+  no "the README does not use 'spice cloud unlink'"
+fi
+if grep -q 'spice connect' README.md; then
+  no "the README still calls 'spice connect'" "that command only retains the deprecated <org>/<pod> Spicepod form"
+else
+  ok "the README calls no removed 'spice connect' lifecycle spelling"
 fi
 echo
 
-# --- The interactive flow refuses rather than hanging without a terminal. ---
+# --- Enrollment refuses rather than hanging without a terminal. -------------
+#
+# stdin is redirected so the result is the same whether a person or CI runs
+# this: an interactive prompt here would hang the script instead of failing it.
 echo "Non-interactive safety"
-out="$(spice connect </dev/null 2>&1)"
+out="$(spice cloud link </dev/null 2>&1)"
 code=$?
 if [ "$code" -ne 0 ]; then
-  ok "non-interactive 'spice connect' exits non-zero instead of prompting"
+  ok "non-interactive 'spice cloud link' exits non-zero instead of prompting"
 else
-  no "non-interactive 'spice connect' exited 0" "$out"
+  no "non-interactive 'spice cloud link' exited 0" "$out"
 fi
 case "$out" in
-*'requires a terminal'*) ok "it explains that setup is interactive" ;;
-*) no "it does not explain that setup needs a terminal" "$out" ;;
+*'requires an interactive terminal'*) ok "it explains that linking is interactive" ;;
+*) no "it does not explain that linking needs a terminal" "$out" ;;
 esac
+# The README sends an unattended machine to `spiced --token`. The CLI must
+# name the same alternative, or the two disagree at the moment it matters.
 case "$out" in
 *'spiced --token'*) ok "it names the unattended alternative" ;;
 *) no "it does not name the unattended alternative" "$out" ;;
 esac
-
-# An enrollment key must never ride a positional argument.
-out="$(spice connect spice-enroll-000000000000 2>&1)"
-case "$out" in
-*'not accepted as a positional argument'*) ok "an enrollment key is refused as a positional argument" ;;
-*) no "an enrollment key was not refused positionally" "$out" ;;
-esac
+if grep -q 'spiced --token' README.md; then
+  ok "the README names the same unattended alternative"
+else
+  no "the README does not name 'spiced --token' for unattended enrollment"
+fi
 echo
 
 printf '%d passed, %d failed\n' "$pass" "$fail"

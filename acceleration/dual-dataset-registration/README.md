@@ -54,12 +54,14 @@ datasets:
     name: taxi_trips
     params:
       file_format: parquet
+      s3_auth: public
 
   # Accelerated copy — loads in the background
   - from: s3://spiceai-demo-datasets/taxi_trips/2024/
     name: taxi_trips_accelerated
     params:
       file_format: parquet
+      s3_auth: public
     ready_state: on_registration # Required for runtime to be ready while loading
     acceleration:
       enabled: true
@@ -70,6 +72,7 @@ datasets:
 
 Key points:
 
+- `s3_auth: public` forces unauthenticated access to the public bucket. Without it, Spice falls back to the default AWS credential chain, which fails if the local environment has invalid or expired AWS credentials configured.
 - `taxi_trips` is a federated dataset with no acceleration. It is ready the moment the runtime starts.
 - `taxi_trips_accelerated` points to the same source but has `acceleration.enabled: true`. The runtime begins loading data into a local DuckDB file as soon as it starts.
 - `ready_state: on_registration` is required on the accelerated dataset so the runtime becomes ready immediately. Without it the runtime waits for the acceleration to finish loading before marking itself ready, which blocks the federated dataset from serving queries.
