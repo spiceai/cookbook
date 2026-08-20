@@ -73,7 +73,7 @@ spice run
 You should see the dataset bootstrap from a consistent snapshot and then transition to live WAL streaming:
 
 ```
-2025-01-13T12:00:00Z  INFO runtime::init::dataset: Initializing dataset orders
+2025-01-13T12:00:00Z  INFO runtime::init::dataset: Dataset orders initializing...
 2025-01-13T12:00:00Z  INFO runtime::init::dataset: Dataset orders registered (postgres:orders), acceleration (duckdb:file, changes).
 2025-01-13T12:00:00Z  INFO runtime::dataconnector::postgres: Bootstrapping PostgreSQL table orders, records=3
 2025-01-13T12:00:00Z  INFO runtime::dataconnector::postgres: Bootstrap complete for orders. Streaming WAL changes from slot spice_orders.

@@ -87,7 +87,7 @@ acceleration:
 The Spice runtime terminal will show that the dataset has been loaded:
 
 ```bash
-2024-08-05T05:04:16.524586Z  INFO runtime: Dataset taxi_trips registered (dremio:datasets.taxi_trips), acceleration (arrow, 10s refresh), results cache enabled.
+2024-08-05T05:04:16.524586Z  INFO runtime::init::dataset: Dataset taxi_trips registered (dremio:datasets.taxi_trips), acceleration (arrow, 10s refresh), results cache enabled.
 2024-08-05T05:04:16.526366Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
 2024-08-05T05:04:18.915971Z  INFO runtime::accelerated_table::refresh_task: Loaded 100,000 rows (27.91 MiB) for dataset taxi_trips in 2s 389ms.
 ```

@@ -71,8 +71,8 @@ spiceai-mysql-sakila  | 2024-12-19T01:36:24.547827Z 1 [System] [MY-013576] [Inno
 spiced-container      | 2024-12-19T01:36:24.772246Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 0.0.0.0:9090
 spiced-container      | 2024-12-19T01:36:24.772267Z  INFO runtime::flight: Spice Runtime Flight listening on 0.0.0.0:50051
 spiced-container      | 2024-12-19T01:36:24.772389Z  INFO runtime::http: Spice Runtime HTTP listening on 0.0.0.0:8090
-spiced-container      | 2024-12-19T01:36:24.888666Z  INFO runtime::init::embedding: Embedding [hf_minilm] ready to embed
-spiced-container      | 2024-12-19T01:36:24.888807Z  INFO runtime::init::dataset: Initializing dataset films
+spiced-container      | 2024-12-19T01:36:24.888666Z  INFO runtime::init::embedding: Embedding Model hf_minilm ready
+spiced-container      | 2024-12-19T01:36:24.888807Z  INFO runtime::init::dataset: Dataset films initializing...
 spiced-container      | 2024-12-19T01:36:24.888926Z  INFO runtime::init::model: Loading model [openai] from openai:gpt-4o...
 spiced-container      | 2024-12-19T01:36:24.889476Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 spiced-container      | 2024-12-19T01:36:24.904304Z  INFO runtime::init::dataset: Dataset films registered (mysql:film), acceleration (arrow), results cache enabled.

@@ -22,7 +22,7 @@ The following output is shown in the terminal:
 ```bash
 2024/11/27 15:00:11 INFO Checking for latest Spice runtime release...
 2024/11/27 15:00:11 INFO Spice.ai runtime starting...
-2024-11-27T23:00:11.849307Z  INFO runtime::init::dataset: No datasets were configured. If this is unexpected, check the Spicepod configuration.
+2024-11-27T23:00:11.849307Z  INFO runtime: No datasets or catalogs were configured. If this is unexpected, check the Spicepod configuration.
 2024-11-27T23:00:11.850338Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2024-11-27T23:00:11.850888Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2024-11-27T23:00:12.052740Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
@@ -279,7 +279,7 @@ Spice.ai runtime starting...
 2024-07-23T00:33:50.549731Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2024-07-23T00:33:50.552016Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2024-07-23T00:33:50.552044Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2024-07-23T00:35:42.716736Z  INFO runtime: Dataset taxi_trips registered (s3://yourcompany-bucketname-datasets/taxi_trips/), acceleration (arrow, 10s refresh), results cache enabled.
+2024-07-23T00:35:42.716736Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://yourcompany-bucketname-datasets/taxi_trips/), acceleration (arrow, 10s refresh), results cache enabled.
 2024-07-23T00:35:42.718009Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
 2024-07-23T00:35:59.390722Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (421.71 MiB) for dataset taxi_trips in 16s 672ms.
 ```

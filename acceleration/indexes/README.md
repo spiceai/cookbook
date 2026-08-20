@@ -31,8 +31,8 @@ spice run
 2024-09-30T18:04:26.070605Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2024-09-30T18:04:26.070827Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2024-09-30T18:04:26.270747Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
-2024-09-30T18:04:26.286500Z  INFO runtime: Dataset traces registered (file:large_eth_traces.parquet), acceleration (duckdb:file), results cache enabled.
-2024-09-30T18:04:26.287326Z  INFO runtime: Dataset traces_no_index registered (file:large_eth_traces.parquet), acceleration (duckdb:file), results cache enabled.
+2024-09-30T18:04:26.286500Z  INFO runtime::init::dataset: Dataset traces registered (file:large_eth_traces.parquet), acceleration (duckdb:file), results cache enabled.
+2024-09-30T18:04:26.287326Z  INFO runtime::init::dataset: Dataset traces_no_index registered (file:large_eth_traces.parquet), acceleration (duckdb:file), results cache enabled.
 2024-09-30T18:04:26.287668Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset traces
 2024-09-30T18:04:26.288332Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset traces_no_index
 2024-09-30T18:05:00.532792Z  INFO runtime::accelerated_table::refresh_task: Loaded 7,595,994 rows (7.04 GiB) for dataset traces in 34s 245ms.
