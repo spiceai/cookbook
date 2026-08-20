@@ -101,18 +101,18 @@ Validate that the correct tables have been made in PostgreSQL using the `psql` c
 ```sql
 $ psql -h host -p5439 -Uadmin dev
 dev=# \d
-                   List of relations
- schema |             name             | type  | owner
---------+------------------------------+-------+-------
- public | spice_sys_dataset_checkpoint | table | admin
- public | customer                | table | admin
- public | lineitem                | table | admin
- public | nation                  | table | admin
- public | orders                  | table | admin
- public | part                    | table | admin
- public | partsupp                | table | admin
- public | region                  | table | admin
- public | supplier                | table | admin
+         List of relations
+ schema |   name   | type  | owner
+--------+----------+-------+-------
+ public | customer | table | admin
+ public | lineitem | table | admin
+ public | nation   | table | admin
+ public | orders   | table | admin
+ public | part     | table | admin
+ public | partsupp | table | admin
+ public | region   | table | admin
+ public | supplier | table | admin
+(8 rows)
 ```
 
 To validate the schema of a table, use the `\d+` command. For example:
@@ -141,7 +141,16 @@ dev=# \d+ "lineitem"
 Has OIDs: yes
 ```
 
-Run the _Pricing Summary Report Query (Q1)_ to validate data. The query and its expected output are detailed in the [TPC Benchmark H Standard Specification](https://www.tpc.org/tpc_documents_current_versions/pdf/tpc-h_v2.17.1.pdf):
+Run the _Pricing Summary Report Query (Q1)_ to validate data. Q1 is defined in the
+[TPC Benchmark H Standard Specification](https://www.tpc.org/tpc_documents_current_versions/pdf/tpc-h_v2.17.1.pdf).
+
+> **Your numbers will differ.** Both spicepods sample the source with
+> `refresh_sql: select * from lineitem limit 1000`. That `LIMIT` has no `ORDER BY`, so
+> which 1,000 rows are loaded is arbitrary and changes from run to run — two successive
+> runs here loaded completely disjoint samples. The aggregates below are therefore one
+> run's result, not a fixed expected answer, and not the TPC-H specification's answer
+> (those are defined over the full SF1 dataset). Add an `ORDER BY` to `refresh_sql` if
+> you want a reproducible sample.
 
 ```sql
 select
@@ -266,6 +275,9 @@ sql> show tables;
 +---------------+--------------+--------------+------------+
 ```
 
+`show tables` on v2.2.0 also lists the `information_schema` views (`tables`, `views`,
+`columns`, `df_settings`, `schemata`, `routines`, `parameters`) alongside the rows above.
+
 To validate the schema of `lineitem`, use the `describe` command:
 
 ```sql
@@ -292,7 +304,16 @@ sql> describe lineitem;
 +-----------------+-------------------+-------------+
 ```
 
-Run the _Pricing Summary Report Query (Q1)_ to validate data. The query and its expected output are detailed in the [TPC Benchmark H Standard Specification](https://www.tpc.org/tpc_documents_current_versions/pdf/tpc-h_v2.17.1.pdf):
+Run the _Pricing Summary Report Query (Q1)_ to validate data. Q1 is defined in the
+[TPC Benchmark H Standard Specification](https://www.tpc.org/tpc_documents_current_versions/pdf/tpc-h_v2.17.1.pdf).
+
+> **Your numbers will differ.** Both spicepods sample the source with
+> `refresh_sql: select * from lineitem limit 1000`. That `LIMIT` has no `ORDER BY`, so
+> which 1,000 rows are loaded is arbitrary and changes from run to run — two successive
+> runs here loaded completely disjoint samples. The aggregates below are therefore one
+> run's result, not a fixed expected answer, and not the TPC-H specification's answer
+> (those are defined over the full SF1 dataset). Add an `ORDER BY` to `refresh_sql` if
+> you want a reproducible sample.
 
 ```sql
 select
@@ -324,8 +345,8 @@ limit 2
 +--------------+--------------+---------+----------------+----------------+----------------+-----------+--------------+----------+-------------+
 | l_returnflag | l_linestatus | sum_qty | sum_base_price | sum_disc_price | sum_charge     | avg_qty   | avg_price    | avg_disc | count_order |
 +--------------+--------------+---------+----------------+----------------+----------------+-----------+--------------+----------+-------------+
-| A            | F            | 6124.00 | 9141994.30     | 8710508.2481   | 9038832.715152 | 24.693548 | 36862.880241 | 0.048145 | 248         |
-| N            | F            | 138.00  | 201910.19      | 189721.4555    | 197237.694662  | 23.000000 | 33651.698333 | 0.055000 | 6           |
+| A            | F            | 6667.00 | 9875068.58     | 9376179.8729   | 9772318.570430 | 24.784386 | 36710.292118 | 0.050334 | 269         |
+| N            | F            | 201.00  | 326575.17      | 305150.9852    | 320880.778704  | 25.125000 | 40821.896250 | 0.050000 | 8           |
 +--------------+--------------+---------+----------------+----------------+----------------+-----------+--------------+----------+-------------+
 ```
 
