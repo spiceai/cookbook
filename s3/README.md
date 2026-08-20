@@ -148,7 +148,7 @@ Time: 0.0240065 seconds. 11 rows.
 **Step 1.** Prepare S3 bucket
 
 - Create a new AWS S3 bucket `yourcompany-bucketname-datasets`.
-- Create a path `tax_trips` in the above bucket.
+- Create a path `taxi_trips` in the above bucket.
 - Download [taxi_trips dataset](https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-01.parquet) parquet, and upload it into `taxi_trips` path in the bucket.
 
 **Step 2.** Prepare AWS IAM user
