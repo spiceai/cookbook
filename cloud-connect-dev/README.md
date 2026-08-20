@@ -28,7 +28,7 @@ cd cookbook/cloud-connect-dev
 Sign in to Spice Cloud:
 
 ```shell
-spice cloud login
+spice login
 ```
 
 In the Spice Cloud portal, create a Cloud Connect project named `cloud-connect-dev` — a project your own runtime serves, which has no region to choose. If that name is taken in your organization, pick another and use it everywhere below.
@@ -72,7 +72,7 @@ cd cookbook/cloud-connect-dev
 spice cloud status
 ```
 
-The report covers the project, its latest deployment, and the instances serving it, then closes with this directory's own state under `Local enrolled-instance state:`.
+The report covers the project, its latest deployment, and the instances serving it, then closes with this directory's own state under `Local enrolled-instance state:`. It reads from Spice Cloud, so it needs the session `spice login` created.
 
 ## 2. Deploy a live change
 
