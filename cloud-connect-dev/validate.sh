@@ -233,6 +233,36 @@ for sub in install uninstall start stop restart; do
 done
 echo
 
+# --- The project the README creates is a Cloud Connect one. -----------------
+#
+# `spice cloud project create` resolves placement before it connects, so these
+# refusals are argument validation: they answer with no account and create
+# nothing. The exit code is asserted too, so a future ordering change that
+# created the project first would fail here rather than quietly succeed.
+echo "Project kind"
+out="$(spice cloud project create validate-only-never-created --region us-east-1-prod-aws-data 2>&1)"
+code=$?
+if [ "$code" -ne 0 ]; then
+  ok "'--region' without '--kind' is refused"
+else
+  no "'--region' without '--kind' exited 0" "$out"
+fi
+case "$out" in
+*'without --kind this creates a Cloud Connect project'*) ok "omitting --kind asks for a Cloud Connect project" ;;
+*) no "the refusal does not say that omitting --kind means Cloud Connect" "$out" ;;
+esac
+out="$(spice cloud project create validate-only-never-created --kind set 2>&1)"
+case "$out" in
+*'needs a region'*) ok "'--kind set' is the Spice-managed path and needs a region" ;;
+*) no "'--kind set' did not ask for a region" "$out" ;;
+esac
+if grep -q 'spice cloud project create cloud-connect-dev' README.md; then
+  ok "the README creates the project with no kind or placement flags"
+else
+  no "the README does not create the project with a bare 'spice cloud project create'"
+fi
+echo
+
 # --- The README and the CLI agree on which commands exist. ------------------
 #
 # A recipe naming a spelling the CLI has dropped sends the reader into an

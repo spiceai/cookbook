@@ -31,7 +31,15 @@ Sign in to Spice Cloud:
 spice login
 ```
 
-In the Spice Cloud portal, create a Cloud Connect project named `cloud-connect-dev` — a project your own runtime serves, which has no region to choose. If that name is taken in your organization, pick another and use it everywhere below.
+Create the project. With no `--kind`, this creates a Cloud Connect project — one your own runtime serves, which has no region to choose:
+
+```shell
+spice cloud project create cloud-connect-dev
+```
+
+If that name is taken in your organization, pick another and use it everywhere below.
+
+`--region`, and the hosted-runtime flags such as `--replicas` and `--memory`, are refused here rather than ignored. They configure a Spice-managed project, which you ask for with `--kind set` or `--kind cluster`.
 
 Link this directory to the project:
 
