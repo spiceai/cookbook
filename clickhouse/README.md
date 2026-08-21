@@ -47,18 +47,18 @@ Follow the [getting started guide](https://docs.spiceai.org/getting-started) to 
 
 See the [datasets reference](https://docs.spiceai.org/reference/spicepod/datasets) for more dataset configuration options.
 
-Set the environment variable `CLICKHOUSE_PASS` to the Clickhouse instance password. Environment variables can be specified on the command line when running the Spice runtime or in a `.env` file in the same directory as `spicepod.yaml`. The password is not required if the Clickhouse instance does not have a password set.
+For a password-protected Clickhouse instance, add the password parameter under the dataset's `params`:
+
+```yaml
+clickhouse_pass: ${env:CLICKHOUSE_PASS}
+```
+
+Then set `CLICKHOUSE_PASS` to the Clickhouse instance password. Environment variables can be specified on the command line when running the Spice runtime or in a `.env` file in the same directory as `spicepod.yaml`. Omit `clickhouse_pass` for an instance that does not have a password.
 
 i.e. to set the password in a `.env` file:
 
 ```bash
 echo "CLICKHOUSE_PASS=<password>" > .env
-```
-
-A `.env` file is created in the project directory with the following content:
-
-```bash
-CLICKHOUSE_PASS=<password>
 ```
 
 If you followed the above [preparation](#preparation) to generate a Clickhouse server use this:

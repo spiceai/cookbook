@@ -12,6 +12,6 @@ libraryDependencies ++= Seq(
 )
 
 
-run / javaOptions += "--add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED"
+run / javaOptions += "--add-opens=java.base/java.nio=ALL-UNNAMED"
 run / javaOptions += "--add-opens=java.base/java.lang=ALL-UNNAMED"
 run / fork := true

@@ -6,7 +6,7 @@ This guide demonstrates how to use Scala to query Spice via the Apache Arrow Fli
 
 ## Requirements
 
-- Scala 2.13+
+- JDK 17
 - [sbt](https://www.scala-sbt.org/) installed
 - [Spice CLI](https://docs.spiceai.org/getting-started) installed and Spice OSS runtime available
 
@@ -21,11 +21,13 @@ cd cookbook/clients/scala
 
 ### 2. Install dependencies
 
-Ensure you have sbt and Scala installed:
+Install sbt and JDK 17:
 
 ```bash
-brew install scala
+brew install openjdk@17
 brew install sbt
+export JAVA_HOME="$(brew --prefix openjdk@17)/libexec/openjdk.jdk/Contents/Home"
+export PATH="$JAVA_HOME/bin:$PATH"
 ```
 
 ### 3. Start Spice OSS
@@ -47,16 +49,16 @@ Expected output:
 
 ```
 [info] Add-ons by account and service:
-[info] MessagingServiceAddOn(account123,service456,addon6,type789,{\feature\":\"mms_support\"}",2025-04-06 16:00:00.0,2025-04-07 23:25:00.0)
-[info] MessagingServiceAddOn(account123,service456,addon2,type789,{\feature\":\"mms_support\"}",2025-04-02 19:30:00.0,2025-04-03 16:15:00.0)
-[info] MessagingServiceAddOn(account123,service456,addon1,type789,{\feature\":\"sms_analytics\"}",2025-04-01 17:00:00.0,2025-04-01 17:00:00.0)
+[info] addon6
+[info] addon2
+[info] addon1
 [info] Add-ons by add-on type:
-[info] MessagingServiceAddOn(account123,service456,addon1,type789,{\feature\":\"sms_analytics\"}",2025-04-01 17:00:00.0,2025-04-01 17:00:00.0)
-[info] MessagingServiceAddOn(account123,service456,addon2,type789,{\feature\":\"mms_support\"}",2025-04-02 19:30:00.0,2025-04-03 16:15:00.0)
-[info] MessagingServiceAddOn(account456,service456,addon4,type789,{\feature\":\"sms_analytics\"}",2025-04-04 15:20:00.0,2025-04-05 18:10:00.0)
-[info] MessagingServiceAddOn(account123,service456,addon6,type789,{\feature\":\"mms_support\"}",2025-04-06 16:00:00.0,2025-04-07 23:25:00.0)
-[info] MessagingServiceAddOn(account789,service456,addon8,type789,{\feature\":\"sms_analytics\"}",2025-04-08 20:15:00.0,2025-04-09 17:40:00.0)
-[info] MessagingServiceAddOn(account456,service789,addon10,type789,{\feature\":\"mms_support\"}",2025-04-10 16:45:00.0,2025-04-10 16:45:00.0)
+[info] addon1
+[info] addon2
+[info] addon4
+[info] addon6
+[info] addon8
+[info] addon10
 ```
 
 ## Learn more

@@ -6,7 +6,7 @@ This guide demonstrates how to use Java to query Spice via the Apache Arrow Flig
 
 ## Requirements
 
-- Java 11 or newer
+- JDK 17
 - [Maven](https://maven.apache.org/) installed
 - [Spice CLI](https://docs.spiceai.org/getting-started) installed and Spice OSS runtime available
 
@@ -36,7 +36,6 @@ spice run
 ### 4. Run the Java client
 
 ```bash
-MAVEN_OPTS="--add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED" \
 mvn exec:exec \
   -Dexec.mainClass="MessagingServiceApp"
 ```
