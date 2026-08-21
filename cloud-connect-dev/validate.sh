@@ -233,6 +233,36 @@ for sub in install uninstall start stop restart; do
 done
 echo
 
+# --- The secrets step names commands that exist, and leaks nothing. ---------
+#
+# `secrets` reaches the control plane and needs a resolvable project, so only
+# `--help` is asserted here. Nothing sets, reads or deletes a real secret: a
+# validator that mutates a cloud project when a developer happens to be logged
+# in is worse than the coverage it would buy.
+echo "Secrets commands"
+secrets_help="$(spice cloud secrets --help 2>&1)"
+for sub in list set get delete; do
+  case "$secrets_help" in
+  *"  $sub "*) ok "'spice cloud secrets' has $sub" ;;
+  *) no "'spice cloud secrets' is missing $sub" ;;
+  esac
+done
+# The password must reach the CLI through the variable. Spelled literally it
+# would sit in the reader's shell history, and in this file.
+if grep -qF 'spice cloud secrets set PG_PASSWORD "$SPICE_DEMO_PG_PASSWORD"' README.md; then
+  ok "the README passes the password by variable, not by literal"
+else
+  no "the README does not set PG_PASSWORD from \$SPICE_DEMO_PG_PASSWORD"
+fi
+# `secrets get` prints the value to stdout, so the recipe confirms with `list`,
+# which reports names and timestamps only.
+if grep -q 'spice cloud secrets get' README.md; then
+  no "the README calls 'spice cloud secrets get'" "it prints the secret value; confirm with 'spice cloud secrets list'"
+else
+  ok "the README confirms the secret without printing its value"
+fi
+echo
+
 # --- The project the README creates is a Cloud Connect one. -----------------
 #
 # `spice cloud project create` resolves placement before it connects, so these

@@ -121,13 +121,30 @@ docker compose exec postgres \
   -c 'SELECT count(*) FROM public.orders;'
 ```
 
-In the portal, open the project's **Settings → Secrets** and add:
+Store the password as a project secret. Linking set this directory's project, so `--project` is not needed:
 
-| Name          | Value                              |
-| ------------- | ---------------------------------- |
-| `PG_PASSWORD` | Value of `$SPICE_DEMO_PG_PASSWORD` |
+```shell
+spice cloud secrets set PG_PASSWORD "$SPICE_DEMO_PG_PASSWORD"
+```
 
-Secret names are matched exactly. A Spicepod that references a name the project does not define is rejected when you deploy it, and the portal names the closest match it holds.
+```text
+✓ Secret 'PG_PASSWORD' set successfully
+```
+
+The value is a command argument. Passing the variable keeps the password out of your shell history, but the expanded value is visible in the process list to anyone else on the machine while the command runs. On a shared machine, set it in the portal under **Settings → Secrets** instead.
+
+Confirm the name without printing the value:
+
+```shell
+spice cloud secrets list
+```
+
+```text
+NAME          UPDATED
+PG_PASSWORD   2026-01-06T16:22:00Z
+```
+
+Secret names are matched exactly. A Spicepod that references a name the project does not define is rejected when you deploy it, and Spice Cloud names the closest match it holds.
 
 Add this dataset to the project Spicepod in the portal — not to the local `spicepod.yaml`:
 
