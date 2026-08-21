@@ -1,9 +1,9 @@
 # A local PostgreSQL for the secrets step of the README.
 #
 # The password is never written here. It is read from the environment, and the
-# same value is what you set as the `pg_password` secret in the Spice Cloud
-# portal — so the one credential this recipe uses exists in your shell and in
-# the portal, and in no file this repository tracks.
+# same value is what you set as the `PG_PASSWORD` secret on the Spice Cloud
+# project — so the one credential this recipe uses exists in your shell and in
+# the project, and in no file this repository tracks.
 services:
   postgres:
     image: postgres:16-alpine

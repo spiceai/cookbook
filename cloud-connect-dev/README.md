@@ -2,7 +2,7 @@
 
 Works with Spice CLI v2.2 or later.
 
-Use this recipe to connect a local Spice instance to Spice Cloud. You will deploy live changes, deliver a secret, and reconnect the instance.
+Use this recipe to link a local Spice instance to Spice Cloud. You will deploy live changes, deliver a secret, and restart the instance.
 
 ## Prerequisites
 
@@ -16,19 +16,60 @@ Install the Spice CLI:
 curl https://install.spiceai.org | /bin/bash
 ```
 
-## 1. Connect the instance
+## 1. Link the instance
 
 Clone the cookbook and open this recipe:
 
 ```shell
 git clone https://github.com/spiceai/cookbook.git
 cd cookbook/cloud-connect-dev
-spice connect
 ```
 
-Log in to Spice Cloud when the command prompts you. Select an organization. Accept `cloud-connect-dev` as the project name.
+Sign in to Spice Cloud:
 
-If that name is in use, accept the suggested name.
+```shell
+spice login
+```
+
+Create the project. With no `--kind`, this creates a Cloud Connect project — one your own runtime serves, which has no region to choose:
+
+```shell
+spice cloud project create cloud-connect-dev
+```
+
+If that name is taken in your organization, pick another and use it everywhere below.
+
+`--region`, and the hosted-runtime flags such as `--replicas` and `--memory`, are refused here rather than ignored. They configure a Spice-managed project, which you ask for with `--kind set` or `--kind cluster`.
+
+Link this directory to the project:
+
+```shell
+spice cloud link <org>/cloud-connect-dev
+```
+
+`spice cloud link` enrolls this directory as an instance and attaches it to the project. It needs an interactive terminal; omit the project to choose one from a list. For an unattended machine, mint an enrollment key in the portal and start the runtime with `spiced --token <enrollment-key>` instead.
+
+```text
+✓ Linked the enrolled instance to project <org>/cloud-connect-dev
+
+Start this instance in the current directory with:
+  spice run
+
+You can now use commands without specifying --project:
+  spice cloud deploy
+  spice cloud logs
+  spice cloud secrets list
+```
+
+Linking adds `.spice/` to `.gitignore`, the directory holding the instance's mTLS private key.
+
+A project with no stored Spicepod is seeded from the local `spicepod.yaml`, so the project now defines the `data` dataset. Later local edits are not synchronized; deploy to change what the instance runs.
+
+Start the instance:
+
+```shell
+spice run
+```
 
 Leave the runtime open. Open the monitor link in the output.
 
@@ -36,14 +77,14 @@ In a second terminal, check the connection:
 
 ```shell
 cd cookbook/cloud-connect-dev
-spice connect status
+spice cloud status
 ```
+
+The report covers the project, its latest deployment, and the instances serving it, then closes with this directory's own state under `Local enrolled-instance state:`. It reads from Spice Cloud, so it needs the session `spice login` created.
 
 ## 2. Deploy a live change
 
-A deployment replaces the Spicepod the instance runs. In the Spice Cloud portal, open the project Spicepod and paste in the contents of this recipe's local `spicepod.yaml`, so the deployed Spicepod still defines the `data` dataset.
-
-Add this view to the project Spicepod, below the datasets:
+A deployment replaces the Spicepod the instance runs. In the Spice Cloud portal, open the project Spicepod and add this view below the datasets:
 
 ```yaml
 views:
@@ -80,13 +121,30 @@ docker compose exec postgres \
   -c 'SELECT count(*) FROM public.orders;'
 ```
 
-In the portal, open the project's **Settings → Secrets** and add:
+Store the password as a project secret. Linking set this directory's project, so `--project` is not needed:
 
-| Name          | Value                              |
-| ------------- | ---------------------------------- |
-| `PG_PASSWORD` | Value of `$SPICE_DEMO_PG_PASSWORD` |
+```shell
+spice cloud secrets set PG_PASSWORD "$SPICE_DEMO_PG_PASSWORD"
+```
 
-Secret names are matched exactly. A Spicepod that references a name the project does not define is rejected when you deploy it, and the portal names the closest match it holds.
+```text
+✓ Secret 'PG_PASSWORD' set successfully
+```
+
+The value is a command argument. Passing the variable keeps the password out of your shell history, but the expanded value is visible in the process list to anyone else on the machine while the command runs. On a shared machine, set it in the portal under **Settings → Secrets** instead.
+
+Confirm the name without printing the value:
+
+```shell
+spice cloud secrets list
+```
+
+```text
+NAME          UPDATED
+PG_PASSWORD   2026-01-06T16:22:00Z
+```
+
+Secret names are matched exactly. A Spicepod that references a name the project does not define is rejected when you deploy it, and Spice Cloud names the closest match it holds.
 
 Add this dataset to the project Spicepod in the portal — not to the local `spicepod.yaml`:
 
@@ -129,10 +187,11 @@ The query returns:
 Confirm the delivery:
 
 ```shell
-spice connect status
+spice cloud status
 ```
 
 ```text
+Local enrolled-instance state:
   secrets:     1 delivered: PG_PASSWORD
 ```
 
@@ -172,11 +231,11 @@ In the first terminal, press `Ctrl-C`. Start the instance again from the same di
 spice run
 ```
 
-You do not need to run `spice connect` again. The existing identity reconnects the instance.
+You do not need to run `spice cloud link` again. The existing identity reconnects the instance.
 
 The instance now serves the deployed `runtime` settings, and the deployment reports nothing pending.
 
-> **Warning:** Spice Cloud invalidates the identity if the instance stays offline for more than 30 days. Enroll the instance again to reconnect it.
+> **Warning:** Spice Cloud invalidates the identity if the instance stays offline for more than 30 days. Link the directory again to reconnect it.
 
 ## 6. Validate the recipe
 
@@ -190,10 +249,16 @@ These checks do not connect to Spice Cloud or use credentials.
 
 ## 7. Clean up
 
-Stop the runtime. Remove the Cloud Connect instance and project:
+Stop the runtime first — `spice cloud unlink` refuses while the instance is running. Then detach this directory:
 
 ```shell
-spice connect remove
+spice cloud unlink
+```
+
+Unlinking releases the enrolled instance, removes its local identity, and uninstalls its service if one is installed. The project keeps its Spicepod, secrets, and deployment history. Delete it when you are finished with it:
+
+```shell
+spice cloud project delete <org>/cloud-connect-dev
 ```
 
 Stop PostgreSQL and delete its volume:
@@ -205,11 +270,18 @@ unset SPICE_DEMO_PG_PASSWORD
 
 ## Run as a service
 
-To keep the instance running after you close the terminal, see [Cloud Connect as a service](https://spiceai.org/docs/deployment/cloud/cloud-connect/service).
+To keep the instance running after you close the terminal, install a service for this directory:
+
+```shell
+spice cloud service install
+```
+
+`spice cloud service` also has `start`, `stop`, `restart`, and `uninstall`. Uninstalling keeps the Cloud identity, so `spice run` still reconnects the instance.
 
 Windows does not support the managed service.
 
+See [Cloud Connect as a service](https://spiceai.org/docs/next/deployment/cloud/cloud-connect/service).
+
 ## Learn more
 
-- [Cloud Connect](https://spiceai.org/docs/deployment/cloud/cloud-connect)
-- [`spice connect` reference](https://spiceai.org/docs/cli/reference/connect)
+- [Cloud Connect](https://spiceai.org/docs/next/deployment/cloud/cloud-connect)
