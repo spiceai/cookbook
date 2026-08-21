@@ -74,10 +74,11 @@ The scheduler starts and registers the `data` dataset:
 
 ### Step 4: Start the Spice Executor
 
-In a new terminal, start the executor:
+A scheduler requires at least one executor to run queries. One instance directory serves one
+runtime, so give the executor its own with `SPICE_CONFIG_DIR`. In a new terminal:
 
 ```bash
-~/.spice/bin/spiced --role executor \
+SPICE_CONFIG_DIR=~/.spice/executor1 ~/.spice/bin/spiced --role executor \
   --http 127.0.0.1:9090 \
   --scheduler-address 127.0.0.1:50052 \
   --node-mtls-ca-certificate-file ~/.spice/pki/ca.crt \
