@@ -184,6 +184,54 @@ else
 fi
 echo
 
+# --- The README names commands the CLI still has, and leaks no credential. --
+#
+# Pure text checks, deliberately above the version gate: they need no CLI, so
+# they run on every checkout, including the CI image whose stable CLI skips
+# everything below. The password guard in particular has to run everywhere.
+echo "README commands"
+if grep -q 'spice cloud project create cloud-connect-dev' README.md; then
+  ok "the README creates the project with no kind or placement flags"
+else
+  no "the README does not create the project with a bare 'spice cloud project create'"
+fi
+if grep -q 'spice cloud link' README.md; then
+  ok "the README links the instance with 'spice cloud link'"
+else
+  no "the README does not use 'spice cloud link'"
+fi
+if grep -q 'spice cloud unlink' README.md; then
+  ok "the README detaches with 'spice cloud unlink'"
+else
+  no "the README does not use 'spice cloud unlink'"
+fi
+if grep -q 'spiced --token' README.md; then
+  ok "the README names 'spiced --token' for unattended enrollment"
+else
+  no "the README does not name 'spiced --token' for unattended enrollment"
+fi
+# A recipe naming a spelling the CLI has dropped sends the reader into an error.
+if grep -q 'spice connect' README.md; then
+  no "the README still calls 'spice connect'" "that command only retains the deprecated <org>/<pod> Spicepod form"
+else
+  ok "the README calls no removed 'spice connect' lifecycle spelling"
+fi
+# The password must reach the CLI through the variable. Spelled literally it
+# would sit in the reader's shell history, and in this file.
+if grep -qF 'spice cloud secrets set PG_PASSWORD "$SPICE_DEMO_PG_PASSWORD"' README.md; then
+  ok "the README passes the password by variable, not by literal"
+else
+  no "the README does not set PG_PASSWORD from \$SPICE_DEMO_PG_PASSWORD"
+fi
+# `secrets get` prints the value to stdout, so the recipe confirms with `list`,
+# which reports names and timestamps only.
+if grep -q 'spice cloud secrets get' README.md; then
+  no "the README calls 'spice cloud secrets get'" "it prints the secret value; confirm with 'spice cloud secrets list'"
+else
+  ok "the README confirms the secret without printing its value"
+fi
+echo
+
 # --- The CLI is new enough to have the flow this recipe documents. ----------
 #
 # Below the gate every assertion would fail for the same single reason on an
@@ -247,20 +295,6 @@ for sub in list set get delete; do
   *) no "'spice cloud secrets' is missing $sub" ;;
   esac
 done
-# The password must reach the CLI through the variable. Spelled literally it
-# would sit in the reader's shell history, and in this file.
-if grep -qF 'spice cloud secrets set PG_PASSWORD "$SPICE_DEMO_PG_PASSWORD"' README.md; then
-  ok "the README passes the password by variable, not by literal"
-else
-  no "the README does not set PG_PASSWORD from \$SPICE_DEMO_PG_PASSWORD"
-fi
-# `secrets get` prints the value to stdout, so the recipe confirms with `list`,
-# which reports names and timestamps only.
-if grep -q 'spice cloud secrets get' README.md; then
-  no "the README calls 'spice cloud secrets get'" "it prints the secret value; confirm with 'spice cloud secrets list'"
-else
-  ok "the README confirms the secret without printing its value"
-fi
 echo
 
 # --- The project the README creates is a Cloud Connect one. -----------------
@@ -286,33 +320,6 @@ case "$out" in
 *'needs a region'*) ok "'--kind set' is the Spice-managed path and needs a region" ;;
 *) no "'--kind set' did not ask for a region" "$out" ;;
 esac
-if grep -q 'spice cloud project create cloud-connect-dev' README.md; then
-  ok "the README creates the project with no kind or placement flags"
-else
-  no "the README does not create the project with a bare 'spice cloud project create'"
-fi
-echo
-
-# --- The README and the CLI agree on which commands exist. ------------------
-#
-# A recipe naming a spelling the CLI has dropped sends the reader into an
-# error, so the drift is worth failing on rather than reading past.
-echo "README and CLI agree"
-if grep -q 'spice cloud link' README.md; then
-  ok "the README links the instance with 'spice cloud link'"
-else
-  no "the README does not use 'spice cloud link'"
-fi
-if grep -q 'spice cloud unlink' README.md; then
-  ok "the README detaches with 'spice cloud unlink'"
-else
-  no "the README does not use 'spice cloud unlink'"
-fi
-if grep -q 'spice connect' README.md; then
-  no "the README still calls 'spice connect'" "that command only retains the deprecated <org>/<pod> Spicepod form"
-else
-  ok "the README calls no removed 'spice connect' lifecycle spelling"
-fi
 echo
 
 # --- Enrollment refuses rather than hanging without a terminal. -------------
@@ -337,11 +344,6 @@ case "$out" in
 *'spiced --token'*) ok "it names the unattended alternative" ;;
 *) no "it does not name the unattended alternative" "$out" ;;
 esac
-if grep -q 'spiced --token' README.md; then
-  ok "the README names the same unattended alternative"
-else
-  no "the README does not name 'spiced --token' for unattended enrollment"
-fi
 echo
 
 printf '%d passed, %d failed\n' "$pass" "$fail"
