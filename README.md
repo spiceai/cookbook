@@ -10,7 +10,7 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 
 ### Core scenarios
 
-- [Federated SQL Query](./federation/README.md) - Query data from S3, PostgreSQL, and Dremio in a single query.
+- [Federated SQL Query](./federation/README.md) - Query data from S3 and a self-hosted Dremio instance in a single query.
 - [Cayenne Data Accelerator](./cayenne/README.md)
 - [Async Queries](./async-queries/README.md) - Submit long-running SQL queries and retrieve results asynchronously.
 - [Hybrid-Search](./search/README.md) - Combine keyword and vector search for improved retrieval.
@@ -78,7 +78,7 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
   - [Debezium CDC SASL/SCRAM from MySQL](./cdc-debezium/sasl-scram/README.md) - Stream changes from MySQL using SASL/SCRAM.
 - [DynamoDB Data Connector](./dynamodb/README.md) - Query data from an AWS-hosted DynamoDB table.
   - [DynamoDB Streams](./dynamodb/streams/README.md) - Stream real-time changes from DynamoDB tables.
-- [Dremio Data Connector](./dremio/README.md) - Connect to a Dremio instance.
+- [Dremio Data Connector](./dremio/README.md) - Connect to a self-hosted Dremio instance running in Docker.
 - [DuckDB Data Connector](./duckdb/connector/README.md) - Use a DuckDB database with sample TPCH data.
 - [File Data Connector](./file/README.md) - Query data from local files.
 - [FTP Data Connector](./ftp/README.md) - Query data from an FTP server.
