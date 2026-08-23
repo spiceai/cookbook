@@ -13,7 +13,7 @@ datasets:
       pg_user: postgres
       pg_pass: ${secrets:PG_PASS}
       pg_replication_slot: spice_orders
-      pg_replication_initial_snapshot: 'true'
+      pg_replication_initial_snapshot: 'auto'
     acceleration:
       enabled: true
       engine: duckdb
