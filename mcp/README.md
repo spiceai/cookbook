@@ -46,17 +46,21 @@ curl -H 'x-api-key: foobar' http://127.0.0.1:8090/v1/tools | jq '.[].name'
 "load_memory"
 "store_memory"
 "random_sample"
-"fs/read_file"
-"fs/read_multiple_files"
-"fs/write_file"
-"fs/edit_file"
-"fs/create_directory"
-"fs/list_directory"
-"fs/directory_tree"
-"fs/move_file"
-"fs/search_files"
-"fs/get_file_info"
-"fs/list_allowed_directories"
+"get_current_datetime"
+"fs__read_file"
+"fs__read_text_file"
+"fs__read_media_file"
+"fs__read_multiple_files"
+"fs__write_file"
+"fs__edit_file"
+"fs__create_directory"
+"fs__list_directory"
+"fs__list_directory_with_sizes"
+"fs__directory_tree"
+"fs__move_file"
+"fs__search_files"
+"fs__get_file_info"
+"fs__list_allowed_directories"
 "list_datasets"
 "table_schema"
 "search"
@@ -66,10 +70,10 @@ curl -H 'x-api-key: foobar' http://127.0.0.1:8090/v1/tools | jq '.[].name'
 
 This shows both the built in tools (e.g. `sql`) and all the tools listed by the MCP server `fs`.
 
-5. List the files from the current directory using the `fs/list_directory` MCP tool.
+5. List the files from the current directory using the `fs__list_directory` MCP tool.
 
 ```bash
-curl -XPOST -H 'x-api-key: foobar' http://127.0.0.1:8090/v1/tools/fs/list_directory \
+curl -XPOST -H 'x-api-key: foobar' http://127.0.0.1:8090/v1/tools/fs__list_directory \
     -d '{"path": "./"}' | jq -r '.[0].text'
 ```
 
@@ -110,9 +114,9 @@ Spice.ai OSS CLI v2.0.0-unstable (c771b74aa)
  Tree                                   Status  Duration    Span ID
  ai_chat                                OK       9953.36ms  d051f9effec60261
  ai_completion                          OK       9953.06ms  6ccd967faf4dfa1a
- tool_use::fs/list_allowed_directories  OK          1.51ms  0091894899b22e4c
+ tool_use::fs__list_allowed_directories OK          1.51ms  0091894899b22e4c
  ai_completion                          OK       9053.25ms  1e9fb1c8408c3ac0
- tool_use::fs/read_text_file            OK          2.96ms  5b3f4b2982e89d0b
+ tool_use::fs__read_text_file           OK          2.96ms  5b3f4b2982e89d0b
  ai_completion                          OK       7731.02ms  9bb53d8608cd4791
 
 ```
@@ -184,27 +188,30 @@ curl -H 'x-api-key: foobar' http://127.0.0.1:8091/v1/tools | jq '.[].name'
 "top_n_sample"
 "search"
 "store_memory"
-"spice_mcp/store_memory"
-"spice_mcp/get_readiness"
-"spice_mcp/sample_distinct_columns"
-"spice_mcp/sql"
-"spice_mcp/fs/read_file"
-"spice_mcp/fs/read_multiple_files"
-"spice_mcp/fs/write_file"
-"spice_mcp/fs/edit_file"
-"spice_mcp/fs/create_directory"
-"spice_mcp/fs/list_directory"
-"spice_mcp/fs/directory_tree"
-"spice_mcp/fs/move_file"
-"spice_mcp/fs/search_files"
-"spice_mcp/fs/get_file_info"
-"spice_mcp/fs/list_allowed_directories"
-"spice_mcp/top_n_sample"
-"spice_mcp/random_sample"
-"spice_mcp/load_memory"
-"spice_mcp/list_datasets"
-"spice_mcp/search"
-"spice_mcp/table_schema"
+"spice_mcp__store_memory"
+"spice_mcp__get_readiness"
+"spice_mcp__sample_distinct_columns"
+"spice_mcp__sql"
+"spice_mcp__fs_-_read_file"
+"spice_mcp__fs_-_read_multiple_files"
+"spice_mcp__fs_-_write_file"
+"spice_mcp__fs_-_edit_file"
+"spice_mcp__fs_-_create_directory"
+"spice_mcp__fs_-_list_directory"
+"spice_mcp__fs_-_directory_tree"
+"spice_mcp__fs_-_move_file"
+"spice_mcp__fs_-_search_files"
+"spice_mcp__fs_-_get_file_info"
+"spice_mcp__fs_-_list_allowed_directories"
+"spice_mcp__top_n_sample"
+"spice_mcp__random_sample"
+"spice_mcp__load_memory"
+"spice_mcp__list_datasets"
+"spice_mcp__search"
+"spice_mcp__table_schema"
+"spice_mcp__auto_-_sql"
+"spice_mcp__memory_-_load_memory"
+"spice_mcp__memory_-_store_memory"
 "table_schema"
 "sql"
 "get_readiness"
@@ -217,22 +224,22 @@ curl -H 'x-api-key: foobar' http://127.0.0.1:8091/v1/tools | jq '.[].name'
 Now you will see the following tools:
 
 - Builtin tools within the second spicepod.
-- Builtin tools from the first spicepod, over MCP (e.g. `spice_mcp/sql`).
-- Tools from the filesystem MCP server, connected to via the first spicepod, over MCP (e.g. `spice_mcp/fs/read_file`).
+- Builtin tools from the first spicepod, over MCP (e.g. `spice_mcp__sql`).
+- Tools from the filesystem MCP server, connected to via the first spicepod, over MCP (e.g. `spice_mcp__fs_-_read_file`).
   ```ascii
-  +-------------------------+     +--------------------+     +-----------------+
-  | 2nd Spice Instance      |     | 1st Spice Instance |     | `fs` MCP Server |
-  +-------------------------+     +--------------------+     +-----------------+
-  | sql                     |     |                    |     |                 |
-  | spice_mcp/sql-----------|-----|-->sql              |     |                 |
-  | spice_mcp/fs/read_file--|-----|-->fs/read_file-----|-----|-->read_file     |
-  +-------------------------+     +--------------------+     +-----------------+
+  +----------------------------+     +--------------------+     +-----------------+
+  | 2nd Spice Instance         |     | 1st Spice Instance |     | `fs` MCP Server |
+  +----------------------------+     +--------------------+     +-----------------+
+  | sql                        |     |                    |     |                 |
+  | spice_mcp__sql-------------|-----|-->sql              |     |                 |
+  | spice_mcp__fs_-_read_file--|-----|-->fs__read_file----|-----|-->read_file     |
+  +----------------------------+     +--------------------+     +-----------------+
   ```
 
 8. Use the SQL tool of the first Spice server, over MCP.
 
 ```bash
-curl -H 'x-api-key: foobar' -XPOST http://127.0.0.1:8091/v1/tools/spice_mcp/sql \
+curl -H 'x-api-key: foobar' -XPOST http://127.0.0.1:8091/v1/tools/spice_mcp__sql \
     -d '{"query": "SELECT * FROM taxi_trips LIMIT 1"}'
 ```
 
