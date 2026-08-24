@@ -18,3 +18,9 @@ catalogs:
     # PostgreSQL WAL through a single shared replication slot.
     acceleration:
       refresh_mode: changes
+      # Persist the acceleration so a restart resumes from the replication slot
+      # instead of re-snapshotting every table. Without a file mode the default
+      # is `memory`, which starts empty on every run.
+      mode: file
+      params:
+        cayenne_file_path: .spice/data/pg-catalog
