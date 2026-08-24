@@ -11,7 +11,7 @@ Your AI assistant gets one connection point that gives it:
 | Tool | What it does |
 |------|-------------|
 | `sql` | Sub-millisecond SQL over accelerated GitHub data |
-| `github/*` | Write tools — create issues, comment on PRs, search code |
+| `github__*` | Write tools — create issues, comment on PRs, search code |
 | `list_datasets`, `table_schema` | Schema discovery |
 | `search`, `top_n_sample`, `sample_distinct_columns` | Data exploration |
 
@@ -27,7 +27,7 @@ Your AI assistant gets one connection point that gives it:
     │    sql, list_datasets, table_schema,            │
     │    search, top_n_sample, ...                    │
     │                                                 │
-    │  github/*  ── stdio ──► npx @mcp/server-github  │
+    │  github__*  ── stdio ──► npx @mcp/server-github │
     │                                                 │
     │  datasets (Arrow, in-memory)                    │
     │    github_issues   ◄── GitHub API               │
@@ -35,6 +35,8 @@ Your AI assistant gets one connection point that gives it:
     │    github_commits  ◄── GitHub API               │
     └─────────────────────────────────────────────────┘
 ```
+
+> **Tool naming (Spice `v2.2+`):** Proxied tools are exposed as `<tool-name>__<upstream-tool-name>`, joined by a **double underscore** — `github__search_code`, not `github/search_code`. MCP clients such as Claude and Cursor reject tool names outside `^[a-zA-Z0-9_-]{1,64}$`, and the previous `/` separator made every proxied tool unusable in those clients ([spiceai/spiceai#10894](https://github.com/spiceai/spiceai/issues/10894)). The `<tool-name>` half is the `name` given in the `tools` section of `spicepod.yaml`, so renaming the tool renames every tool it proxies. On `v2.1.x` and earlier, substitute `/` for `__` throughout this recipe.
 
 > **Want to add Jira?** Uncomment the `jira` tool block in `spicepod.yaml` and add your Jira credentials to `.env`. See [Adding Jira](#optional-adding-jira) below.
 
@@ -100,16 +102,16 @@ curl -s http://127.0.0.1:8090/v1/tools -H "X-API-KEY: foo" | jq '.[].name'
 "get_readiness"
 "load_memory"
 "store_memory"
-"github/create_issue"
-"github/list_issues"
-"github/get_pull_request"
-"github/list_pull_requests"
-"github/search_code"
-"github/search_repositories"
+"github__create_issue"
+"github__list_issues"
+"github__get_pull_request"
+"github__list_pull_requests"
+"github__search_code"
+"github__search_repositories"
 ...
 ```
 
-Built-in tools (`sql`, `list_datasets`, ...) and proxied GitHub MCP tools (`github/*`) appear together in one catalog.
+Built-in tools (`sql`, `list_datasets`, ...) and proxied GitHub MCP tools (`github__*`) appear together in one catalog.
 
 ## Connect Claude Code
 
@@ -129,7 +131,7 @@ claude mcp list
 spice: http://localhost:8090/v1/mcp (http)
 ```
 
-Claude Code will now have access to the full Spice tool catalog — `sql`, `github/*`, `list_datasets`, and the rest — in every conversation.
+Claude Code will now have access to the full Spice tool catalog — `sql`, `github__*`, `list_datasets`, and the rest — in every conversation.
 
 ## Example queries
 
@@ -181,7 +183,7 @@ curl -s -XPOST http://127.0.0.1:8090/v1/tools/sql \
 Search code across the repository:
 
 ```bash
-curl -s -XPOST http://127.0.0.1:8090/v1/tools/github/search_code \
+curl -s -XPOST http://127.0.0.1:8090/v1/tools/github__search_code \
   -H "Content-Type: application/json" \
   -H "X-API-KEY: foo" \
   -d '{"q": "java repo:spiceai/cookbook"}'
@@ -218,7 +220,9 @@ curl -s http://127.0.0.1:8090/v1/tools -H "X-API-KEY: foo" | jq '[.[].name | sel
 ```
 
 ```json
-["jira/get_issue", "jira/search_issues", "jira/create_issue", "jira/list_projects", ...]
+["jira__jira_get_issue", "jira__jira_search", "jira__jira_create_issue", "jira__jira_get_all_projects", ...]
 ```
+
+The `jira_` prefix appears twice because `mcp-atlassian` already namespaces its own tools: it exposes `jira_get_issue`, and the tool named `jira` prefixes that again. This is expected.
 
 Your AI assistant can now cross-reference GitHub PRs with Jira tickets through a single MCP connection.

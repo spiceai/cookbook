@@ -46,17 +46,17 @@ curl -H 'x-api-key: foobar' http://127.0.0.1:8090/v1/tools | jq '.[].name'
 "load_memory"
 "store_memory"
 "random_sample"
-"fs/read_file"
-"fs/read_multiple_files"
-"fs/write_file"
-"fs/edit_file"
-"fs/create_directory"
-"fs/list_directory"
-"fs/directory_tree"
-"fs/move_file"
-"fs/search_files"
-"fs/get_file_info"
-"fs/list_allowed_directories"
+"fs__read_file"
+"fs__read_multiple_files"
+"fs__write_file"
+"fs__edit_file"
+"fs__create_directory"
+"fs__list_directory"
+"fs__directory_tree"
+"fs__move_file"
+"fs__search_files"
+"fs__get_file_info"
+"fs__list_allowed_directories"
 "list_datasets"
 "table_schema"
 "search"
@@ -66,10 +66,12 @@ curl -H 'x-api-key: foobar' http://127.0.0.1:8090/v1/tools | jq '.[].name'
 
 This shows both the built in tools (e.g. `sql`) and all the tools listed by the MCP server `fs`.
 
-5. List the files from the current directory using the `fs/list_directory` MCP tool.
+> **Tool naming (Spice `v2.2+`):** Proxied tools are exposed as `<tool-name>__<upstream-tool-name>`, joined by a **double underscore** — `fs__read_file`, not `fs/read_file`. MCP clients such as Claude and Cursor reject tool names outside `^[a-zA-Z0-9_-]{1,64}$`, and the previous `/` separator made every proxied tool unusable in those clients ([spiceai/spiceai#10894](https://github.com/spiceai/spiceai/issues/10894)). The `<tool-name>` half is the `name` given in the `tools` section of `spicepod.yaml`, so renaming the tool renames every tool it proxies. On `v2.1.x` and earlier, substitute `/` for `__` throughout this recipe.
+
+5. List the files from the current directory using the `fs__list_directory` MCP tool.
 
 ```bash
-curl -XPOST -H 'x-api-key: foobar' http://127.0.0.1:8090/v1/tools/fs/list_directory \
+curl -XPOST -H 'x-api-key: foobar' http://127.0.0.1:8090/v1/tools/fs__list_directory \
     -d '{"path": "./"}' | jq -r '.[0].text'
 ```
 
@@ -116,6 +118,8 @@ Spice.ai OSS CLI v2.0.0-unstable (c771b74aa)
  ai_completion                          OK       7731.02ms  9bb53d8608cd4791
 
 ```
+
+> **Note:** The trace shows `tool_use::fs/read_text_file` with a `/`, even though the tool is now called `fs__read_text_file`. Task-history labels were missed by the rename, so the two spellings currently coexist depending on how the tool was invoked — tracked in [spiceai/spiceai#13338](https://github.com/spiceai/spiceai/issues/13338).
 
 ## Connect to Spice over MCP
 
@@ -184,27 +188,27 @@ curl -H 'x-api-key: foobar' http://127.0.0.1:8091/v1/tools | jq '.[].name'
 "top_n_sample"
 "search"
 "store_memory"
-"spice_mcp/store_memory"
-"spice_mcp/get_readiness"
-"spice_mcp/sample_distinct_columns"
-"spice_mcp/sql"
-"spice_mcp/fs/read_file"
-"spice_mcp/fs/read_multiple_files"
-"spice_mcp/fs/write_file"
-"spice_mcp/fs/edit_file"
-"spice_mcp/fs/create_directory"
-"spice_mcp/fs/list_directory"
-"spice_mcp/fs/directory_tree"
-"spice_mcp/fs/move_file"
-"spice_mcp/fs/search_files"
-"spice_mcp/fs/get_file_info"
-"spice_mcp/fs/list_allowed_directories"
-"spice_mcp/top_n_sample"
-"spice_mcp/random_sample"
-"spice_mcp/load_memory"
-"spice_mcp/list_datasets"
-"spice_mcp/search"
-"spice_mcp/table_schema"
+"spice_mcp__store_memory"
+"spice_mcp__get_readiness"
+"spice_mcp__sample_distinct_columns"
+"spice_mcp__sql"
+"spice_mcp__fs_-_read_file"
+"spice_mcp__fs_-_read_multiple_files"
+"spice_mcp__fs_-_write_file"
+"spice_mcp__fs_-_edit_file"
+"spice_mcp__fs_-_create_directory"
+"spice_mcp__fs_-_list_directory"
+"spice_mcp__fs_-_directory_tree"
+"spice_mcp__fs_-_move_file"
+"spice_mcp__fs_-_search_files"
+"spice_mcp__fs_-_get_file_info"
+"spice_mcp__fs_-_list_allowed_directories"
+"spice_mcp__top_n_sample"
+"spice_mcp__random_sample"
+"spice_mcp__load_memory"
+"spice_mcp__list_datasets"
+"spice_mcp__search"
+"spice_mcp__table_schema"
 "table_schema"
 "sql"
 "get_readiness"
@@ -217,22 +221,25 @@ curl -H 'x-api-key: foobar' http://127.0.0.1:8091/v1/tools | jq '.[].name'
 Now you will see the following tools:
 
 - Builtin tools within the second spicepod.
-- Builtin tools from the first spicepod, over MCP (e.g. `spice_mcp/sql`).
-- Tools from the filesystem MCP server, connected to via the first spicepod, over MCP (e.g. `spice_mcp/fs/read_file`).
+- Builtin tools from the first spicepod, over MCP (e.g. `spice_mcp__sql`).
+- Tools from the filesystem MCP server, connected to via the first spicepod, over MCP (e.g. `spice_mcp__fs_-_read_file`).
+
+  Chaining two hops escapes the inner separator: the first instance already exposes the tool as `fs__read_file`, and prefixing it again would produce an ambiguous `spice_mcp__fs__read_file`. So the inner `__` is rewritten to `_-_`, giving `spice_mcp__fs_-_read_file`, which decodes back to catalog `spice_mcp` and tool `fs__read_file`.
+
   ```ascii
-  +-------------------------+     +--------------------+     +-----------------+
-  | 2nd Spice Instance      |     | 1st Spice Instance |     | `fs` MCP Server |
-  +-------------------------+     +--------------------+     +-----------------+
-  | sql                     |     |                    |     |                 |
-  | spice_mcp/sql-----------|-----|-->sql              |     |                 |
-  | spice_mcp/fs/read_file--|-----|-->fs/read_file-----|-----|-->read_file     |
-  +-------------------------+     +--------------------+     +-----------------+
+  +----------------------------+     +--------------------+     +-----------------+
+  | 2nd Spice Instance         |     | 1st Spice Instance |     | `fs` MCP Server |
+  +----------------------------+     +--------------------+     +-----------------+
+  | sql                        |     |                    |     |                 |
+  | spice_mcp__sql-------------|-----|-->sql              |     |                 |
+  | spice_mcp__fs_-_read_file--|-----|-->fs__read_file----|-----|-->read_file     |
+  +----------------------------+     +--------------------+     +-----------------+
   ```
 
 8. Use the SQL tool of the first Spice server, over MCP.
 
 ```bash
-curl -H 'x-api-key: foobar' -XPOST http://127.0.0.1:8091/v1/tools/spice_mcp/sql \
+curl -H 'x-api-key: foobar' -XPOST http://127.0.0.1:8091/v1/tools/spice_mcp__sql \
     -d '{"query": "SELECT * FROM taxi_trips LIMIT 1"}'
 ```
 

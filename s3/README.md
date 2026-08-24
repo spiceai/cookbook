@@ -202,35 +202,14 @@ SPICE_S3_KEY=<aws_access_key_id>
 SPICE_S3_SECRET=<aws_secret_access_key>
 ```
 
-**Step 5.** Configure spicepod to contain correct s3_region
-
-s3_region parameter [defaults to us-east-1](https://docs.spiceai.org/components/data-connectors/s3). Update the spicepod to include s3_region parameter if the s3 bucket used in this recipe is not in `us-east-1`
-
-```bash
-from: s3://yourcompany-bucketname-datasets/taxi_trips/
-name: taxi_trips
-description: taxi trips in s3
-params:
-  file_format: parquet
-  s3_region: yourcompany-bucket-region
-  s3_auth: key
-  s3_secret: ${secrets:SPICE_S3_SECRET}
-  s3_key: ${secrets:SPICE_S3_KEY}
-acceleration:
-  enabled: true
-  refresh_mode: full
-  refresh_check_interval: 10s
-
-```
-
-**Step 6.** Start the Spice runtime.
+**Step 5.** Start the Spice runtime.
 
 ```bash
 cd s3-demo-project
 spice run
 ```
 
-**Step 7.** Configure the dataset to connect to S3:
+**Step 6.** Configure the dataset to connect to S3:
 
 ```bash
 spice dataset configure
@@ -270,6 +249,30 @@ The following output is shown:
 
 ```bash
 Saved datasets/taxi_trips/dataset.yaml
+```
+
+**Step 7.** Add the S3 credentials and region to the dataset definition.
+
+`spice dataset configure` does not prompt for credentials, so the generated dataset
+cannot yet read the private bucket. Open the file it just saved and add the `s3_auth`,
+`s3_key`, and `s3_secret` parameters. Add `s3_region` as well if the bucket is not in
+`us-east-1` — the s3_region parameter
+[defaults to us-east-1](https://docs.spiceai.org/components/data-connectors/s3).
+
+```bash
+from: s3://yourcompany-bucketname-datasets/taxi_trips/
+name: taxi_trips
+description: taxi trips in s3
+params:
+  file_format: parquet
+  s3_region: yourcompany-bucket-region
+  s3_auth: key
+  s3_secret: ${secrets:SPICE_S3_SECRET}
+  s3_key: ${secrets:SPICE_S3_KEY}
+acceleration:
+  enabled: true
+  refresh_mode: full
+  refresh_check_interval: 10s
 ```
 
 If the login credentials were entered correctly, the dataset will have loaded into the runtime. The following output is shown in the Spice runtime terminal:
