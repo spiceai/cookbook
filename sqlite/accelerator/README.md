@@ -115,7 +115,7 @@ The following output is shown in the Spice runtime terminal confirming new confi
 2024-09-10T06:59:21.908667Z  INFO runtime: Unloaded dataset taxi_trips
 2024-09-10T06:59:22.524295Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (sqlite:file), results cache enabled.
 2024-09-10T06:59:22.525789Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
-2024-09-10T06:59:39.244473Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (421.71 MiB) for dataset taxi_trips in 16s 718ms.
+2024-09-10T06:59:39.244473Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 16s 718ms.
 ```
 
 Run query to display the longest taxi trips again:

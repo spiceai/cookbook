@@ -79,7 +79,7 @@ Result:
 2024-12-12T22:10:02.221149Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled.
 2024-12-12T22:10:02.222425Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
 2024-12-12T22:10:06.212606Z  INFO runtime::accelerated_table::refresh_task: Loaded 74 rows (1.06 MiB) for dataset spiceai.files in 4s 570ms.
-2024-12-12T22:10:10.896203Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (419.31 MiB) for dataset taxi_trips in 8s 673ms.
+2024-12-12T22:10:10.896203Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 8s 673ms.
 
 ```
 
