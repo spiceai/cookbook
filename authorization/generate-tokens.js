@@ -34,15 +34,26 @@ const USERS = [
 const dir = __dirname;
 const keyPath = path.join(dir, "keys", "demo-private-key.pem");
 
-// Load a committed key if present so the JWKS and tokens stay stable across
-// runs; otherwise mint a fresh keypair.
+// Reuse an existing key so the JWKS and tokens stay stable across runs;
+// otherwise mint a fresh keypair. Read first and treat ENOENT as "not there",
+// rather than testing for the file and then writing it: between those two steps
+// the key can appear, and the write would replace one the committed
+// jwks.json/tokens.env are already signed against.
 let privateKeyPem;
-if (fs.existsSync(keyPath)) {
+try {
   privateKeyPem = fs.readFileSync(keyPath, "utf8");
-} else {
+} catch (err) {
+  if (err.code !== "ENOENT") throw err;
   const { privateKey } = crypto.generateKeyPairSync("rsa", { modulusLength: 2048 });
   privateKeyPem = privateKey.export({ type: "pkcs8", format: "pem" });
-  fs.writeFileSync(keyPath, privateKeyPem);
+  try {
+    // "wx" fails instead of clobbering; 0600 keeps the key owner-only.
+    fs.writeFileSync(keyPath, privateKeyPem, { flag: "wx", mode: 0o600 });
+  } catch (writeErr) {
+    if (writeErr.code !== "EEXIST") throw writeErr;
+    // Another run won the race — adopt its key so the JWKS matches the tokens.
+    privateKeyPem = fs.readFileSync(keyPath, "utf8");
+  }
 }
 const privateKey = crypto.createPrivateKey(privateKeyPem);
 const publicKey = crypto.createPublicKey(privateKey);
