@@ -43,7 +43,7 @@ Sample runtime logs:
 2025-01-27T19:54:02.157072Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-01-27T19:54:02.866819Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow, 10s refresh), results cache enabled.
 2025-01-27T19:54:02.868324Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
-2025-01-27T19:54:13.743056Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.41 MiB) for dataset taxi_trips in 10s 874ms.
+2025-01-27T19:54:13.743056Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 10s 874ms.
 ```
 
 Run the Python sample in another terminal:

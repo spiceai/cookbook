@@ -89,7 +89,7 @@ The following output is shown in the Spice runtime terminal:
 ```bash
 2024-11-27T23:01:32.660992Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow, 10s refresh), results cache enabled.
 2024-11-27T23:01:32.663444Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
-2024-11-27T23:01:41.897121Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (419.31 MiB) for dataset taxi_trips in 9s 233ms.
+2024-11-27T23:01:41.897121Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 9s 233ms.
 ```
 
 **Step 3.** Run queries against the dataset using the Spice SQL REPL.
@@ -284,7 +284,7 @@ Spice.ai runtime starting...
 2024-07-23T00:33:50.552044Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2024-07-23T00:35:42.716736Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://yourcompany-bucketname-datasets/taxi_trips/), acceleration (arrow, 10s refresh), results cache enabled.
 2024-07-23T00:35:42.718009Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
-2024-07-23T00:35:59.390722Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (421.71 MiB) for dataset taxi_trips in 16s 672ms.
+2024-07-23T00:35:59.390722Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 16s 672ms.
 ```
 
 **Step 8.** Run queries against the dataset using the Spice SQL REPL.

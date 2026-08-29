@@ -36,7 +36,7 @@ Output:
 2025-01-13T21:27:42.242310Z  INFO runtime::init::model: Model [openai] deployed, ready for inferencing
 2025-01-13T21:27:42.576976Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow, 10s refresh), results cache enabled.
 2025-01-13T21:27:42.578442Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
-2025-01-13T21:27:53.260052Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.41 MiB) for dataset taxi_trips in 10s 681ms.
+2025-01-13T21:27:53.260052Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 10s 681ms.
 ```
 
 Spice will use your OpenAI API key to communicate with OpenAI on your client code's behalf.
