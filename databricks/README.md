@@ -154,8 +154,8 @@ To improve the query performance, the Databricks dataset can be accelerated.
    ```shell
    >>> spice datasets
 
-   NAME     FROM                                       REPLICATION ACCELERATION STATUS
-   my_table databricks:spice_data.public.awesome_table false       true         Ready
+    NAME      FROM                                        REPLICATION  ACCELERATION  STATUS  ERROR
+    my_table  databricks:spice_data.public.awesome_table  false        true          Ready
    ```
 
 3. Rerun the query
