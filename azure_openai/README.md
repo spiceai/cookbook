@@ -74,12 +74,12 @@ Result:
 2024-12-12T22:10:01.248962Z  INFO runtime::init::model: Loading model [chat-model] from azure:gpt-4o-mini...
 2024-12-12T22:10:01.448894Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2024-12-12T22:10:01.640572Z  INFO runtime::init::dataset: Dataset spiceai.files registered (github:github.com/spiceai/spiceai/files/trunk), acceleration (arrow), results cache enabled.
-2024-12-12T22:10:01.641876Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset spiceai.files
+2024-12-12T22:10:01.641876Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset spiceai.files
 2024-12-12T22:10:01.920208Z  INFO runtime::init::model: Model [chat-model] deployed, ready for inferencing
 2024-12-12T22:10:02.221149Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled.
-2024-12-12T22:10:02.222425Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
-2024-12-12T22:10:06.212606Z  INFO runtime::accelerated_table::refresh_task: Loaded 74 rows (1.06 MiB) for dataset spiceai.files in 4s 570ms.
-2024-12-12T22:10:10.896203Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 8s 673ms.
+2024-12-12T22:10:02.222425Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
+2024-12-12T22:10:06.212606Z  INFO runtime_table::accelerated::refresh_task: Loaded 74 rows (1.06 MiB) for dataset spiceai.files in 4s 570ms.
+2024-12-12T22:10:10.896203Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 8s 673ms.
 
 ```
 

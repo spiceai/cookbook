@@ -36,8 +36,8 @@ Spice.ai runtime starting...
 2024-07-16T19:16:34.197759Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2024-07-16T19:16:34.197770Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2024-07-16T19:16:34.885084Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow, 10s refresh), results cache enabled.
-2024-07-16T19:16:34.886257Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
-2024-07-16T19:16:40.494038Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 5s 607ms.
+2024-07-16T19:16:34.886257Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
+2024-07-16T19:16:40.494038Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 5s 607ms.
 ```
 
 In another terminal, compile and run:

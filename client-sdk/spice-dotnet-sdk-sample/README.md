@@ -37,8 +37,8 @@ Sample runtime logs:
 2025-08-28T21:08:11.151175Z  INFO runtime::init::dataset: Dataset taxi_trips initializing...
 2025-08-28T21:08:11.162604Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-08-28T21:08:12.336410Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow, 10s refresh), results cache enabled.
-2025-08-28T21:08:12.338066Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
-2025-08-28T21:08:20.383434Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (399.41 MiB) for dataset taxi_trips in 8s 45ms.
+2025-08-28T21:08:12.338066Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
+2025-08-28T21:08:20.383434Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.41 MiB) for dataset taxi_trips in 8s 45ms.
 2025-08-28T21:08:20.455383Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 

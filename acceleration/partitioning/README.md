@@ -50,8 +50,8 @@ Spice.ai runtime starting...
 2026-08-15T12:09:50.646429Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2026-08-15T12:09:50.646776Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2026-08-15T12:09:51.818849Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (cayenne:file), results cache enabled. duration_ms=101
-2026-08-15T12:09:51.820118Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
-2026-08-15T12:10:02.183762Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 10s 363ms.
+2026-08-15T12:09:51.820118Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
+2026-08-15T12:10:02.183762Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 10s 363ms.
 2026-08-15T12:10:02.265750Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
@@ -131,8 +131,8 @@ The `bucket(50, PULocationID)` function hashes the `PULocationID` column and dis
 2026-08-15T12:11:09.656053Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2026-08-15T12:11:09.664397Z  INFO runtime::init::dataset: Dataset taxi_trips initializing...
 2026-08-15T12:11:15.122630Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (cayenne:file), results cache enabled. duration_ms=76
-2026-08-15T12:11:15.123765Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
-2026-08-15T12:11:23.519321Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 8s 395ms.
+2026-08-15T12:11:15.123765Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
+2026-08-15T12:11:23.519321Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 8s 395ms.
 2026-08-15T12:11:23.604755Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 

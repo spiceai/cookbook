@@ -109,8 +109,8 @@ datasets:
 
 ```bash
 2026-08-13T12:19:22.038848Z  INFO runtime::init::dataset: Accelerated Dataset taxi_trips updating...
-2026-08-13T12:19:23.118534Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
-2026-08-13T12:19:25.902457Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 2s 783ms.
+2026-08-13T12:19:23.118534Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
+2026-08-13T12:19:25.902457Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 2s 783ms.
 2026-08-13T12:19:26.977420Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled. duration_ms=0
 ```
 

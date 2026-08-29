@@ -62,13 +62,13 @@ This will start the Spice runtime, which will connect to Oracle and load the TPC
 2025-07-07T20:41:43.432399Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-07-07T20:41:43.915273Z  INFO runtime::init::dataset: Dataset lineitem registered (oracle:"LINEITEM"), acceleration (arrow), results cache enabled.
 2025-07-07T20:41:43.916361Z  INFO runtime::init::dataset: Dataset orders registered (oracle:"ORDERS"), acceleration (arrow), results cache enabled.
-2025-07-07T20:41:43.916382Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset lineitem
-2025-07-07T20:41:43.917524Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset orders
+2025-07-07T20:41:43.916382Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset lineitem
+2025-07-07T20:41:43.917524Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset orders
 2025-07-07T20:41:43.935174Z  INFO runtime::init::dataset: Dataset customer registered (oracle:"CUSTOMER"), acceleration (arrow), results cache enabled.
-2025-07-07T20:41:43.936280Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset customer
-2025-07-07T20:41:43.949015Z  INFO runtime::accelerated_table::refresh_task: Loaded 7 rows (5.56 kiB) for dataset orders in 31ms.
-2025-07-07T20:41:43.949027Z  INFO runtime::accelerated_table::refresh_task: Loaded 27 rows (10.37 kiB) for dataset lineitem in 32ms.
-2025-07-07T20:41:43.950450Z  INFO runtime::accelerated_table::refresh_task: Loaded 7 rows (6.43 kiB) for dataset customer in 14ms.
+2025-07-07T20:41:43.936280Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset customer
+2025-07-07T20:41:43.949015Z  INFO runtime_table::accelerated::refresh_task: Loaded 7 rows (5.56 kiB) for dataset orders in 31ms.
+2025-07-07T20:41:43.949027Z  INFO runtime_table::accelerated::refresh_task: Loaded 27 rows (10.37 kiB) for dataset lineitem in 32ms.
+2025-07-07T20:41:43.950450Z  INFO runtime_table::accelerated::refresh_task: Loaded 7 rows (6.43 kiB) for dataset customer in 14ms.
 2025-07-07T20:41:44.036153Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 

@@ -79,8 +79,8 @@ Observe that Spice loads data from the configured Kafka topic into the `orders` 
 2025-08-24T05:06:41.527790Z  INFO runtime::init::dataset: Dataset nation registered (s3://spiceai-demo-datasets/tpch/nation/), acceleration (duckdb:file), results cache enabled.
 2025-08-24T05:06:41.531264Z  INFO runtime::init::dataset: Dataset customer registered (s3://spiceai-demo-datasets/tpch/customer/), acceleration (duckdb:file), results cache enabled.
 2025-08-24T05:06:41.531332Z  INFO runtime::init::dataset: Dataset supplier registered (s3://spiceai-demo-datasets/tpch/supplier/), acceleration (duckdb:file), results cache enabled.
-2025-08-24T05:06:54.138084Z DEBUG runtime::accelerated_table::refresh_task::changes: Inserting data row for orders
-2025-08-24T05:06:54.167452Z DEBUG runtime::accelerated_table::refresh_task::changes: Inserting data row for orders
+2025-08-24T05:06:54.138084Z DEBUG runtime_table::accelerated::refresh_task::changes: Inserting data row for orders
+2025-08-24T05:06:54.167452Z DEBUG runtime_table::accelerated::refresh_task::changes: Inserting data row for orders
 ...
 ```
 

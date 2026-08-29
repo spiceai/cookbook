@@ -88,8 +88,8 @@ Observe that it consumes all of the changes. It should look like:
 
 ```bash
 2024-07-01T12:39:22.207145Z  INFO runtime::init::dataset: Dataset cdc registered (debezium:cdc.inventory.customer_addresses), acceleration (sqlite:file, changes), results cache enabled.
-2024-07-01T12:39:22.677117Z  INFO runtime::accelerated_table::refresh_task::changes: Upserting data row for cdc with id=3
-2024-07-01T12:39:22.692018Z  INFO runtime::accelerated_table::refresh_task::changes: Upserting data row for cdc with id=4
+2024-07-01T12:39:22.677117Z  INFO runtime_table::accelerated::refresh_task::changes: Upserting data row for cdc with id=3
+2024-07-01T12:39:22.692018Z  INFO runtime_table::accelerated::refresh_task::changes: Upserting data row for cdc with id=4
 ...
 ```
 
@@ -116,7 +116,7 @@ VALUES
 Notice that the Spice log shows the change.
 
 ```bash
-2024-08-26T22:29:48.540739Z DEBUG runtime::accelerated_table::refresh_task::changes: Upserting data row for cdc with id=100
+2024-08-26T22:29:48.540739Z DEBUG runtime_table::accelerated::refresh_task::changes: Upserting data row for cdc with id=100
 ```
 
 Querying the data again from the `spice sql` REPL will show the new record.

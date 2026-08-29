@@ -29,8 +29,8 @@ spice run
 2024-11-27T20:46:11.346653Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2024-11-27T20:46:11.544488Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2024-11-27T20:46:12.286180Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow, 10s refresh), results cache enabled.
-2024-11-27T20:46:12.287391Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
-2024-11-27T20:46:22.751704Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 10s 464ms.
+2024-11-27T20:46:12.287391Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
+2024-11-27T20:46:22.751704Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 10s 464ms.
 ```
 
 ## Build sample application
