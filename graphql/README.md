@@ -80,8 +80,8 @@ Example output:
 2025-07-07T18:32:50.761704Z  INFO runtime::init::dataset: Dataset stargazers initializing...
 2025-07-07T18:32:50.761790Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-07-07T18:32:52.129189Z  INFO runtime::init::dataset: Dataset stargazers registered (graphql:https://api.github.com/graphql), acceleration (arrow), results cache enabled.
-2025-07-07T18:32:52.130877Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset stargazers
-2025-07-07T18:33:14.858107Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,478 rows (2.59 MiB) for dataset stargazers in 22s 727ms.
+2025-07-07T18:32:52.130877Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset stargazers
+2025-07-07T18:33:14.858107Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,478 rows (2.59 MiB) for dataset stargazers in 22s 727ms.
 2025-07-07T18:33:14.930166Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 

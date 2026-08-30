@@ -90,7 +90,7 @@ Shortly after startup you will see both datasets register. The federated table i
 ```bash
 2025-03-24T10:00:01.123456Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), results cache enabled.
 2025-03-24T10:00:01.234567Z  INFO runtime::init::dataset: Dataset taxi_trips_accelerated registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (duckdb:file, 1800s refresh), results cache enabled.
-2025-03-24T10:00:01.234890Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips_accelerated
+2025-03-24T10:00:01.234890Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips_accelerated
 ```
 
 ## Step 4. Query the federated table immediately
@@ -187,7 +187,7 @@ When the acceleration finishes, `taxi_trips_accelerated` reports `Ready`:
 The Spice runtime logs also confirm when the load completes:
 
 ```bash
-2025-03-24T10:03:45.678901Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips_accelerated in 3m 44s.
+2025-03-24T10:03:45.678901Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips_accelerated in 3m 44s.
 ```
 
 ## Step 6. Switch to the accelerated table

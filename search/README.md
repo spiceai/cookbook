@@ -88,12 +88,12 @@ You should see this output:
 2025-09-26T15:21:47.659106Z  INFO runtime::init::dataset: Dataset bluesky_posts initializing...
 2025-09-26T15:21:47.730735Z  INFO runtime::dataconnector::file: Watching changes to bluesky_posts.parquet
 2025-09-26T15:21:47.730999Z  INFO runtime::init::dataset: Dataset bluesky_posts registered (file://bluesky_posts.parquet), acceleration (duckdb:file, append), results cache enabled.
-2025-09-26T15:21:47.740354Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset bluesky_posts
-2025-09-26T15:21:57.885819Z  INFO runtime::accelerated_table::refresh_task: Dataset bluesky_posts received 38,101 records
-2025-09-26T15:21:58.507599Z  INFO runtime::accelerated_table::refresh_task: Loaded 38,101 rows (54.72 MiB) for dataset bluesky_posts in 10s 775ms.
+2025-09-26T15:21:47.740354Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset bluesky_posts
+2025-09-26T15:21:57.885819Z  INFO runtime_table::accelerated::refresh_task: Dataset bluesky_posts received 38,101 records
+2025-09-26T15:21:58.507599Z  INFO runtime_table::accelerated::refresh_task: Loaded 38,101 rows (54.72 MiB) for dataset bluesky_posts in 10s 775ms.
 2025-09-26T15:21:58.550191Z  INFO runtime: All components are loaded. Spice runtime is ready!
-2025-09-26T15:22:20.335633Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset bluesky_posts
-2025-09-26T15:22:21.960722Z  INFO runtime::accelerated_table::refresh_task: Loaded 251 rows (339.49 kiB) for dataset bluesky_posts in 1s 656ms.
+2025-09-26T15:22:20.335633Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset bluesky_posts
+2025-09-26T15:22:21.960722Z  INFO runtime_table::accelerated::refresh_task: Loaded 251 rows (339.49 kiB) for dataset bluesky_posts in 1s 656ms.
 ```
 
 _In a new terminal_, start the Spice SQL REPL:

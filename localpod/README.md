@@ -55,11 +55,11 @@ $ spice run
 2026-08-02T12:24:38.452860Z  INFO runtime::init::dataset: Loading datasets: 1 tasks dispatched, 0 skipped at accelerator init (of 2 total; localpod datasets may be chained).
 2026-08-02T12:24:38.452891Z  INFO runtime::init::dataset: Dataset local_time_series initializing...
 2026-08-02T12:24:38.453637Z  INFO runtime::init::dataset: Dataset time_series registered (file:data.csv), acceleration (arrow, 15s refresh), results cache enabled. duration_ms=0
-2026-08-02T12:24:38.454943Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset time_series
-2026-08-02T12:24:38.455886Z  INFO runtime::accelerated_table::refresh_task: Loaded 1 rows for dataset time_series in 0s.
+2026-08-02T12:24:38.454943Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset time_series
+2026-08-02T12:24:38.455886Z  INFO runtime_table::accelerated::refresh_task: Loaded 1 rows for dataset time_series in 0s.
 2026-08-02T12:24:38.458522Z  INFO runtime::init::dataset: Dataset local_time_series registered (localpod:time_series), acceleration (duckdb:file, 10s refresh), results cache enabled. duration_ms=3
-2026-08-02T12:24:38.459791Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset local_time_series
-2026-08-02T12:24:38.463429Z  INFO runtime::accelerated_table::refresh_task: Loaded 1 rows for dataset local_time_series in 3ms.
+2026-08-02T12:24:38.459791Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset local_time_series
+2026-08-02T12:24:38.463429Z  INFO runtime_table::accelerated::refresh_task: Loaded 1 rows for dataset local_time_series in 3ms.
 2026-08-02T12:24:38.561540Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
@@ -101,8 +101,8 @@ Replace the seed data with 1,000 generated rows and observe the `localpod` updat
 In the terminal where `spice run` is running, you should see a message indicating the new data is loaded:
 
 ```shell
-2026-08-02T12:25:23.471503Z  INFO runtime::accelerated_table::refresh_task: Loaded 1,000 rows (24.00 B) for dataset time_series in 4ms.
-2026-08-02T12:25:28.564207Z  INFO runtime::accelerated_table::refresh_task: Loaded 1,000 rows (24.00 B) for dataset local_time_series in 15ms.
+2026-08-02T12:25:23.471503Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (24.00 B) for dataset time_series in 4ms.
+2026-08-02T12:25:28.564207Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (24.00 B) for dataset local_time_series in 15ms.
 ```
 
 And the same SQL queries as above will give updated results:

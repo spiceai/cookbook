@@ -59,7 +59,7 @@ Result:
 2025-01-21T22:48:40.570139Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-01-21T22:48:40.769265Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-01-21T22:48:41.380306Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled.
-2025-01-21T22:48:41.381620Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
+2025-01-21T22:48:41.381620Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
 2025-01-21T22:48:44.001483Z  INFO runtime::init::model: Model [deepseek] deployed, ready for inferencing
 ```
 

@@ -76,7 +76,7 @@ spiced-container      | 2024-12-19T01:36:24.888807Z  INFO runtime::init::dataset
 spiced-container      | 2024-12-19T01:36:24.888926Z  INFO runtime::init::model: Loading model [openai] from openai:gpt-4o...
 spiced-container      | 2024-12-19T01:36:24.889476Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 spiced-container      | 2024-12-19T01:36:24.904304Z  INFO runtime::init::dataset: Dataset films registered (mysql:film), acceleration (arrow), results cache enabled.
-spiced-container      | 2024-12-19T01:36:24.905805Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset films
+spiced-container      | 2024-12-19T01:36:24.905805Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset films
 spiced-container      | 2024-12-19T01:36:28.185593Z  INFO runtime::init::model: Model [openai] deployed, ready for inferencing
 ```
 

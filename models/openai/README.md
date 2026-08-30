@@ -73,9 +73,9 @@ Result:
 2025-01-20T16:19:45.544669Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-01-20T16:19:45.544761Z  INFO runtime::init::model: Loading model [chat-model] from openai:gpt-4o...
 2025-01-20T16:19:46.164600Z  INFO runtime::init::dataset: Dataset spiceai.docs registered (github:github.com/spiceai/spiceai/files/trunk), acceleration (arrow), results cache enabled.
-2025-01-20T16:19:46.165929Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset spiceai.docs
+2025-01-20T16:19:46.165929Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset spiceai.docs
 2025-01-20T16:19:46.534044Z  INFO runtime::init::model: Model [chat-model] deployed, ready for inferencing
-2025-01-20T16:19:49.394003Z  INFO runtime::accelerated_table::refresh_task: Loaded 93 rows (1.28 MiB) for dataset spiceai.docs in 3s 228ms.
+2025-01-20T16:19:49.394003Z  INFO runtime_table::accelerated::refresh_task: Loaded 93 rows (1.28 MiB) for dataset spiceai.docs in 3s 228ms.
 ```
 
 ## SQL Search

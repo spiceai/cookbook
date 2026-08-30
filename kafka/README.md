@@ -84,6 +84,11 @@ Observe that Spice loads data from the configured Kafka topic into the `orders` 
 ...
 ```
 
+The transcript above is from `v1.6.0`. From `v2.2.0` the accelerated-table code moved to its own
+`runtime-table` crate, so those two records read
+`runtime_table::accelerated::refresh_task::changes` instead. The `SPICED_LOG` filter in `kafka/.env`
+names both targets, so the recipe shows them on either version.
+
 Run `spice sql` in a separate terminal to query the data
 
 ```sql

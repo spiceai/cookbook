@@ -40,19 +40,19 @@ Inserted new user user_1743059152063665845@example.com with username user_174305
 Run `docker logs -f spiceai-retention-demo` and Wait for the next retention check interval and see the retention policy evict data:
 
 ```console
-2025-03-27T07:08:50.616347Z  INFO runtime::accelerated_table::refresh_task: Loaded 1 rows (34.64 kiB) for dataset users in 16ms.
-2025-03-27T07:08:54.291596Z  INFO runtime::accelerated_table: [retention] Evicting data for users where updated_at < 2025-03-27T07:08:24+00:00...
-2025-03-27T07:08:54.299160Z  INFO runtime::accelerated_table: [retention] Evicted 2 records for users
-2025-03-27T07:08:55.634074Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset users
-2025-03-27T07:08:55.650633Z  INFO runtime::accelerated_table::refresh_task: Loaded 1 rows (34.64 kiB) for dataset users in 31ms.
-2025-03-27T07:09:00.660625Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset users
-2025-03-27T07:09:00.673057Z  INFO runtime::accelerated_table::refresh_task: Loaded 1 rows (34.64 kiB) for dataset users in 20ms.
-2025-03-27T07:09:04.293654Z  INFO runtime::accelerated_table: [retention] Evicting data for users where updated_at < 2025-03-27T07:08:34+00:00...
-2025-03-27T07:09:04.302727Z  INFO runtime::accelerated_table: [retention] Evicted 2 records for users
-2025-03-27T07:09:05.689919Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset users
-2025-03-27T07:09:05.697891Z  INFO runtime::accelerated_table::refresh_task: Loaded 1 rows (34.64 kiB) for dataset users in 23ms.
-2025-03-27T07:09:10.712582Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset users
-2025-03-27T07:09:10.729119Z  INFO runtime::accelerated_table::refresh_task: Loaded 1 rows (34.64 kiB) for dataset users in 25ms.
+2025-03-27T07:08:50.616347Z  INFO runtime_table::accelerated::refresh_task: Loaded 1 rows (34.64 kiB) for dataset users in 16ms.
+2025-03-27T07:08:54.291596Z  INFO runtime_table::accelerated::retention: [retention] Evicting data for users where updated_at < 2025-03-27T07:08:24+00:00
+2025-03-27T07:08:54.299160Z  INFO runtime_table::accelerated::retention: [retention] Evicted 2 records for users
+2025-03-27T07:08:55.634074Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset users
+2025-03-27T07:08:55.650633Z  INFO runtime_table::accelerated::refresh_task: Loaded 1 rows (34.64 kiB) for dataset users in 31ms.
+2025-03-27T07:09:00.660625Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset users
+2025-03-27T07:09:00.673057Z  INFO runtime_table::accelerated::refresh_task: Loaded 1 rows (34.64 kiB) for dataset users in 20ms.
+2025-03-27T07:09:04.293654Z  INFO runtime_table::accelerated::retention: [retention] Evicting data for users where updated_at < 2025-03-27T07:08:34+00:00
+2025-03-27T07:09:04.302727Z  INFO runtime_table::accelerated::retention: [retention] Evicted 2 records for users
+2025-03-27T07:09:05.689919Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset users
+2025-03-27T07:09:05.697891Z  INFO runtime_table::accelerated::refresh_task: Loaded 1 rows (34.64 kiB) for dataset users in 23ms.
+2025-03-27T07:09:10.712582Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset users
+2025-03-27T07:09:10.729119Z  INFO runtime_table::accelerated::refresh_task: Loaded 1 rows (34.64 kiB) for dataset users in 25ms.
 ```
 
 In addition to viewing the logs, run queries with the Spice SQL REPL to explore the data and confirm that only recently added users are in the dataset.
