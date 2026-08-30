@@ -64,7 +64,7 @@ datasets:
 Spice runtime is already configured to run with the debug level of information, with environment variable configured in `cdc-debezium/.env`
 
 ```bash
-SPICED_LOG="runtime_table::accelerated::refresh_task::changes=TRACE,info"
+SPICED_LOG="runtime_table::accelerated::refresh_task::changes=TRACE,runtime::accelerated_table::refresh_task::changes=TRACE,info"
 ```
 
 Ensure the current directory is `cdc-debezium`, and start the spice runtime with the following command
