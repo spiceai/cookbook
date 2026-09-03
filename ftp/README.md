@@ -38,11 +38,11 @@ Output:
 2025-06-09T17:59:19.961855Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-06-09T17:59:19.962011Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
 2025-06-09T17:59:21.486798Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-06-09T17:59:21.491284Z  INFO runtime::init::dataset: Initializing dataset customers
+2025-06-09T17:59:21.491284Z  INFO runtime::init::dataset: Dataset customers initializing...
 2025-06-09T17:59:21.492025Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-06-09T17:59:21.633945Z  INFO runtime::init::dataset: Dataset customers registered (ftp://localhost/customers.csv), acceleration (arrow, 10s refresh), results cache enabled.
-2025-06-09T17:59:21.635123Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset customers
-2025-06-09T17:59:21.707071Z  INFO runtime::accelerated_table::refresh_task: Loaded 100 rows (23.05 kiB) for dataset customers in 71ms.
+2025-06-09T17:59:21.635123Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset customers
+2025-06-09T17:59:21.707071Z  INFO runtime_table::accelerated::refresh_task: Loaded 100 rows (23.05 kiB) for dataset customers in 71ms.
 2025-06-09T17:59:21.735570Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 

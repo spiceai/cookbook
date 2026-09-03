@@ -64,7 +64,7 @@ Spice can read data straight from a Databricks instance. This recipe will create
 6. Confirm that the runtime has registered the new table (in the original terminal)
 
    ```shell
-   2024-03-27T05:27:54.051229Z  INFO runtime: Dataset my_table registered (databricks:spice_data.public.awesome_table), results cache enabled.
+   2024-03-27T05:27:54.051229Z  INFO runtime::init::dataset: Dataset my_table registered (databricks:spice_data.public.awesome_table), results cache enabled.
    ```
 
 7. Check the table exists from the Spice REPL
@@ -154,8 +154,8 @@ To improve the query performance, the Databricks dataset can be accelerated.
    ```shell
    >>> spice datasets
 
-   NAME     FROM                                       REPLICATION ACCELERATION STATUS
-   my_table databricks:spice_data.public.awesome_table false       true         Ready
+    NAME      FROM                                        REPLICATION  ACCELERATION  STATUS  ERROR
+    my_table  databricks:spice_data.public.awesome_table  false        true          Ready
    ```
 
 3. Rerun the query
@@ -221,7 +221,7 @@ Note: A dataset can be accelerated when configured by specifying yes (y) to `loc
 
    ```shell
    >>> spice run
-   2025-01-15T04:44:40.207555Z  INFO runtime::init::dataset: Initializing dataset my_table
+   2025-01-15T04:44:40.207555Z  INFO runtime::init::dataset: Dataset my_table initializing...
    2025-01-15T04:44:40.208013Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
    2025-01-15T04:44:40.208823Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
    2025-01-15T04:44:40.238106Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
@@ -297,7 +297,7 @@ Note: A dataset can be accelerated when configured by specifying yes (y) to `loc
    >>> spice run
    2025-05-16T17:29:08.062816Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
    2025-05-16T17:29:08.065607Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
-   2025-05-16T17:29:08.068465Z  INFO runtime::init::dataset: Initializing dataset customer
+   2025-05-16T17:29:08.068465Z  INFO runtime::init::dataset: Dataset customer initializing...
    2025-05-16T17:29:08.084175Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
    2025-05-16T17:29:15.290665Z  INFO runtime::init::dataset: Dataset customer registered (databricks:<catalog>.<schema>.<table>), results cache enabled.
    2025-05-16T17:29:15.393903Z  INFO runtime: All components are loaded. Spice runtime is ready!
@@ -373,7 +373,7 @@ Create a Databricks service principal by following the [Databricks documentation
 
    ```shell
    >>> spice run
-   2025-01-15T04:44:40.207555Z  INFO runtime::init::dataset: Initializing dataset my_table
+   2025-01-15T04:44:40.207555Z  INFO runtime::init::dataset: Dataset my_table initializing...
    2025-01-15T04:44:40.208013Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
    2025-01-15T04:44:40.208823Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
    2025-01-15T04:44:40.238106Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none

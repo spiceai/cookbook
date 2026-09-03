@@ -38,15 +38,15 @@ instances are accessible from within Spice to demonstrate that you can query acr
    2024-09-23T19:43:29.280949Z  WARN tiberius::client::tls_stream::rustls_tls_stream: Trusting the server certificate without validation.
    2024-09-23T19:43:29.281023Z  WARN tiberius::client::tls_stream::rustls_tls_stream: Trusting the server certificate without validation.
    2024-09-23T19:43:29.281987Z  WARN tiberius::client::tls_stream::rustls_tls_stream: Trusting the server certificate without validation.
-   2024-09-23T19:43:29.296410Z  INFO runtime: Dataset sales.customer registered (mssql:Sales.Customer), acceleration (arrow), results cache enabled.
-   2024-09-23T19:43:29.296456Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset sales.customer
-   2024-09-23T19:43:29.298284Z  INFO runtime: Dataset sales.customer2022 registered (mssql:Sales.Customer), acceleration (arrow), results cache enabled.
-   2024-09-23T19:43:29.298383Z  INFO runtime: Dataset sales.salesorderheader registered (mssql:Sales.SalesOrderHeader), acceleration (arrow), results cache enabled.
-   2024-09-23T19:43:29.299097Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset sales.salesorderheader
-   2024-09-23T19:43:29.299104Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset sales.customer2022
-   2024-09-23T19:43:29.374935Z  INFO runtime::accelerated_table::refresh_task: Loaded 19,820 rows (2.20 MiB) for dataset sales.customer in 78ms.
-   2024-09-23T19:43:29.387697Z  INFO runtime::accelerated_table::refresh_task: Loaded 19,820 rows (2.20 MiB) for dataset sales.customer2022 in 88ms.
-   2024-09-23T19:43:29.394271Z  INFO runtime::accelerated_table::refresh_task: Loaded 31,465 rows (7.19 MiB) for dataset sales.salesorderheader in 95ms.
+   2024-09-23T19:43:29.296410Z  INFO runtime::init::dataset: Dataset sales.customer registered (mssql:Sales.Customer), acceleration (arrow), results cache enabled.
+   2024-09-23T19:43:29.296456Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset sales.customer
+   2024-09-23T19:43:29.298284Z  INFO runtime::init::dataset: Dataset sales.customer2022 registered (mssql:Sales.Customer), acceleration (arrow), results cache enabled.
+   2024-09-23T19:43:29.298383Z  INFO runtime::init::dataset: Dataset sales.salesorderheader registered (mssql:Sales.SalesOrderHeader), acceleration (arrow), results cache enabled.
+   2024-09-23T19:43:29.299097Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset sales.salesorderheader
+   2024-09-23T19:43:29.299104Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset sales.customer2022
+   2024-09-23T19:43:29.374935Z  INFO runtime_table::accelerated::refresh_task: Loaded 19,820 rows (2.20 MiB) for dataset sales.customer in 78ms.
+   2024-09-23T19:43:29.387697Z  INFO runtime_table::accelerated::refresh_task: Loaded 19,820 rows (2.20 MiB) for dataset sales.customer2022 in 88ms.
+   2024-09-23T19:43:29.394271Z  INFO runtime_table::accelerated::refresh_task: Loaded 31,465 rows (7.19 MiB) for dataset sales.salesorderheader in 95ms.
    ```
 
 4. In another shell, fire up the Spice SQL REPL using `spice sql`

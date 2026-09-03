@@ -11,3 +11,4 @@ datasets:
     name: data
     params:
       file_format: parquet
+      s3_auth: public

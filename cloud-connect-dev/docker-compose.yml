@@ -1,0 +1,26 @@
+# A local PostgreSQL for the secrets step of the README.
+#
+# The password is never written here. It is read from the environment, and the
+# same value is what you set as the `PG_PASSWORD` secret on the Spice Cloud
+# project — so the one credential this recipe uses exists in your shell and in
+# the project, and in no file this repository tracks.
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: cloud-connect-dev-postgres
+    environment:
+      POSTGRES_USER: spice_reader
+      POSTGRES_DB: spice_demo
+      # `:?` fails the command with this message rather than starting a
+      # container with an empty password.
+      POSTGRES_PASSWORD: ${SPICE_DEMO_PG_PASSWORD:?export SPICE_DEMO_PG_PASSWORD first — see step 3 of the README}
+    ports:
+      # 55432, not 5432: a development machine often already has a Postgres.
+      - "55432:5432"
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U spice_reader -d spice_demo"]
+      interval: 5s
+      timeout: 5s
+      retries: 12

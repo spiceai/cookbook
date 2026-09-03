@@ -46,7 +46,7 @@ Spice.ai runtime starting...
 2024-09-16T21:25:43.306009Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2024-09-16T21:25:43.309474Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2024-09-16T21:25:43.507974Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
-2024-09-16T21:25:44.101055Z  INFO runtime: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), results cache enabled.
+2024-09-16T21:25:44.101055Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), results cache enabled.
 ```
 
 **Step 4.** Run queries against the dataset using the Spice SQL REPL.
@@ -106,9 +106,9 @@ datasets:
 2024-09-12T23:08:53.964728Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2024-09-12T23:08:53.965420Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2024-09-12T23:08:53.965471Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
-2024-09-12T23:08:55.308963Z  INFO runtime: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (duckdb:file), results cache enabled.
-2024-09-12T23:08:55.310382Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
-2024-09-12T23:09:11.477553Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (421.71 MiB) for dataset taxi_trips in 16s 167ms.
+2024-09-12T23:08:55.308963Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (duckdb:file), results cache enabled.
+2024-09-12T23:08:55.310382Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
+2024-09-12T23:09:11.477553Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 16s 167ms.
 ```
 
 **Step 7.** Run a query against the `taxi_trips` dataset again, observing the fast query time.

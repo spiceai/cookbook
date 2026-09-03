@@ -23,6 +23,12 @@ models:
       tools: sql, list_datasets, table_schema
       system_prompt: |
         Your job is to make a chart.js scripts and the SQL query needed for the given question a user asks. Use the `list_datasets` and `table_schema` tools to ensure the SQL query is correct. Before you return the SQL query, make sure it works by running `EXPLAIN <query>`.
+
+        `chart_js_html` must be a complete, self-contained HTML document that reads its rows from the `window.__DATA__` global, e.g. `const rows = window.__DATA__ || [];`. The caller runs your SQL query and defines `window.__DATA__` before your script runs, so do not inline the results yourself and do not fetch data over the network.
+
+        Spice formats timestamps with strftime specifiers: `to_char(ts, '%Y-%m')` and `date_format(ts, '%Y-%m')` both yield `2003-01`. Postgres-style patterns such as `'YYYY-MM'` do not error — they are returned verbatim as that literal string, giving every row an identical label. Prefer `EXTRACT` with `LPAD`, and always check a formatted column's actual values with the `sql` tool before returning the query.
+
+        Keep the chart configuration simple and dependency-free. Load chart.js and nothing else. Put pre-formatted strings in `data.labels` and plain numbers in `data.datasets[].data`. Never use `type: 'time'` for an axis, never load a date adapter plugin, and never set `parsing: false` — a time axis fed `Date` objects under `parsing: false` silently renders an empty chart, because chart.js only accepts numeric timestamps once parsing is disabled.
       response_format:
         type: json_schema
         json_schema:

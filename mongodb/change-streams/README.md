@@ -77,10 +77,10 @@ spice run
 You should see the dataset bootstrap and then transition to live streaming:
 
 ```
-2025-01-13T12:00:00Z  INFO runtime::init::dataset: Initializing dataset orders
+2025-01-13T12:00:00Z  INFO runtime::init::dataset: Dataset orders initializing...
 2025-01-13T12:00:00Z  INFO runtime::init::dataset: Dataset orders registered (mongodb:orders), acceleration (duckdb:file, changes).
-2025-01-13T12:00:00Z  INFO runtime::dataconnector::mongodb: Bootstrapping MongoDB collection orders, records=3
-2025-01-13T12:00:00Z  INFO runtime::dataconnector::mongodb: Bootstrap complete for orders. Streaming live changes.
+2025-01-13T12:00:00Z  INFO connector_mongodb::changes: MongoDB Change Stream started; bootstrapping accelerator from collection snapshot dataset=orders collection=orders
+2025-01-13T12:00:00Z  INFO connector_mongodb::changes: MongoDB collection snapshot complete; resuming Change Stream events from captured token dataset=orders collection=orders
 2025-01-13T12:00:00Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 

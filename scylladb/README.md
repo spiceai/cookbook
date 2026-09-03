@@ -150,7 +150,7 @@ Sample output:
 
 ## Using Acceleration for Better Performance
 
-ScyllaDB pushes down partition-key equality filters (and clustering-key comparisons when a partition-key filter is also present); queries without a partition-key filter fetch all data and filter locally. Enabling acceleration is therefore recommended for frequently queried tables:
+ScyllaDB can push down partition-key equality filters (and clustering-key comparisons when a partition-key filter is also present). Unaccelerated queries remain subject to ScyllaDB's CQL restrictions, so enable acceleration when you need unrestricted SQL filtering or sorting:
 
 ```yaml
 datasets:
@@ -230,8 +230,9 @@ The following SQL operations cannot be pushed down to ScyllaDB and are performed
 - **Aggregations**: COUNT, SUM, AVG, etc. are computed locally
 - **Subqueries**: Nested queries are not supported in CQL
 - **Window functions**: RANK, ROW_NUMBER, etc. not supported
-- **WHERE clauses without a partition key**: Partition-key equality and clustering-key comparison (`=`, `<`, `<=`, `>`, `>=`) filters are pushed down to CQL; queries without a partition-key filter fetch all data and filter locally
-- **ORDER BY**: Sorting is done locally
+- **WHERE clauses without a partition key**: Unsupported predicates are normally evaluated locally, but pushdown behavior depends on the complete query
+- **UUID partition-key predicates in v2.2**: A predicate such as `WHERE id = '<uuid>'` can be sent to CQL as a string literal and rejected as an invalid UUID constant; use acceleration or another predicate until the runtime issue is fixed
+- **ORDER BY**: Unaccelerated queries are subject to ScyllaDB's rule that the partition key must be restricted by `EQ` or `IN`; enable acceleration for unrestricted sorting
 
 ### Connector Limitations
 

@@ -27,29 +27,29 @@ The following output is shown in the Spice runtime terminal:
 
 ```bash
 2026-08-05T12:12:47.811362Z  INFO runtime::init::dataset: Dataset tpch.customer registered (s3://spiceai-demo-datasets/tpch/customer/), acceleration (duckdb), results cache enabled.
-2026-08-05T12:12:47.812658Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset tpch.customer
+2026-08-05T12:12:47.812658Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset tpch.customer
 2026-08-05T12:12:49.605443Z  INFO runtime::init::dataset: Dataset tpch.lineitem registered (s3://spiceai-demo-datasets/tpch/lineitem/), acceleration (duckdb), results cache enabled.
-2026-08-05T12:12:49.606500Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset tpch.lineitem
+2026-08-05T12:12:49.606500Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset tpch.lineitem
 2026-08-05T12:12:50.409819Z  INFO runtime::init::dataset: Dataset tpch.nation registered (s3://spiceai-demo-datasets/tpch/nation/), acceleration (duckdb), results cache enabled.
-2026-08-05T12:12:50.410648Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset tpch.nation
-2026-08-05T12:12:50.524894Z  INFO runtime::accelerated_table::refresh_task: Loaded 150,000 rows (33.76 MiB) for dataset tpch.customer in 2s 712ms.
-2026-08-05T12:12:50.970014Z  INFO runtime::accelerated_table::refresh_task: Loaded 25 rows (3.35 kiB) for dataset tpch.nation in 559ms.
+2026-08-05T12:12:50.410648Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset tpch.nation
+2026-08-05T12:12:50.524894Z  INFO runtime_table::accelerated::refresh_task: Loaded 150,000 rows (33.76 MiB) for dataset tpch.customer in 2s 712ms.
+2026-08-05T12:12:50.970014Z  INFO runtime_table::accelerated::refresh_task: Loaded 25 rows (3.35 kiB) for dataset tpch.nation in 559ms.
 2026-08-05T12:12:51.591911Z  INFO runtime::init::dataset: Dataset tpch.orders registered (s3://spiceai-demo-datasets/tpch/orders/), acceleration (duckdb), results cache enabled.
-2026-08-05T12:12:51.592095Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset tpch.orders
+2026-08-05T12:12:51.592095Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset tpch.orders
 2026-08-05T12:12:52.822669Z  INFO runtime::init::dataset: Dataset tpch.part registered (s3://spiceai-demo-datasets/tpch/part/), acceleration (duckdb), results cache enabled.
-2026-08-05T12:12:52.823043Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset tpch.part
+2026-08-05T12:12:52.823043Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset tpch.part
 2026-08-05T12:12:53.982557Z  INFO runtime::init::dataset: Dataset tpch.partsupp registered (s3://spiceai-demo-datasets/tpch/partsupp/), acceleration (duckdb), results cache enabled.
-2026-08-05T12:12:53.983000Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset tpch.partsupp
-2026-08-05T12:12:54.160528Z  INFO runtime::accelerated_table::refresh_task: Loaded 200,000 rows (35.80 MiB) for dataset tpch.part in 1s 337ms.
+2026-08-05T12:12:53.983000Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset tpch.partsupp
+2026-08-05T12:12:54.160528Z  INFO runtime_table::accelerated::refresh_task: Loaded 200,000 rows (35.80 MiB) for dataset tpch.part in 1s 337ms.
 2026-08-05T12:12:54.829053Z  INFO runtime::init::dataset: Dataset tpch.region registered (s3://spiceai-demo-datasets/tpch/region/), acceleration (duckdb), results cache enabled.
-2026-08-05T12:12:54.829967Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset tpch.region
-2026-08-05T12:12:55.402071Z  INFO runtime::accelerated_table::refresh_task: Loaded 5 rows (1008.00 B) for dataset tpch.region in 572ms.
+2026-08-05T12:12:54.829967Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset tpch.region
+2026-08-05T12:12:55.402071Z  INFO runtime_table::accelerated::refresh_task: Loaded 5 rows (1008.00 B) for dataset tpch.region in 572ms.
 2026-08-05T12:12:56.036613Z  INFO runtime::init::dataset: Dataset tpch.supplier registered (s3://spiceai-demo-datasets/tpch/supplier/), acceleration (duckdb), results cache enabled.
-2026-08-05T12:12:56.036896Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset tpch.supplier
-2026-08-05T12:12:56.397026Z  INFO runtime::accelerated_table::refresh_task: Loaded 800,000 rows (141.48 MiB) for dataset tpch.partsupp in 2s 414ms.
-2026-08-05T12:12:57.340627Z  INFO runtime::accelerated_table::refresh_task: Loaded 10,000 rows (1.87 MiB) for dataset tpch.supplier in 1s 303ms.
-2026-08-05T12:13:12.771851Z  INFO runtime::accelerated_table::refresh_task: Loaded 6,001,215 rows (1.07 GiB) for dataset tpch.lineitem in 23s 165ms.
-2026-08-05T12:13:16.294713Z  INFO runtime::accelerated_table::refresh_task: Loaded 1,500,000 rows (212.28 MiB) for dataset tpch.orders in 24s 702ms.
+2026-08-05T12:12:56.036896Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset tpch.supplier
+2026-08-05T12:12:56.397026Z  INFO runtime_table::accelerated::refresh_task: Loaded 800,000 rows (141.48 MiB) for dataset tpch.partsupp in 2s 414ms.
+2026-08-05T12:12:57.340627Z  INFO runtime_table::accelerated::refresh_task: Loaded 10,000 rows (1.87 MiB) for dataset tpch.supplier in 1s 303ms.
+2026-08-05T12:13:12.771851Z  INFO runtime_table::accelerated::refresh_task: Loaded 6,001,215 rows (1.07 GiB) for dataset tpch.lineitem in 23s 165ms.
+2026-08-05T12:13:16.294713Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,500,000 rows (212.28 MiB) for dataset tpch.orders in 24s 702ms.
 ```
 
 **Step 3.** Run queries against the dataset using the Spice SQL REPL.

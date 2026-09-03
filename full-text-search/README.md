@@ -53,7 +53,7 @@ Wait for the dataset to load and index:
 
 ```shell
 2026-01-21T01:00:00.000000Z  INFO runtime::init::dataset: Dataset cookbook_files registered (github:github.com/spiceai/cookbook/files/trunk), acceleration (arrow), results cache enabled.
-2026-01-21T01:00:05.000000Z  INFO runtime::accelerated_table::refresh_task: Loaded 104 rows (1.13 MiB) for dataset cookbook_files in 4s.
+2026-01-21T01:00:05.000000Z  INFO runtime_table::accelerated::refresh_task: Loaded 104 rows (1.13 MiB) for dataset cookbook_files in 4s.
 2026-01-21T01:00:05.100000Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 

@@ -1,0 +1,49 @@
+name: Validate cloud-connect-dev
+
+# Deterministic checks only: the cloud-connect-dev validation needs no Spice
+# Cloud account and no credentials, so it runs on forks and pull requests.
+# The cloud-backed steps of the recipe (enrollment, project creation,
+# deployment) are covered by the credentialed release gate, not here.
+
+on:
+  push:
+    branches:
+      - trunk
+    paths:
+      - 'cloud-connect-dev/**'
+      - '.github/workflows/validate-cloud-connect-dev.yml'
+  pull_request:
+    paths:
+      - 'cloud-connect-dev/**'
+      - '.github/workflows/validate-cloud-connect-dev.yml'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+      - name: Install the Spice CLI
+        run: |
+          curl -fsSL https://install.spiceai.org | /bin/bash
+          echo "$HOME/.spice/bin" >> "$GITHUB_PATH"
+
+      # Exit 2 means the installed CLI predates the flow this recipe documents,
+      # so nothing was asserted. Surface that as a notice rather than a pass or
+      # a failure: the release that ships the flow turns it into a real run.
+      - name: Validate the recipe
+        run: |
+          set +e
+          ./cloud-connect-dev/validate.sh
+          code=$?
+          set -e
+          if [ "$code" -eq 2 ]; then
+            echo "::notice title=cloud-connect-dev not validated::The installed Spice CLI predates v2.2; the recipe's assertions did not run."
+            exit 0
+          fi
+          exit "$code"

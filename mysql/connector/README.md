@@ -179,7 +179,7 @@ Confirm in the terminal output the `sample_data` dataset has been loaded:
 
 ```bash
 2025/01/13 11:52:51 INFO Spice.ai runtime starting...
-2025-01-13T19:52:51.473621Z  INFO runtime::init::dataset: Initializing dataset sample_data
+2025-01-13T19:52:51.473621Z  INFO runtime::init::dataset: Dataset sample_data initializing...
 2025-01-13T19:52:51.474795Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-01-13T19:52:51.474869Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2025-01-13T19:52:51.491591Z  INFO runtime::init::dataset: Dataset sample_data registered (mysql:spice_demo.sample_data).

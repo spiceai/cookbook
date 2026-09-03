@@ -59,7 +59,7 @@ You should see the dataset bootstrap from a consistent snapshot and then transit
 2026-07-23T01:40:37.396202Z  INFO data_components::mysql_replication::shared: MySQL replication: GTID auto-positioning active. dataset=orders source_table=spice_demo.orders
 2026-07-23T01:40:37.397269Z  INFO data_components::mysql_replication::shared: dataset joined shared mysql binlog group dataset=orders connection=localhost:3308 snapshot=true rejoining=false members=1
 2026-07-23T01:40:37.397719Z  INFO data_components::mysql_replication::bootstrap: mysql replication: starting initial snapshot dataset=orders
-2026-07-23T01:40:37.397936Z  INFO runtime::accelerated_table::refresh_task::changes: Processing TRUNCATE for orders
+2026-07-23T01:40:37.397936Z  INFO runtime_table::accelerated::refresh_task::changes: Processing TRUNCATE for orders
 2026-07-23T01:40:37.404727Z  INFO data_components::mysql_replication::bootstrap: mysql replication: initial snapshot complete dataset=orders rows=3
 2026-07-23T01:40:37.491325Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2026-07-23T01:40:37.492029Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090

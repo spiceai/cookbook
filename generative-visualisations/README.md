@@ -100,17 +100,20 @@ The script will:
 
 ### Step 3: View the Visualization
 
-The script outputs a Chart.js HTML snippet. To view it:
-
-1. Copy the HTML output
-2. Save it to a file (e.g., `chart.html`)
-3. Open in a web browser
-
-Or use this one-liner to open the visualization directly:
+Pass `--output-html` to write a self-contained HTML file. The script runs the
+generated SQL and embeds the results in the page, so the chart renders offline
+with no further wiring:
 
 ```bash
-uv run main.py "How has sales changed over time?" 2>/dev/null | head -n 50 > chart.html && open chart.html
+uv run main.py "How has sales changed over time?" --output-html chart.html
 ```
+
+Then open it in a browser (`open chart.html` on macOS, `xdg-open chart.html` on Linux).
+
+Without `--output-html`, the script prints the Chart.js HTML to stdout alongside
+the SQL, the query results, and the summary. That output is a human-readable
+report — don't redirect it straight into a `.html` file, as the section headers
+and the trailing sections are not valid HTML.
 
 ## Example Queries
 
@@ -150,6 +153,9 @@ ORDER BY "year", "month";
   <body>
     <canvas id="salesTrendChart" width="600" height="400"></canvas>
     <script>
+      // The model reads rows from `window.__DATA__`, which `--output-html`
+      // defines from the query results before this script runs.
+      const rows = window.__DATA__ || [];
       // Chart configuration with line chart showing monthly sales trends
       ...
     </script>
@@ -160,6 +166,13 @@ ORDER BY "year", "month";
 **AI Summary:**
 
 > Sales show a strong seasonal pattern with peaks in November. The data from 2003-2005 shows consistent growth year-over-year, with November typically exceeding $1M in sales.
+
+## Command-Line Options
+
+| Flag | Description |
+| --- | --- |
+| `--output-html FILE` | Write a self-contained HTML file with the chart and query results embedded |
+| `--no-summary` | Skip the `summary_maker` step |
 
 ## Configuration
 
@@ -190,6 +203,19 @@ You can modify the system prompts in `spicepod.yaml` to:
 
 - Verify your `.env` file exists and contains a valid OpenAI API key
 - Make sure you're running from the `generative-visualisations` directory
+
+**Every x-axis label is identical (e.g. all `YYYY-MM`)**
+
+- Spice formats timestamps with strftime specifiers, so `to_char(ts, '%Y-%m')` is correct
+  while the Postgres-style `to_char(ts, 'YYYY-MM')` is returned verbatim as a literal
+  string rather than erroring. Re-run the question, or ask for the label built with
+  `EXTRACT` and `LPAD`.
+
+**The chart renders but the plot area is empty**
+
+- Check the generated config for `parsing: false` on a `type: 'time'` axis. Chart.js only
+  accepts numeric timestamps once parsing is disabled, so `Date` objects make the axis
+  silently fall back to the current month, placing the data off-scale.
 
 **SQL query errors**
 

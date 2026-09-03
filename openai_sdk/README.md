@@ -28,15 +28,15 @@ Output:
 
 ```bash
 2025/01/13 13:27:41 INFO Spice.ai runtime starting...
-2025-01-13T21:27:41.702275Z  INFO runtime::init::dataset: Initializing dataset taxi_trips
+2025-01-13T21:27:41.702275Z  INFO runtime::init::dataset: Dataset taxi_trips initializing...
 2025-01-13T21:27:41.704347Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-01-13T21:27:41.704514Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2025-01-13T21:27:41.703575Z  INFO runtime::init::model: Loading model [openai] from openai:gpt-4o...
 2025-01-13T21:27:41.902271Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-01-13T21:27:42.242310Z  INFO runtime::init::model: Model [openai] deployed, ready for inferencing
 2025-01-13T21:27:42.576976Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow, 10s refresh), results cache enabled.
-2025-01-13T21:27:42.578442Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
-2025-01-13T21:27:53.260052Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (399.41 MiB) for dataset taxi_trips in 10s 681ms.
+2025-01-13T21:27:42.578442Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
+2025-01-13T21:27:53.260052Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 10s 681ms.
 ```
 
 Spice will use your OpenAI API key to communicate with OpenAI on your client code's behalf.

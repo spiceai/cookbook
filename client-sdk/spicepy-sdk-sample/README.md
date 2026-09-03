@@ -37,13 +37,13 @@ Sample runtime logs:
 ```text
 2025/01/27 11:53:58 INFO Checking for latest Spice runtime release...
 2025/01/27 11:54:01 INFO Spice.ai runtime starting...
-2025-01-27T19:54:01.956890Z  INFO runtime::init::dataset: Initializing dataset taxi_trips
+2025-01-27T19:54:01.956890Z  INFO runtime::init::dataset: Dataset taxi_trips initializing...
 2025-01-27T19:54:01.957325Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2025-01-27T19:54:01.958254Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-01-27T19:54:02.157072Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-01-27T19:54:02.866819Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow, 10s refresh), results cache enabled.
-2025-01-27T19:54:02.868324Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
-2025-01-27T19:54:13.743056Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (399.41 MiB) for dataset taxi_trips in 10s 874ms.
+2025-01-27T19:54:02.868324Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
+2025-01-27T19:54:13.743056Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 10s 874ms.
 ```
 
 Run the Python sample in another terminal:

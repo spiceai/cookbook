@@ -161,15 +161,18 @@ The `+` and `-` keys on the time server adjust response delay:
 
 ## Cache Schema
 
-The caching accelerator automatically adds metadata fields to cached data:
+The cached table carries the request and response metadata alongside the content — `describe time` lists all eight columns:
 
-| Field           | Type      | Description                       |
-| --------------- | --------- | --------------------------------- |
-| `request_path`  | String    | The URL path used for the request |
-| `request_query` | String    | Query parameters from the request |
-| `request_body`  | String    | Request body (for POST requests)  |
-| `content`       | String    | The response content              |
-| `_fetched_at`   | Timestamp | When the data was fetched (named `fetched_at` on Spice `v1.x`) |
+| Field              | Type            | Description                                                    |
+| ------------------ | --------------- | -------------------------------------------------------------- |
+| `request_path`     | `Utf8`          | The URL path used for the request                              |
+| `request_query`    | `Utf8`          | Query parameters from the request                              |
+| `request_body`     | `Utf8`          | Request body (for POST requests)                               |
+| `request_headers`  | `Utf8`          | Headers sent with the request                                  |
+| `content`          | `Utf8`          | The response content                                           |
+| `response_status`  | `UInt16`        | HTTP status code returned by the upstream server               |
+| `response_headers` | `Map`           | Response headers, as a map of string keys to string values     |
+| `_fetched_at`      | `Timestamp(ns)` | When the data was fetched (named `fetched_at` on Spice `v1.x`) |
 
 ## Use Cases
 

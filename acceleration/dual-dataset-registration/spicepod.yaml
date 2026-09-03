@@ -8,12 +8,14 @@ datasets:
     name: taxi_trips
     params:
       file_format: parquet
+      s3_auth: public
 
   # Accelerated copy — loads in the background
   - from: s3://spiceai-demo-datasets/taxi_trips/2024/
     name: taxi_trips_accelerated
     params:
       file_format: parquet
+      s3_auth: public
     ready_state: on_registration
     acceleration:
       enabled: true

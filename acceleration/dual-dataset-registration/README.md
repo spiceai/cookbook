@@ -54,12 +54,14 @@ datasets:
     name: taxi_trips
     params:
       file_format: parquet
+      s3_auth: public
 
   # Accelerated copy — loads in the background
   - from: s3://spiceai-demo-datasets/taxi_trips/2024/
     name: taxi_trips_accelerated
     params:
       file_format: parquet
+      s3_auth: public
     ready_state: on_registration # Required for runtime to be ready while loading
     acceleration:
       enabled: true
@@ -70,6 +72,7 @@ datasets:
 
 Key points:
 
+- `s3_auth: public` forces unauthenticated access to the public bucket. Without it, Spice falls back to the default AWS credential chain, which fails if the local environment has invalid or expired AWS credentials configured.
 - `taxi_trips` is a federated dataset with no acceleration. It is ready the moment the runtime starts.
 - `taxi_trips_accelerated` points to the same source but has `acceleration.enabled: true`. The runtime begins loading data into a local DuckDB file as soon as it starts.
 - `ready_state: on_registration` is required on the accelerated dataset so the runtime becomes ready immediately. Without it the runtime waits for the acceleration to finish loading before marking itself ready, which blocks the federated dataset from serving queries.
@@ -87,7 +90,7 @@ Shortly after startup you will see both datasets register. The federated table i
 ```bash
 2025-03-24T10:00:01.123456Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), results cache enabled.
 2025-03-24T10:00:01.234567Z  INFO runtime::init::dataset: Dataset taxi_trips_accelerated registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (duckdb:file, 1800s refresh), results cache enabled.
-2025-03-24T10:00:01.234890Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips_accelerated
+2025-03-24T10:00:01.234890Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips_accelerated
 ```
 
 ## Step 4. Query the federated table immediately
@@ -184,7 +187,7 @@ When the acceleration finishes, `taxi_trips_accelerated` reports `Ready`:
 The Spice runtime logs also confirm when the load completes:
 
 ```bash
-2025-03-24T10:03:45.678901Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips_accelerated in 3m 44s.
+2025-03-24T10:03:45.678901Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips_accelerated in 3m 44s.
 ```
 
 ## Step 6. Switch to the accelerated table

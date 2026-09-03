@@ -2,7 +2,7 @@
 
 Works with `v2.0+`
 
-Spice.ai integrates Amazon S3 Vectors, launched in public preview at AWS Summit New York 2025, as a scalable vector index backend for embedding storage and similarity search. This recipe configures a dataset of GitHub pull requests from the `spiceai/spiceai` repository, embeds the `body` column using OpenAI, stores embeddings in S3 Vectors, and demonstrates semantic search via SQL and HTTP. Spice manages index creation, data synchronization, and query execution, enabling sub-second similarity queries on large datasets at ~$0.02/GB, reducing costs by up to 90% versus traditional vector databases.
+Spice.ai integrates Amazon S3 Vectors, launched in public preview at AWS Summit New York 2025, as a scalable vector index backend for embedding storage and similarity search. This recipe configures a dataset of GitHub pull requests from the `spiceai/cookbook` repository, embeds the `body` column using OpenAI, stores embeddings in S3 Vectors, and demonstrates semantic search via SQL and HTTP. Spice manages index creation, data synchronization, and query execution, enabling sub-second similarity queries on large datasets at ~$0.02/GB, reducing costs by up to 90% versus traditional vector databases.
 
 ## Prerequisites
 
@@ -11,7 +11,20 @@ Spice.ai integrates Amazon S3 Vectors, launched in public preview at AWS Summit 
   - `GITHUB_TOKEN`: GitHub personal access token ([guide](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic)).
   - `SPICE_OPENAI_API_KEY`: OpenAI API key.
   - `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` (and `AWS_SESSION_TOKEN` if using temporary credentials): AWS credentials for S3 Vectors access. For alternatives, see [S3 Vectors documentation](https://spiceai.org/docs/components/vectors/s3_vectors).
-- AWS account with an S3 Vectors-enabled bucket (e.g., `spiceai-cookbook` in `us-east-2`).
+- An S3 Vectors bucket in your own AWS account, set as `s3_vectors_bucket` in `spicepod.yaml`. Spice creates the *indexes* inside the bucket automatically, but not the bucket itself:
+
+  ```shell
+  aws s3vectors create-vector-bucket --vector-bucket-name <your-bucket> --region us-east-2
+  ```
+
+Instead of static keys, `s3_vectors_aws_iam_role_source` uses the AWS credential chain — `auto` (any chain provider, including an SSO profile), `metadata` (IMDS/ECS/EKS only), or `env`:
+
+```yaml
+s3_vectors_param: &s3_vectors_param
+  s3_vectors_bucket: <your-bucket>
+  s3_vectors_aws_region: us-east-2
+  s3_vectors_aws_iam_role_source: auto
+```
 
 ## Configuration
 
@@ -54,20 +67,20 @@ LIMIT 4;
 Results:
 
 ```sql
-+----------------------------------------------+------------------------------------------------------+---------------------+
-|                      url                     |                         title                        |        _score       |
-|                    varchar                   |                        varchar                       |       float64       |
-+----------------------------------------------+------------------------------------------------------+---------------------+
-| https://github.com/spiceai/spiceai/pull/6496 | Update spiceai/duckdb-rs -> DuckDB 1.3.2 + index fix | 0.6220794320106506  |
-| https://github.com/spiceai/cookbook/pull/335 | Update DynamoDB cookbook auth                        | 0.3785504102706909  |
-| https://github.com/spiceai/cookbook/pull/233 | fix: Update ODBC cookbook to use SQLite              | 0.37669312953948975 |
-| https://github.com/spiceai/cookbook/pull/329 | Update `unnest_depth` for DynamoDB cookbook          | 0.36396580934524536 |
-+----------------------------------------------+------------------------------------------------------+---------------------+
++----------------------------------------------+--------------------------------------------------------------------------------+--------------------+
+|                     url                      |                                     title                                      |       _score       |
+|                   varchar                    |                                    varchar                                     |      float64       |
++----------------------------------------------+--------------------------------------------------------------------------------+--------------------+
+| https://github.com/spiceai/cookbook/pull/576 | fix(localpod,duckdb): correct a truncated CSV header and a typo                 | 0.7042624683970505 |
+| https://github.com/spiceai/cookbook/pull/581 | Fix caching/sql_results recipe: correct dataset names, log lines, and Q1 output | 0.6822196713980645 |
+| https://github.com/spiceai/cookbook/pull/595 | docs: fix v2.2 cookbook validation issues                                      | 0.681723637898489  |
+| https://github.com/spiceai/cookbook/pull/590 | Add Mysql-Aurora CDC cookbook                                                  | 0.6804361755080721 |
++----------------------------------------------+--------------------------------------------------------------------------------+--------------------+
 
-Time: 1.083296234 seconds. 4 rows.
+4 rows.
 ```
 
-The `_score` column (0-1, higher is more similar) is computed from distances returned by S3 Vectors.
+The `_score` column (0-1, higher is more similar) is computed from cosine distance. Because `refresh_data_window: 7d` only loads the last week of pull requests, the specific rows and scores you see will differ from the output above.
 
 ### Query Plan
 
@@ -77,40 +90,44 @@ Examine execution:
 EXPLAIN SELECT url, title, _score FROM vector_search(pulls, 'bugs in DuckDB', 4) ORDER BY _score DESC LIMIT 4;
 ```
 
-Plan:
+Plan (the 1536-element query vector is elided as `[...]` for readability):
 
 ```sql
-+---------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|   plan_type   |                                                                                                  plan                                                                                                 |
-|    varchar    |                                                                                                varchar                                                                                                |
-+---------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| logical_plan  | Sort: vector_search(pulls, Utf8("bugs in DuckDB"), Int64(4))._score DESC NULLS FIRST, fetch=4                                                                                                         |
-|               |   Projection: vector_search(pulls, Utf8("bugs in DuckDB"), Int64(4)).url, vector_search(pulls, Utf8("bugs in DuckDB"), Int64(4)).title, vector_search(pulls, Utf8("bugs in DuckDB"), Int64(4))._score |
-|               |     TableScan: vector_search(pulls, Utf8("bugs in DuckDB"), Int64(4)) projection=[_score, title, url]                                                                                                 |
-| physical_plan | ProjectionExec: expr=[url@3 as url, title@2 as title, _score@1 as _score]                                                                                                                             |
-|               |   SortExec: TopK(fetch=4), expr=[_score@1 DESC NULLS LAST, id@0 ASC], preserve_partitioning=[false]                                                                                                   |
-|               |     HashJoinExec: mode=CollectLeft, join_type=Left, accumulator=MinMaxLeftAccumulator, on=[(id@0, id@0)], projection=[id@0, _score@1, title@3, url@4]                                                 |
-|               |       CoalescePartitionsExec                                                                                                                                                                          |
-|               |         ProjectionExec: expr=[key@0 as id, 1 - distance@1 as _score]                                                                                                                                  |
-|               |           RepartitionExec: partitioning=RoundRobinBatch(16), input_partitions=1                                                                                                                       |
-|               |             CoalescePartitionsExec: fetch=4                                                                                                                                                           |
-|               |               CooperativeExec                                                                                                                                                                         |
-|               |                 BytesProcessedExec                                                                                                                                                                    |
-|               |                   RepartitionExec: partitioning=RoundRobinBatch(16), input_partitions=1                                                                                                               |
-|               |                     CooperativeExec                                                                                                                                                                   |
-|               |                       S3VectorsQueryExec (spiceai-cookbook/pulls-body-my-embedding-model): limit=4                                                                                                    |
-|               |       SchemaCastScanExec                                                                                                                                                                              |
-|               |         BytesProcessedExec                                                                                                                                                                            |
-|               |           DataSourceExec: partitions=1, partition_sizes=[6]                                                                                                                                           |
-|               |                                                                                                                                                                                                       |
-+---------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
++---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------+
+|   plan_type   |                                                                  plan                                                                  |
+|    varchar    |                                                                varchar                                                                 |
++---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------+
+| logical_plan  | Sort: vector_search(pulls, Utf8("bugs in DuckDB"), Int64(4))._score DESC NULLS FIRST, fetch=4                                           |
+|               |   Projection: vector_search(...).url, vector_search(...).title, vector_search(...)._score                                               |
+|               |     TableScan: vector_search(pulls, Utf8("bugs in DuckDB"), Int64(4)) projection=[_score, title, url]                                   |
+| physical_plan | SortExec: TopK(fetch=4), expr=[_score@2 DESC], preserve_partitioning=[false]                                                            |
+|               |   ProjectionExec: expr=[url@2 as url, title@1 as title, _score@3 as _score]                                                             |
+|               |     SortExec: TopK(fetch=4), expr=[_score@3 DESC NULLS LAST, id@0 ASC], preserve_partitioning=[false]                                   |
+|               |       ProjectionExec: expr=[id@1 as id, title@2 as title, url@3 as url,                                                                 |
+|               |                            1 - cosine_distance([...], body_embedding@0) as _score]                                                      |
+|               |         BytesProcessedExec                                                                                                              |
+|               |           DataSourceExec: partitions=1, partition_sizes=[18]                                                                            |
++---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------+
 ```
 
-The plan shows `S3VectorsQueryExec` for similarity search, joined via `HashJoinExec` with `DataSourceExec` to fetch fields like `title` and `url`.
+Because this dataset sets `acceleration: enabled: true`, the embeddings are materialized
+locally alongside the rows, and the similarity search is evaluated there — the plan scores
+rows with `cosine_distance` over the local `body_embedding` column. S3 Vectors is still the
+durable index: Spice creates it, writes every embedding through to it on ingestion, and
+serves reads from it when the vectors are not available locally.
 
-### Optimize with Metadata
+Confirm the vectors reached S3:
 
-To avoid joins and push filters, uncomment metadata columns in `spicepod.yaml`:
+```shell
+aws s3vectors list-vectors \
+  --vector-bucket-name <your-bucket> \
+  --index-name pulls-body-my-embedding-model \
+  --region us-east-2 --query 'length(vectors)'
+```
+
+### Metadata Columns
+
+The `spicepod.yaml` in this recipe declares metadata alongside the embedded column:
 
 ```yaml
 columns:
@@ -130,46 +147,34 @@ columns:
       vectors: filterable
 ```
 
-Restart:
+`filterable` metadata can be used in search predicates; `non-filterable` metadata is stored
+and returned but cannot be filtered on. These declarations shape the S3 Vectors index itself,
+visible on the created index:
 
 ```shell
-spice run
+aws s3vectors get-index \
+  --vector-bucket-name <your-bucket> \
+  --index-name pulls-body-my-embedding-model \
+  --region us-east-2
 ```
 
-Re-run the `EXPLAIN`:
-
-```sql
-EXPLAIN SELECT url, title, _score FROM vector_search(pulls, 'bugs in DuckDB', 4) ORDER BY _score DESC LIMIT 4;
+```json
+{
+  "index": {
+    "indexName": "pulls-body-my-embedding-model",
+    "dataType": "float32",
+    "dimension": 1536,
+    "distanceMetric": "cosine",
+    "metadataConfiguration": {
+      "nonFilterableMetadataKeys": [
+        "url"
+      ]
+    }
+  }
+}
 ```
 
-Plan:
-
-```sql
-+---------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|   plan_type   |                                                                                                  plan                                                                                                 |
-|    varchar    |                                                                                                varchar                                                                                                |
-+---------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| logical_plan  | Sort: vector_search(pulls, Utf8("bugs in DuckDB"), Int64(4))._score DESC NULLS FIRST, fetch=4                                                                                                         |
-|               |   Projection: vector_search(pulls, Utf8("bugs in DuckDB"), Int64(4)).url, vector_search(pulls, Utf8("bugs in DuckDB"), Int64(4)).title, vector_search(pulls, Utf8("bugs in DuckDB"), Int64(4))._score |
-|               |     TableScan: vector_search(pulls, Utf8("bugs in DuckDB"), Int64(4)) projection=[_score, title, url]                                                                                                 |
-| physical_plan | SortPreservingMergeExec: [_score@2 DESC], fetch=4                                                                                                                                                     |
-|               |   SortExec: TopK(fetch=4), expr=[_score@2 DESC], preserve_partitioning=[true]                                                                                                                         |
-|               |     ProjectionExec: expr=[url@1 as url, title@0 as title, 1 - distance@3 as _score]                                                                                                                   |
-|               |       RepartitionExec: partitioning=RoundRobinBatch(16), input_partitions=1                                                                                                                           |
-|               |         CoalescePartitionsExec: fetch=4                                                                                                                                                               |
-|               |           CooperativeExec                                                                                                                                                                             |
-|               |             BytesProcessedExec                                                                                                                                                                        |
-|               |               RepartitionExec: partitioning=RoundRobinBatch(16), input_partitions=1                                                                                                                   |
-|               |                 CooperativeExec                                                                                                                                                                       |
-|               |                   S3VectorsQueryExec (spiceai-cookbook/pulls-body-my-embedding-model): limit=4                                                                                                        |
-|               |                                                                                                                                                                                                       |
-+---------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-
-```
-
-Now, a single `S3VectorsQueryExec` retrieves all data, avoiding joins.
-
-Filter pushdown example:
+Filtering on a `filterable` column:
 
 ```sql
 EXPLAIN
@@ -183,26 +188,25 @@ LIMIT 4;
 Plan:
 
 ```sql
-+---------------+----------------------------------------------------------------------------------------------------------------------+
-| plan_type     | plan                                                      |
-+---------------+----------------------------------------------------------------------------------------------------------------------+
-| logical_plan  | Sort: vector_search()._score DESC NULLS FIRST, fetch=4     |
-|               |   Projection: vector_search().url, vector_search().title, vector_search()._score                                       |
-|               |     BytesProcessedNode                                    |
-|               |       TableScan: vector_search() projection=[title, url, _score], full_filters=[vector_search().state = Utf8("OPEN")]  |
-| physical_plan | SortPreservingMergeExec: [_score@2 DESC], fetch=4          |
-|               |   SortExec: TopK(fetch=4), expr=[_score@2 DESC], preserve_partitioning=[true]                                          |
-|               |     ProjectionExec: expr=[url@1 as url, title@0 as title, _score@2 as _score]                                           |
-|               |       BytesProcessedExec                                  |
-|               |         ProjectionExec: expr=[title@0 as title, url@1 as url, 1 - distance@2 as _score]                                |
-|               |           RepartitionExec: partitioning=RoundRobinBatch(10), input_partitions=1                                       |
-|               |             BytesProcessedExec                            |
-|               |               **S3VectorsQueryExec: filter={state:{$eq:"OPEN"}} limit=4**                                             |
-|               |                                                           |
-+---------------+----------------------------------------------------------------------------------------------------------------------+
++---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------+
+|   plan_type   |                                                                  plan                                                                  |
+|    varchar    |                                                                varchar                                                                 |
++---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------+
+| physical_plan | SortExec: TopK(fetch=4), expr=[_score@2 DESC], preserve_partitioning=[false]                                                            |
+|               |   ProjectionExec: expr=[url@2 as url, title@1 as title, _score@3 as _score]                                                             |
+|               |     SortPreservingMergeExec: [_score@3 DESC NULLS LAST, id@0 ASC], fetch=4                                                              |
+|               |       SortExec: TopK(fetch=4), expr=[_score@3 DESC NULLS LAST, id@0 ASC], preserve_partitioning=[true]                                  |
+|               |         ProjectionExec: expr=[id@1 as id, title@3 as title, url@4 as url,                                                               |
+|               |                              1 - cosine_distance([...], body_embedding@0) as _score]                                                    |
+|               |           RepartitionExec: partitioning=RoundRobinBatch(18), input_partitions=1                                                          |
+|               |             FilterExec: state@2 = OPEN                                                                                                  |
+|               |               BytesProcessedExec                                                                                                        |
+|               |                 DataSourceExec: partitions=1, partition_sizes=[18]                                                                      |
++---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------+
 ```
 
-The filter is pushed to `S3VectorsQueryExec`, ensuring accurate top-K results.
+The predicate is applied before scoring, so the top-K is computed over matching rows only
+rather than filtered afterward.
 
 ## Search via HTTP
 
@@ -221,10 +225,14 @@ curl --request POST \
 		"url",
 		"title"
 	],
-	"where": "state='\''CLOSED'\''",
+	"where": "state='\''MERGED'\''",
 	"limit": 4
 }'
 ```
+
+`state` is one of `OPEN`, `MERGED`, or `CLOSED`; a 7-day window on an active repository
+typically holds only `OPEN` and `MERGED`, so filtering on `CLOSED` can legitimately return
+no results.
 
 Response:
 

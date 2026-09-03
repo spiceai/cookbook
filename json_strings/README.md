@@ -80,8 +80,8 @@ Result:
 2026-08-01T12:22:17.794970Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2026-08-01T12:22:17.796959Z  INFO runtime::init::dataset: Dataset products registered (file://tshirts.csv), acceleration (arrow), results cache enabled. duration_ms=0
 2026-08-01T12:22:17.797065Z  INFO runtime::datafusion: Initializing view products_with_color
-2026-08-01T12:22:17.798404Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset products
-2026-08-01T12:22:17.799379Z  INFO runtime::accelerated_table::refresh_task: Loaded 8 rows (3.46 kiB) for dataset products in 0s.
+2026-08-01T12:22:17.798404Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset products
+2026-08-01T12:22:17.799379Z  INFO runtime_table::accelerated::refresh_task: Loaded 8 rows (3.46 kiB) for dataset products in 0s.
 2026-08-01T12:22:18.721572Z  INFO runtime::datafusion: View products_with_color registered.
 2026-08-01T12:22:18.820636Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
@@ -90,14 +90,14 @@ Run `spice sql` in another window and review the `products` dataset structure. Y
 
 ```console
 sql> describe products;
-+--------------+-------------+-----------+-------------+
-| table_schema | column_name | data_type | is_nullable |
-|    varchar   |   varchar   |  varchar  |   varchar   |
-+--------------+-------------+-----------+-------------+
-| public       | id          | Int64     | YES         |
-| public       | name        | Utf8      | YES         |
-| public       | properties  | Utf8      | YES         |
-+--------------+-------------+-----------+-------------+
++-------------+-----------+-------------+
+| column_name | data_type | is_nullable |
+|   varchar   |  varchar  |   varchar   |
++-------------+-----------+-------------+
+| id          | Int64     | YES         |
+| name        | Utf8      | YES         |
+| properties  | Utf8      | YES         |
++-------------+-----------+-------------+
 ```
 
 ```console
@@ -224,15 +224,15 @@ Query products and their colors using the created view:
 
 ```console
 sql> describe products_with_color;
-+--------------+-------------+-----------+-------------+
-| table_schema | column_name | data_type | is_nullable |
-|    varchar   |   varchar   |  varchar  |   varchar   |
-+--------------+-------------+-----------+-------------+
-| public       | id          | Int64     | YES         |
-| public       | name        | Utf8      | YES         |
-| public       | properties  | Utf8      | YES         |
-| public       | color       | Utf8      | YES         |
-+--------------+-------------+-----------+-------------+
++-------------+-----------+-------------+
+| column_name | data_type | is_nullable |
+|   varchar   |  varchar  |   varchar   |
++-------------+-----------+-------------+
+| id          | Int64     | YES         |
+| name        | Utf8      | YES         |
+| properties  | Utf8      | YES         |
+| color       | Utf8      | YES         |
++-------------+-----------+-------------+
 ```
 
 ```console

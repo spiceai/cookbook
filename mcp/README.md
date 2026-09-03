@@ -70,6 +70,8 @@ curl -H 'x-api-key: foobar' http://127.0.0.1:8090/v1/tools | jq '.[].name'
 
 This shows both the built in tools (e.g. `sql`) and all the tools listed by the MCP server `fs`.
 
+> **Tool naming (Spice `v2.2+`):** Proxied tools are exposed as `<tool-name>__<upstream-tool-name>`, joined by a **double underscore** — `fs__read_file`, not `fs/read_file`. MCP clients such as Claude and Cursor reject tool names outside `^[a-zA-Z0-9_-]{1,64}$`, and the previous `/` separator made every proxied tool unusable in those clients ([spiceai/spiceai#10894](https://github.com/spiceai/spiceai/issues/10894)). The `<tool-name>` half is the `name` given in the `tools` section of `spicepod.yaml`, so renaming the tool renames every tool it proxies. On `v2.1.x` and earlier, substitute `/` for `__` throughout this recipe.
+
 5. List the files from the current directory using the `fs__list_directory` MCP tool.
 
 ```bash
@@ -226,6 +228,9 @@ Now you will see the following tools:
 - Builtin tools within the second spicepod.
 - Builtin tools from the first spicepod, over MCP (e.g. `spice_mcp__sql`).
 - Tools from the filesystem MCP server, connected to via the first spicepod, over MCP (e.g. `spice_mcp__fs_-_read_file`).
+
+  Chaining two hops escapes the inner separator: the first instance already exposes the tool as `fs__read_file`, and prefixing it again would produce an ambiguous `spice_mcp__fs__read_file`. So the inner `__` is rewritten to `_-_`, giving `spice_mcp__fs_-_read_file`, which decodes back to catalog `spice_mcp` and tool `fs__read_file`.
+
   ```ascii
   +----------------------------+     +--------------------+     +-----------------+
   | 2nd Spice Instance         |     | 1st Spice Instance |     | `fs` MCP Server |

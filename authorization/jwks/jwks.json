@@ -1,0 +1,12 @@
+{
+  "keys": [
+    {
+      "kty": "RSA",
+      "n": "lD5eXw2RUOjmkqxWsixIFs3yvEuk0cTzbcpTk_3aq4fyTqpZu6NNlD_LIQjVEqaMJ99ibVEwcmuZTug8bjM2-C-duOuSMguTUoD-z_DZX9OvheTrqwFEy_2btFIUKUo2ibdsa-IjA3i-wxGc8zXVy4UyPqMr-JG39OnhlmFXNCUyt5UiwQtvC4wb0iiVW74Wm9JS5dYMG-KC1OLC9kEu3PlZFTlSfXCqnTvX4LnXToTPcUya_n3Apns4mMPCt0Qn0BvdmVCvA3oRA0LpAo2qPTnK44hAHKd1rincpJFyeX6ASrbmzbqSouOQGtauF8VbmYYnaCsGlBIwRqVzh84nSw",
+      "e": "AQAB",
+      "kid": "spice-cookbook-key",
+      "alg": "RS256",
+      "use": "sig"
+    }
+  ]
+}

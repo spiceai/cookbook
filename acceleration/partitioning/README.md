@@ -45,12 +45,14 @@ Confirm in the terminal output the `taxi_trips` dataset has been loaded and acce
 
 ```bash
 Spice.ai runtime starting...
-2024-09-16T21:25:43.306009Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2024-09-16T21:25:43.309474Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2024-09-16T21:25:43.507974Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
-2024-09-16T21:25:44.101055Z  INFO runtime: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (cayenne:file), results cache enabled.
-2024-09-16T21:25:45.310382Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
-2024-09-16T21:26:01.477553Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (421.71 MiB) for dataset taxi_trips in 4s 167ms.
+2026-08-15T12:09:50.445159Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2026-08-15T12:09:50.465737Z  INFO runtime::init::dataset: Dataset taxi_trips initializing...
+2026-08-15T12:09:50.646429Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2026-08-15T12:09:50.646776Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2026-08-15T12:09:51.818849Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (cayenne:file), results cache enabled. duration_ms=101
+2026-08-15T12:09:51.820118Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
+2026-08-15T12:10:02.183762Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 10s 363ms.
+2026-08-15T12:10:02.265750Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
 **Step 4.** Run queries against the dataset using the Spice SQL REPL.
@@ -70,11 +72,12 @@ SELECT COUNT(DISTINCT PULocationID) as unique_locations FROM taxi_trips;
 ```
 +------------------+
 | unique_locations |
+|       int64      |
 +------------------+
 | 260              |
 +------------------+
 
-Time: 0.088840307 seconds. 1 rows
+Time: 0.031309 seconds. 1 rows.
 ```
 
 Now run a query filtering by a specific pickup location:
@@ -86,11 +89,12 @@ SELECT COUNT(*) FROM taxi_trips WHERE PULocationID = 161;
 ```
 +----------+
 | count(*) |
+|   int64  |
 +----------+
 | 143471   |
 +----------+
 
-Time: 0.041479883 seconds. 1 rows.
+Time: 0.007991375 seconds. 1 rows.
 ```
 
 Notice that without partitioning, Spice must scan the entire dataset for this query.
@@ -122,12 +126,14 @@ The `bucket(50, PULocationID)` function hashes the `PULocationID` column and dis
 **Step 6.** Restart the Spice app and observe the dataset being loaded with partitioning.
 
 ```bash
-2024-09-12T23:08:53.964728Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2024-09-12T23:08:53.965420Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2024-09-12T23:08:53.965471Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
-2024-09-12T23:08:55.308963Z  INFO runtime: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (cayenne:file), results cache enabled.
-2024-09-12T23:08:55.310382Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
-2024-09-12T23:09:11.477553Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (421.71 MiB) for dataset taxi_trips in 24s 380ms.
+2026-08-15T12:11:09.653803Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2026-08-15T12:11:09.655711Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2026-08-15T12:11:09.656053Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2026-08-15T12:11:09.664397Z  INFO runtime::init::dataset: Dataset taxi_trips initializing...
+2026-08-15T12:11:15.122630Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (cayenne:file), results cache enabled. duration_ms=76
+2026-08-15T12:11:15.123765Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
+2026-08-15T12:11:23.519321Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 8s 395ms.
+2026-08-15T12:11:23.604755Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
 **Step 7.** Run the same query again to see the performance improvement from partition pruning.
@@ -139,14 +145,17 @@ SELECT COUNT(*) FROM taxi_trips WHERE PULocationID = 161;
 ```
 +----------+
 | count(*) |
+|   int64  |
 +----------+
 | 143471   |
 +----------+
 
-Time: 0.028580917 seconds. 1 rows.
+Time: 0.00751475 seconds. 1 rows.
 ```
 
-The query is now significantly faster because Spice only reads the partition(s) containing `PULocationID = 161`, rather than scanning the entire dataset.
+The same count is returned, but Spice now only reads the partition containing `PULocationID = 161` rather than scanning the entire dataset. The partition files are visible under `.spice/data/taxi_trips/` as `expr0=<bucket>` directories.
+
+The speedup grows with the size of the dataset and the selectivity of the filter — on this 2.9M-row sample both queries already complete in single-digit milliseconds, so the benefit is most visible at terabyte scale.
 
 ## Partitioning Functions
 

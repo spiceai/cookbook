@@ -6,3 +6,5 @@ acceleration/indexes/spicepod.yaml
 *-qs/
 bin/
 obj/
+.env
+.spice/

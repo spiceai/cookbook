@@ -2,7 +2,7 @@
 
 Works with `v1.0+`
 
-This repository provides a simple cookbook example demonstrating how to use Python to query Spice via the Apache Arrow Database Connectivity (ADBC) API with the Flight SQL interface to Spice OSS. The example script connects to a local Spice OSS runtime, executes a parameterized query and a simple query, and fetches results as Arrow Tables.
+This repository provides a simple cookbook example demonstrating how to use Python to query Spice via the Apache Arrow Database Connectivity (ADBC) API with the Flight SQL interface to Spice OSS. The example script connects to a local Spice OSS runtime, executes a parameterized query, and fetches results as an Arrow Table.
 
 ## Requirements
 
@@ -22,7 +22,7 @@ cd cookbook/clients/adbc
 ### 2. Install dependencies
 
 ```bash
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
@@ -60,7 +60,7 @@ AccountId: [["account123","account789","account456"]]
 ServiceId: [["service789","service789","service789"]]
 AddOnSid: [["addon3","addon7","addon10"]]
 AddOnTypeSid: [["type123","type123","type789"]]
-AddOnJson: [["{\feature\":\"voice_integration\"}"","{\feature\":\"voice_integration\"}"","{\feature\":\"mms_support\"}""]]
+AddOnJson: [["{"feature":"voice_integration"}","{"feature":"voice_integration"}","{"feature":"mms_support"}"]]
 DateCreated: [[2025-04-03 15:45:00,2025-04-07 11:30:00,2025-04-10 09:45:00]]
 DateUpdated: [[2025-04-03 15:45:00,2025-04-07 11:30:00,2025-04-10 09:45:00]]
 ```
