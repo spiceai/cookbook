@@ -46,12 +46,16 @@ curl -H 'x-api-key: foobar' http://127.0.0.1:8090/v1/tools | jq '.[].name'
 "load_memory"
 "store_memory"
 "random_sample"
+"get_current_datetime"
 "fs__read_file"
+"fs__read_text_file"
+"fs__read_media_file"
 "fs__read_multiple_files"
 "fs__write_file"
 "fs__edit_file"
 "fs__create_directory"
 "fs__list_directory"
+"fs__list_directory_with_sizes"
 "fs__directory_tree"
 "fs__move_file"
 "fs__search_files"
@@ -112,14 +116,12 @@ Spice.ai OSS CLI v2.0.0-unstable (c771b74aa)
  Tree                                   Status  Duration    Span ID
  ai_chat                                OK       9953.36ms  d051f9effec60261
  ai_completion                          OK       9953.06ms  6ccd967faf4dfa1a
- tool_use::fs/list_allowed_directories  OK          1.51ms  0091894899b22e4c
+ tool_use::fs__list_allowed_directories OK          1.51ms  0091894899b22e4c
  ai_completion                          OK       9053.25ms  1e9fb1c8408c3ac0
- tool_use::fs/read_text_file            OK          2.96ms  5b3f4b2982e89d0b
+ tool_use::fs__read_text_file           OK          2.96ms  5b3f4b2982e89d0b
  ai_completion                          OK       7731.02ms  9bb53d8608cd4791
 
 ```
-
-> **Note:** The trace shows `tool_use::fs/read_text_file` with a `/`, even though the tool is now called `fs__read_text_file`. Task-history labels were missed by the rename, so the two spellings currently coexist depending on how the tool was invoked — tracked in [spiceai/spiceai#13338](https://github.com/spiceai/spiceai/issues/13338).
 
 ## Connect to Spice over MCP
 
@@ -209,6 +211,9 @@ curl -H 'x-api-key: foobar' http://127.0.0.1:8091/v1/tools | jq '.[].name'
 "spice_mcp__list_datasets"
 "spice_mcp__search"
 "spice_mcp__table_schema"
+"spice_mcp__auto_-_sql"
+"spice_mcp__memory_-_load_memory"
+"spice_mcp__memory_-_store_memory"
 "table_schema"
 "sql"
 "get_readiness"
