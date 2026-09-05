@@ -131,13 +131,13 @@ Run `spice search`
 
 ```shell
 search> animals
- Rank  Match                                                                                     Score   Dataset
- 1     A Beautiful Story of a Dog And a Technical Writer who must Outgun a Student in A Balloon  0.8975  spice.public.films
- 2     A Epic Documentary of a Hunter And a Dog who must Outgun a Dog in A Balloon Factory       0.8941  spice.public.films
- 3     A Boring Display of a Man And a Dog who must Redeem a Girl in A U-Boat                    0.8897  spice.public.films
+ Rank  Match                                                                                             Score   Dataset
+ 1     A Touching Reflection of a Crocodile And a Dog who must Chase a Hunter in An Abandoned Fun House  0.7381  spice.public.films
+ 2     A Amazing Saga of a Dog And a A Shark who must Challenge a Cat in The Sahara Desert               0.7374  spice.public.films
+ 3     A Boring Display of a Moose And a Squirrel who must Outrace a Teacher in A Shark Tank             0.7345  spice.public.films
  ...
 
-Time: 0.032 seconds. 10 results.
+Time: 0.045 seconds. 10 results.
 ```
 
 Or using API: https://docs.spiceai.org/api/HTTP/post-search
@@ -157,46 +157,56 @@ curl -X POST http://localhost:8090/v1/search \
   "results": [
     {
       "matches": {
-        "description": "A Beautiful Story of a Dog And a Technical Writer who must Outgun a Student in A Balloon"
+        "description": [
+          "A Touching Reflection of a Crocodile And a Dog who must Chase a Hunter in An Abandoned Fun House"
+        ]
       },
-      "_score": 0.8974827855112448,
-      "dataset": "spice.public.films",
+      "data": {
+        "title": "STRICTLY SCARFACE",
+        "rental_rate": 2.99,
+        "release_year": 2006
+      },
+      "_score": 0.7381305772506472,
+      "dataset": "spice.public.films"
+    },
+    {
+      "matches": {
+        "description": [
+          "A Amazing Saga of a Dog And a A Shark who must Challenge a Cat in The Sahara Desert"
+        ]
+      },
+      "data": {
+        "title": "ORDER BETRAYED",
+        "release_year": 2006,
+        "rental_rate": 2.99
+      },
+      "_score": 0.7373867489232178,
+      "dataset": "spice.public.films"
+    },
+    {
+      "matches": {
+        "description": [
+          "A Boring Display of a Moose And a Squirrel who must Outrace a Teacher in A Shark Tank"
+        ]
+      },
       "data": {
         "rental_rate": 2.99,
-        "release_year": 2006,
-        "title": "POTLUCK MIXED"
-      }
-    },
-    {
-      "matches": {
-        "description": "A Epic Documentary of a Hunter And a Dog who must Outgun a Dog in A Balloon Factory"
-      },
-      "_score": 0.8941260610769606,
-      "dataset": "spice.public.films",
-      "data": {
-        "title": "IGBY MAKER",
-        "rental_rate": 4.99,
+        "title": "LUCK OPUS",
         "release_year": 2006
-      }
-    },
-    {
-      "matches": {
-        "description": "A Boring Display of a Man And a Dog who must Redeem a Girl in A U-Boat"
       },
-      "_score": 0.8896955774714774,
-      "dataset": "spice.public.films",
-      "data": {
-        "rental_rate": 0.99,
-        "title": "TIMBERLAND SKY",
-        "release_year": 2006
-      }
+      "_score": 0.7344745862880335,
+      "dataset": "spice.public.films"
     }
   ],
-  "duration_ms": 30
+  "duration_ms": 173
 }
 ```
 
+Each entry in `matches` is a list: a column can contribute more than one highlight to a single row, so the runtime always returns the highlights as an array.
+
 > **Version note:** The relevance score is returned in the `_score` field (leading underscore) on Spice `v2.0+`. On `v1.x` it was returned as `score` (no underscore).
+>
+> The matches and scores above are from Spice `v2.2.1+`. Earlier releases padded every input to the fixed length declared in the embedding model's `tokenizer.json`, so the padding dominated the vector of a short description and the search returned less relevant results with tightly clustered scores near `0.89`. See the [v2.2.1 release notes](https://github.com/spiceai/spiceai/releases/tag/v2.2.1).
 
 ### Using Language Model
 
