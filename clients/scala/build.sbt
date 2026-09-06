@@ -15,8 +15,11 @@ libraryDependencies ++= Seq(
 run / javaOptions += "--add-opens=java.base/java.nio=ALL-UNNAMED"
 run / javaOptions += "--add-opens=java.base/java.lang=ALL-UNNAMED"
 
-// Arrow's Netty allocator uses sun.misc.Unsafe memory access, which JDK 24+ disables by
-// default (JEP 498). The flag was only added in JDK 23, so it is applied conditionally.
+// Arrow allocates through Netty, and Netty switches off its own sun.misc.Unsafe path
+// whenever the JVM reports `sun.misc.unsafe.memory.access` as anything other than `allow`,
+// leaving Arrow with no usable allocator. JDK 24 sets that property to `warn` by default
+// (JEP 498 phase 2 — the JDK does not itself deny the calls until phase 3, JDK 26 or later).
+// The option only exists from JDK 23 on, so it is applied conditionally.
 run / javaOptions ++= {
   val jdk = System.getProperty("java.specification.version").toInt
   if (jdk >= 23) Seq("--sun-misc-unsafe-memory-access=allow") else Seq.empty
