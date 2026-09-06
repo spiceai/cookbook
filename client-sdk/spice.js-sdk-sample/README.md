@@ -55,8 +55,8 @@ npm start
 ```
 
 `index_cloud.mjs` is a minimal cloud-only snippet and keeps an inline API key placeholder
-by design. Replace the API key placeholder in `index_cloud.mjs` with `${SPICE_API_KEY}`,
-then run:
+by design. It does not read the environment, so replace its `API_KEY` placeholder with the
+key itself rather than with `${SPICE_API_KEY}`, then run:
 
 ```bash
 node index_cloud.mjs
