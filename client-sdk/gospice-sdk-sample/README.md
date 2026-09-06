@@ -11,7 +11,7 @@ Use the [gospice SDK](https://github.com/spiceai/gospice) to query Spice from Go
 
 ## Prerequisites
 
-- [Go](https://go.dev/) 1.24+
+- [Go](https://go.dev/) 1.25+
 - [Spice CLI](https://docs.spiceai.org/getting-started) for local mode
 
 ## Local Quick Start
@@ -89,6 +89,6 @@ Expected output is a list of tables from `show tables;`.
 ## Links
 
 - [gospice SDK](https://github.com/spiceai/gospice)
-- [Go package](https://pkg.go.dev/github.com/spiceai/gospice/v6)
+- [Go package](https://pkg.go.dev/github.com/spiceai/gospice/v8)
 - [Spice.ai Cloud](https://spice.ai)
 - [Spice.ai documentation](https://docs.spiceai.org)
