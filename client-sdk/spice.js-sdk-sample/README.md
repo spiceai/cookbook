@@ -47,7 +47,16 @@ Set your API key for the commands in this README:
 export SPICE_API_KEY="your_api_key"
 ```
 
-The cloud snippet keeps an inline API key placeholder by design. Replace the API key placeholder in `index_cloud.mjs` with `${SPICE_API_KEY}`, then run:
+`index.js` reads `SPICE_API_KEY` (from the environment or a `.env` file) and connects to
+Spice.ai Cloud instead of the local runtime when it is set - no code edit needed:
+
+```bash
+npm start
+```
+
+`index_cloud.mjs` is a minimal cloud-only snippet and keeps an inline API key placeholder
+by design. Replace the API key placeholder in `index_cloud.mjs` with `${SPICE_API_KEY}`,
+then run:
 
 ```bash
 node index_cloud.mjs
@@ -66,7 +75,7 @@ Spice.js initialized
 NYC Taxi Trips Data Analysis
 
 Connected to: Local Spice Runtime
-Tip: Use `index_cloud.mjs` with your cloud API key for Spice.ai Cloud
+Tip: Set SPICE_API_KEY in .env to use Spice.ai Cloud
 
 Querying taxi_trips dataset...
 
