@@ -11,6 +11,12 @@
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+        <!-- Apache Arrow's Netty allocator uses sun.misc.Unsafe memory access, which JDK 24+
+             disables by default (JEP 498). Without the flag the client dies opening the Flight
+             SQL connection with UnsupportedOperationException. The flag was only added in JDK
+             23, so the default below repeats the add-opens argument (harmless) and the
+             jdk23-plus profile swaps in the real flag. -->
+        <arrow.unsafe.arg>--add-opens=java.base/java.nio=ALL-UNNAMED</arrow.unsafe.arg>
     </properties>
 
     <dependencies>
@@ -51,6 +57,7 @@
             <executable>java</executable>
             <arguments>
             <argument>--add-opens=java.base/java.nio=ALL-UNNAMED</argument>
+            <argument>${arrow.unsafe.arg}</argument>
             <argument>-classpath</argument>
             <classpath/>
             <argument>MessagingServiceApp</argument>
@@ -59,4 +66,15 @@
         </plugin>
     </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>jdk23-plus</id>
+            <activation>
+                <jdk>[23,)</jdk>
+            </activation>
+            <properties>
+                <arrow.unsafe.arg>--sun-misc-unsafe-memory-access=allow</arrow.unsafe.arg>
+            </properties>
+        </profile>
+    </profiles>
 </project>

@@ -6,7 +6,7 @@ This guide demonstrates how to use Java to query Spice via the Apache Arrow Flig
 
 ## Requirements
 
-- JDK 17
+- JDK 17 or newer
 - [Maven](https://maven.apache.org/) installed
 - [Spice CLI](https://docs.spiceai.org/getting-started) installed and Spice OSS runtime available
 
