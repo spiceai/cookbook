@@ -107,12 +107,13 @@ show tables;
 ```
 
 ```console
-+---------------+--------------+---------------+------------+
-| table_catalog | table_schema | table_name    | table_type |
-+---------------+--------------+---------------+------------+
-| spice         | public       | taxi_trips    | BASE TABLE |
-| spice         | runtime      | task_history  | BASE TABLE |
-+---------------+--------------+---------------+------------+
++---------------+--------------+--------------+------------+
+| table_catalog | table_schema |  table_name  | table_type |
+|    varchar    |    varchar   |    varchar   |   varchar  |
++---------------+--------------+--------------+------------+
+| spice         | public       | taxi_trips   | BASE TABLE |
+| spice         | runtime      | task_history | BASE TABLE |
++---------------+--------------+--------------+------------+
 
 Time: 0.010070708 seconds. 2 rows.
 ```
@@ -126,6 +127,7 @@ select avg(total_amount), avg(tip_amount), count(1), passenger_count from taxi_t
 ```console
 +------------------------------+----------------------------+-----------------+-----------------+
 | avg(taxi_trips.total_amount) | avg(taxi_trips.tip_amount) | count(Int64(1)) | passenger_count |
+|            float64           |           float64          |      int64      |      int64      |
 +------------------------------+----------------------------+-----------------+-----------------+
 | 25.327816939456493           | 3.0722599713967904         | 31465           | 0               |
 | 26.205230445472967           | 3.371262288468208          | 2188739         | 1               |

@@ -61,6 +61,7 @@ You should see the following output:
 sql> select avg(passenger_count) from yellow_taxis;
 +-----------------------------------+
 | avg(yellow_taxis.passenger_count) |
+|              float64              |
 +-----------------------------------+
 | 1.3392808966805005                |
 +-----------------------------------+
@@ -150,7 +151,8 @@ Expected output:
 
 ```text
 +----------------------------+
-| location                   |
+|          location          |
+|           varchar          |
 +----------------------------+
 | path/to/file/clickhouse.md |
 | path/to/file/debezium.md   |
