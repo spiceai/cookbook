@@ -21,7 +21,10 @@ Multi-tenancy isolates by **organization**; RLS isolates by **user**.
 
 ## Requirements
 
-- Spice.ai runtime (Enterprise) - [Install Spice.ai](https://docs.spiceai.org/installation)
+- Spice.ai runtime, **Enterprise distribution** - the OSS runtime has no
+  `oidc` or `authorization` configuration and rejects this Spicepod (see
+  [Step 2](#step-2-run-spice)).
+  [Get Spice.ai Enterprise](https://docs.spice.ai/docs/enterprise)
 - `python3` (standard library) to serve the JWKS
 - `node` - only to regenerate the demo tokens
 
@@ -62,6 +65,20 @@ In a second terminal:
 spice run
 ```
 
+> **On the OSS runtime this looks like a success but is not.** The Spicepod is
+> rejected, no datasets load, and the runtime still logs `All components are
+> loaded. Spice runtime is ready!` - that line is printed either way, so it does
+> **not** confirm the recipe is working. The warning below is the failure signal:
+> if `spice run` prints it, stop here and install the Enterprise distribution,
+> because every query below will fail with
+> `table 'spice.public.customers' not found`:
+>
+> ```text
+> WARN spiced: Starting in pods watcher mode without a valid spicepod.yaml. The runtime will load
+> components once a valid spicepod.yaml is provided: Unable to load spicepod ...: Failed to parse
+> spicepod.yaml: unknown field `oidc`, expected `api-key` or `api_key`
+> ```
+
 ## Step 3: Load the demo tokens
 
 In a third terminal:
@@ -82,13 +99,14 @@ echo 'select id, tenant_id, email, ssn from customers order by id;' \
 ```
 
 ```text
-+----+-----------+---------+-------------+
-| id | tenant_id | email   | ssn         |
-+----+-----------+---------+-------------+
-| 1  | acme      | ***@*** | ***-**-**** |
-| 2  | acme      | ***@*** | ***-**-**** |
-| 5  | acme      | ***@*** | ***-**-**** |
-+----+-----------+---------+-------------+
++-------+-----------+---------+-------------+
+|   id  | tenant_id |  email  |     ssn     |
+| int64 |  varchar  | varchar |   varchar   |
++-------+-----------+---------+-------------+
+| 1     | acme      | ***@*** | ***-**-**** |
+| 2     | acme      | ***@*** | ***-**-**** |
+| 5     | acme      | ***@*** | ***-**-**** |
++-------+-----------+---------+-------------+
 ```
 
 The same query as a Globex analyst returns Globex rows only - tenant isolation
@@ -100,12 +118,13 @@ echo 'select id, tenant_id, email, ssn from customers order by id;' \
 ```
 
 ```text
-+----+-----------+---------+-------------+
-| id | tenant_id | email   | ssn         |
-+----+-----------+---------+-------------+
-| 3  | globex    | ***@*** | ***-**-**** |
-| 4  | globex    | ***@*** | ***-**-**** |
-+----+-----------+---------+-------------+
++-------+-----------+---------+-------------+
+|   id  | tenant_id |  email  |     ssn     |
+| int64 |  varchar  | varchar |   varchar   |
++-------+-----------+---------+-------------+
+| 3     | globex    | ***@*** | ***-**-**** |
+| 4     | globex    | ***@*** | ***-**-**** |
++-------+-----------+---------+-------------+
 ```
 
 ## Step 5: Row-level security by ownership
@@ -118,12 +137,13 @@ echo 'select id, tenant_id, owner, name, amount from deals order by id;' \
 ```
 
 ```text
-+----+-----------+------------+--------------+--------+
-| id | tenant_id | owner      | name         | amount |
-+----+-----------+------------+--------------+--------+
-| 1  | acme      | alice@acme | Acme Renewal | 50000  |
-| 2  | acme      | alice@acme | Acme Upsell  | 20000  |
-+----+-----------+------------+--------------+--------+
++-------+-----------+------------+--------------+--------+
+|   id  | tenant_id |    owner   |     name     | amount |
+| int64 |  varchar  |   varchar  |    varchar   |  int64 |
++-------+-----------+------------+--------------+--------+
+| 1     | acme      | alice@acme | Acme Renewal | 50000  |
+| 2     | acme      | alice@acme | Acme Upsell  | 20000  |
++-------+-----------+------------+--------------+--------+
 ```
 
 Dana is in the **same tenant** as Alice (`acme`), but sees only the row she
@@ -135,11 +155,12 @@ echo 'select id, tenant_id, owner, name, amount from deals order by id;' \
 ```
 
 ```text
-+----+-----------+-----------+----------------+--------+
-| id | tenant_id | owner     | name           | amount |
-+----+-----------+-----------+----------------+--------+
-| 3  | acme      | dana@acme | Acme Expansion | 75000  |
-+----+-----------+-----------+----------------+--------+
++-------+-----------+-----------+----------------+--------+
+|   id  | tenant_id |   owner   |      name      | amount |
+| int64 |  varchar  |  varchar  |     varchar    |  int64 |
++-------+-----------+-----------+----------------+--------+
+| 3     | acme      | dana@acme | Acme Expansion | 75000  |
++-------+-----------+-----------+----------------+--------+
 ```
 
 `morgan` holds the `admin` role, which is exempt from the ownership filter and
@@ -152,14 +173,15 @@ echo 'select id, tenant_id, owner, name, amount from deals order by id;' \
 ```
 
 ```text
-+----+-----------+------------+-----------------+--------+
-| id | tenant_id | owner      | name            | amount |
-+----+-----------+------------+-----------------+--------+
-| 1  | acme      | alice@acme | Acme Renewal    | 50000  |
-| 2  | acme      | alice@acme | Acme Upsell     | 20000  |
-| 3  | acme      | dana@acme  | Acme Expansion  | 75000  |
-| 5  | acme      | hebe@acme  | Acme Onboarding | 30000  |
-+----+-----------+------------+-----------------+--------+
++-------+-----------+------------+-----------------+--------+
+|   id  | tenant_id |    owner   |       name      | amount |
+| int64 |  varchar  |   varchar  |     varchar     |  int64 |
++-------+-----------+------------+-----------------+--------+
+| 1     | acme      | alice@acme | Acme Renewal    | 50000  |
+| 2     | acme      | alice@acme | Acme Upsell     | 20000  |
+| 3     | acme      | dana@acme  | Acme Expansion  | 75000  |
+| 5     | acme      | hebe@acme  | Acme Onboarding | 30000  |
++-------+-----------+------------+-----------------+--------+
 ```
 
 ## Step 6: Role-conditional PII
@@ -173,13 +195,14 @@ echo 'select id, tenant_id, email, ssn from customers order by id;' \
 ```
 
 ```text
-+----+-----------+--------------------+-------------+
-| id | tenant_id | email              | ssn         |
-+----+-----------+--------------------+-------------+
-| 1  | acme      | alice@acme.example | 111-11-1111 |
-| 2  | acme      | aaron@acme.example | 222-22-2222 |
-| 5  | acme      | amy@acme.example   | 555-55-5555 |
-+----+-----------+--------------------+-------------+
++-------+-----------+--------------------+-------------+
+|   id  | tenant_id |        email       |     ssn     |
+| int64 |  varchar  |       varchar      |   varchar   |
++-------+-----------+--------------------+-------------+
+| 1     | acme      | alice@acme.example | 111-11-1111 |
+| 2     | acme      | aaron@acme.example | 222-22-2222 |
+| 5     | acme      | amy@acme.example   | 555-55-5555 |
++-------+-----------+--------------------+-------------+
 ```
 
 ## Step 7: RBAC
@@ -202,12 +225,13 @@ echo 'select * from salaries order by id;' | spice sql --api-key "$TOKEN_HEBE"
 ```
 
 ```text
-+----+-----------+----------------+--------+
-| id | tenant_id | employee       | amount |
-+----+-----------+----------------+--------+
-| 1  | acme      | Alice Anderson | 120000 |
-| 2  | acme      | Aaron Ackerman | 115000 |
-+----+-----------+----------------+--------+
++-------+-----------+----------------+--------+
+|   id  | tenant_id |    employee    | amount |
+| int64 |  varchar  |     varchar    |  int64 |
++-------+-----------+----------------+--------+
+| 1     | acme      | Alice Anderson | 120000 |
+| 2     | acme      | Aaron Ackerman | 115000 |
++-------+-----------+----------------+--------+
 ```
 
 
