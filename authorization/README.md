@@ -67,8 +67,11 @@ spice run
 
 > **On the OSS runtime this looks like a success but is not.** The Spicepod is
 > rejected, no datasets load, and the runtime still logs `All components are
-> loaded. Spice runtime is ready!` - so check for this line, otherwise every
-> query below fails with `table 'spice.public.customers' not found`:
+> loaded. Spice runtime is ready!` - that line is printed either way, so it does
+> **not** confirm the recipe is working. The warning below is the failure signal:
+> if `spice run` prints it, stop here and install the Enterprise distribution,
+> because every query below will fail with
+> `table 'spice.public.customers' not found`:
 >
 > ```text
 > WARN spiced: Starting in pods watcher mode without a valid spicepod.yaml. The runtime will load
