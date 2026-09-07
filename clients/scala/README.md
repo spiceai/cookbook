@@ -6,7 +6,7 @@ This guide demonstrates how to use Scala to query Spice via the Apache Arrow Fli
 
 ## Requirements
 
-- JDK 17
+- JDK 17 or newer
 - [sbt](https://www.scala-sbt.org/) installed
 - [Spice CLI](https://docs.spiceai.org/getting-started) installed and Spice OSS runtime available
 
