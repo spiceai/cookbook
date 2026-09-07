@@ -1,6 +1,6 @@
 # DynamoDB Streams Data Connector (AWS Hosted)
 
-Works with `v1.10+`
+Works with `v2.2.0+`
 
 This recipe demonstrates how to configure a Spice dataset to stream real-time changes from an AWS-hosted DynamoDB table using DynamoDB Streams. You'll see how inserts, updates, and deletes automatically flow into Spice.
 
