@@ -19,6 +19,16 @@
      <maven.compiler.source>17</maven.compiler.source>
      <maven.compiler.target>17</maven.compiler.target>
      <exec.mainClass>ai.spice.example.App</exec.mainClass>
+     <!-- Apache Arrow allocates through Netty, and Netty switches off its own
+          sun.misc.Unsafe path whenever the JVM reports `sun.misc.unsafe.memory.access` as
+          anything other than `allow`. That leaves Arrow with no usable allocator, and the
+          sample dies in SpiceClient's constructor with UnsupportedOperationException. JDK 24
+          sets that property to `warn` by default (JEP 498 phase 2 — the JDK does not itself
+          deny the calls until phase 3, JDK 26 or later), so passing `allow` is what keeps
+          Netty's Unsafe path available. The option only exists from JDK 23 on, so the default
+          below repeats the add-opens argument (harmless) and the jdk23-plus profile swaps in
+          the real flag. -->
+     <arrow.unsafe.arg>--add-opens=java.base/java.nio=ALL-UNNAMED</arrow.unsafe.arg>
   </properties>
   <build>
     <plugins>
@@ -27,9 +37,12 @@
         <artifactId>exec-maven-plugin</artifactId>
         <version>3.6.3</version>
         <configuration>
-          <executable>java</executable>
+          <!-- Maven's own JVM, so the jdk23-plus activation below and the JVM actually
+               launched here can never be different Java versions. -->
+          <executable>${java.home}/bin/java</executable>
           <arguments>
             <argument>--add-opens=java.base/java.nio=ALL-UNNAMED</argument>
+            <argument>${arrow.unsafe.arg}</argument>
             <argument>-classpath</argument>
             <classpath/>
             <argument>${exec.mainClass}</argument>
@@ -38,4 +51,15 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>jdk23-plus</id>
+      <activation>
+        <jdk>[23,)</jdk>
+      </activation>
+      <properties>
+        <arrow.unsafe.arg>--sun-misc-unsafe-memory-access=allow</arrow.unsafe.arg>
+      </properties>
+    </profile>
+  </profiles>
 </project>
