@@ -17,7 +17,7 @@ Follow these steps to get started with federated SQL query against AWS RDS for P
 
 ![Screenshot](./aws-rds.png)
 
-**Step 3.** Edit the `spicepod.yaml` file in this working directory and replace `[remote_table_path]` with the path to the remote table to be accelerated, `[local_table_name]` with the desired name for the locally accelerated table, and the `[pg_host]` and `[pg_port]` params with the connection parameters from the AWS RDS instance. The `[pg_user]` should be set to the username for the RDS instance. The `[pg_db]` should be set to the name of the database in the RDS instance. The `PG_PASS` environment variable should be set to the password for the RDS instance. Environment variables can be specified on the command line when running the Spice runtime, or in a `.env` file in the same directory as `spicepod.yaml`.
+**Step 3.** Edit the `spicepod.yaml` file in this working directory and replace `[remote_table_path]` with the path to the remote table to be accelerated, `[local_table_name]` with the desired name for the locally accelerated table, and the `pg_host` and `pg_port` params' `[Host]` and `[Port]` values with the connection parameters from the AWS RDS instance. The `pg_user` param's `[User]` should be set to the username for the RDS instance. The `pg_db` param's `[Database name]` should be set to the name of the database in the RDS instance. The `PG_PASS` environment variable should be set to the password for the RDS instance. Environment variables can be specified on the command line when running the Spice runtime, or in a `.env` file in the same directory as `spicepod.yaml`.
 
 ```bash
 echo "PG_PASS=<password>" > .env
