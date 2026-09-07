@@ -66,6 +66,7 @@ select "VendorID", tpep_pickup_datetime, tpep_dropoff_datetime, passenger_count 
 ```
 +----------+----------------------+-----------------------+-----------------+
 | VendorID | tpep_pickup_datetime | tpep_dropoff_datetime | passenger_count |
+|   int32  |     timestamp[us]    |     timestamp[us]     |      int64      |
 +----------+----------------------+-----------------------+-----------------+
 | 2        | 2024-01-13T03:18:09  | 2024-01-13T03:24:37   | 1               |
 | 2        | 2024-01-13T03:52:58  | 2024-01-13T04:01:18   | 1               |
@@ -120,6 +121,7 @@ select "VendorID", tpep_pickup_datetime, tpep_dropoff_datetime, passenger_count 
 ```
 +----------+----------------------+-----------------------+-----------------+
 | VendorID | tpep_pickup_datetime | tpep_dropoff_datetime | passenger_count |
+|   int32  |     timestamp[us]    |     timestamp[us]     |      int64      |
 +----------+----------------------+-----------------------+-----------------+
 | 2        | 2024-01-13T03:18:09  | 2024-01-13T03:24:37   | 1               |
 | 2        | 2024-01-13T03:52:58  | 2024-01-13T04:01:18   | 1               |
