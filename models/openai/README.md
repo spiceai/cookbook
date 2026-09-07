@@ -132,7 +132,9 @@ Result
   "results": [
     {
       "matches": {
-        "content": "# Metrics Naming\n\n## TL;DR\n\n**Metric Naming Guide**: Prioritize Developer Experience (DX) with intuitive, ..."
+        "content": [
+          "# Metrics Naming\n\n## TL;DR\n\n**Metric Naming Guide**: Prioritize Developer Experience (DX) with intuitive, ..."
+        ]
       },
       "_score": 0.7941223368131454,
       "dataset": "spiceai.docs",
@@ -142,7 +144,9 @@ Result
     },
     {
       "matches": {
-        "content": "# Criteria Definitions\n\n## RC\n\nAcronym for \"Release Candidate\". Identifies a version that is eligible for ..."
+        "content": [
+          "# Criteria Definitions\n\n## RC\n\nAcronym for \"Release Candidate\". Identifies a version that is eligible for ..."
+        ]
       },
       "_score": 0.7145749783070606,
       "dataset": "spiceai.docs",

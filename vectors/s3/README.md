@@ -241,7 +241,9 @@ Response:
   "results": [
     {
       "matches": {
-        "body": "## 📝 Summary\r\n- Update duckdb-rs to point at spiceai duckdb fork: https://github.com/spiceai/duckdb-rs/pull/20\r\n- DuckDB v1.3.2 + [index resolution fix](https://github.com/spiceai/duckdb/compare/v1.3.2...v1.3.2-index-resolution)\r\n"
+        "body": [
+          "## 📝 Summary\r\n- Update duckdb-rs to point at spiceai duckdb fork: https://github.com/spiceai/duckdb-rs/pull/20\r\n- DuckDB v1.3.2 + [index resolution fix](https://github.com/spiceai/duckdb/compare/v1.3.2...v1.3.2-index-resolution)\r\n"
+        ]
       },
       "data": {
         "url": "https://github.com/spiceai/spiceai/pull/6496",
@@ -255,7 +257,9 @@ Response:
     },
     {
       "matches": {
-        "body": "## 📝 Summary\r\n\r\n<!-- What does this PR change? Why is it necessary? Keep it concise. -->\r\n\r\n## 🔗 Related\r\n\r\n<!-- Link to relevant issues, discussions, or other PRs. Use \"Closes #123\" to auto-close issues. Omit if none. -->\r\n\r\n## 🚨 Breaking Changes\r\n\r\n<!-- Describe breaking changes if any, or delete this section. -->\r\n<!-- If breaking, make sure the \"breaking change\" label is added. -->\r\n\r\n## 📚 Docs\r\n\r\n<!-- Note any required updates to docs, recipes, or guides. Omit if not applicable. -->\r\n\r\n## 👀 Notes for Reviewers\r\n\r\n<!-- Any areas needing special attention or questions for reviewers? Omitၓ Omit if none. -->\r\n"
+        "body": [
+          "## 📝 Summary\r\n\r\n<!-- What does this PR change? Why is it necessary? Keep it concise. -->\r\n\r\n## 🔗 Related\r\n\r\n<!-- Link to relevant issues, discussions, or other PRs. Use \"Closes #123\" to auto-close issues. Omit if none. -->\r\n\r\n## 🚨 Breaking Changes\r\n\r\n<!-- Describe breaking changes if any, or delete this section. -->\r\n<!-- If breaking, make sure the \"breaking change\" label is added. -->\r\n\r\n## 📚 Docs\r\n\r\n<!-- Note any required updates to docs, recipes, or guides. Omit if not applicable. -->\r\n\r\n## 👀 Notes for Reviewers\r\n\r\n<!-- Any areas needing special attention or questions for reviewers? Omitၓ Omit if none. -->\r\n"
+        ]
       },
       "data": {
         "url": "https://github.com/spiceai/spiceai/pull/6494",
@@ -269,7 +273,9 @@ Response:
     },
     {
       "matches": {
-        "body": "## 📝 Summary\r\n\r\n<!-- What does this PR change? Why is it necessary? Keep it concise. -->\r\n\r\n## 🔗 Related\r\n\r\n<!-- Link to relevant issues, discussions, or other PRs. Use \"Closes #123\" to auto-close issues. Omit if none. -->\r\n\r\n## 🚨 Breaking Changes\r\n\r\n<!-- Describe breaking changes if any, or delete this section. -->\r\n<!-- If breaking, make sure the \"breaking change\" label is added. -->\r\n\r\n## 📚 Docs\r\n\r\n<!-- Note any required updates to docs, recipes, or guides. Omit if not applicable. -->\r\n\r\n## 👀 Notes for Reviewers\r\n\r\n<!-- Any areas needing special attention or questions for reviewers? Omit if none. -->\r\n"
+        "body": [
+          "## 📝 Summary\r\n\r\n<!-- What does this PR change? Why is it necessary? Keep it concise. -->\r\n\r\n## 🔗 Related\r\n\r\n<!-- Link to relevant issues, discussions, or other PRs. Use \"Closes #123\" to auto-close issues. Omit if none. -->\r\n\r\n## 🚨 Breaking Changes\r\n\r\n<!-- Describe breaking changes if any, or delete this section. -->\r\n<!-- If breaking, make sure the \"breaking change\" label is added. -->\r\n\r\n## 📚 Docs\r\n\r\n<!-- Note any required updates to docs, recipes, or guides. Omit if not applicable. -->\r\n\r\n## 👀 Notes for Reviewers\r\n\r\n<!-- Any areas needing special attention or questions for reviewers? Omit if none. -->\r\n"
+        ]
       },
       "data": {
         "url": "https://github.com/spiceai/spiceai/pull/6520",
@@ -283,7 +289,9 @@ Response:
     },
     {
       "matches": {
-        "body": "## Summary\r\nAdds a new `availability_monitor` configuration option to individual datasets to control whether the dataset availability monitor checks that specific dataset. This provides granular control over which datasets are monitored, preventing unnecessary remote calls that could wake up expensive warehouses.\r\n\r\n- Closes #5676\r\n\r\n## Usage\r\nUsers can now disable availability monitoring for specific datasets that might cause expensive warehouse wake-ups:\r\n\r\n```yaml\r\ndatasets:\r\n  - from: snowflake\r\n    name: expensive_table\r\n    availability_monitor: disabled\r\n  \r\n  - from: file://local_data.csv\r\n    name: local_data\r\n    availability_monitor: default\r\n```\r\n"
+        "body": [
+          "## Summary\r\nAdds a new `availability_monitor` configuration option to individual datasets to control whether the dataset availability monitor checks that specific dataset. This provides granular control over which datasets are monitored, preventing unnecessary remote calls that could wake up expensive warehouses.\r\n\r\n- Closes #5676\r\n\r\n## Usage\r\nUsers can now disable availability monitoring for specific datasets that might cause expensive warehouse wake-ups:\r\n\r\n```yaml\r\ndatasets:\r\n  - from: snowflake\r\n    name: expensive_table\r\n    availability_monitor: disabled\r\n  \r\n  - from: file://local_data.csv\r\n    name: local_data\r\n    availability_monitor: default\r\n```\r\n"
+        ]
       },
       "data": {
         "url": "https://github.com/spiceai/spiceai/pull/6482",
@@ -388,7 +396,9 @@ curl --request POST \
   "results": [
     {
       "matches": {
-        "content": "\n```sql\n-- Normal query - single department access\nINSERT INTO query_audit_logs (user_id, query_text, database_name, schema_name, rows_affected, ..."
+        "content": [
+          "\n```sql\n-- Normal query - single department access\nINSERT INTO query_audit_logs (user_id, query_text, database_name, schema_name, rows_affected, ..."
+        ]
       },
       "primary_key": {
         "path": "guides/security-analyzer/README.md"
@@ -398,7 +408,9 @@ curl --request POST \
     },
     {
       "matches": {
-        "content": "\n```shell\ndrop table <CATALOG_NAME>.<SCHEMA_NAME>.test_table_no_v2checkpoint;\n```\n\n**Verify table removal in Spice**: Observe that the table has beem removed in spice runtime log\n\n```shell\n2025-01-18T00:59:49.121835Z  INFO data_components::unity_catalog::provider: Refreshed schema <CATALOG_NAME>.<SCHEMA_NAME>. Tables removed: test_table_no_v2checkpoint.\n```\n\n## Step 8. Use Databricks Service Principal\n\nCreate a Databricks service ..."
+        "content": [
+          "\n```shell\ndrop table <CATALOG_NAME>.<SCHEMA_NAME>.test_table_no_v2checkpoint;\n```\n\n**Verify table removal in Spice**: Observe that the table has beem removed in spice runtime log\n\n```shell\n2025-01-18T00:59:49.121835Z  INFO data_components::unity_catalog::provider: Refreshed schema <CATALOG_NAME>.<SCHEMA_NAME>. Tables removed: test_table_no_v2checkpoint.\n```\n\n## Step 8. Use Databricks Service Principal\n\nCreate a Databricks service ..."
+        ]
       },
       "primary_key": {
         "path": "catalogs/databricks/README.md"

@@ -137,7 +137,9 @@ Result:
   "results": [
     {
       "matches": {
-        "content": ".\n\n## Definitions\n\n- Metric: is a measurement used to track the state and behavior of a system component. Metrics represent the current status ..."
+        "content": [
+          ".\n\n## Definitions\n\n- Metric: is a measurement used to track the state and behavior of a system component. Metrics represent the current status ..."
+        ]
       },
       "data": {
         "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/dev/metrics.md"
@@ -150,7 +152,9 @@ Result:
     },
     {
       "matches": {
-        "content": "6\n\n## Core Connector Data Types\n\nCore Connector Data Types depend on the specific connector, but in general can be abstracted as (non-exhaustive) types like: ..."
+        "content": [
+          "6\n\n## Core Connector Data Types\n\nCore Connector Data Types depend on the specific connector, but in general can be abstracted as (non-exhaustive) types like: ..."
+        ]
       },
       "data": {
         "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/criteria/definitions.md"

@@ -77,7 +77,9 @@ Result:
   "results": [
     {
       "matches": {
-        "content": "\n| Component           | Description                                                                                                                                                                                  | Definition Link                                            |"
+        "content": [
+          "\n| Component           | Description                                                                                                                                                                                  | Definition Link                                            |"
+        ]
       },
       "data": {
         "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/EXTENSIBILITY.md"
@@ -90,7 +92,9 @@ Result:
     },
     {
       "matches": {
-        "content": ".\n\n**API Guidelines**: The [Rust API Guidelines](https://rust-lang.github.io/api-guidelines/about.html) are followed for all public interfaces."
+        "content": [
+          ".\n\n**API Guidelines**: The [Rust API Guidelines](https://rust-lang.github.io/api-guidelines/about.html) are followed for all public interfaces."
+        ]
       },
       "data": {
         "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/dev/style_guide.md"
@@ -129,7 +133,9 @@ Result:
   "results": [
     {
       "matches": {
-        "content": "\n| Component           | Description                                                                                                                                                                                  | Definition Link                                            |"
+        "content": [
+          "\n| Component           | Description                                                                                                                                                                                  | Definition Link                                            |"
+        ]
       },
       "data": {
         "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/EXTENSIBILITY.md",
@@ -143,7 +149,9 @@ Result:
     },
     {
       "matches": {
-        "content": " ] All of the model's error messages follow the [error handling guidelines](../../dev/error_handling.md)\n\n### Documentation\n\n- [ ] All documentation meets alpha criteria.\n- [ ] Documentation includes any exceptions made for Beta quality.\n"
+        "content": [
+          " ] All of the model's error messages follow the [error handling guidelines](../../dev/error_handling.md)\n\n### Documentation\n\n- [ ] All documentation meets alpha criteria.\n- [ ] Documentation includes any exceptions made for Beta quality.\n"
+        ]
       },
       "data": {
         "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/criteria/models/beta.md",
@@ -212,7 +220,9 @@ Result:
   "results": [
     {
       "matches": {
-        "content": "\n| Component           | Description                                                                                                                                                                                  | Definition Link                                            |"
+        "content": [
+          "\n| Component           | Description                                                                                                                                                                                  | Definition Link                                            |"
+        ]
       },
       "data": {
         "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/EXTENSIBILITY.md"
@@ -225,7 +235,9 @@ Result:
     },
     {
       "matches": {
-        "content": " ] All of the model's error messages follow the [error handling guidelines](../../dev/error_handling.md)\n\n### Documentation\n\n- [ ] All documentation meets alpha criteria.\n- [ ] Documentation includes any exceptions made for Beta quality.\n"
+        "content": [
+          " ] All of the model's error messages follow the [error handling guidelines](../../dev/error_handling.md)\n\n### Documentation\n\n- [ ] All documentation meets alpha criteria.\n- [ ] Documentation includes any exceptions made for Beta quality.\n"
+        ]
       },
       "data": {
         "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/criteria/models/beta.md"
