@@ -113,10 +113,10 @@ datasets:
 Check if dataset has been reloaded
 
 ```bash
-2024-08-05T14:36:11.552233Z  INFO runtime: Updating accelerated dataset taxi_trips...
-2024-08-05T14:36:12.777384Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
-2024-08-05T14:36:21.990860Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,619 rows (421.58 MiB) for dataset taxi_trips in 9s 213ms.
-2024-08-05T14:36:23.197896Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled.
+2026-09-08T12:08:56.214710Z  INFO runtime::init::dataset: Accelerated Dataset taxi_trips updating...
+2026-09-08T12:08:57.391829Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
+2026-09-08T12:09:00.250563Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,619 rows (399.38 MiB) for dataset taxi_trips in 2s 858ms.
+2026-09-08T12:09:01.170846Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled.
 
 ```
 
