@@ -47,9 +47,13 @@ Run queries using the Spice SQL REPL to explore the data and ensure the constrai
 `spice sql`
 
 ```bash
-Welcome to the interactive Spice.ai SQL Query Utility! Type 'help' for help.
+Welcome to the Spice.ai SQL REPL! Type `help` or `?` for commands.
 
-show tables; -- list available tables
+Examples:
+  show tables;              -- list available tables
+  describe <table_name>;    -- show column types
+  nql <question>            -- natural language to SQL (requires a model)
+
 sql> show tables;
 +---------------+--------------+--------------+------------+
 | table_catalog | table_schema | table_name   | table_type |
