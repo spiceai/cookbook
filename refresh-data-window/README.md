@@ -55,9 +55,13 @@ spice sql
 ```
 
 ```shell
-Welcome to the Spice.ai SQL REPL! Type 'help' for help.
+Welcome to the Spice.ai SQL REPL! Type `help` or `?` for commands.
 
-show tables; -- list available tables
+Examples:
+  show tables;              -- list available tables
+  describe <table_name>;    -- show column types
+  nql <question>            -- natural language to SQL (requires a model)
+
 ```
 
 ```sql

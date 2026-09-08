@@ -176,9 +176,13 @@ SELECT * FROM customer_addresses LIMIT 5;
 ```
 
 ```bash
-Welcome to the Spice.ai SQL REPL! Type 'help' for help.
+Welcome to the Spice.ai SQL REPL! Type `help` or `?` for commands.
 
-show tables; -- list available tables
+Examples:
+  show tables;              -- list available tables
+  describe <table_name>;    -- show column types
+  nql <question>            -- natural language to SQL (requires a model)
+
 sql> SELECT * FROM customer_addresses LIMIT 5;
 +----+------------+------------+----------------------------+----------------------+--------------------+--------------+---------------+--------------+--------------+
 | id | first_name | last_name  | email                      | res_address          | work_address       | country      | state         | phone_1      | phone_2      |

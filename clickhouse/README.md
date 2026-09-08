@@ -92,9 +92,13 @@ For more information on using `spice sql`, see the [CLI reference](https://docs.
 
 ```console
 $ spice sql
-Welcome to the Spice.ai SQL REPL! Type 'help' for help.
+Welcome to the Spice.ai SQL REPL! Type `help` or `?` for commands.
 
-show tables; -- list available tables
+Examples:
+  show tables;              -- list available tables
+  describe <table_name>;    -- show column types
+  nql <question>            -- natural language to SQL (requires a model)
+
 sql> select * from my_first_table;
 +---------+----------------------------------------------------+---------------------+---------+
 | user_id | message                                            | timestamp           | metric  |

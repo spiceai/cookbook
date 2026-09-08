@@ -150,7 +150,13 @@ SELECT 1 AS id;
 
 ```shell
 >> spice sql
-Welcome to the Spice.ai SQL REPL! Type 'help' for help.
+Welcome to the Spice.ai SQL REPL! Type `help` or `?` for commands.
+
+Examples:
+  show tables;              -- list available tables
+  describe <table_name>;    -- show column types
+  nql <question>            -- natural language to SQL (requires a model)
+
 sql> select * from db_uc.<SCHEMA_NAME>.test_table_no_v2checkpoint;
 +----+
 | id |
