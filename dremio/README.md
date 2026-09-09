@@ -119,6 +119,10 @@ select avg(total_amount), avg(tip_amount), count(1), passenger_count from taxi_t
 Time: 0.003632416 seconds. 6 rows.
 ```
 
+> **Note:** the group counts are stable, but the `avg(...)` values are float64 sums whose result depends on
+> how many partitions the query ran with, so the last few digits will differ from the output above on a
+> machine with a different core count. Compare the counts and the leading digits, not the full mantissa.
+
 The trailing digits of the averages can vary between runs — floating-point aggregation depends on the order partitions are combined in.
 
 **Step 7.** Stop Dremio and remove its container and volume.

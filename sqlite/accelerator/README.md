@@ -72,7 +72,7 @@ Time: 2.1508365 seconds. 10 rows.
 
 ## Step3. Enable SQLite Accelerator
 
-Use text editor to open `spicepod.yaml` and set `acceleration.enabled: true`. Save.
+Use a text editor to open `spicepod.yaml` and add the `acceleration` block shown below. Save.
 
 Before:
 
@@ -86,10 +86,6 @@ datasets:
     description: taxi trips in s3
     params:
       file_format: parquet
-    acceleration:
-      enabled: false
-      engine: sqlite
-      mode: file
 ```
 
 After:

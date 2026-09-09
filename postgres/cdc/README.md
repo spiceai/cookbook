@@ -91,7 +91,7 @@ spice sql
 ```
 
 ```sql
-SELECT * FROM orders;
+SELECT * FROM orders ORDER BY id;
 ```
 
 ```console
@@ -118,7 +118,7 @@ docker exec postgres-cdc psql -U postgres -d spice_demo -c \
 Query again in the SQL REPL:
 
 ```sql
-SELECT * FROM orders;
+SELECT * FROM orders ORDER BY id;
 ```
 
 ```console
@@ -167,7 +167,7 @@ docker exec postgres-cdc psql -U postgres -d spice_demo -c \
 ```
 
 ```sql
-SELECT * FROM orders;
+SELECT * FROM orders ORDER BY id;
 ```
 
 ```console
