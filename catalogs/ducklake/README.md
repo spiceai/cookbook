@@ -6,11 +6,17 @@ The DuckLake Catalog Connector enables Spice to automatically discover and query
 
 ## Prerequisites
 
-- [DuckDB CLI](https://duckdb.org/docs/installation/) **v1.5.2 or later** is installed (to create a DuckLake catalog):
+- [DuckDB CLI](https://duckdb.org/docs/installation/) **v1.4.x** is installed (to create a DuckLake catalog). DuckDB **v1.5.x is not supported** — install the pinned version:
   ```bash
-  curl https://install.duckdb.org | sh
+  curl https://install.duckdb.org | DUCKDB_VERSION=1.4.4 sh
   ```
-  Older DuckDB CLI versions create the catalog at metadata version `0.3`, which Spice rejects at runtime with `DuckLake catalog version mismatch: catalog version is 0.3, but the extension requires version 1.0`. Verify the installed version with `duckdb --version` before running Step 2.
+  Spice v2.2.1 embeds DuckDB 1.4.4, which reads database storage versions 64-67. DuckDB CLI v1.5.x writes storage version 68, so a catalog created with it fails at startup with:
+
+  ```bash
+  ERROR runtime::init::catalog: Failed to initialize catalog connector: Failed to setup the catalog my_lakehouse (ducklake). Failed to initialize DuckLake: IO Error: Failed to attach DuckLake MetaData "__ducklake_metadata_ducklake" at path + "metadata.ducklake"Trying to read a database file with version number 68, but we can only read versions between 64 and 67.
+  ```
+
+  Verify the installed version with `duckdb --version` before running Step 2.
 - Spice v2.0 or later is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation).
 
 ## Step 1. Create a new directory and initialize a Spicepod
@@ -20,6 +26,9 @@ mkdir ducklake-catalog-recipe
 cd ducklake-catalog-recipe
 spice init
 ```
+
+> The cookbook's `catalogs/ducklake/` directory ships only `spicepod.yaml` and this
+> README — the DuckLake catalog and its Parquet data are generated locally in Step 2.
 
 ## Step 2. Create a DuckLake catalog with sample data
 
@@ -54,26 +63,28 @@ CREATE TABLE my_lakehouse.main.region AS SELECT * FROM region;
 CREATE TABLE my_lakehouse.main.supplier AS SELECT * FROM supplier;
 ```
 
-Verify the tables were created:
+Verify the tables were created. `SHOW ALL TABLES` lists only the in-memory `dbgen`
+tables, so switch to the DuckLake catalog first:
 
 ```sql
-SHOW ALL TABLES;
+USE my_lakehouse.main;
+SHOW TABLES;
 ```
 
 ```text
-┌──────────────┬─────────┬──────────┬──────────────────┬───────────────────────────────────────────────────────────────┬───────────┐
-│   database   │ schema  │   name   │ column_names     │ column_types                                                │ temporary │
-│   varchar    │ varchar │ varchar  │    varchar[]      │             varchar[]                                       │  boolean  │
-├──────────────┼─────────┼──────────┼──────────────────┼───────────────────────────────────────────────────────────────┤───────────┤
-│ my_lakehouse │ main    │ customer │ [c_custkey, ...]  │ [INTEGER, VARCHAR, ...]                                     │ false     │
-│ my_lakehouse │ main    │ lineitem │ [l_orderkey, ...] │ [INTEGER, INTEGER, ...]                                     │ false     │
-│ my_lakehouse │ main    │ nation   │ [n_nationkey, ...]│ [INTEGER, VARCHAR, ...]                                     │ false     │
-│ my_lakehouse │ main    │ orders   │ [o_orderkey, ...] │ [INTEGER, INTEGER, ...]                                     │ false     │
-│ my_lakehouse │ main    │ part     │ [p_partkey, ...]  │ [INTEGER, VARCHAR, ...]                                     │ false     │
-│ my_lakehouse │ main    │ partsupp │ [ps_partkey, ...] │ [INTEGER, INTEGER, ...]                                     │ false     │
-│ my_lakehouse │ main    │ region   │ [r_regionkey, ...]│ [INTEGER, VARCHAR, ...]                                     │ false     │
-│ my_lakehouse │ main    │ supplier │ [s_suppkey, ...]  │ [INTEGER, VARCHAR, ...]                                     │ false     │
-└──────────────┴─────────┴──────────┴──────────────────┴───────────────────────────────────────────────────────────────┴───────────┘
+┌──────────┐
+│   name   │
+│ varchar  │
+├──────────┤
+│ customer │
+│ lineitem │
+│ nation   │
+│ orders   │
+│ part     │
+│ partsupp │
+│ region   │
+│ supplier │
+└──────────┘
 ```
 
 Exit DuckDB:
@@ -124,20 +135,26 @@ SHOW TABLES;
 ```
 
 ```text
-+---------------+--------------+------------+------------+
-| table_catalog | table_schema | table_name | table_type |
-+---------------+--------------+------------+------------+
-| my_lakehouse  | main         | customer   | BASE TABLE |
-| my_lakehouse  | main         | lineitem   | BASE TABLE |
-| my_lakehouse  | main         | nation     | BASE TABLE |
-| my_lakehouse  | main         | orders     | BASE TABLE |
-| my_lakehouse  | main         | part       | BASE TABLE |
-| my_lakehouse  | main         | partsupp   | BASE TABLE |
-| my_lakehouse  | main         | region     | BASE TABLE |
-| my_lakehouse  | main         | supplier   | BASE TABLE |
++---------------+--------------+--------------+------------+
+| table_catalog | table_schema |  table_name  | table_type |
+|    varchar    |    varchar   |    varchar   |   varchar  |
++---------------+--------------+--------------+------------+
 | spice         | runtime      | task_history | BASE TABLE |
-+---------------+--------------+------------+------------+
+| my_lakehouse  | main         | customer     | BASE TABLE |
+| my_lakehouse  | main         | lineitem     | BASE TABLE |
+| my_lakehouse  | main         | nation       | BASE TABLE |
+| my_lakehouse  | main         | partsupp     | BASE TABLE |
+| my_lakehouse  | main         | supplier     | BASE TABLE |
+| my_lakehouse  | main         | part         | BASE TABLE |
+| my_lakehouse  | main         | region       | BASE TABLE |
+| my_lakehouse  | main         | orders       | BASE TABLE |
++---------------+--------------+--------------+------------+
+
+Time: 0.001980541 seconds. 9 rows.
 ```
+
+`SHOW TABLES` reflects registration order, which varies between runs — add an
+`ORDER BY` if you need a stable listing.
 
 Query the customer table:
 
@@ -148,16 +165,18 @@ LIMIT 5;
 ```
 
 ```text
-+-----------+--------------------+--------------+-----------+
-| c_custkey |       c_name       | c_mktsegment | c_acctbal |
-|   int64   |       varchar      |    varchar   |decimal(15,2)|
-+-----------+--------------------+--------------+-----------+
-| 1         | Customer#000000001 | BUILDING     | 711.56    |
-| 2         | Customer#000000002 | AUTOMOBILE   | 121.65    |
-| 3         | Customer#000000003 | AUTOMOBILE   | 7498.12   |
-| 4         | Customer#000000004 | MACHINERY    | 2866.83   |
-| 5         | Customer#000000005 | HOUSEHOLD    | 794.47    |
-+-----------+--------------------+--------------+-----------+
++-----------+--------------------+--------------+---------------+
+| c_custkey |       c_name       | c_mktsegment |   c_acctbal   |
+|   int64   |       varchar      |    varchar   | decimal(15,2) |
++-----------+--------------------+--------------+---------------+
+| 1         | Customer#000000001 | BUILDING     | 711.56        |
+| 2         | Customer#000000002 | AUTOMOBILE   | 121.65        |
+| 3         | Customer#000000003 | AUTOMOBILE   | 7498.12       |
+| 4         | Customer#000000004 | MACHINERY    | 2866.83       |
+| 5         | Customer#000000005 | HOUSEHOLD    | 794.47        |
++-----------+--------------------+--------------+---------------+
+
+Time: 0.022599292 seconds. 5 rows.
 ```
 
 Run a cross-table query:
@@ -167,7 +186,7 @@ SELECT n.n_name AS nation, COUNT(*) AS num_customers, ROUND(AVG(c.c_acctbal), 2)
 FROM my_lakehouse.main.customer c
 JOIN my_lakehouse.main.nation n ON c.c_nationkey = n.n_nationkey
 GROUP BY n.n_name
-ORDER BY num_customers DESC
+ORDER BY num_customers DESC, nation
 LIMIT 5;
 ```
 
@@ -176,13 +195,18 @@ LIMIT 5;
 |  nation | num_customers |  avg_balance  |
 | varchar |     int64     | decimal(19,6) |
 +---------+---------------+---------------+
-| MOROCCO | 72            | 5484.470000   |
 | IRAN    | 72            | 4206.760000   |
+| MOROCCO | 72            | 5484.470000   |
 | CANADA  | 69            | 4116.120000   |
 | BRAZIL  | 68            | 3635.300000   |
 | JAPAN   | 67            | 4962.460000   |
 +---------+---------------+---------------+
+
+Time: 0.010695833 seconds. 5 rows.
 ```
+
+Several nations tie on `num_customers`, so `nation` is added as a tie-break to make
+the ordering deterministic.
 
 `c_acctbal` is a `decimal(15,2)` column, so `AVG` and `ROUND` return a decimal
 rather than a float — the values print with the full decimal scale.
@@ -230,6 +254,8 @@ VALUES (5, 'ANTARCTICA', 'A cold and remote region');
 +--------+
 | 1      |
 +--------+
+
+Time: 0.023055792 seconds. 1 rows.
 ```
 
 Verify the insert:
