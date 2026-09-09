@@ -20,8 +20,7 @@ spice run
 The following output is shown in the terminal:
 
 ```bash
-2024/11/27 15:00:11 INFO Checking for latest Spice runtime release...
-2024/11/27 15:00:11 INFO Spice.ai runtime starting...
+ INFO Spice.ai runtime starting...
 2024-11-27T23:00:11.849307Z  INFO runtime: No datasets or catalogs were configured. If this is unexpected, check the Spicepod configuration.
 2024-11-27T23:00:11.850338Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2024-11-27T23:00:11.850888Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090

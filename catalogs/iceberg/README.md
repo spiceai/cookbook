@@ -52,8 +52,7 @@ spice run
 ```
 
 ```bash
-2025/01/27 11:08:36 INFO Checking for latest Spice runtime release...
-2025/01/27 11:08:37 INFO Spice.ai runtime starting...
+ INFO Spice.ai runtime starting...
 2025-01-27T19:08:37.494155Z  INFO runtime: No datasets or catalogs were configured. If this is unexpected, check the Spicepod configuration.
 2025-01-27T19:08:37.494905Z  INFO runtime::init::catalog: Registering catalog 'ice' for iceberg
 2025-01-27T19:08:37.499174Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051

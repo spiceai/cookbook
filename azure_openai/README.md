@@ -64,8 +64,7 @@ spice run
 Result:
 
 ```shell
-2024/12/12 14:10:00 INFO Checking for latest Spice runtime release...
-2024/12/12 14:10:00 INFO Spice.ai runtime starting...
+ INFO Spice.ai runtime starting...
 2024-12-12T22:10:00.770177Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2024-12-12T22:10:00.770385Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2024-12-12T22:10:01.248755Z  INFO runtime::init::embedding: Embedding Model embeddings-model ready

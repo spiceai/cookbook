@@ -44,8 +44,7 @@ You should see terminal output like so:
 
 ```shell
 $ spice run
-2026/08/02 12:24:38 INFO Checking for latest Spice runtime release...
-2026/08/02 12:24:38 INFO Spice.ai runtime starting...
+ INFO Spice.ai runtime starting...
 2026-08-02T12:24:38.441060Z  INFO spiced: Starting runtime v2.1.2+models
 2026-08-02T12:24:38.442600Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2026-08-02T12:24:38.442643Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka

@@ -39,8 +39,7 @@ spice run
 ```
 
 ```console
-2025/07/16 08:17:09 INFO Checking for latest Spice runtime release...
-2025/07/16 08:17:13 INFO Spice.ai runtime starting...
+ INFO Spice.ai runtime starting...
 2025-07-16T15:17:13.713677Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-07-16T15:17:13.713846Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
 2025-07-16T15:17:14.160281Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
