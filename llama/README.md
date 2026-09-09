@@ -94,10 +94,11 @@ For more information, see the [Spice HuggingFace documentation](https://docs.spi
 
 ## Hardware Acceleration
 
-`spice install` (and `curl https://install.spiceai.org | /bin/bash`) auto-detects the
-local hardware accelerator and installs the matching runtime build — Metal on Apple
-silicon, CUDA on Linux when a supported GPU is present — so no extra step is needed.
-Confirm which build is installed with:
+`curl https://install.spiceai.org | /bin/bash` installs the `spice` CLI only. The
+runtime itself is fetched the first time you run `spice run` or `spice install`, and
+*that* step auto-detects the local hardware accelerator and installs the matching
+build — Metal on Apple silicon, CUDA on Linux when a supported GPU is present — so no
+extra step is needed. Confirm which build is installed with:
 
 ```sh
 spice version
@@ -112,8 +113,14 @@ A `+models.metal` or `+models.cuda_<cc>` suffix on the runtime version means the
 accelerated build is in use. To install a CUDA build explicitly on Linux:
 
 ```sh
-spice install cuda
+spice install cuda --force
 ```
+
+`--force` is required here rather than optional: by this point in the recipe `spice
+run` has already installed a runtime, and `spice install` skips the download whenever
+the installed version matches the latest release tag — a check that does not consider
+which flavor you asked for. Without `--force` the command reports the runtime as
+already installed and leaves the non-CUDA build in place.
 
 Building from source is only necessary to run an unreleased revision; see
 [Building Spice](https://github.com/spiceai/spiceai/blob/trunk/CONTRIBUTING.md#building).
