@@ -85,7 +85,7 @@ search result below change as the repository's `docs/` directory changes.
 
 1. In the `spicepod.yaml`, uncomment the `datasets[0].columns[0].embeddings`
    block and the `file_format: md` parameter.
-2. Restart the spiced.
+2. Restart the `spiced` runtime.
 
    The runtime logs `WARN runtime_parameters: Ignoring parameter 'file_format':
    not supported for connector github.` — this is expected and harmless. The
@@ -213,7 +213,7 @@ documents is about 40 KB — it is elided above.
 Spice can build full-text search indexes from dataset columns. Enable full text search at the column level (see `doc.pulls` dataset).
 
 1. In the `spicepod.yaml`, uncomment `datasets[1]` (i.e. `doc.pulls` dataset).
-2. Restart the spiced.
+2. Restart the `spiced` runtime.
 3. Perform a basic search
 
 ```shell
