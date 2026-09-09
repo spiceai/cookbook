@@ -52,9 +52,7 @@ Run the time server using Docker:
 docker run -it --rm -p 7400:7400 ghcr.io/spiceai/cookbook-time-server:latest
 ```
 
-The server will start and display an interactive control panel. It needs a TTY for the panel, so keep it in
-its own terminal - if you detach it, use `-dit` (with `-d` alone it exits immediately with
-`Error: No such device or address (os error 6)`).
+The server will start and display an interactive control panel.
 
 ### Step 2: Start Spice Runtime
 
@@ -123,10 +121,7 @@ datasets:
    SELECT request_path, content, _fetched_at FROM time WHERE request_path = '/time';
    ```
 
-2. **Repeat the Query (Cache Hit)**: Run the same query a couple more times - it returns in milliseconds
-   from the cache instead of waiting on the server. The very first repeat may still fetch, because the
-   first response is written to the accelerator just after it is returned; from the next query on you are
-   reading the cache.
+2. **Immediate Repeat (Cache Hit)**: Run the same query again - it returns instantly from cache
 
 3. **Wait for Staleness**: Wait 10+ seconds (past `caching_ttl`), then query again:
    - The stale cached data returns immediately
