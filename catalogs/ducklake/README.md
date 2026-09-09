@@ -27,8 +27,9 @@ cd ducklake-catalog-recipe
 spice init
 ```
 
-> The cookbook's `catalogs/ducklake/` directory ships only `spicepod.yaml` and this
-> README — the DuckLake catalog and its Parquet data are generated locally in Step 2.
+> The cookbook's `catalogs/ducklake/` directory ships no catalog data — the DuckLake
+> catalog and its Parquet files are generated locally in Step 2, and a `.gitignore`
+> here keeps them out of the repo.
 
 ## Step 2. Create a DuckLake catalog with sample data
 
@@ -153,8 +154,15 @@ SHOW TABLES;
 Time: 0.001980541 seconds. 9 rows.
 ```
 
-`SHOW TABLES` reflects registration order, which varies between runs — add an
-`ORDER BY` if you need a stable listing.
+`SHOW TABLES` reflects registration order, which varies between runs. It takes no
+`ORDER BY` — query `information_schema.tables` when you need a stable listing:
+
+```sql
+SELECT table_catalog, table_schema, table_name, table_type
+FROM information_schema.tables
+WHERE table_catalog = 'my_lakehouse'
+ORDER BY table_name;
+```
 
 Query the customer table:
 
