@@ -1,0 +1,4 @@
+# Created by Step 2 (DuckDB CLI) — never commit the catalog or its Parquet data
+metadata.ducklake
+metadata.ducklake.wal
+metadata.ducklake.files/
