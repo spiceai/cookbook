@@ -15,7 +15,7 @@ cd spiceai-demo
 
 ```bash
 spice login
-Spice.ai OSS CLI v2.3.0-enterprise (8592f3564)
+Spice.ai OSS CLI v2.3.0-enterprise
 ? How would you like to authenticate to Spice Cloud? ›
 ❯ Login with a web browser
   Paste an access token
