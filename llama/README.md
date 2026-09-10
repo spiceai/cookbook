@@ -26,17 +26,18 @@ For more information, see the [Spice HuggingFace documentation](https://docs.spi
 
 2. **Configure the spicepod with the Llama model:**
 
-   Edit the `spicepod.yml` file to include the Llama model configuration:
+   Edit the `spicepod.yaml` file to include the Llama model configuration:
 
    ```yaml
    models:
      - name: llama3
        from: huggingface:huggingface.co/meta-llama/Llama-3.2-3B-Instruct
        params:
-         hf_token: ${ secrets:SPICE_HUGGINGFACE_API_KEY }
+         huggingface_token: ${ secrets:SPICE_HUGGINGFACE_API_KEY }
    ```
 
-   An example `spicepod.yml` is also provided in the recipe directory.
+   An example `spicepod.yml` is also provided in the recipe directory (both
+   `spicepod.yaml` and `spicepod.yml` are loaded).
 
 3. **Update `.env` with the HuggingFace variable:**
 
@@ -91,36 +92,35 @@ For more information, see the [Spice HuggingFace documentation](https://docs.spi
    Time: 16.09s (first token 0.53s). Tokens: 197. Prompt: 64. Completion: 133 (8.55/s).
    ```
 
-## Optional: Enable Hardware Acceleration
+## Hardware Acceleration
 
-If you have the required hardware (NVIDIA GPU or Apple M-series processor), you can build and run Spice with hardware acceleration.
-
-See [Building Spice](https://github.com/spiceai/spiceai/blob/trunk/CONTRIBUTING.md#building) for general instructions to build Spice from source.
-
-### For NVIDIA GPU (CUDA)
-
-1. **Install CUDA Toolkit:**
-
-Follow the [CUDA Toolkit installation guide](https://developer.nvidia.com/cuda-downloads) to install the appropriate version for your system.
-
-2. **Build Spice with CUDA support:**
+`curl https://install.spiceai.org | /bin/bash` installs the `spice` CLI only. The
+runtime itself is fetched the first time you run `spice run` or `spice install`, and
+*that* step auto-detects the local hardware accelerator and installs the matching
+build — Metal on Apple silicon, CUDA on Linux when a supported GPU is present — so no
+extra step is needed. Confirm which build is installed with:
 
 ```sh
-git clone git@github.com:spiceai/spiceai.git
-cd spiceai
-make install-cuda
+spice version
 ```
-
-### For Apple M-series (Metal)
-
-1. **Ensure you have the latest macOS updates:**
-
-   Make sure your macOS is up to date to leverage the latest Metal support.
-
-2. **Build Spice with Metal support:**
 
 ```sh
-git clone git@github.com:spiceai/spiceai.git
-cd spiceai
-make install-metal
+CLI version:     v2.2.1
+Runtime version: v2.2.1+models.metal
 ```
+
+A `+models.metal` or `+models.cuda_<cc>` suffix on the runtime version means the
+accelerated build is in use. To install a CUDA build explicitly on Linux:
+
+```sh
+spice install cuda --force
+```
+
+`--force` is required here rather than optional: by this point in the recipe `spice
+run` has already installed a runtime, and `spice install` skips the download whenever
+the installed version matches the latest release tag — a check that does not consider
+which flavor you asked for. Without `--force` the command reports the runtime as
+already installed and leaves the non-CUDA build in place.
+
+Building from source is only necessary to run an unreleased revision; see
+[Building Spice](https://github.com/spiceai/spiceai/blob/trunk/CONTRIBUTING.md#building).
