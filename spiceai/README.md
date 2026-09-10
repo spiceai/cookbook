@@ -11,10 +11,14 @@ spice init spiceai-demo
 cd spiceai-demo
 ```
 
-**Step 2.** Use `spice login` to store the Spice.ai Cloud Platform API Key and Token.
+**Step 2.** Use `spice login` and choose "Login with a web browser" to store the Spice.ai Cloud Platform API Key and Token.
 
 ```bash
 spice login
+Spice.ai OSS CLI v2.3.0-enterprise (8592f3564)
+? How would you like to authenticate to Spice Cloud? ›
+❯ Login with a web browser
+  Paste an access token
 ```
 
 A browser window will open displaying a code that will appear in the terminal. Select Approve if the authorization codes match.
@@ -24,8 +28,17 @@ A browser window will open displaying a code that will appear in the terminal. S
 There will be a confirmation in the terminal that login was successful:
 
 ```bash
-Successfully logged in to Spice.ai as your_user (your_email@email.com)
-Using app your_user/your_app
+✓ Successfully logged in to Spice Cloud as <your_username> (<your_email>)
+Active org: <your_org>
+  You belong to 2 organizations — run 'spice cloud orgs' to list them, or 'spice cloud org use <org>' to switch.
+
+You can now use 'spice cloud' commands to manage your apps and deployments.
+
+Quick start:
+  spice cloud orgs                   - List your organizations
+  spice cloud projects               - List your projects
+  spice cloud project create <name>  - Create a new project
+  spice cloud deploy --project <org/project> - Deploy it
 ```
 
 A `.env` file is created in the `spiceai-demo` directory with the following content:
