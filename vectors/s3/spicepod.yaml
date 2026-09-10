@@ -51,6 +51,10 @@ datasets:
           - from: my_embedding_model
             row_id:
               - id
+            chunking:
+              enabled: true
+              target_chunk_size: 512
+              trim_whitespace: true
       - name: title
         metadata:
           vectors: filterable

@@ -49,9 +49,11 @@ datasets:
   - from: github:github.com/spiceai/spiceai/issues
     name: spiceai.issues
     params:
+      github_query_mode: search
       github_token: ${secrets:GITHUB_TOKEN}
     acceleration:
       enabled: true
+      refresh_sql: SELECT * FROM spiceai.issues WHERE state = 'CLOSED' LIMIT 10
     columns:
       - name: body
         embeddings:
@@ -71,10 +73,11 @@ datasets:
     description: Spice.ai project documentation (github.com/spiceai/spiceai)
     params:
       github_token: ${secrets:GITHUB_TOKEN}
-      include: "docs/**/*.md"
+      include: "docs/dev/*.md"
       file_format: md
     acceleration:
       enabled: true
+      refresh_sql: SELECT * FROM spiceai.files LIMIT 16
     columns:
       - name: content
         embeddings:
