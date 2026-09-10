@@ -99,6 +99,8 @@ datasets:
         caching_ttl: 10s
         caching_stale_while_revalidate_ttl: 10s
         caching_stale_if_error: enabled
+        caching_max_size: 256MiB
+        caching_max_items: 10000
 ```
 
 ### Key Configuration Options
@@ -110,6 +112,37 @@ datasets:
 | `caching_ttl`                        | `10s`     | Cache entries are considered fresh for 10 seconds              |
 | `caching_stale_while_revalidate_ttl` | `10s`     | Serve stale data for 10 seconds while refreshing in background |
 | `caching_stale_if_error`             | `enabled` | Return cached data if the upstream server returns an error     |
+| `caching_max_size`                   | `256MiB`  | Byte budget for the stored cache (`v2.3.0+`)                   |
+| `caching_max_items`                  | `10000`   | Row budget for the stored cache (`v2.3.0+`)                    |
+
+### What Bounds the Cache
+
+`caching_ttl` and `caching_stale_while_revalidate_ttl` bound how long an entry is
+*served*, not how long it is *stored*. With `caching_stale_if_error: enabled` an
+expired entry is deliberately kept, because it is the copy served when the origin
+fails — so those two TTLs evict nothing, and the accelerator grows with every
+distinct request it serves.
+
+`caching_max_size` and `caching_max_items` (`v2.3.0+`) are what bound it. Eviction is
+entry-granular: a cached response can span several rows, so the runtime ranks entries
+by their oldest page and removes all of an entry's rows together. Without a budget,
+`v2.3.0+` warns at startup:
+
+```console
+WARN runtime_table::accelerated::caching_eviction: Dataset 'time' sets `caching_stale_if_error: enabled` with no `caching_max_size` or `caching_max_items`, so no cached entry is ever evicted and the acceleration will grow without bound - expired entries are deliberately kept as fallback for a failing origin. Set a budget to bound it.
+```
+
+A time-based bound is a separate mechanism, and the runtime warns separately when
+none is running. To add one, either set `caching_stale_if_error: disabled` — which
+evicts at `caching_ttl` + `caching_stale_while_revalidate_ttl`, giving up the
+stale-if-error fallback this recipe demonstrates — or declare a retention policy with
+all four of `retention_check_enabled: true`, `retention_period`,
+`retention_check_interval`, and the dataset's `time_column`. A policy missing any one
+of those starts nothing.
+
+> **Note:** This recipe's DuckDB accelerator is in-memory (no `mode: file`), so the
+> cache starts empty on every `spice run`. Add `mode: file` under `acceleration` to
+> persist it across restarts.
 
 ## Experimenting with Caching Behavior
 
