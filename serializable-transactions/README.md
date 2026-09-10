@@ -61,8 +61,10 @@ docker exec spice-bank psql -U postgres -d spice_demo -c "SHOW wal_level;"
 
 ## Step 2. Create and seed the accounts
 
-Two tables, each with a primary key (required so `UPDATE`/`DELETE` replicate and so
-write-back can address rows by key). Alice starts with 1000 in checking, 0 in savings.
+Two tables, each with a single-column primary key — required so `UPDATE` replicates and
+so write-back can address rows by key. (A `DELETE` through Spice is refused on a
+write-back dataset; see [What write-back refuses](#what-write-back-refuses).) Alice
+starts with 1000 in checking, 0 in savings.
 
 ```bash
 docker exec -i spice-bank psql -U postgres -d spice_demo <<'EOF'
@@ -232,6 +234,38 @@ SELECT pg_drop_replication_slot('spice_savings');
 - For `write_mode: write_back`, the commit records the touched primary keys in a marker
   table **in the same commit transaction**; a per-table worker then reconciles them to
   PostgreSQL idempotently (delete-by-key, then insert the current rows).
+
+## What write-back refuses
+
+> **Version note:** Both refusals below were added in `v2.3.0`. On `v2.2.x` these
+> statements were accepted, and a `DELETE` could diverge the accelerator from
+> PostgreSQL without recording anything for delivery.
+
+`write_mode: write_back` only accepts writes it can record for delivery to PostgreSQL,
+so two shapes are refused outright rather than silently diverging from the source:
+
+- **Writes outside a transaction.** An `INSERT` or `UPDATE` that is not inside a
+  `BEGIN … COMMIT` body is refused. Every write in this recipe is submitted as one
+  `BEGIN; … COMMIT;` request, which is why they succeed.
+- **`DELETE` in any form, and `TRUNCATE`.** A delete cannot be recorded for delivery,
+  so it is refused:
+
+  ```console
+  Failed to delete from dataset 'checking': DELETE is not supported while
+  'acceleration.write_mode: write_back' is enabled, because a delete cannot be
+  recorded for delivery to the federated source.
+  ```
+
+  To remove rows at the source, stop writing to the dataset and wait for its
+  `dataset_acceleration_write_back_pending_keys` metric to reach zero *while write-back
+  is still enabled* — the delivery worker is what drains it, and taking the dataset out
+  of write-back stops that worker and clears the gauge without delivering anything. Once
+  it reads zero, take the dataset out of write-back, delete at the source, and let the
+  change stream refresh the accelerator.
+
+The runtime also refuses a write-back configuration it cannot uphold, which is why each
+dataset here sets `mode: file`, declares a single-column `primary_key`, and sets no
+retention.
 
 ## Additional Resources
 
