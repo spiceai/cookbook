@@ -28,7 +28,7 @@ s3_vectors_param: &s3_vectors_param
 
 ## Configuration
 
-Use the `spicepod.yaml` in this recipe directory. It pulls recent GitHub PRs, accelerates data for the last 7 days, embeds the `body` column, and stores vectors in S3 Vectors. The `row_id` uses `id` as the primary key for vector upsert. On ingestion, Spice embeds each PR's `body` using OpenAI and upserts to S3 Vectors with `id` as key, handling updates/deletions automatically.
+Use the `spicepod.yaml` in this recipe directory. It pulls recent GitHub PRs, accelerates data for the last 7 days, chunks and embeds the `body` column, and stores vectors in S3 Vectors. Chunking keeps large PR bodies, such as dependency update descriptions, within the embedding model's input limit. The `row_id` uses `id` to associate each chunk with its source PR; search results retain the PR's metadata.
 
 ## Run Spice
 
@@ -90,31 +90,11 @@ Examine execution:
 EXPLAIN SELECT url, title, _score FROM vector_search(pulls, 'bugs in DuckDB', 4) ORDER BY _score DESC LIMIT 4;
 ```
 
-Plan (the 1536-element query vector is elided as `[...]` for readability):
-
-```sql
-+---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------+
-|   plan_type   |                                                                  plan                                                                  |
-|    varchar    |                                                                varchar                                                                 |
-+---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------+
-| logical_plan  | Sort: vector_search(pulls, Utf8("bugs in DuckDB"), Int64(4))._score DESC NULLS FIRST, fetch=4                                           |
-|               |   Projection: vector_search(...).url, vector_search(...).title, vector_search(...)._score                                               |
-|               |     TableScan: vector_search(pulls, Utf8("bugs in DuckDB"), Int64(4)) projection=[_score, title, url]                                   |
-| physical_plan | SortExec: TopK(fetch=4), expr=[_score@2 DESC], preserve_partitioning=[false]                                                            |
-|               |   ProjectionExec: expr=[url@2 as url, title@1 as title, _score@3 as _score]                                                             |
-|               |     SortExec: TopK(fetch=4), expr=[_score@3 DESC NULLS LAST, id@0 ASC], preserve_partitioning=[false]                                   |
-|               |       ProjectionExec: expr=[id@1 as id, title@2 as title, url@3 as url,                                                                 |
-|               |                            1 - cosine_distance([...], body_embedding@0) as _score]                                                      |
-|               |         BytesProcessedExec                                                                                                              |
-|               |           DataSourceExec: partitions=1, partition_sizes=[18]                                                                            |
-+---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------+
-```
-
-Because this dataset sets `acceleration: enabled: true`, the embeddings are materialized
-locally alongside the rows, and the similarity search is evaluated there — the plan scores
-rows with `cosine_distance` over the local `body_embedding` column. S3 Vectors is still the
-durable index: Spice creates it, writes every embedding through to it on ingestion, and
-serves reads from it when the vectors are not available locally.
+With acceleration enabled, the embeddings are materialized locally alongside the
+rows. The plan scores each body chunk with `cosine_distance`, groups by the PR's
+`id` to retain its best-matching chunk, and orders the resulting PRs by `_score`.
+S3 Vectors stores the embeddings durably; Spice writes the chunks to it during
+ingestion and can use the remote index when vectors are not available locally.
 
 Confirm the vectors reached S3:
 
@@ -136,6 +116,10 @@ columns:
       - from: my_embedding_model
         row_id:
           - id
+        chunking:
+          enabled: true
+          target_chunk_size: 512
+          trim_whitespace: true
   - name: title
     metadata:
       vectors: filterable
@@ -310,7 +294,9 @@ Response:
 
 ## Chunking
 
-The Spice runtime can manage chunking, embedding and reaggregating chunks of datasets with large content. Spice loaded `spiceai.cookbook_readme`: all cookbook READMEs. Search, both HTTP and SQL can be queried as before.
+Both PR bodies and cookbook README content use chunking. Spice embeds the chunks
+and returns matching source rows through the same HTTP and SQL search APIs. Use
+`_match` to inspect the matching chunk within a README:
 
 ```SQL
 SELECT

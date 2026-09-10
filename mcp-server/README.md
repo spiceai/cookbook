@@ -143,6 +143,10 @@ Once connected, ask your AI assistant questions like:
 
 ### SQL against the accelerated data (direct API)
 
+The `/v1/tools/sql` endpoint returns a JSON string containing the serialized row
+array. Pipe the response through `jq 'fromjson'` to decode it into a JSON array.
+The examples below show the raw response; row counts depend on the GitHub data.
+
 Count issues by state:
 
 ```bash
@@ -153,10 +157,10 @@ curl -s -XPOST http://127.0.0.1:8090/v1/tools/sql \
 ```
 
 ```json
-[{"type":"text","text":"[{\"state\":\"OPEN\",\"n\":1},{\"state\":\"CLOSED\",\"n\":1}]"}]
+"[{\"state\":\"OPEN\",\"n\":1},{\"state\":\"CLOSED\",\"n\":1}]"
 ```
 
-Top contributors by commits:
+Top contributors by commits (example response shown for two contributors):
 
 ```bash
 curl -s -XPOST http://127.0.0.1:8090/v1/tools/sql \
@@ -166,7 +170,7 @@ curl -s -XPOST http://127.0.0.1:8090/v1/tools/sql \
 ```
 
 ```json
-[{"type":"text","text":"[{\"author_name\":\"Sergei Grebnov\",\"commits\":74},{\"author_name\":\"Luke Kim\",\"commits\":45},..."}]
+"[{\"author_name\":\"Sergei Grebnov\",\"commits\":74},{\"author_name\":\"Luke Kim\",\"commits\":45}]"
 ```
 
 PRs merged in the last 7 days:
