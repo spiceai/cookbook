@@ -9,7 +9,11 @@ This recipe demonstrates how to configure a Spice dataset to connect to a Scylla
 - A ScyllaDB cluster (self-hosted or ScyllaDB Cloud)
 - ScyllaDB CQL native transport accessible (default port 9042)
 - User credentials with read access to the target keyspace/tables
-- Spice.ai runtime ([Getting Started](https://docs.spiceai.org/getting-started))
+- Spice.ai runtime ([Getting Started](https://docs.spiceai.org/getting-started)) **built with the
+  `scylladb` feature**. The ScyllaDB connector is not included in the default release builds - a released
+  binary reports `This build of Spice.ai does not include the scylladb data connector`. Build from source
+  with `make install-scylladb`, or use the Enterprise distribution
+  ([details](https://docs.spice.ai/docs/enterprise)).
 
 ---
 

@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 # syntax=docker/dockerfile:1
-FROM python:3.10-bullseye
+FROM python:3.11-bookworm
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -22,7 +22,7 @@ RUN apt-get update && \
     curl \
     vim \
     unzip \
-    openjdk-11-jdk \
+    openjdk-17-jdk \
     build-essential \
     software-properties-common \
     ssh && \

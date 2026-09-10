@@ -77,7 +77,7 @@ spice sql
 ```
 
 ```sql
-SELECT * FROM orders;
+SELECT * FROM orders ORDER BY id;
 ```
 
 ```console
@@ -104,7 +104,7 @@ docker exec mysql-cdc mysql -uroot -pspice -e \
 Query again in the SQL REPL:
 
 ```sql
-SELECT * FROM orders;
+SELECT * FROM orders ORDER BY id;
 ```
 
 ```console
@@ -153,7 +153,7 @@ docker exec mysql-cdc mysql -uroot -pspice -e \
 ```
 
 ```sql
-SELECT * FROM orders;
+SELECT * FROM orders ORDER BY id;
 ```
 
 ```console
