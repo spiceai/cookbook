@@ -27,7 +27,10 @@ datasets:
       github_query_mode: search
       github_token: ${secrets:GITHUB_TOKEN}
       github_include_comments: all
-      github_max_comments_fetched: 75 # 75 is the maximum; higher values are clamped
+      # github_max_comments_fetched defaults to 25 and is capped at 75. Leave it
+      # unset: on a repository this size, pinning the cap pushes the GraphQL
+      # query past GitHub's per-request budget, so the first refresh of this
+      # dataset takes several minutes or fails outright and has to retry.
     time_column: updated_at
     acceleration:
       enabled: true
