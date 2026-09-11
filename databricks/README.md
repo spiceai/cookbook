@@ -71,9 +71,13 @@ Spice can read data straight from a Databricks instance. This recipe will create
 
    ```shell
    >>> spice sql
-   Welcome to the Spice.ai SQL REPL! Type 'help' for help.
+   Welcome to the Spice.ai SQL REPL! Type `help` or `?` for commands.
 
-   show tables; -- list available tables
+   Examples:
+     show tables;              -- list available tables
+     describe <table_name>;    -- show column types
+     nql <question>            -- natural language to SQL (requires a model)
+
    sql> show tables;
    +---------------+--------------+---------------+------------+
    | table_catalog | table_schema | table_name    | table_type |
@@ -232,9 +236,13 @@ Note: A dataset can be accelerated when configured by specifying yes (y) to `loc
 
    ```shell
    >>> spice sql
-   Welcome to the Spice.ai SQL REPL! Type 'help' for help.
+   Welcome to the Spice.ai SQL REPL! Type `help` or `?` for commands.
 
-   show tables; -- list available tables
+   Examples:
+     show tables;              -- list available tables
+     describe <table_name>;    -- show column types
+     nql <question>            -- natural language to SQL (requires a model)
+
    sql> show tables;
    +---------------+--------------+---------------+------------+
    | table_catalog | table_schema | table_name    | table_type |
@@ -307,9 +315,13 @@ Note: A dataset can be accelerated when configured by specifying yes (y) to `loc
 
    ```shell
    >>> spice sql
-   Welcome to the Spice.ai SQL REPL! Type 'help' for help.
+   Welcome to the Spice.ai SQL REPL! Type `help` or `?` for commands.
 
-   show tables; -- list available tables
+   Examples:
+     show tables;              -- list available tables
+     describe <table_name>;    -- show column types
+     nql <question>            -- natural language to SQL (requires a model)
+
    sql> show tables;
    +---------------+--------------+--------------+------------+
    | table_catalog | table_schema | table_name   | table_type |
@@ -384,9 +396,13 @@ Create a Databricks service principal by following the [Databricks documentation
 
    ```shell
    >>> spice sql
-   Welcome to the Spice.ai SQL REPL! Type 'help' for help.
+   Welcome to the Spice.ai SQL REPL! Type `help` or `?` for commands.
 
-   show tables; -- list available tables
+   Examples:
+     show tables;              -- list available tables
+     describe <table_name>;    -- show column types
+     nql <question>            -- natural language to SQL (requires a model)
+
    sql> show tables;
    +---------------+--------------+---------------+------------+
    | table_catalog | table_schema | table_name    | table_type |

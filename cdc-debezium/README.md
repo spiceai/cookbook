@@ -53,7 +53,10 @@ datasets:
       debezium_transport: kafka
       debezium_message_format: json
       kafka_bootstrap_servers: localhost:19092
-      kafka_security_protocol: PLAINTEXT
+      kafka_security_protocol: SASL_PLAINTEXT
+      kafka_sasl_mechanism: SCRAM-SHA-256
+      kafka_sasl_username: ${secrets:KAFKA_USERNAME}
+      kafka_sasl_password: ${secrets:KAFKA_PASSWORD}
     acceleration:
       enabled: true
       engine: sqlite
@@ -105,7 +108,8 @@ VALUES
 Notice that the Spice log shows the change.
 
 ```bash
-2026-05-06T18:30:24.317690Z TRACE runtime_table::accelerated::refresh_task::changes: Processing upsert batch for cdc with 1 rows
+2026-09-09T20:58:53.982874Z TRACE runtime_table::accelerated::refresh_task::changes: Processing append/change stream batch: dataset=cdc, rows=1, sub-batches=1
+2026-09-09T20:58:53.993595Z TRACE runtime_table::accelerated::refresh_task::changes: Append/change stream batch sub-batch processed dataset=cdc op="upsert" rows=1 duration_ms=10.546417
 ```
 
 Querying the data again from the `spice sql` REPL will show the new record.

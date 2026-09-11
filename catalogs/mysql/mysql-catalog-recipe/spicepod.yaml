@@ -10,3 +10,4 @@ catalogs:
       mysql_tcp_port: 3306
       mysql_db: tpch
       mysql_user: ${secrets:MYSQL_USER}
+      mysql_sslmode: disabled
