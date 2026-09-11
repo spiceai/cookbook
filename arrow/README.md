@@ -40,8 +40,7 @@ spice run
 Confirm in the terminal output the `taxi_trips` dataset has been registered:
 
 ```bash
-2026/08/13 12:18:39 INFO Checking for latest Spice runtime release...
-2026/08/13 12:18:39 INFO Spice.ai runtime starting...
+ INFO Spice.ai runtime starting...
 2026-08-13T12:18:39.774775Z  INFO spiced: Starting runtime v2.1.5+models.metal
 2026-08-13T12:18:39.775655Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2026-08-13T12:18:39.775701Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka

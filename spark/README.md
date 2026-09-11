@@ -83,8 +83,7 @@ spice run
 ```
 
 ```shell
-2025/01/14 02:52:58 INFO Checking for latest Spice runtime release...
-2025/01/14 02:52:59 INFO Spice.ai runtime starting...
+ INFO Spice.ai runtime starting...
 2025-01-13T17:53:00.171638Z  INFO runtime: No datasets or catalogs were configured. If this is unexpected, check the Spicepod configuration.
 2025-01-13T17:53:00.181202Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2025-01-13T17:53:00.185632Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
@@ -232,8 +231,7 @@ spice run
 
 ```console
 Spice.ai OSS CLI v1.4.0-unstable-build.8eee8ad4b
-2025/06/10 10:46:32 INFO Checking for latest Spice runtime release...
-2025/06/10 10:46:32 INFO Spice.ai runtime starting...
+ INFO Spice.ai runtime starting...
 2025-06-10T01:46:32.725076Z  INFO spiced: Starting runtime v1.4.0-unstable-build.8eee8ad4b+models
 2025-06-10T01:46:32.742491Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-06-10T01:46:32.744098Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
