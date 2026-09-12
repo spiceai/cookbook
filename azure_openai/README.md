@@ -63,6 +63,13 @@ models:
 spice run
 ```
 
+At startup the runtime logs `WARN runtime_parameters: Ignoring parameter
+'file_format': not supported for connector github.` — this is expected and
+harmless. The GitHub connector has no `file_format` parameter, but the chunker
+reads the dataset's `file_format` directly and uses it to pick the Markdown-aware
+splitter, which is what the setting is for here. Removing it falls back to the
+plain text splitter.
+
 Wait for the datasets to finish loading, then check their sizes in `spice sql`:
 
 ```sql
