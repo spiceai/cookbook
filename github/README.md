@@ -75,6 +75,10 @@ Wait until all datasets are loaded:
 
 **Step 3.** Run `spice sql` in a new terminal to start an interactive SQL query session against the Spice runtime.
 
+The datasets track live repositories — `spiceai.issues` and `spiceai.pulls` are additionally
+limited to a 7-day `refresh_data_window` — so the rows below are a snapshot, not a fixed
+expectation. Column names and types are what to compare against.
+
 Get the 10 most recently updated issues:
 
 ```sql
@@ -82,22 +86,23 @@ select number, title, state, labels, updated_at from spiceai.issues order by upd
 ```
 
 ```console
-+--------+------------------------------------------------------------------------+--------+--------------------+----------------------+
-| number | title                                                                  | state  | labels             | updated_at           |
-+--------+------------------------------------------------------------------------+--------+--------------------+----------------------+
-| 2455   | v0.17.3-beta endgame                                                   | OPEN   | [endgame]          | 2024-09-02T15:49:21Z |
-| 2147   | Enhancement: Native schema inference for Data Connectors               | OPEN   | [kind/enhancement] | 2024-09-02T12:40:31Z |
-| 2460   | Clickhouse Native Schema Inference                                     | CLOSED | [kind/task]        | 2024-09-02T12:40:30Z |
-| 2464   | ODBC Native Scheme Inference                                           | CLOSED | [kind/task]        | 2024-09-02T12:39:51Z |
-| 2465   | Snowflake Native Schema Inference                                      | OPEN   | [kind/task]        | 2024-09-02T07:21:02Z |
-| 2463   | Sqlite Native Schema Inference                                         | OPEN   | [kind/task]        | 2024-09-02T07:20:28Z |
-| 2462   | PostgreSQL Native Schema Inference                                     | OPEN   | [kind/task]        | 2024-09-02T07:20:11Z |
-| 2461   | DuckDB Native Schema Inference                                         | OPEN   | [kind/task]        | 2024-09-02T07:19:59Z |
-| 1852   | Warn if `endpoint` param for `s3` data connector ends in `/`           | CLOSED | [kind/bug]         | 2024-09-02T07:12:29Z |
-| 2349   | Accelerator queries with date ranges in where clause return no columns | CLOSED | [kind/bug]         | 2024-09-02T06:50:56Z |
-+--------+------------------------------------------------------------------------+--------+--------------------+----------------------+
++--------+-----------------------------------------------------------------------------------------------------------------------------------------------------+---------+-------------------------------------------+---------------------+
+| number |                                                                        title                                                                        |  state  |                   labels                  |      updated_at     |
+|  int64 |                                                                       varchar                                                                       | varchar |                 varchar[]                 |    timestamp[ms]    |
++--------+-----------------------------------------------------------------------------------------------------------------------------------------------------+---------+-------------------------------------------+---------------------+
+| 14058  | Enhancement: Cloud Connect GetDatasets command so spice cloud datasets works for self-hosted instances                                              | OPEN    | [kind/enhancement, area/api]              | 2026-09-12T09:34:27 |
+| 14057  | Cayenne: a partition_by expression whose function semantics change across an upgrade has no compatibility guard, so pruning can silently drop rows  | OPEN    | [kind/bug, area/cayenne]                  | 2026-09-12T09:34:26 |
+| 14056  | BigQuery: federate date_part('dow', …) as EXTRACT(DAYOFWEEK …) - 1 now that both weekday spellings agree locally (follow-up to #13920)              | OPEN    | [kind/enhancement, area/data-connectors]  | 2026-09-12T09:34:25 |
+| 14018  | `Dataset load summary` counts 4 datasets for a Spicepod that declares 2                                                                             | OPEN    | [kind/bug, area/runtime]                  | 2026-09-12T09:34:24 |
+| 14008  | A projection above a LIMIT keeps qualifiers naming the relation the derived table now encloses, so the remote engine cannot bind them               | OPEN    | [kind/bug, area/sql]                      | 2026-09-12T09:34:23 |
+| 13961  | A chunked index's upsert and pruning are two inner-index operations, so concurrent compute_index calls for one key can prune a newer write's chunks | OPEN    | [kind/bug, area/search]                   | 2026-09-12T09:34:21 |
+| 13949  | No test covers Arrow hash-index activation under `refresh_mode: caching`                                                                            | OPEN    | [kind/bug]                                | 2026-09-12T09:34:20 |
+| 13937  | GraphQL page-size shrink does not trigger on GitHub's 'Resource limits for this query exceeded'                                                     | OPEN    | [kind/bug, area/data-connectors]          | 2026-09-12T09:34:19 |
+| 13927  | A plan cached by an in-flight planner survives the invalidation that should have dropped it                                                         | OPEN    | [kind/bug]                                | 2026-09-12T09:34:19 |
+| 13916  | A logical plan built before a hot reload repopulates the plan cache after clear_cached_plans and is served stale                                    | OPEN    | [kind/bug, area/datafusion, area/caching] | 2026-09-12T09:34:18 |
++--------+-----------------------------------------------------------------------------------------------------------------------------------------------------+---------+-------------------------------------------+---------------------+
 
-Time: 0.017607167 seconds. 10 rows.
+Time: 0.001630834 seconds. 10 rows.
 ```
 
 Get the 10 most recently merged pull requests:
@@ -107,22 +112,23 @@ select number, title, state, merged_at from spiceai.pulls where state = 'MERGED'
 ```
 
 ```console
-+--------+--------------------------------------------------------------------------------+--------+----------------------+
-| number | title                                                                          | state  | merged_at            |
-+--------+--------------------------------------------------------------------------------+--------+----------------------+
-| 2475   | Remove non existing updated_at from github.pulls dataset                       | MERGED | 2024-09-02T16:40:15Z |
-| 2474   | Fix LLMs health check; Add `updatedAt` field to GitHub connector               | MERGED | 2024-09-02T15:34:50Z |
-| 2468   | List GitHub connector in readme                                                | MERGED | 2024-09-02T12:55:25Z |
-| 2466   | Native clickhouse schema inference                                             | MERGED | 2024-09-02T12:40:29Z |
-| 2467   | Add `assignees` and `labels` fields to github issues and github pulls datasets | MERGED | 2024-09-02T11:45:52Z |
-| 2459   | Add `accelerated_refresh` to `task_history` table                              | MERGED | 2024-09-02T08:07:49Z |
-| 2458   | Trim trailing `/` for S3 data connector                                        | MERGED | 2024-09-02T07:12:28Z |
-| 2456   | Bump `datafusion` version to the latest                                        | MERGED | 2024-09-02T06:50:55Z |
-| 2452   | GitHub connector: convert `labels` and `hashes` to primitive arrays            | MERGED | 2024-09-02T06:12:25Z |
-| 2457   | task: Disable and update federation                                            | MERGED | 2024-09-02T05:33:34Z |
-+--------+--------------------------------------------------------------------------------+--------+----------------------+
++--------+-----------------------------------------------------------------------------------------------------+---------+---------------------+
+| number |                                                title                                                |  state  |      merged_at      |
+|  int64 |                                               varchar                                               | varchar |    timestamp[ms]    |
++--------+-----------------------------------------------------------------------------------------------------+---------+---------------------+
+| 14049  | fix(deps): bump arrow-rs fork pin for Decimal->Float rounding fix                                   | MERGED  | 2026-09-11T19:52:55 |
+| 14047  | fix(cayenne): make DELETE, UPDATE and INSERT work on a `mode: memory` acceleration (fixes #12008)   | MERGED  | 2026-09-11T19:52:55 |
+| 14040  | fix: clarify OpenDAL S3 retry warnings                                                              | MERGED  | 2026-09-11T19:52:55 |
+| 14022  | Fix subqueries with use_source acceleration                                                         | MERGED  | 2026-09-11T19:52:55 |
+| 14031  | endgame: include spiceai/skills versioned release                                                   | MERGED  | 2026-09-11T05:46:52 |
+| 14021  | fix(caching): partition doomed entries at the survivor cutoff so eviction converges (closes #13994) | MERGED  | 2026-09-11T05:46:52 |
+| 14035  | perf(vortex): defer projection setup on filtered scans until the filter resolves                    | MERGED  | 2026-09-11T05:05:28 |
+| 14009  | Reduce Cayenne allocations during primary-key validation and filtering                              | MERGED  | 2026-09-10T20:46:24 |
+| 14012  | fix(deps): bump arrow-rs to correctly-rounded Decimal→Float cast (closes #13978)                    | MERGED  | 2026-09-10T20:46:24 |
+| 13996  | test(forks): guard seven fork patches that had no repo-side test                                    | MERGED  | 2026-09-10T20:46:24 |
++--------+-----------------------------------------------------------------------------------------------------+---------+---------------------+
 
-Time: 0.010307125 seconds. 10 rows.
+Time: 0.001864792 seconds. 10 rows.
 ```
 
 Query the review comments on a pull request:
@@ -146,13 +152,14 @@ LIMIT 1;
 ```
 
 ```console
-+---------------------------------+-------------------------------------+---------------------------------+
-| review_comments.comment[author] | review_comments.comment[created_at] | review_comments.comment[body]   |
-+---------------------------------+-------------------------------------+---------------------------------+
-| sgrebnov                        | 2025-07-31T05:51:11                 | This is case insensitive regexp |
-+---------------------------------+-------------------------------------+---------------------------------+
++---------------------------------+-------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| review_comments.comment[author] | review_comments.comment[created_at] |                                                                                                                                                                                                                                                                                                                                review_comments.comment[body]                                                                                                                                                                                                                                                                                                                               |
+|             varchar             |            timestamp[ms]            |                                                                                                                                                                                                                                                                                                                                           varchar                                                                                                                                                                                                                                                                                                                                          |
++---------------------------------+-------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| copilot-pull-request-reviewer   | 2026-09-11T19:55:24                 | This pin bump invalidates the ledger's repo-side guard for the balanced `list_contains` patch. The linked Vortex change sends primitive lists with at least four elements through `hash_probe_contains`, while `test_large_in_list_filter_pushdown_stays_evaluable` uses an 8,192-element `INT` list; that test therefore no longer constructs the balanced OR tree whose loss it is meant to catch. Update the guard to force the unsupported-probe fallback (for example, a large decimal list) and revise its stale explanation. Unverified by execution here because the review container cannot build the fork dependency; this follows the new dispatch and the existing test input. |
++---------------------------------+-------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-Time: 0.046107542 seconds. 1 rows.
+Time: 0.003752708 seconds. 1 rows.
 ```
 
 Query the discussion on a pull request:
@@ -176,20 +183,24 @@ LIMIT 1;
 ```
 
 ```console
-+----------------------------+--------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| discussion.comment[author] | discussion.comment[created_at] | discussion.comment[body]                                                                                                                                                      |
-+----------------------------+--------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| github-actions             | 2025-07-22T01:18:14            | ## ✅ Pull with Spice Passed                                                                                                                                                  |
-|                            |                                |                                                                                                                                                                               |
-|                            |                                | ### Passing checks:                                                                                                                                                           |
-|                            |                                |                                                                                                                                                                               |
-|                            |                                | - ✅ Title meets minimum length requirement (10 characters)                                                                                                                   |
-|                            |                                | - ✅ Has at least one of the required labels: `kind/refactor`, `kind/bug`, `kind/enhancement`, `kind/documentation`, `kind/optimization`, `kind/dependencies`, `kind/endgame` |
-|                            |                                | - ✅ No banned labels detected                                                                                                                                                |
-|                            |                                | - ✅ Has at least one assignee: `peasee`                                                                                                                                      |
-|                            |                                |                                                                                                                                                                               |
-|                            |                                |                                                                                                                                                                               |
-+----------------------------+--------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
++----------------------------+--------------------------------+-------------------------------------------------------------+
+| discussion.comment[author] | discussion.comment[created_at] |                   discussion.comment[body]                  |
+|           varchar          |          timestamp[ms]         |                           varchar                           |
++----------------------------+--------------------------------+-------------------------------------------------------------+
+| github-actions             | 2026-09-11T19:49:44            | ## ✅ Pull with Spice Passed                                |
+|                            |                                |                                                             |
+|                            |                                | ### Passing checks:                                         |
+|                            |                                |                                                             |
+|                            |                                | - ✅ Title meets minimum length requirement (10 characters) |
+|                            |                                | - ✅ No banned labels detected                              |
+|                            |                                | - ✅ Has a label from required category `kind/`             |
+|                            |                                | - ✅ Has a label from required category `area/`             |
+|                            |                                | - ✅ Has at least one assignee: `bjchambers`                |
+|                            |                                |                                                             |
+|                            |                                |                                                             |
++----------------------------+--------------------------------+-------------------------------------------------------------+
+
+Time: 0.001584416 seconds. 1 rows.
 ```
 
 Get the 10 most recent commits:
@@ -199,22 +210,23 @@ select message_head_line, author_name, sha from spiceai.commits order by committ
 ```
 
 ```console
-+--------------------------------------------------------------------------+------------------+------------------------------------------+
-| message_head_line                                                        | author_name      | sha                                      |
-+--------------------------------------------------------------------------+------------------+------------------------------------------+
-| Remove non existing updated_at from github.pulls dataset (#2475)         | Evgenii Khramkov | eeb94605ce737d779ae99e4617329164ce95c357 |
-| Fix LLMs health check; Add `updatedAt` field to GitHub connector (#2474) | Evgenii Khramkov | e63fecb86657b97352d772247a12c357cde354c4 |
-| List GitHub connector in readme (#2468)                                  | Evgenii Khramkov | 4fa914c95185290d6cbc20e108d575a22d33119b |
-| Native clickhouse schema inference (#2466)                               | Phillip LeBlanc  | 2d8d9b573213d10bbd39c90e786b086d61166dae |
-| Add `assignees` and `labels` fields to github issues and github pulls…   | Evgenii Khramkov | 582e702c53320975143b83330f3ae9cae3fc7241 |
-| Add `accelerated_refresh` to `task_history` table (#2459)                | Phillip LeBlanc  | 2187f711364ddc3cd0ab635e414c682643347109 |
-| Trim trailing `/` for S3 data connector (#2458)                          | Phillip LeBlanc  | 81260ed4583ec11547bac43a331cc46037f16bce |
-| Bump datafusion to the latest (#2456)                                    | Sergei Grebnov   | 2e9db2b33154992c30603d46d5949ba456f9b2f6 |
-| GitHub connector: convert `labels` and `hashes` to primitive arrays (…   | Sergei Grebnov   | 4f6ffb8728a2a9293ae120f384e19f61aba187b8 |
-| task: Disable and update federation (#2457)                              | peasee           | 0358a11dd1c2ce4c15b949c7265cd70e2351d615 |
-+--------------------------------------------------------------------------+------------------+------------------------------------------+
++------------------------------------------------------------------------+-----------------+------------------------------------------+
+|                            message_head_line                           |   author_name   |                    sha                   |
+|                                 varchar                                |     varchar     |                  varchar                 |
++------------------------------------------------------------------------+-----------------+------------------------------------------+
+| fix: clarify OpenDAL S3 retry warnings (#14040)                        | Luke Kim        | ecd92a5122415ecf2a7b4a976c4ce31c64b69f00 |
+| fix(cayenne): make DELETE, UPDATE and INSERT work on a `mode: memory`… | Ben Chambers    | 9b9c4fae1239d30ae800df89cef8d0fd56e569d3 |
+| Fix subqueries with use_source acceleration (#14022)                   | Phillip LeBlanc | 48f47f6b9dcd8f93d6bce8b7637e02f7af1ba15a |
+| fix(deps): bump arrow-rs fork pin for Decimal->Float rounding fix (#1… | Jack Eadie      | eba6c527fdbb1c725a49132f09a9422441de20c0 |
+| fix(caching): partition doomed entries at the survivor cutoff so evic… | Jack Eadie      | 4c7b254d6c17ee7124618d37553dc0f5aa852e90 |
+| endgame: include spiceai/skills versioned release (#14031)             | Luke Kim        | 3cccd7ccc900f7925a61c0063503ab3046eaf522 |
+| perf(vortex): defer projection setup on filtered scans until the filt… | Ben Chambers    | e8dd9d2bf9f4bfc8afc6d8dd97f5474501be64c8 |
+| fix(deps): bump arrow-rs to correctly-rounded Decimal→Float cast (clo… | Jack Eadie      | 9972f4a6d455517099c1ca604bbc6a8c8c26f80f |
+| test(forks): guard seven fork patches that had no repo-side test (#13… | Viktor Yershov  | 919a66c54554664f667d512f9c45c9516f541ddd |
+| Reduce Cayenne allocations during primary-key validation and filterin… | Luke Kim        | 94e6ab6bf2a2ef26070c9549627d14ef8bd6ab59 |
++------------------------------------------------------------------------+-----------------+------------------------------------------+
 
-Time: 0.009864666 seconds. 10 rows.
+Time: 0.002161167 seconds. 10 rows.
 ```
 
 Get the 10 most recent stargazers of the spiceai repository
@@ -275,7 +287,8 @@ select name, path, download_url from spiceai.files where path like 'docs/release
 
 ```console
 +-----------------+-----------------------------------------+-------------------------------------------------------------------------------------------------+
-| name            | path                                    | download_url                                                                                    |
+|       name      |                   path                  |                                           download_url                                          |
+|     varchar     |                 varchar                 |                                             varchar                                             |
 +-----------------+-----------------------------------------+-------------------------------------------------------------------------------------------------+
 | v0.17.0-beta.md | docs/release_notes/beta/v0.17.0-beta.md | https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/release_notes/beta/v0.17.0-beta.md |
 | v0.17.1-beta.md | docs/release_notes/beta/v0.17.1-beta.md | https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/release_notes/beta/v0.17.1-beta.md |
@@ -294,7 +307,7 @@ select name, path, download_url from spiceai.files where path like 'docs/release
 | v0.20.0-beta.md | docs/release_notes/beta/v0.20.0-beta.md | https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/release_notes/beta/v0.20.0-beta.md |
 +-----------------+-----------------------------------------+-------------------------------------------------------------------------------------------------+
 
-Time: 0.0051505 seconds. 15 rows.
+Time: 0.001074959 seconds. 15 rows.
 ```
 
 Read release notes of Spice `v0.17.2-beta` release
@@ -305,7 +318,8 @@ select content from spiceai.files where name = 'v0.17.2-beta.md';
 
 ````console
 +-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| content                                                                                                                                                                                                                                                                                                                                             |
+|                                                                                                                                                                       content                                                                                                                                                                       |
+|                                                                                                                                                                       varchar                                                                                                                                                                       |
 +-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | # Spice v0.17.2-beta (Aug 26, 2024)                                                                                                                                                                                                                                                                                                                 |
 |                                                                                                                                                                                                                                                                                                                                                     |
@@ -437,5 +451,5 @@ select content from spiceai.files where name = 'v0.17.2-beta.md';
 |                                                                                                                                                                                                                                                                                                                                                     |
 +-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-Time: 0.008751208 seconds. 1 rows.
+Time: 0.000985458 seconds. 1 rows.
 ````
