@@ -38,7 +38,7 @@ Your AI assistant gets one connection point that gives it:
 
 > **Tool naming (Spice `v2.2+`):** Proxied tools are exposed as `<tool-name>__<upstream-tool-name>`, joined by a **double underscore** — `github__search_code`, not `github/search_code`. MCP clients such as Claude and Cursor reject tool names outside `^[a-zA-Z0-9_-]{1,64}$`, and the previous `/` separator made every proxied tool unusable in those clients ([spiceai/spiceai#10894](https://github.com/spiceai/spiceai/issues/10894)). The `<tool-name>` half is the `name` given in the `tools` section of `spicepod.yaml`, so renaming the tool renames every tool it proxies. On `v2.1.x` and earlier, substitute `/` for `__` throughout this recipe.
 
-> **Want to add Jira?** Uncomment the `jira` tool block in `spicepod.yaml` and add your Jira credentials to `.env`. See [Adding Jira](#optional-adding-jira) below.
+> **Want to add Jira?** Add a `jira` tool block to `spicepod.yaml` and add your Jira credentials to `.env`. See [Adding Jira](#optional-adding-jira) below.
 
 ## Prerequisites
 
@@ -78,12 +78,20 @@ spice run
 Spice loads GitHub data into memory and launches the GitHub MCP server subprocess. Expect the initial load to take 20–60 seconds.
 
 ```console
-2025-05-21T10:00:01Z  INFO runtime: Spice runtime is ready
-2025-05-21T10:00:01Z  INFO runtime::init::dataset: Dataset github_issues registered (github:...), acceleration (arrow)
-2025-05-21T10:00:01Z  INFO runtime::init::dataset: Dataset github_pulls registered (github:...), acceleration (arrow)
-2025-05-21T10:00:01Z  INFO runtime::init::dataset: Dataset github_commits registered (github:...), acceleration (arrow)
-2025-05-21T10:00:01Z  INFO runtime::init::tool: Tool github registered (mcp:npx)
+2026-09-12T12:04:46.677499Z  INFO spiced: Starting runtime v2.3.0+models.metal
+2026-09-12T12:04:46.999770Z  INFO runtime::http::routes: Enabled API key authentication on HTTP routes
+2026-09-12T12:04:47.000953Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+GitHub MCP Server running on stdio
+2026-09-12T12:04:48.422999Z  INFO runtime::init::dataset: Dataset github_issues registered (github:github.com/spiceai/cookbook/issues), acceleration (arrow, 300s refresh), results cache enabled. duration_ms=4
+2026-09-12T12:04:49.065134Z  INFO runtime_table::accelerated::refresh_task: Loaded 4 rows (1.53 MiB) for dataset github_issues in 640ms.
+2026-09-12T12:04:50.436538Z  INFO runtime::init::dataset: Dataset github_pulls registered (github:github.com/spiceai/cookbook/pulls), acceleration (arrow, 300s refresh), results cache enabled. duration_ms=0
+2026-09-12T12:04:50.660468Z  INFO runtime::init::dataset: Dataset github_commits registered (github:github.com/spiceai/cookbook/commits), acceleration (arrow), results cache enabled. duration_ms=6
+2026-09-12T12:05:08.156863Z  INFO runtime_table::accelerated::refresh_task: Loaded 500 rows (1.51 MiB) for dataset github_commits in 17s 494ms.
+2026-09-12T12:05:09.750891Z  INFO runtime_table::accelerated::refresh_task: Loaded 69 rows (7.37 MiB) for dataset github_pulls in 19s 312ms.
+2026-09-12T12:05:09.757459Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
+
+The GitHub MCP server subprocess announces itself on stdout (`GitHub MCP Server running on stdio`); tool loading itself is logged at `DEBUG`, so no `Tool github registered` line appears at the default log level.
 
 **Step 4.** Confirm the unified tool catalog is available (in a new terminal):
 
@@ -128,7 +136,9 @@ claude mcp list
 ```
 
 ```
-spice: http://localhost:8090/v1/mcp (http)
+Checking MCP server health…
+
+spice: http://localhost:8090/v1/mcp (HTTP) - ✔ Connected
 ```
 
 Claude Code will now have access to the full Spice tool catalog — `sql`, `github__*`, `list_datasets`, and the rest — in every conversation.
@@ -203,7 +213,7 @@ JIRA_USERNAME=your@email.com
 JIRA_API_TOKEN=...
 ```
 
-Uncomment the `jira` tool block in `spicepod.yaml`:
+Add a `jira` tool block to the `tools` section of `spicepod.yaml`:
 
 ```yaml
   - name: jira
