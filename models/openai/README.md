@@ -77,6 +77,13 @@ Result:
 2025-01-20T16:19:49.394003Z  INFO runtime_table::accelerated::refresh_task: Loaded 93 rows (1.28 MiB) for dataset spiceai.docs in 3s 228ms.
 ```
 
+At startup the runtime logs `WARN runtime_parameters: Ignoring parameter
+'file_format': not supported for connector github.` — this is expected and
+harmless. The GitHub connector has no `file_format` parameter, but the chunker
+reads the dataset's `file_format` directly and uses it to pick the Markdown-aware
+splitter, which is what the setting is for here. Removing it falls back to the
+plain text splitter.
+
 ## SQL Search
 
 1. Execute a Basic SQL Query to perform keyword searches within the dataset:
