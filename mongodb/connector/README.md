@@ -6,7 +6,7 @@ This recipe will use a demo instance of MongoDB with a generated dataset. Follow
 
 ## Prerequisites
 
-- [Docker](https://docs.docker.com/get-docker/)is installed
+- [Docker](https://docs.docker.com/get-docker/) is installed
 - Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation).
 
 ## Steps
