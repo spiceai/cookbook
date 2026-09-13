@@ -129,7 +129,7 @@ by their oldest page and removes all of an entry's rows together. Without a budg
 `v2.3.0+` warns at startup:
 
 ```console
-WARN runtime_table::accelerated::caching_eviction: Dataset 'time' sets `caching_stale_if_error: enabled` with no `caching_max_size` or `caching_max_items`, so no cached entry is ever evicted and the acceleration will grow without bound - expired entries are deliberately kept as fallback for a failing origin. Set a budget to bound it.
+WARN runtime_table::accelerated::caching_eviction: Dataset 'time' sets `caching_stale_if_error: enabled` with no `caching_max_size` or `caching_max_items`, so no cached entry is ever evicted and the acceleration will grow without bound — expired entries are deliberately kept as fallback for a failing origin. Set a budget to bound it. For details, visit: https://spiceai.org/docs/components/data-accelerators/data-refresh#refresh-modes
 ```
 
 A time-based bound is a separate mechanism, and the runtime warns separately when
@@ -139,6 +139,27 @@ stale-if-error fallback this recipe demonstrates — or declare a retention poli
 all four of `retention_check_enabled: true`, `retention_period`,
 `retention_check_interval`, and the dataset's `time_column`. A policy missing any one
 of those starts nothing.
+
+### Two Warnings This Recipe's Config Still Prints
+
+The spicepod above sets both budgets, so the `caching_eviction` warning above is gone.
+Two others remain on every `spice run`, and neither means the configuration is wrong:
+
+```console
+WARN runtime::datafusion: Dataset 'time' sets `caching_stale_if_error: enabled` and has no retention policy running, so no cached entry is ever evicted and the accelerator grows with every distinct request it serves. ...
+WARN runtime_table::accelerated: Dataset time: `on_zero_results` is ignored when `refresh_mode: caching` is set. Caching mode always queries the source on a cache miss. Remove `on_zero_results` from the dataset configuration to silence this warning. ...
+```
+
+The first is the *time-based* bound described above: `caching_max_size` and
+`caching_max_items` bound how much is stored, not how old it gets, so the runtime still
+reports that nothing evicts by age. Adding a retention policy — or
+`caching_stale_if_error: disabled` — silences it, at the cost of the stale-if-error
+fallback this recipe demonstrates.
+
+The second fires for **every** `refresh_mode: caching` dataset, whether or not
+`on_zero_results` is set; this spicepod never sets it, so there is nothing to remove.
+Caching mode treats a zero-row accelerator result as a cache miss and always falls back
+to the source, which is what the warning is there to say.
 
 > **Note:** This recipe's DuckDB accelerator is in-memory (no `mode: file`), so the
 > cache starts empty on every `spice run`. Add `mode: file` under `acceleration` to
