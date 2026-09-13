@@ -165,7 +165,7 @@ Consider using an autoscaler such as the [Kubernetes Horizontal Pod Autoscaler](
 
 High availability is achieved by running multiple replicas in Kubernetes. Node selectors and taints can be used to ensure that the runtime pods are scheduled across specific nodes to improve fault tolerance. Consistent health checks and readiness probes verify that each replica contains the correct data and is ready to serve requests. Rolling updates combined with specific resource requests and limits help maintain uninterrupted service during maintenance and outages.
 
-Monitoring and alerting form a vital part of sustaining system stability. Spice provides several [metrics](https://spiceai.org/docs/features/observability#metrics) that can be used to monitor the runtime.
+Monitoring and alerting form a vital part of sustaining system stability. Spice provides several [metrics](https://spiceai.org/docs/features/observability#available-metrics) that can be used to monitor the runtime.
 
 Network security relies on secure communication channels and access controls. Transport Layer Security (TLS) secures data in transit, while authentication and network policies restrict access to sensitive APIs. In some environments, a service mesh provides further security measures. Regular audits and updates address emerging vulnerabilities. For more information about network security in Kubernetes, consult the [Kubernetes Network Policies documentation](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
 
