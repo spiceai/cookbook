@@ -35,8 +35,9 @@ Expected response:
 ```shell
 $ curl -XPOST -i http://localhost:8090/v1/sql -d 'SELECT 1'
 HTTP/1.1 401 Unauthorized
+vary: origin, access-control-request-method, access-control-request-headers
 content-length: 12
-date: Thu, 07 Nov 2024 01:52:00 GMT
+date: Sun, 13 Sep 2026 12:19:38 GMT
 
 Unauthorized
 ```
@@ -50,13 +51,17 @@ curl -H "Content-Type: text/plain" -H "x-api-key: foobar" -XPOST -i http://local
 Output:
 
 ```shell
-curl -H "x-api-key: foobar" -H 'Content-Type: text/plain' -XPOST -i http://localhost:8090/v1/sql -d 'SELECT 1'
+$ curl -H "Content-Type: text/plain" -H "x-api-key: foobar" -XPOST -i http://localhost:8090/v1/sql -d 'SELECT 1'
 HTTP/1.1 200 OK
 content-type: application/json
 x-cache: Miss from spiceai
 results-cache-status: MISS
-content-length: 16
-date: Thu, 07 Nov 2024 01:53:20 GMT
+results-cache-scope: user
+vary: Authorization, X-API-Key, Cookie
+vary: origin, access-control-request-method, access-control-request-headers
+spice-trace-id: a058f3d2b44f600e05be59eca570fa71
+transfer-encoding: chunked
+date: Sun, 13 Sep 2026 12:19:44 GMT
 
 [{"Int64(1)":1}]
 ```
@@ -76,8 +81,8 @@ ERROR unauthorized: invalid or missing Spice API key. Run `spice login` or set S
 ```bash
 $ spice pods --api-key foobar
 
-NAME    VERSION DATASETS MODELS DEPENDENCIES
-api_key v1      0        0      0
+ NAME     VERSION  DATASETS  MODELS  DEPENDENCIES
+ api_key  v1       0         0       0
 ```
 
 ## SQL REPL
