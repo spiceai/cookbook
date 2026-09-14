@@ -133,10 +133,10 @@ spice run
 You should see the dataset load and the accelerator perform its first full refresh:
 
 ```
-2025-01-13T12:00:00Z  INFO runtime::init::dataset: Initializing dataset customers
-2025-01-13T12:00:00Z  INFO runtime::init::dataset: Dataset customers registered (mysql:testdb.customers), acceleration (arrow, full).
-2025-01-13T12:00:00Z  INFO runtime_table::accelerated::refresh_task: Refreshing dataset customers
-2025-01-13T12:00:00Z  INFO runtime_table::accelerated::refresh_task: Loaded 3 rows for dataset customers
+2025-01-13T12:00:00Z  INFO runtime::init::dataset: Dataset customers initializing...
+2025-01-13T12:00:00Z  INFO runtime::init::dataset: Dataset customers registered (mysql:testdb.customers), acceleration (arrow, 10s refresh), results cache enabled.
+2025-01-13T12:00:00Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset customers
+2025-01-13T12:00:00Z  INFO runtime_table::accelerated::refresh_task: Loaded 3 rows (3.52 kiB) for dataset customers in 30ms.
 2025-01-13T12:00:00Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
@@ -155,15 +155,16 @@ SELECT * FROM customers;
 ```
 
 ```console
-+----+-----------+-----------------------+--------+
-| id | name      | email                 | tier   |
-+----+-----------+-----------------------+--------+
-| 1  | Alice     | alice@example.com     | gold   |
-| 2  | Bob       | bob@example.com       | silver |
-| 3  | Charlie   | charlie@example.com   | silver |
-+----+-----------+-----------------------+--------+
++-------+---------+---------------------+---------+
+|   id  |   name  |        email        |   tier  |
+| int64 | varchar |       varchar       | varchar |
++-------+---------+---------------------+---------+
+| 1     | Alice   | alice@example.com   | gold    |
+| 2     | Bob     | bob@example.com     | silver  |
+| 3     | Charlie | charlie@example.com | silver  |
++-------+---------+---------------------+---------+
 
-Time: 0.008 seconds. 3 rows.
+Time: 0.002946416 seconds. 3 rows.
 ```
 
 ---
@@ -182,16 +183,17 @@ SELECT * FROM customers;
 ```
 
 ```console
-+----+-----------+-----------------------+--------+
-| id | name      | email                 | tier   |
-+----+-----------+-----------------------+--------+
-| 1  | Alice     | alice@example.com     | gold   |
-| 2  | Bob       | bob@example.com       | silver |
-| 3  | Charlie   | charlie@example.com   | silver |
-| 4  | Diana     | diana@example.com     | gold   |
-+----+-----------+-----------------------+--------+
++-------+---------+---------------------+---------+
+|   id  |   name  |        email        |   tier  |
+| int64 | varchar |       varchar       | varchar |
++-------+---------+---------------------+---------+
+| 1     | Alice   | alice@example.com   | gold    |
+| 2     | Bob     | bob@example.com     | silver  |
+| 3     | Charlie | charlie@example.com | silver  |
+| 4     | Diana   | diana@example.com   | gold    |
++-------+---------+---------------------+---------+
 
-Time: 0.006 seconds. 4 rows.
+Time: 0.001410959 seconds. 4 rows.
 ```
 
 ---
