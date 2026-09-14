@@ -80,8 +80,8 @@ You should see this output:
 ```bash
 2025-09-26T15:21:38.154354Z  INFO spiced: Starting runtime v1.8.0-unstable-build.71ac09ff2+models.metal
 2025-09-26T15:21:38.225135Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
-2025-09-26T15:21:38.229824Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s
-2025-09-26T15:21:38.230575Z  INFO runtime::init::caching: Initialized embeddings cache; max size: 128.00 MiB, item ttl: 1s
+2025-09-26T15:21:38.229824Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
+2025-09-26T15:21:38.230575Z  INFO runtime::init::caching: Initialized embeddings cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
 2025-09-26T15:21:38.658888Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2025-09-26T15:21:38.678694Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-09-26T15:21:47.550688Z  INFO runtime::init::embedding: Embedding Model potion_128m ready
@@ -89,7 +89,6 @@ You should see this output:
 2025-09-26T15:21:47.730735Z  INFO runtime::dataconnector::file: Watching changes to bluesky_posts.parquet
 2025-09-26T15:21:47.730999Z  INFO runtime::init::dataset: Dataset bluesky_posts registered (file://bluesky_posts.parquet), acceleration (duckdb:file, append), results cache enabled.
 2025-09-26T15:21:47.740354Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset bluesky_posts
-2025-09-26T15:21:57.885819Z  INFO runtime_table::accelerated::refresh_task: Dataset bluesky_posts received 38,101 records
 2025-09-26T15:21:58.507599Z  INFO runtime_table::accelerated::refresh_task: Loaded 38,101 rows (54.72 MiB) for dataset bluesky_posts in 10s 775ms.
 2025-09-26T15:21:58.550191Z  INFO runtime: All components are loaded. Spice runtime is ready!
 2025-09-26T15:22:20.335633Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset bluesky_posts
