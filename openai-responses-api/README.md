@@ -27,18 +27,18 @@ spice run
 ```
 
 ```console
-2025-08-25T23:34:30.324620Z  INFO spiced: Starting runtime v1.6.0-unstable-build.54c06a350-dev+models
-2025-08-25T23:34:30.325913Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
-2025-08-25T23:34:30.326072Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
-2025-08-25T23:34:31.163684Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-08-25T23:34:31.164965Z  INFO runtime::init::dataset: Dataset taxi_trips initializing...
-2025-08-25T23:34:31.165957Z  INFO runtime::init::model: Loading model [gpt-4o-responses] from openai:gpt-4o...
-2025-08-25T23:34:31.177013Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2025-08-25T23:34:31.992304Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled.
-2025-08-25T23:34:31.993720Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
-2025-08-25T23:34:34.491656Z  INFO runtime::init::model: Model [gpt-4o-responses] deployed, ready for inferencing
-2025-08-25T23:34:46.359978Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 14s 366ms.
-2025-08-25T23:34:46.453673Z  INFO runtime: All components are loaded. Spice runtime is ready!
+INFO spiced: Starting runtime v2.3.0+models.metal
+INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
+INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+INFO runtime::init::dataset: Dataset taxi_trips initializing...
+INFO runtime::init::model: Loading model [gpt-4o-responses] from openai:gpt-4o...
+INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled. duration_ms=0
+INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
+INFO runtime::init::model: Model [gpt-4o-responses] deployed, ready for inferencing
+INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 7s 474ms.
+INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
 ## Using OpenAI-hosted tools

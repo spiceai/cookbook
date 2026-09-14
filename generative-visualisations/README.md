@@ -76,14 +76,14 @@ spice run
 You should see output indicating that Spice is loading datasets and models:
 
 ```
-2025-01-08T10:00:00.000Z  INFO runtime::init::dataset: Dataset sales initializing...
-2025-01-08T10:00:00.001Z  INFO runtime::init::model: Loading model [visualisation_and_sql] from openai:gpt-5.2...
-2025-01-08T10:00:00.300Z  INFO runtime::init::model: Model [visualisation_and_sql] deployed, ready for inferencing
-2025-01-08T10:00:00.301Z  INFO runtime::init::model: Loading model [summary_maker] from openai:gpt-5.2...
-2025-01-08T10:00:00.600Z  INFO runtime::init::model: Model [summary_maker] deployed, ready for inferencing
-2025-01-08T10:00:01.045Z  INFO runtime::init::dataset: Dataset sales registered (s3://spiceai-demo-datasets/cleaned_sales_data.parquet), acceleration (arrow), results cache enabled. duration_ms=0
-2025-01-08T10:00:01.120Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset sales
-2025-01-08T10:00:01.807Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,823 rows (1010.18 kiB) for dataset sales in 687ms.
+INFO runtime::init::dataset: Dataset sales initializing...
+INFO runtime::init::model: Loading model [visualisation_and_sql] from openai:gpt-5.2...
+INFO runtime::init::model: Model [visualisation_and_sql] deployed, ready for inferencing
+INFO runtime::init::model: Loading model [summary_maker] from openai:gpt-5.2...
+INFO runtime::init::model: Model [summary_maker] deployed, ready for inferencing
+INFO runtime::init::dataset: Dataset sales registered (s3://spiceai-demo-datasets/cleaned_sales_data.parquet), acceleration (arrow), results cache enabled. duration_ms=0
+INFO runtime_table::accelerated::refresh_task: Loading data for dataset sales
+INFO runtime_table::accelerated::refresh_task: Loaded 2,823 rows (1010.18 kiB) for dataset sales in 687ms.
 ```
 
 **Keep this terminal open.** Open a new terminal for the next steps.
