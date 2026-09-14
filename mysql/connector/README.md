@@ -160,6 +160,10 @@ datasets:
       mysql_sslmode: disabled
       mysql_user: root
       mysql_pass: ${env:MYSQL_PASS}
+    acceleration:
+      enabled: true
+      refresh_mode: full
+      refresh_check_interval: 10s
 ```
 
 Ensure the `MYSQL_PASS` environment variable is set to the password for your MySQL instance. Environment variables can be specified on the command line when running the Spice runtime or in a `.env` file in the same directory as `spicepod.yaml`.
