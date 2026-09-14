@@ -113,7 +113,7 @@ The `spiceai_region` parameter selects which Spice Cloud region to source the da
 Save the changes to `spicepod.yaml`. The Spice runtime terminal will show that the dataset has been loaded:
 
 ```console
-2025-01-07T00:58:34.081889Z  INFO runtime::init::dataset: Dataset taxi_trips registered (spice.ai/spiceai/quickstart/datasets/taxi_trips), acceleration (postgres), results cache enabled.
+2025-01-07T00:58:34.081889Z  INFO runtime::init::dataset: Dataset taxi_trips registered (spice.ai/spiceai/quickstart/datasets/taxi_trips), acceleration (postgres, 10s refresh), results cache enabled.
 2025-01-07T00:58:34.083257Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
 2025-01-07T00:59:43.684903Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (8.41 GiB) for dataset taxi_trips in 1m 9s 601ms.
 ```

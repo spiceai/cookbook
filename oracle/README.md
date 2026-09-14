@@ -51,7 +51,7 @@ spice run
 This will start the Spice runtime, which will connect to Oracle and load the TPC-H tables:
 
 ```bash
-2025/07/07 13:41:42 INFO Spice.ai runtime starting...
+ INFO Spice.ai runtime starting...
 2025-07-07T20:41:42.882796Z  INFO spiced: Starting runtime v1.5.0-unstable-build.2187f22e7+models
 2025-07-07T20:41:42.884157Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-07-07T20:41:42.884197Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
