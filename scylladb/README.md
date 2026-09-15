@@ -115,7 +115,7 @@ If the configuration is correct, you should see output similar to:
 
 ```console
 INFO runtime::init::dataset: Dataset users initializing...
-INFO runtime::init::dataset: Dataset users registered (scylladb:users), acceleration (none), results cache enabled.
+INFO runtime::init::dataset: Dataset users registered (scylladb:users), results cache enabled.
 ```
 
 ---
