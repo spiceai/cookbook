@@ -80,11 +80,11 @@ Spice can read data straight from a Databricks instance. This recipe will create
 
    sql> show tables;
    +---------------+--------------+---------------+------------+
-   | table_catalog | table_schema | table_name    | table_type |
+   | table_catalog | table_schema |   table_name  | table_type |
+   |    varchar    |    varchar   |    varchar    |   varchar  |
    +---------------+--------------+---------------+------------+
    | spice         | public       | my_table      | BASE TABLE |
    | spice         | runtime      | task_history  | BASE TABLE |
-   | spice         | runtime      | metrics       | BASE TABLE |
    +---------------+--------------+---------------+------------+
 
    Time: 0.008540708 seconds
@@ -245,11 +245,11 @@ Note: A dataset can be accelerated when configured by specifying yes (y) to `loc
 
    sql> show tables;
    +---------------+--------------+---------------+------------+
-   | table_catalog | table_schema | table_name    | table_type |
+   | table_catalog | table_schema |   table_name  | table_type |
+   |    varchar    |    varchar   |    varchar    |   varchar  |
    +---------------+--------------+---------------+------------+
    | spice         | public       | my_table      | BASE TABLE |
    | spice         | runtime      | task_history  | BASE TABLE |
-   | spice         | runtime      | metrics       | BASE TABLE |
    +---------------+--------------+---------------+------------+
 
    Time: 0.008540708 seconds
@@ -324,7 +324,8 @@ Note: A dataset can be accelerated when configured by specifying yes (y) to `loc
 
    sql> show tables;
    +---------------+--------------+--------------+------------+
-   | table_catalog | table_schema | table_name   | table_type |
+   | table_catalog | table_schema |  table_name  | table_type |
+   |    varchar    |    varchar   |    varchar   |   varchar  |
    +---------------+--------------+--------------+------------+
    | spice         | runtime      | task_history | BASE TABLE |
    | spice         | public       | customer     | BASE TABLE |
@@ -405,11 +406,11 @@ Create a Databricks service principal by following the [Databricks documentation
 
    sql> show tables;
    +---------------+--------------+---------------+------------+
-   | table_catalog | table_schema | table_name    | table_type |
+   | table_catalog | table_schema |   table_name  | table_type |
+   |    varchar    |    varchar   |    varchar    |   varchar  |
    +---------------+--------------+---------------+------------+
    | spice         | public       | my_table      | BASE TABLE |
    | spice         | runtime      | task_history  | BASE TABLE |
-   | spice         | runtime      | metrics       | BASE TABLE |
    +---------------+--------------+---------------+------------+
 
    Time: 0.008540708 seconds

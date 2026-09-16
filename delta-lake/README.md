@@ -65,7 +65,8 @@ Spice supports reading data directly from Delta Lake tables. This recipe will cr
 
     sql> show tables;
     +---------------+--------------+------------------+------------+
-    | table_catalog | table_schema | table_name       | table_type |
+    | table_catalog | table_schema |    table_name    | table_type |
+    |    varchar    |    varchar   |      varchar     |   varchar  |
     +---------------+--------------+------------------+------------+
     | spice         | runtime      | task_history     | BASE TABLE |
     | spice         | public       | delta_lake_table | BASE TABLE |
