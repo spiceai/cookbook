@@ -70,12 +70,13 @@ show tables;
 ```
 
 ```sql
-+---------------+--------------+---------------+------------+
-| table_catalog | table_schema |   table_name  | table_type |
-|    varchar    |    varchar   |    varchar    |   varchar  |
-+---------------+--------------+---------------+------------+
-| spice         | runtime      | task_history  | BASE TABLE |
-+---------------+--------------+---------------+------------+
++---------------+--------------+--------------+------------+
+| table_catalog | table_schema |  table_name  | table_type |
+|    varchar    |    varchar   |    varchar   |   varchar  |
++---------------+--------------+--------------+------------+
+| spice         | runtime      | task_history | BASE TABLE |
+| spice         | runtime      | metrics      | BASE TABLE |
++---------------+--------------+--------------+------------+
 ```
 
 **Step 6.** Create a `values.yaml` file to configure the Spice deployment. See [Spice Helm Values](https://spiceai.org/docs/deployment/kubernetes/helm) for more details.
@@ -135,6 +136,7 @@ show tables;
 +---------------+--------------+-----------------------+------------+
 | spice         | public       | taxi_trips_customized | BASE TABLE |
 | spice         | runtime      | task_history          | BASE TABLE |
+| spice         | runtime      | metrics               | BASE TABLE |
 +---------------+--------------+-----------------------+------------+
 ```
 
