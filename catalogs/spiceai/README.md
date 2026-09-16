@@ -69,7 +69,8 @@ Use `show tables;` in the Spice SQL REPL to see the available datasets.
 ```bash
 sql> show tables;
 +---------------+--------------+--------------+------------+
-| table_catalog | table_schema | table_name   | table_type |
+| table_catalog | table_schema |  table_name  | table_type |
+|    varchar    |    varchar   |    varchar   |   varchar  |
 +---------------+--------------+--------------+------------+
 | scp           | tpch         | orders       | BASE TABLE |
 | scp           | tpch         | region       | BASE TABLE |
@@ -103,7 +104,8 @@ catalogs:
 ```bash
 sql> show tables;
 +---------------+--------------+---------------+------------+
-| table_catalog | table_schema | table_name    | table_type |
+| table_catalog | table_schema |   table_name  | table_type |
+|    varchar    |    varchar   |    varchar    |   varchar  |
 +---------------+--------------+---------------+------------+
 | scp           | tpch         | partsupp      | BASE TABLE |
 | scp           | tpch         | part          | BASE TABLE |
@@ -132,7 +134,8 @@ catalogs:
 spice sql
 sql> show tables;
 +---------------+--------------+--------------+------------+
-| table_catalog | table_schema | table_name   | table_type |
+| table_catalog | table_schema |  table_name  | table_type |
+|    varchar    |    varchar   |    varchar   |   varchar  |
 +---------------+--------------+--------------+------------+
 | scp           | tpch         | partsupp     | BASE TABLE |
 | scp           | tpch         | part         | BASE TABLE |

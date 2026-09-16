@@ -261,7 +261,8 @@ Validate that the correct tables have been made:
 spice sql
 sql> show tables;
 +---------------+--------------+--------------+------------+
-| table_catalog | table_schema | table_name   | table_type |
+| table_catalog | table_schema |  table_name  | table_type |
+|    varchar    |    varchar   |    varchar   |   varchar  |
 +---------------+--------------+--------------+------------+
 | spice         | runtime      | task_history | BASE TABLE |
 | spice         | public       | part         | BASE TABLE |
