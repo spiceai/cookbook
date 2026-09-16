@@ -146,7 +146,8 @@ SELECT * FROM supplier_order_waits LIMIT 5;
 
 ```console
 +--------------------+------------+---------+
-| s_name             | nation     | numwait |
+|       s_name       |   nation   | numwait |
+|       varchar      |   varchar  |  int64  |
 +--------------------+------------+---------+
 | Supplier#000002340 | INDIA      | 25      |
 | Supplier#000003591 | JAPAN      | 24      |
@@ -207,7 +208,8 @@ Observe the query execution time.
 
 ```console
 +--------------------+--------------+---------+
-| s_name             | nation       | numwait |
+|       s_name       |    nation    | numwait |
+|       varchar      |    varchar   |  int64  |
 +--------------------+--------------+---------+
 | Supplier#000002829 | SAUDI ARABIA | 20      |
 | Supplier#000005808 | SAUDI ARABIA | 18      |
@@ -232,7 +234,8 @@ SELECT * FROM supplier_order_waits WHERE nation = 'SAUDI ARABIA' LIMIT 10;
 
 ```console
 +--------------------+--------------+---------+
-| s_name             | nation       | numwait |
+|       s_name       |    nation    | numwait |
+|       varchar      |    varchar   |  int64  |
 +--------------------+--------------+---------+
 | Supplier#000002829 | SAUDI ARABIA | 20      |
 | Supplier#000005808 | SAUDI ARABIA | 18      |
