@@ -93,6 +93,23 @@ search result below change as the repository's `docs/` directory changes.
    dataset's `file_format` directly and uses it to pick the Markdown-aware
    splitter, which is what the setting is for here.
 
+   **Wait for the runtime to finish loading before searching.** With embeddings
+   enabled, the initial load also chunks every file and embeds it locally, which
+   takes a few minutes — about 4 minutes for the ~200 files this Spicepod reads,
+   against under 10 seconds without embeddings. Search only works once the
+   runtime logs:
+
+   ```text
+   INFO runtime_table::accelerated::refresh_task: Loaded 207 rows (12.75 MiB) for dataset spiceai.files in 3m 55s 719ms.
+   INFO runtime: All components are loaded. Spice runtime is ready!
+   ```
+
+   Searching before then returns:
+
+   ```text
+   Failed to execute search query: External error: Acceleration not ready; loading initial data for spiceai.files
+   ```
+
 3. Perform a basic search
 
 ```shell
@@ -233,11 +250,11 @@ Result:
   "results": [
     {
       "matches": {
-        "body": [
-          "Adds benefits, consideration, limits on data ingestion"
-        ],
         "title": [
           "Data ingestion doc"
+        ],
+        "body": [
+          "Adds benefits, consideration, limits on data ingestion"
         ]
       },
       "primary_key": {
@@ -260,8 +277,24 @@ Result:
       },
       "_score": 0.03200204813108039,
       "dataset": "doc.pulls"
+    },
+    {
+      "matches": {
+        "title": [
+          "Document Snowflake Data Connector"
+        ],
+        "body": [
+          "Document Snowflake Data Connector\r\n<img width=\"742\" alt=\"image\" src=\"https://github.com/spiceai/docs/assets/981580/03bdb514-391b-462f-8918-fb3f0cf28931\">\r\n<img width=\"745\" alt=\"image\" src=\"https://github.com/spiceai/docs/assets/981580/ce3319c2-db83-44c4-888a-606999484c7e\">\r\n"
+        ]
+      },
+      "primary_key": {
+        "id": "PR_kwDOF38K0s5uby1C"
+      },
+      "_score": 0.029910714285714284,
+      "dataset": "doc.pulls"
     }
-  ]
+  ],
+  "duration_ms": 7
 }
 ```
 
