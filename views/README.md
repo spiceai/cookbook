@@ -268,7 +268,7 @@ views:
       engine: duckdb
 
     sql: |
-    ...
+      ... # unchanged
 ```
 
 Start the Spice Runtime, and observe scheduled refreshes:
