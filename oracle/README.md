@@ -107,26 +107,27 @@ describe lineitem;
 ```
 
 ```bash
-+-----------------+-------------------+-------------+
-| column_name     | data_type         | is_nullable |
-+-----------------+-------------------+-------------+
-| L_ORDERKEY      | Int64             | YES         |
-| L_PARTKEY       | Int64             | YES         |
-| L_SUPPKEY       | Int64             | YES         |
-| L_LINENUMBER    | Int64             | YES         |
-| L_QUANTITY      | Decimal128(15, 2) | YES         |
-| L_EXTENDEDPRICE | Decimal128(15, 2) | YES         |
-| L_DISCOUNT      | Decimal128(15, 2) | YES         |
-| L_TAX           | Decimal128(15, 2) | YES         |
-| L_RETURNFLAG    | Utf8              | YES         |
-| L_LINESTATUS    | Utf8              | YES         |
-| L_SHIPDATE      | Date32            | YES         |
-| L_COMMITDATE    | Date32            | YES         |
-| L_RECEIPTDATE   | Date32            | YES         |
-| L_SHIPINSTRUCT  | Utf8              | YES         |
-| L_SHIPMODE      | Utf8              | YES         |
-| L_COMMENT       | Utf8              | YES         |
-+-----------------+-------------------+-------------+
++--------------+-----------------+-------------------+-------------+
+| table_schema |   column_name   |     data_type     | is_nullable |
+|    varchar   |     varchar     |      varchar      |   varchar   |
++--------------+-----------------+-------------------+-------------+
+| public       | L_ORDERKEY      | Int64             | YES         |
+| public       | L_PARTKEY       | Int64             | YES         |
+| public       | L_SUPPKEY       | Int64             | YES         |
+| public       | L_LINENUMBER    | Int64             | YES         |
+| public       | L_QUANTITY      | Decimal128(15, 2) | YES         |
+| public       | L_EXTENDEDPRICE | Decimal128(15, 2) | YES         |
+| public       | L_DISCOUNT      | Decimal128(15, 2) | YES         |
+| public       | L_TAX           | Decimal128(15, 2) | YES         |
+| public       | L_RETURNFLAG    | Utf8              | YES         |
+| public       | L_LINESTATUS    | Utf8              | YES         |
+| public       | L_SHIPDATE      | Date32            | YES         |
+| public       | L_COMMITDATE    | Date32            | YES         |
+| public       | L_RECEIPTDATE   | Date32            | YES         |
+| public       | L_SHIPINSTRUCT  | Utf8              | YES         |
+| public       | L_SHIPMODE      | Utf8              | YES         |
+| public       | L_COMMENT       | Utf8              | YES         |
++--------------+-----------------+-------------------+-------------+
 
 Time: 0.005356291 seconds. 16 rows.
 ```

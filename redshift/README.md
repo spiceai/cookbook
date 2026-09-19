@@ -283,26 +283,27 @@ To validate the schema of `lineitem`, use the `describe` command:
 
 ```sql
 sql> describe lineitem;
-+-----------------+-------------------+-------------+
-| column_name     | data_type         | is_nullable |
-+-----------------+-------------------+-------------+
-| l_orderkey      | Int32             | YES         |
-| l_partkey       | Int32             | YES         |
-| l_suppkey       | Int32             | YES         |
-| l_linenumber    | Int32             | YES         |
-| l_quantity      | Decimal128(15, 2) | YES         |
-| l_extendedprice | Decimal128(15, 2) | YES         |
-| l_discount      | Decimal128(15, 2) | YES         |
-| l_tax           | Decimal128(15, 2) | YES         |
-| l_returnflag    | Utf8              | YES         |
-| l_linestatus    | Utf8              | YES         |
-| l_shipdate      | Date32            | YES         |
-| l_commitdate    | Date32            | YES         |
-| l_receiptdate   | Date32            | YES         |
-| l_shipinstruct  | Utf8              | YES         |
-| l_shipmode      | Utf8              | YES         |
-| l_comment       | Utf8              | YES         |
-+-----------------+-------------------+-------------+
++--------------+-----------------+-------------------+-------------+
+| table_schema |   column_name   |     data_type     | is_nullable |
+|    varchar   |     varchar     |      varchar      |   varchar   |
++--------------+-----------------+-------------------+-------------+
+| public       | l_orderkey      | Int32             | YES         |
+| public       | l_partkey       | Int32             | YES         |
+| public       | l_suppkey       | Int32             | YES         |
+| public       | l_linenumber    | Int32             | YES         |
+| public       | l_quantity      | Decimal128(15, 2) | YES         |
+| public       | l_extendedprice | Decimal128(15, 2) | YES         |
+| public       | l_discount      | Decimal128(15, 2) | YES         |
+| public       | l_tax           | Decimal128(15, 2) | YES         |
+| public       | l_returnflag    | Utf8              | YES         |
+| public       | l_linestatus    | Utf8              | YES         |
+| public       | l_shipdate      | Date32            | YES         |
+| public       | l_commitdate    | Date32            | YES         |
+| public       | l_receiptdate   | Date32            | YES         |
+| public       | l_shipinstruct  | Utf8              | YES         |
+| public       | l_shipmode      | Utf8              | YES         |
+| public       | l_comment       | Utf8              | YES         |
++--------------+-----------------+-------------------+-------------+
 ```
 
 Run the _Pricing Summary Report Query (Q1)_ to validate data. Q1 is defined in the
