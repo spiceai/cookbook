@@ -145,29 +145,30 @@ describe nyc_taxis;
 ```
 
 ```shell
-+-----------------------+-----------------------------------------+-------------+
-| column_name           | data_type                               | is_nullable |
-+-----------------------+-----------------------------------------+-------------+
-| VendorID              | Int64                                   | YES         |
-| tpep_pickup_datetime  | Timestamp(Microsecond, Some("Etc/UTC")) | YES         |
-| tpep_dropoff_datetime | Timestamp(Microsecond, Some("Etc/UTC")) | YES         |
-| passenger_count       | Float64                                 | YES         |
-| trip_distance         | Float64                                 | YES         |
-| RatecodeID            | Float64                                 | YES         |
-| store_and_fwd_flag    | Utf8                                    | YES         |
-| PULocationID          | Int64                                   | YES         |
-| DOLocationID          | Int64                                   | YES         |
-| payment_type          | Int64                                   | YES         |
-| fare_amount           | Float64                                 | YES         |
-| extra                 | Float64                                 | YES         |
-| mta_tax               | Float64                                 | YES         |
-| tip_amount            | Float64                                 | YES         |
-| tolls_amount          | Float64                                 | YES         |
-| improvement_surcharge | Float64                                 | YES         |
-| total_amount          | Float64                                 | YES         |
-| congestion_surcharge  | Float64                                 | YES         |
-| airport_fee           | Float64                                 | YES         |
-+-----------------------+-----------------------------------------+-------------+
++--------------+-----------------------+--------------------------+-------------+
+| table_schema |      column_name      |         data_type        | is_nullable |
+|    varchar   |        varchar        |          varchar         |   varchar   |
++--------------+-----------------------+--------------------------+-------------+
+| public       | VendorID              | Int64                    | YES         |
+| public       | tpep_pickup_datetime  | Timestamp(µs, "Etc/UTC") | YES         |
+| public       | tpep_dropoff_datetime | Timestamp(µs, "Etc/UTC") | YES         |
+| public       | passenger_count       | Float64                  | YES         |
+| public       | trip_distance         | Float64                  | YES         |
+| public       | RatecodeID            | Float64                  | YES         |
+| public       | store_and_fwd_flag    | Utf8                     | YES         |
+| public       | PULocationID          | Int64                    | YES         |
+| public       | DOLocationID          | Int64                    | YES         |
+| public       | payment_type          | Int64                    | YES         |
+| public       | fare_amount           | Float64                  | YES         |
+| public       | extra                 | Float64                  | YES         |
+| public       | mta_tax               | Float64                  | YES         |
+| public       | tip_amount            | Float64                  | YES         |
+| public       | tolls_amount          | Float64                  | YES         |
+| public       | improvement_surcharge | Float64                  | YES         |
+| public       | total_amount          | Float64                  | YES         |
+| public       | congestion_surcharge  | Float64                  | YES         |
+| public       | airport_fee           | Float64                  | YES         |
++--------------+-----------------------+--------------------------+-------------+
 
 Time: 0.006024208 seconds. 19 rows.
 ```
