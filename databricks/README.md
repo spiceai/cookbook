@@ -116,7 +116,7 @@ Spice can read data straight from a Databricks instance. This recipe will create
    | public       | congestion_surcharge  | Float64       | YES         |
    | public       | Airport_fee           | Float64       | YES         |
    +--------------+-----------------------+---------------+-------------+
-   Time: 0.00507075 seconds
+   Time: 0.00507075 seconds. 19 rows.
    ```
 
 8. Query against the Databricks table. Since the table isn't accelerated, the spice runtime will make a network call to the object storage service.
