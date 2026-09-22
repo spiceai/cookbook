@@ -7,7 +7,7 @@ Use [spicepy](https://github.com/spiceai/spicepy) to query Spice from Python.
 ## What This Sample Includes
 
 - `sample.py`: Query a local Spice runtime, including a parameterized query.
-- `main_cloud.py`: Query Spice.ai Cloud with inline replacement values.
+- `main_cloud.py`: Query Spice.ai Cloud, reading the API key from the `SPICE_API_KEY` environment variable.
 
 ## Prerequisites
 
