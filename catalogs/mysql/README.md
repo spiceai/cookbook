@@ -116,7 +116,8 @@ SHOW TABLES;
 
 ```
 +---------------+--------------+--------------+------------+
-| table_catalog | table_schema | table_name   | table_type |
+| table_catalog | table_schema |  table_name  | table_type |
+|    varchar    |    varchar   |    varchar   |   varchar  |
 +---------------+--------------+--------------+------------+
 | my            | tpch         | region       | BASE TABLE |
 | my            | tpch         | nation       | BASE TABLE |

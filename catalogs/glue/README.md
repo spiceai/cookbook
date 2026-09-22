@@ -80,7 +80,8 @@ List the available tables:
 ```sql
 sql> show tables;
 +-----------------+--------------+-------------------+------------+
-| table_catalog   | table_schema | table_name        | table_type |
+|  table_catalog  | table_schema |     table_name    | table_type |
+|     varchar     |    varchar   |      varchar      |   varchar  |
 +-----------------+--------------+-------------------+------------+
 | my_glue_catalog | testdb       | hive_table_001    | BASE TABLE |
 | my_glue_catalog | testdb       | iceberg_table_001 | BASE TABLE |

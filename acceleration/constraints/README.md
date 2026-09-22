@@ -56,7 +56,8 @@ Examples:
 
 sql> show tables;
 +---------------+--------------+--------------+------------+
-| table_catalog | table_schema | table_name   | table_type |
+| table_catalog | table_schema |  table_name  | table_type |
+|    varchar    |    varchar   |    varchar   |   varchar  |
 +---------------+--------------+--------------+------------+
 | spice         | public       | users        | BASE TABLE |
 | spice         | runtime      | task_history | BASE TABLE |

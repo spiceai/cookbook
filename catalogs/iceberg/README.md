@@ -67,7 +67,8 @@ spice run
 spice sql
 sql> show tables;
 +---------------+--------------+--------------+------------+
-| table_catalog | table_schema | table_name   | table_type |
+| table_catalog | table_schema |  table_name  | table_type |
+|    varchar    |    varchar   |    varchar   |   varchar  |
 +---------------+--------------+--------------+------------+
 | ice           | tpch_sf1     | lineitem     | BASE TABLE |
 | ice           | tpch_sf1     | nation       | BASE TABLE |
