@@ -66,6 +66,7 @@ datasets:
     description: NYC TLC trips sample
     params:
       file_format: parquet
+      s3_auth: public
     acceleration:
       enabled: true
       engine: duckdb
