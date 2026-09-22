@@ -7,7 +7,7 @@ Use [spicepy](https://github.com/spiceai/spicepy) to query Spice from Python.
 ## What This Sample Includes
 
 - `sample.py`: Query a local Spice runtime, including a parameterized query.
-- `main_cloud.py`: Query Spice.ai Cloud with inline replacement values.
+- `main_cloud.py`: Query Spice.ai Cloud, reading the API key from the `SPICE_API_KEY` environment variable.
 
 ## Prerequisites
 
@@ -82,7 +82,7 @@ Set your API key for the commands in this README:
 export SPICE_API_KEY="your_api_key"
 ```
 
-The cloud snippet keeps an inline API key placeholder by design. Replace the API key placeholder in `main_cloud.py` with `${SPICE_API_KEY}`, then run:
+`main_cloud.py` reads that variable with `os.environ["SPICE_API_KEY"]`, so run it as is:
 
 ```bash
 uv run main_cloud.py
@@ -93,6 +93,5 @@ Expected output is a table list from `show tables;`.
 ## Links
 
 - [spicepy SDK](https://github.com/spiceai/spicepy)
-- [PyPI package](https://pypi.org/project/spicepy/)
 - [Spice.ai Cloud](https://spice.ai)
 - [Spice.ai documentation](https://docs.spiceai.org)

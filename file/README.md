@@ -173,8 +173,8 @@ Remove the created files:
 # Remove the spicepod.yaml
 rm spicepod.yaml
 
-# Remove the downloaded Markdown files
-rm *.md
+# Remove the downloaded Markdown files (not `rm *.md`, which also deletes this recipe's README.md)
+rm clickhouse.md debezium.md ducklake.md iceberg.md
 ```
 
 ## Additional Resources
