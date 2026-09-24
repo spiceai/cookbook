@@ -45,21 +45,22 @@ You should see terminal output like so:
 ```shell
 $ spice run
  INFO Spice.ai runtime starting...
-2026-08-02T12:24:38.441060Z  INFO spiced: Starting runtime v2.1.2+models
-2026-08-02T12:24:38.442600Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
-2026-08-02T12:24:38.442643Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
-2026-08-02T12:24:38.442658Z  INFO runtime::init::caching: Initialized embeddings cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
-2026-08-02T12:24:38.444400Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2026-08-02T12:24:38.444761Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2026-08-02T12:24:38.452860Z  INFO runtime::init::dataset: Loading datasets: 1 tasks dispatched, 0 skipped at accelerator init (of 2 total; localpod datasets may be chained).
-2026-08-02T12:24:38.452891Z  INFO runtime::init::dataset: Dataset local_time_series initializing...
-2026-08-02T12:24:38.453637Z  INFO runtime::init::dataset: Dataset time_series registered (file:data.csv), acceleration (arrow, 15s refresh), results cache enabled. duration_ms=0
-2026-08-02T12:24:38.454943Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset time_series
-2026-08-02T12:24:38.455886Z  INFO runtime_table::accelerated::refresh_task: Loaded 1 rows for dataset time_series in 0s.
-2026-08-02T12:24:38.458522Z  INFO runtime::init::dataset: Dataset local_time_series registered (localpod:time_series), acceleration (duckdb:file, 10s refresh), results cache enabled. duration_ms=3
-2026-08-02T12:24:38.459791Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset local_time_series
-2026-08-02T12:24:38.463429Z  INFO runtime_table::accelerated::refresh_task: Loaded 1 rows for dataset local_time_series in 3ms.
-2026-08-02T12:24:38.561540Z  INFO runtime: All components are loaded. Spice runtime is ready!
+2026-09-24T15:46:28.639648Z  INFO spiced: Starting runtime v2.3.2+models.metal
+2026-09-24T15:46:28.642754Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2026-09-24T15:46:28.642780Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
+2026-09-24T15:46:28.642793Z  INFO runtime::init::caching: Initialized embeddings cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
+2026-09-24T15:46:28.644686Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2026-09-24T15:46:28.645041Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2026-09-24T15:46:28.652730Z  INFO runtime::init::dataset: Loading datasets: 1 tasks dispatched, 0 skipped at accelerator init (of 2 total; localpod datasets may be chained).
+2026-09-24T15:46:28.652776Z  INFO runtime::init::dataset: Dataset local_time_series initializing...
+2026-09-24T15:46:28.655274Z  INFO runtime::init::dataset: Dataset time_series registered (file:data.csv), acceleration (arrow, 15s refresh), results cache enabled. duration_ms=0
+2026-09-24T15:46:28.656620Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset time_series
+2026-09-24T15:46:28.657844Z  INFO runtime_table::accelerated::refresh_task: Loaded 1 rows (384.00 B) for dataset time_series in 1ms.
+2026-09-24T15:46:28.664894Z  INFO runtime::datafusion: Localpod dataset local_time_series synchronizing refreshes with parent table time_series
+2026-09-24T15:46:28.665318Z  INFO runtime::init::dataset: Dataset local_time_series registered (localpod:time_series), acceleration (duckdb:file, 10s refresh), results cache enabled. duration_ms=8
+2026-09-24T15:46:28.666606Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset local_time_series
+2026-09-24T15:46:28.671346Z  INFO runtime_table::accelerated::refresh_task: Loaded 1 rows (384.00 B) for dataset local_time_series in 4ms.
+2026-09-24T15:46:28.767918Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
 ### Querying the `localpod`
@@ -100,8 +101,8 @@ Replace the seed data with 1,000 generated rows and observe the `localpod` updat
 In the terminal where `spice run` is running, you should see a message indicating the new data is loaded:
 
 ```shell
-2026-08-02T12:25:23.471503Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (24.00 B) for dataset time_series in 4ms.
-2026-08-02T12:25:28.564207Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (24.00 B) for dataset local_time_series in 15ms.
+2026-09-24T15:46:58.687136Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (24.28 kiB) for dataset time_series in 13ms.
+2026-09-24T15:46:58.687180Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (24.28 kiB) for dataset local_time_series in 13ms.
 ```
 
 And the same SQL queries as above will give updated results:
