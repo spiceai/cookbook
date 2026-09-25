@@ -22,20 +22,23 @@ services:
     networks:
       iceberg_net:
     depends_on:
-      - rest
-      - minio
+      rest:
+        condition: service_started
+      createbucket:
+        condition: service_completed_successfully
     environment:
       - AWS_ACCESS_KEY_ID=admin
       - AWS_SECRET_ACCESS_KEY=password
       - AWS_REGION=us-east-1
-      - CATALOG_S3_ENDPOINT=http://minio:9000
+      - CATALOG_S3_ENDPOINT=http://rustfs:9000
       - CATALOG_URI=http://rest:8181
       - CATALOG_WAREHOUSE=s3://iceberg
   rest:
     image: apache/iceberg-rest-fixture
     container_name: iceberg-rest
     depends_on:
-      - minio
+      createbucket:
+        condition: service_completed_successfully
     networks:
       iceberg_net:
     ports:
@@ -46,29 +49,30 @@ services:
       - AWS_REGION=us-east-1
       - CATALOG_WAREHOUSE=s3://iceberg
       - CATALOG_IO__IMPL=org.apache.iceberg.aws.s3.S3FileIO
-      - CATALOG_S3_ENDPOINT=http://minio:9000
+      - CATALOG_S3_ENDPOINT=http://rustfs:9000
       - CATALOG_CATALOG__IMPL=org.apache.iceberg.jdbc.JdbcCatalog
       - CATALOG_URI=jdbc:sqlite:/tmp/iceberg.db
-  minio:
-    image: minio/minio
-    container_name: minio
+  rustfs:
+    image: rustfs/rustfs:1.0.0
+    container_name: rustfs
     environment:
-      - MINIO_ROOT_USER=admin
-      - MINIO_ROOT_PASSWORD=password
-      - MINIO_DOMAIN=minio
+      - RUSTFS_ACCESS_KEY=admin
+      - RUSTFS_SECRET_KEY=password
+      - RUSTFS_CONSOLE_ENABLE=true
+      # Iceberg's S3FileIO addresses the bucket virtual-hosted style (iceberg.rustfs)
+      - RUSTFS_SERVER_DOMAINS=rustfs
     networks:
       iceberg_net:
         aliases:
-          - iceberg.minio
+          - iceberg.rustfs
     ports:
       - 9001:9001
       - 9000:9000
-    command: ["server", "/data", "--console-address", ":9001"]
-  mc:
+  createbucket:
     depends_on:
-      - minio
-    image: minio/mc
-    container_name: mc
+      - rustfs
+    image: amazon/aws-cli
+    container_name: createbucket
     networks:
       iceberg_net:
     environment:
@@ -77,11 +81,8 @@ services:
       - AWS_REGION=us-east-1
     entrypoint: >
       /bin/sh -c "
-      /usr/bin/mc alias set minio http://minio:9000 admin password;
-      /usr/bin/mc rb minio/iceberg;
-      /usr/bin/mc mb minio/iceberg;
-      /usr/bin/mc anonymous set public minio/iceberg;
-      tail -f /dev/null
+      until aws --endpoint-url http://rustfs:9000 s3 ls >/dev/null 2>&1; do sleep 1; done;
+      aws --endpoint-url http://rustfs:9000 s3api head-bucket --bucket iceberg 2>/dev/null || aws --endpoint-url http://rustfs:9000 s3 mb s3://iceberg
       "
 networks:
   iceberg_net:
