@@ -1,11 +1,15 @@
 # Caching Accelerator
 
-Works with `v2.3.0+`
+Works with `v2.3.1+`
 
-> `refresh_mode: caching` itself works on `v1.10+`, but this recipe's spicepod sets
-> `caching_max_size` and `caching_max_items`, which are `v2.3.0+`. An older runtime
-> starts, then ignores both — `Ignoring parameter caching_max_size: not supported for
-> accelerator duckdb.` — leaving the acceleration unbounded.
+> `refresh_mode: caching` itself works on `v1.10+`, and `caching_max_size` /
+> `caching_max_items` — which this recipe's spicepod sets — land in `v2.3.0`. Below
+> `v2.3.0` the runtime starts, then ignores both — `Ignoring parameter
+> caching_max_size: not supported for accelerator duckdb.` — leaving the acceleration
+> unbounded. On `v2.3.0` itself the budgets are honoured, but a cache budget is not yet
+> treated as the accelerator's bound, so the `runtime::datafusion` retention warning
+> documented below as absent is still printed. The console output in this recipe is
+> therefore `v2.3.1+`.
 
 This recipe demonstrates the **caching accelerator** (`refresh_mode: caching`), which provides intelligent caching for HTTP-based datasets with Stale-While-Revalidate (SWR) support.
 
