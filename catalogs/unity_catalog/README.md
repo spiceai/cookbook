@@ -6,6 +6,8 @@ The Unity Catalog Connector makes querying tables in a Unity Catalog with Spice 
 
 Note: This recipe applies to the [open-source version of Unity Catalog](https://www.unitycatalog.io/). To get started with the Databricks Unity Catalog Connector, see the [Databricks Unity Catalog Connector recipe](../databricks/README.md).
 
+> **Note:** The Delta Lake tables in this recipe are stored in [RustFS](https://github.com/rustfs/rustfs), an S3-compatible object store. Earlier versions used MinIO, whose open-source server and client are archived: the `minio/minio` and `minio/mc` images can no longer be pulled.
+
 ## Prerequisites
 
 - Docker and Docker Compose installed.
@@ -21,9 +23,9 @@ docker compose up -d
 
 This starts:
 - **Unity Catalog server** on `http://localhost:8081` — metadata catalog
-- **MinIO** on `http://localhost:9000` (console: `http://localhost:9001`) — S3-compatible object store for Delta Lake tables
+- **RustFS** on `http://localhost:9000` (console: `http://localhost:9001/rustfs/console/`) — S3-compatible object store for Delta Lake tables
 - **Unity Catalog UI** on `http://localhost:3000` — browse the catalog
-- **Seed container** — populates the catalog with sample Delta Lake tables in MinIO
+- **Seed container** — populates the catalog with sample Delta Lake tables in RustFS
 
 The seed container creates a `unity.samples` schema with realistic tables:
 - **customers** (100 rows) — customer dimension with name, email, segment, location
@@ -31,11 +33,11 @@ The seed container creates a `unity.samples` schema with realistic tables:
 - **orders** (500 rows) — order fact table with status, payment method
 - **order_items** (~1500 rows) — line items linking orders to products
 
-You can browse the catalog in the UI at [http://localhost:3000](http://localhost:3000) and the MinIO console at [http://localhost:9001](http://localhost:9001) (credentials: `minio` / `minio123`).
+You can browse the catalog in the UI at [http://localhost:3000](http://localhost:3000) and the RustFS console at [http://localhost:9001/rustfs/console/](http://localhost:9001/rustfs/console/) (credentials: `minio` / `minio123`).
 
 ## Step 2. Start the Spice runtime
 
-The included `spicepod.yaml` is pre-configured to connect to the local Unity Catalog and MinIO:
+The included `spicepod.yaml` is pre-configured to connect to the local Unity Catalog and RustFS:
 
 ```bash
 spice run
@@ -141,7 +143,7 @@ docker compose down -v
 
 ## How It Works
 
-Unity Catalog is a **metadata-only catalog** — it stores table schemas and their storage locations, but not the actual data. The data lives in Delta Lake format on an S3-compatible object store (MinIO in this recipe).
+Unity Catalog is a **metadata-only catalog** — it stores table schemas and their storage locations, but not the actual data. The data lives in Delta Lake format on an S3-compatible object store (RustFS in this recipe).
 
 The `spicepod.yaml` configuration:
 
@@ -163,6 +165,6 @@ catalogs:
       unity_catalog_aws_allow_http: "true"
 ```
 
-Spice connects to Unity Catalog to discover table metadata, then reads the actual Delta Lake data directly from MinIO using the S3 credentials.
+Spice connects to Unity Catalog to discover table metadata, then reads the actual Delta Lake data directly from RustFS using the S3 credentials.
 
 Visit the documentation for more information configuring the [Unity Catalog Connector](https://docs.spiceai.org/components/catalogs/unity-catalog).
