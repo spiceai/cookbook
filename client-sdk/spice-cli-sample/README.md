@@ -1,5 +1,7 @@
 # Spice CLI Cloud Sample
 
+Works with `v2.0+`
+
 Use the [Spice CLI](https://docs.spiceai.org/getting-started) to run SQL against [Spice.ai Cloud](https://spice.ai).
 
 ## Links
@@ -41,19 +43,15 @@ The script snippets keep inline placeholders by design. Replace the API key and 
 bash query_cloud_default.sh
 ```
 
-## Additional URL Examples
+## Explicit Endpoint Example
 
-Run with an explicit gRPC endpoint URL:
+Run with an explicit Arrow Flight (gRPC) endpoint URL:
 
 ```bash
 bash query_cloud_grpc.sh
 ```
 
-Run with an explicit HTTP endpoint URL:
-
-```bash
-bash query_cloud_http.sh
-```
+`--endpoint` takes an Arrow Flight (gRPC) URL, not the HTTP API. To query over HTTP, use the [cURL sample](../curl-sample/README.md).
 
 ## Manual Commands
 
@@ -61,15 +59,10 @@ bash query_cloud_http.sh
 spice sql \
   --cloud \
   --api-key "${SPICE_API_KEY}" \
-  "SELECT * FROM ${SPICE_DATASET} LIMIT 10"
+  --query "SELECT * FROM ${SPICE_DATASET} LIMIT 10"
 
 spice sql \
   --api-key "${SPICE_API_KEY}" \
   --endpoint "grpc+tls://flight.spiceai.io:443" \
-  "SELECT * FROM ${SPICE_DATASET} LIMIT 10"
-
-spice sql \
-  --api-key "${SPICE_API_KEY}" \
-  --endpoint "https://data.spiceai.io" \
-  "SELECT * FROM ${SPICE_DATASET} LIMIT 10"
+  --query "SELECT * FROM ${SPICE_DATASET} LIMIT 10"
 ```

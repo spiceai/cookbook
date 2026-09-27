@@ -1,5 +1,7 @@
 # cURL Cloud Sample
 
+Works with `v1.0+`
+
 Use [cURL](https://curl.se/) to run SQL against [Spice.ai Cloud](https://spice.ai) over HTTP.
 
 ## Links
@@ -38,11 +40,11 @@ bash query_cloud_http.sh
 
 ```bash
 curl -X POST https://data.spiceai.io/v1/sql \
-  -H "Content-Type: application/json" \
+  -H "Content-Type: text/plain" \
   -H "X-API-Key: ${SPICE_API_KEY}" \
-  -d "{\"query\": \"SELECT * FROM ${SPICE_DATASET} LIMIT 10\"}"
+  -d "SELECT * FROM ${SPICE_DATASET} LIMIT 10"
 ```
 
 ## Expected Result
 
-You should receive JSON with query results in a `data` array.
+You should receive a JSON array with one object per row.
