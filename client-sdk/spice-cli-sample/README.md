@@ -37,6 +37,8 @@ export SPICE_API_KEY="your_api_key"
 export SPICE_DATASET="your_dataset"
 ```
 
+`--cloud` and `flight.spiceai.io` reach projects in `us-east-1`. For a project in `us-west-2`, add `--cloud-region us-west-2` after `--cloud`, and use `grpc+tls://us-west-2-prod-aws-flight.spiceai.io:443` as the `--endpoint`.
+
 The script snippets keep inline placeholders by design. Replace the API key and dataset placeholders in the scripts, then run:
 
 ```bash

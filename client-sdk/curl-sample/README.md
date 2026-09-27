@@ -30,6 +30,8 @@ export SPICE_API_KEY="your_api_key"
 export SPICE_DATASET="your_dataset"
 ```
 
+`https://data.spiceai.io` reaches projects in `us-east-1`. For a project in another region, replace it in `query_cloud_http.sh` and in the manual query below with that region's endpoint, such as `https://us-west-2-prod-aws-data.spiceai.io` for `us-west-2`.
+
 The script snippet keeps inline placeholders by design. Replace the API key and dataset placeholders in `query_cloud_http.sh`, then run:
 
 ```bash
