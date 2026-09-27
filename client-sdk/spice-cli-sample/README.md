@@ -1,0 +1,70 @@
+# Spice CLI Cloud Sample
+
+Works with `v2.0+`
+
+Use the [Spice CLI](https://docs.spiceai.org/getting-started) to run SQL against [Spice.ai Cloud](https://spice.ai).
+
+## Links
+
+- [Spice CLI documentation](https://docs.spiceai.org/cli)
+- [Spice CLI installation](https://docs.spiceai.org/getting-started)
+- [Spice.ai Cloud](https://spice.ai)
+- [Spice OSS GitHub](https://github.com/spiceai/spiceai)
+
+## Prerequisites
+
+- [Spice CLI](https://docs.spiceai.org/getting-started)
+- A Spice.ai Cloud API key
+- A dataset available in your Cloud app
+
+Install Spice CLI if needed:
+
+```bash
+curl https://install.spiceai.org | /bin/bash
+```
+
+## Quick Start
+
+```bash
+git clone https://github.com/spiceai/cookbook.git
+cd cookbook/client-sdk/spice-cli-sample
+```
+
+Set your cloud values for the commands in this README:
+
+```bash
+export SPICE_API_KEY="your_api_key"
+export SPICE_DATASET="your_dataset"
+```
+
+`--cloud` and `flight.spiceai.io` reach projects in `us-east-1`. For a project in `us-west-2`, add `--cloud-region us-west-2` after `--cloud`, and use `grpc+tls://us-west-2-prod-aws-flight.spiceai.io:443` as the `--endpoint`.
+
+The script snippets keep inline placeholders by design. Replace the API key and dataset placeholders in the scripts, then run:
+
+```bash
+bash query_cloud_default.sh
+```
+
+## Explicit Endpoint Example
+
+Run with an explicit Arrow Flight (gRPC) endpoint URL:
+
+```bash
+bash query_cloud_grpc.sh
+```
+
+`--endpoint` takes an Arrow Flight (gRPC) URL, not the HTTP API. To query over HTTP, use the [cURL sample](../curl-sample/README.md).
+
+## Manual Commands
+
+```bash
+spice sql \
+  --cloud \
+  --api-key "${SPICE_API_KEY}" \
+  --query "SELECT * FROM ${SPICE_DATASET} LIMIT 10"
+
+spice sql \
+  --api-key "${SPICE_API_KEY}" \
+  --endpoint "grpc+tls://flight.spiceai.io:443" \
+  --query "SELECT * FROM ${SPICE_DATASET} LIMIT 10"
+```
