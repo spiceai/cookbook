@@ -51,8 +51,13 @@ You should see output indicating the model is ready:
 
 ```shell
 2025-10-06T10:30:00.123456Z  INFO runtime::init::model: Loading model [gpt-4o-mini] from openai:gpt-4o-mini...
+2025-10-06T10:30:00.124220Z  INFO runtime::init::dataset: Dataset customer_feedback initializing...
+2025-10-06T10:30:00.124316Z  INFO runtime::init::dataset: Dataset taxi_zones initializing...
+2025-10-06T10:30:00.127931Z  INFO runtime::init::dataset: Dataset taxi_zones registered (file:../data/taxi_zone_lookup.csv), acceleration (arrow), results cache enabled. duration_ms=0
+2025-10-06T10:30:00.127957Z  INFO runtime::init::dataset: Dataset customer_feedback registered (file:../data/customer_feedback.csv), acceleration (arrow), results cache enabled. duration_ms=0
+2025-10-06T10:30:00.130589Z  INFO runtime_table::accelerated::refresh_task: Loaded 265 rows (21.56 kiB) for dataset taxi_zones in 1ms.
+2025-10-06T10:30:00.130721Z  INFO runtime_table::accelerated::refresh_task: Loaded 20 rows (4.16 kiB) for dataset customer_feedback in 1ms.
 2025-10-06T10:30:01.234567Z  INFO runtime::init::model: Model [gpt-4o-mini] deployed, ready for inferencing
-2025-10-06T10:30:02.345678Z  INFO runtime::init::dataset: Dataset taxi_zones registered...
 ```
 
 ### Step 4: Try Your First AI Query
@@ -240,7 +245,7 @@ LIMIT 10;
 
 ### Limits
 
-- Maximum batch size: 100 rows per query
+- Maximum batch size: 1000 rows per query
 - Maximum message size: 1 MB per message
 
 ### Error Handling
@@ -292,7 +297,7 @@ Add to `spicepod.yaml`:
 ```yaml
 models:
   - name: sonnet-4-5
-    from: anthropic:claude-4-5-sonnet
+    from: anthropic:claude-sonnet-4-5
     params:
       anthropic_api_key: ${secrets:ANTHROPIC_API_KEY}
 ```
@@ -313,7 +318,7 @@ Then use in queries:
 SELECT
   ai('Hello!', 'gpt-4o-mini') as openai_response,
   ai('Hello!', 'sonnet-4-5') as claude_response,
-  ai('Hello!', 'grok-4-1-fast-non-reasoning') as grok_response;
+  ai('Hello!', 'grok-4-1-fast') as grok_response;
 ```
 
 ## Real-World Use Cases
@@ -387,6 +392,6 @@ Check the Spice logs for error messages:
 ## Next Steps
 
 - Explore the [text-to-sql](../text-to-sql) cookbook for natural language to SQL
-- Check out [vector search](../vectors) for semantic search capabilities
+- Check out [vector search](../vectors/s3) for semantic search capabilities
 - Try [embeddings](../search) for similarity search
 - Learn about [LLM tools](https://docs.spiceai.org/features/large-language-models/tools) for more advanced AI integration

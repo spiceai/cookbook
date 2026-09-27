@@ -6,7 +6,7 @@ Follow this recipe to configure dataset acceleration using SQLite.
 
 _Tip: Open and refer to the [SQLite Data Accelerator](https://spiceai.org/docs/components/data-accelerators/sqlite) documentation while completing this recipe._
 
-_Tip: Follow the [Advanced Data Refresh Recipe](../data-refresh/README.md) to learn more about advanced data refresh scenarios, such as programmatically updating `refresh_sql` and triggering data refreshes._
+_Tip: Follow the [Advanced Data Refresh Recipe](../../acceleration/data-refresh/README.md) to learn more about advanced data refresh scenarios, such as programmatically updating `refresh_sql` and triggering data refreshes._
 
 ## Step 1. Initialize the Spice app
 
@@ -28,12 +28,10 @@ spice run
 Output:
 
 ```bash
-2024-09-10T06:54:36.184935Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
 2024-09-10T06:54:36.185086Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2024-09-10T06:54:36.187305Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2024-09-10T06:54:36.193225Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2024-09-10T06:54:36.385124Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2024-09-10T06:54:37.020990Z  INFO runtime: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), results cache enabled.
+2024-09-10T06:54:36.385124Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2024-09-10T06:54:37.020990Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), results cache enabled.
 ```
 
 ## Step 2. Run query against the dataset using the Spice SQL REPL
@@ -55,6 +53,7 @@ Output:
 ```bash
 +---------------+--------------+
 | trip_distance | total_amount |
+|    float64    |    float64   |
 +---------------+--------------+
 | 312722.3      | 22.15        |
 | 97793.92      | 36.31        |
@@ -73,24 +72,20 @@ Time: 2.1508365 seconds. 10 rows.
 
 ## Step3. Enable SQLite Accelerator
 
-Use text editor to open `spicepod.yaml` and set `acceleration.enabled: true`. Save.
+Use a text editor to open `spicepod.yaml` and add the `acceleration` block shown below. Save.
 
 Before:
 
 ```yaml
 version: v1
 kind: Spicepod
-name: spice_app
+name: sqlite
 datasets:
   - from: s3://spiceai-demo-datasets/taxi_trips/2024/
     name: taxi_trips
     description: taxi trips in s3
     params:
       file_format: parquet
-    acceleration:
-      enabled: false
-      engine: sqlite
-      mode: file
 ```
 
 After:
@@ -98,7 +93,7 @@ After:
 ```yaml
 version: v1
 kind: Spicepod
-name: spice_app
+name: sqlite
 datasets:
   - from: s3://spiceai-demo-datasets/taxi_trips/2024/
     name: taxi_trips
@@ -115,9 +110,9 @@ The following output is shown in the Spice runtime terminal confirming new confi
 
 ```bash
 2024-09-10T06:59:21.908667Z  INFO runtime: Unloaded dataset taxi_trips
-2024-09-10T06:59:22.524295Z  INFO runtime: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (sqlite:file), results cache enabled.
-2024-09-10T06:59:22.525789Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
-2024-09-10T06:59:39.244473Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (421.71 MiB) for dataset taxi_trips in 16s 718ms.
+2024-09-10T06:59:22.524295Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (sqlite:file), results cache enabled.
+2024-09-10T06:59:22.525789Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
+2024-09-10T06:59:39.244473Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 16s 718ms.
 ```
 
 Run query to display the longest taxi trips again:
@@ -131,6 +126,7 @@ Output:
 ```bash
 +---------------+--------------+
 | trip_distance | total_amount |
+|    float64    |    float64   |
 +---------------+--------------+
 | 312722.3      | 22.15        |
 | 97793.92      | 36.31        |

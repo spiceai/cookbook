@@ -1,0 +1,17 @@
+# Self-hosted Dremio Community Edition (dremio-oss) for the federated SQL query recipe.
+#
+#   9047  - Dremio web UI and REST API
+#   32010 - Arrow Flight endpoint, used by the Spice Dremio data connector
+services:
+  dremio:
+    image: dremio/dremio-oss:26.0.5
+    ports:
+      - '9047:9047'
+      - '32010:32010'
+    volumes:
+      # The cookbook `data` directory, exposed to Dremio as the `datasets` source.
+      - ../data:/opt/dremio/datasets:ro
+      - dremio-data:/opt/dremio/data
+
+volumes:
+  dremio-data:

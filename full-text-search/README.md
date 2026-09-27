@@ -1,6 +1,6 @@
 # Full-Text Search with Spice
 
-Works with `v1.0+`
+Works with `v2.0+`
 
 Full-text search uses BM25 scoring to retrieve records matching keywords in indexed columns. This cookbook demonstrates how to configure and query full-text search indexes on markdown files from the Spice cookbook repository.
 
@@ -53,7 +53,7 @@ Wait for the dataset to load and index:
 
 ```shell
 2026-01-21T01:00:00.000000Z  INFO runtime::init::dataset: Dataset cookbook_files registered (github:github.com/spiceai/cookbook/files/trunk), acceleration (arrow), results cache enabled.
-2026-01-21T01:00:05.000000Z  INFO runtime::accelerated_table::refresh_task: Loaded 104 rows (1.13 MiB) for dataset cookbook_files in 4s.
+2026-01-21T01:00:05.000000Z  INFO runtime_table::accelerated::refresh_task: Loaded 104 rows (1.13 MiB) for dataset cookbook_files in 4s.
 2026-01-21T01:00:05.100000Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
@@ -73,10 +73,11 @@ show tables;
 
 ```
 +---------------+--------------+----------------+------------+
-| table_catalog | table_schema | table_name     | table_type |
+| table_catalog | table_schema |   table_name   | table_type |
+|    varchar    |    varchar   |     varchar    |   varchar  |
 +---------------+--------------+----------------+------------+
-| spice         | public       | cookbook_files | BASE TABLE |
 | spice         | runtime      | task_history   | BASE TABLE |
+| spice         | public       | cookbook_files | BASE TABLE |
 +---------------+--------------+----------------+------------+
 ```
 
@@ -85,22 +86,25 @@ show tables;
 Search for files containing specific keywords:
 
 ```sql
-SELECT path, score
+SELECT path, _score
 FROM text_search(cookbook_files, 'vector search', content)
-ORDER BY score DESC
+ORDER BY _score DESC
 LIMIT 5;
 ```
 
-Results (scores may vary):
+Results (paths and scores vary as the cookbook changes):
 
 ```
-+-------------------------------+--------------------+
-| path                          | score              |
-+-------------------------------+--------------------+
-| vectors/README.md             | 6.82               |
-| search/README.md              | 6.51               |
-| search_github_files/README.md | 6.47               |
-+-------------------------------+--------------------+
++--------------------------------+-------------------+
+|              path              |       _score      |
+|             varchar            |      float64      |
++--------------------------------+-------------------+
+| search/elasticsearch/README.md | 7.372053146362305 |
+| vectors/s3/README.md           | 7.359576225280762 |
+| search/README.md               | 7.14163875579834  |
+| ai/WHEN_TO_USE.md              | 7.056568145751953 |
+| full-text-search/README.md     | 6.641867637634277 |
++--------------------------------+-------------------+
 ```
 
 ### Search for Specific Topics
@@ -108,9 +112,9 @@ Results (scores may vary):
 Find all cookbooks mentioning a particular technology:
 
 ```sql
-SELECT path, score
+SELECT path, _score
 FROM text_search(cookbook_files, 'DuckDB acceleration', content)
-ORDER BY score DESC
+ORDER BY _score DESC
 LIMIT 5;
 ```
 
@@ -119,10 +123,10 @@ LIMIT 5;
 Full-text search results can be filtered using standard SQL:
 
 ```sql
-SELECT path, score
+SELECT path, _score
 FROM text_search(cookbook_files, 'kubernetes', content)
 WHERE path LIKE 'kubernetes/%'
-ORDER BY score DESC
+ORDER BY _score DESC
 LIMIT 10;
 ```
 
@@ -138,7 +142,7 @@ text_search(
   limit INTEGER,             -- Maximum results returned (optional, defaults to 1000)
   include_score BOOLEAN      -- Include relevance scores in results (optional, defaults to TRUE)
 )
-RETURNS TABLE                -- Original table columns plus a FLOAT column `score`
+RETURNS TABLE                -- Original table columns plus a FLOAT column `_score`
 ```
 
 ## Search with HTTP API
@@ -163,21 +167,31 @@ Response (truncated):
   "results": [
     {
       "matches": {
-        "content": "... Follow these steps to get started with ..."
-      },
-      "data": {
-        "path": "postgres/rds/README.md"
+        "content": ["# AWS RDS for PostgreSQL\n\nWorks with `v1.0+`\n\nFollow these steps to ge..."]
       },
       "primary_key": {
         "path": "postgres/rds/README.md"
       },
-      "score": 1.41,
+      "_score": 1.12,
       "dataset": "cookbook_files"
     }
   ],
-  "duration_ms": 12
+  "duration_ms": 4
 }
 ```
+
+Each result contains:
+
+- **`matches`**: the indexed column(s) that matched, mapping column name to an array of matching text.
+- **`primary_key`**: the `full_text_search.row_id` column(s) — `path` for this dataset.
+- **`_score`**: the BM25 relevance score.
+- **`data`**: any `additional_columns` that are _not_ part of the primary key. Requesting only
+  `path` (the row_id) returns no `data` object, because that value is already in `primary_key`.
+  Requesting `["name", "size"]` instead adds:
+
+  ```json
+  "data": { "name": "README.md", "size": 2437 }
+  ```
 
 ## When to Use Full-Text Search
 

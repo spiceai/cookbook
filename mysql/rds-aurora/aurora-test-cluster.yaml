@@ -10,15 +10,6 @@ Parameters:
     MaxLength: 16
     AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
 
-  MasterPassword:
-    Type: String
-    Default: TestPassword123!
-    Description: Master password for Aurora cluster (change for production)
-    NoEcho: true
-    MinLength: 8
-    MaxLength: 41
-    AllowedPattern: '[a-zA-Z0-9!@#$%^&*()_+=-]*'
-
   DatabaseName:
     Type: String
     Default: testdb
@@ -146,7 +137,7 @@ Resources:
       Engine: aurora-mysql
       DatabaseName: !Ref DatabaseName
       MasterUsername: !Ref MasterUsername
-      MasterUserPassword: !Ref MasterPassword
+      ManageMasterUserPassword: true
       DBSubnetGroupName: !Ref DBSubnetGroup
       VpcSecurityGroupIds:
         - !Ref DBSecurityGroup
@@ -174,14 +165,14 @@ Resources:
           Value: !Sub '${AWS::StackName}-instance'
 
 Outputs:
-  ClusterEndpoint:
-    Description: Aurora Cluster Writer Endpoint
+  WriterEndpoint:
+    Description: Aurora Cluster Writer Endpoint - use this to seed/modify data
     Value: !GetAtt AuroraCluster.Endpoint.Address
     Export:
-      Name: !Sub '${AWS::StackName}-ClusterEndpoint'
+      Name: !Sub '${AWS::StackName}-WriterEndpoint'
 
   ReaderEndpoint:
-    Description: Aurora Cluster Reader Endpoint
+    Description: Aurora Cluster Reader Endpoint - Spice queries this endpoint
     Value: !GetAtt AuroraCluster.ReadEndpoint.Address
     Export:
       Name: !Sub '${AWS::StackName}-ReaderEndpoint'
@@ -200,15 +191,6 @@ Outputs:
     Description: Master Username
     Value: !Ref MasterUsername
 
-  ConnectionString:
-    Description: Connection string for Spice
-    Value: !Sub 'mysql://${MasterUsername}:${MasterPassword}@${AuroraCluster.Endpoint.Address}:${AuroraCluster.Endpoint.Port}/${DatabaseName}'
-
-  SpicepodConfig:
-    Description: Configuration values for spicepod.yaml
-    Value: !Sub |
-      mysql_host: ${AuroraCluster.ReadEndpoint.Address}
-      mysql_tcp_port: ${AuroraCluster.Endpoint.Port}
-      mysql_db: ${DatabaseName}
-      mysql_user: ${MasterUsername}
-      MYSQL_PASS: ${MasterPassword}
+  MasterUserSecretArn:
+    Description: Secrets Manager ARN holding the auto-generated master password
+    Value: !GetAtt AuroraCluster.MasterUserSecret.SecretArn

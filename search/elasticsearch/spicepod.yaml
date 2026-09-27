@@ -1,0 +1,80 @@
+version: v2
+kind: Spicepod
+name: elasticsearch
+
+embeddings:
+  - from: openai:text-embedding-3-small
+    name: openai_embeddings
+    params:
+      openai_api_key: ${secrets:OPENAI_API_KEY}
+
+x-elasticsearch-fts: &elasticsearch_fts
+  enabled: true
+  engine: elasticsearch
+  params:
+    elasticsearch_endpoint: http://localhost:9200
+    elasticsearch_user: ${secrets:ELASTIC_USER}
+    elasticsearch_pass: ${secrets:ELASTIC_PASS}
+    elasticsearch_index: fts_index
+
+x-elasticsearch-vectors: &elasticsearch_vectors
+  enabled: true
+  engine: elasticsearch
+  params:
+    elasticsearch_endpoint: http://localhost:9200
+    elasticsearch_user: ${secrets:ELASTIC_USER}
+    elasticsearch_pass: ${secrets:ELASTIC_PASS}
+    elasticsearch_index: vector_index
+    elasticsearch_vector_field: content_embedding
+
+x-elasticsearch-fts-tuned: &elasticsearch_fts_tuned
+  enabled: true
+  engine: elasticsearch
+  params:
+    elasticsearch_endpoint: http://localhost:9200
+    elasticsearch_user: ${secrets:ELASTIC_USER}
+    elasticsearch_pass: ${secrets:ELASTIC_PASS}
+    elasticsearch_index: fts_index_tuned
+    number_of_shards: 2
+    number_of_replicas: 0
+    refresh_interval: 1s              # creation-time only - restore to fast refresh for queries
+    bulk_load_refresh_interval: "-1"  # disable during bulk write, restore to refresh_interval after
+    force_merge_after_write: true
+    force_merge_segments: 1
+    batch_write_rows: 500
+    index_settings: '{"index":{"codec":"best_compression"}}'
+
+datasets:
+  - from: file:./articles.parquet
+    name: articles
+    params:
+      file_format: parquet
+    acceleration:
+      enabled: true
+      engine: arrow
+
+    vectors: *elasticsearch_vectors
+
+    columns:
+      - name: content
+        embeddings:
+          - from: openai_embeddings
+            row_id:
+              - id
+            chunking:
+              enabled: true
+              target_chunk_size: 256
+              overlap_size: 64
+
+        full_text_search:
+          <<: *elasticsearch_fts
+          # <<: *elasticsearch_fts_tuned
+          row_id:
+            - id
+
+      - name: title
+        full_text_search:
+          <<: *elasticsearch_fts
+          # <<: *elasticsearch_fts_tuned
+          row_id:
+            - id

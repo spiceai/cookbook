@@ -71,11 +71,11 @@ object MessagingServiceApp {
     try {
       val addOns1 = dao.getMessagingServiceAddOns("account123", "service456")
       println("Add-ons by account and service:")
-      addOns1.asScala.foreach(println)
+      addOns1.asScala.foreach(addOn => println(addOn.AddOnSid))
 
       val addOns2 = dao.getMessagingServiceAddOnByAddOnType("type789", 10)
       println("\nAdd-ons by add-on type:")
-      addOns2.asScala.foreach(println)
+      addOns2.asScala.foreach(addOn => println(addOn.AddOnSid))
     } finally {
       dbi.close(dao)
     }

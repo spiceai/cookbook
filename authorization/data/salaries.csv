@@ -1,0 +1,4 @@
+id,tenant_id,employee,amount
+1,acme,Alice Anderson,120000
+2,acme,Aaron Ackerman,115000
+3,globex,Gina Gomez,130000

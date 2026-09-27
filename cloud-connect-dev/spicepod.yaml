@@ -1,0 +1,9 @@
+version: v1
+kind: Spicepod
+name: cloud-connect-dev
+
+datasets:
+  - from: s3://spiceai-public-datasets/hive_partitioned_data/
+    name: data
+    params:
+      file_format: parquet

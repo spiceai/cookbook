@@ -61,6 +61,7 @@ You should see the following output:
 sql> select avg(passenger_count) from yellow_taxis;
 +-----------------------------------+
 | avg(yellow_taxis.passenger_count) |
+|              float64              |
 +-----------------------------------+
 | 1.3392808966805005                |
 +-----------------------------------+
@@ -97,9 +98,9 @@ base_url="https://raw.githubusercontent.com/spiceai/docs/refs/heads/trunk/websit
 
 files=(
   "clickhouse.md"
-  "databricks.md"
   "debezium.md"
-  "delta-lake.md"
+  "ducklake.md"
+  "iceberg.md"
 )
 
 for file in "${files[@]}"; do
@@ -149,15 +150,15 @@ select location from docs;
 Expected output:
 
 ```text
-+---------------------------------------------+
-| location                                    |
-+---------------------------------------------+
-| Users/lukim/dev/cookbook/file/debezium.md   |
-| Users/lukim/dev/cookbook/file/databricks.md |
-| Users/lukim/dev/cookbook/file/README.md     |
-| Users/lukim/dev/cookbook/file/clickhouse.md |
-| Users/lukim/dev/cookbook/file/delta-lake.md |
-+---------------------------------------------+
++----------------------------+
+|          location          |
+|           varchar          |
++----------------------------+
+| path/to/file/clickhouse.md |
+| path/to/file/debezium.md   |
+| path/to/file/ducklake.md   |
+| path/to/file/iceberg.md    |
++----------------------------+
 ```
 
 ### Step 5: Terminate the Spice Runtime
@@ -172,8 +173,8 @@ Remove the created files:
 # Remove the spicepod.yaml
 rm spicepod.yaml
 
-# Remove the downloaded Markdown files
-rm *.md
+# Remove the downloaded Markdown files (not `rm *.md`, which also deletes this recipe's README.md)
+rm clickhouse.md debezium.md ducklake.md iceberg.md
 ```
 
 ## Additional Resources

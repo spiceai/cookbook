@@ -28,16 +28,13 @@ spice run
 ```
 
 ```shell
-2025/01/27 11:29:49 INFO Checking for latest Spice runtime release...
-2025/01/27 11:29:50 INFO Spice.ai runtime starting...
-2025-01-27T19:29:50.856594Z  INFO runtime::init::dataset: Initializing dataset llm_memory
+ INFO Spice.ai runtime starting...
+2025-01-27T19:29:50.856594Z  INFO runtime::init::dataset: Dataset llm_memory initializing...
 2025-01-27T19:29:50.857758Z  INFO runtime::init::model: Loading model [chat_model] from openai:gpt-4o...
 2025-01-27T19:29:50.858938Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-01-27T19:29:50.859020Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
 2025-01-27T19:29:50.859210Z  INFO runtime::init::dataset: Dataset llm_memory registered (memory:store).
 2025-01-27T19:29:50.865516Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2025-01-27T19:29:50.869294Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2025-01-27T19:29:51.058851Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2025-01-27T19:29:51.058851Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-01-27T19:29:52.248966Z  INFO runtime::init::model: Model [chat_model] deployed, ready for inferencing
 ```
 
@@ -106,16 +103,29 @@ You are Alice, and you work as a software engineer.
 
 ### Using Memory Tools Directly
 
+> **Note (Spice `v2.0+`):** Tool-invocation endpoints (`/v1/tools/*`) require an authentication provider to be configured on the runtime. Without `runtime.auth` these routes return `401 Unauthorized`. To call them, add an API-key provider to `spicepod.yml`:
+>
+> ```yaml
+> runtime:
+>   auth:
+>     api-key:
+>       enabled: true
+>       keys:
+>         - ${ secrets:SPICE_API_KEY }
+> ```
+>
+> and pass the key as an `x-api-key` header (shown below). Enabling `runtime.auth` applies to all endpoints, so the earlier `spice chat` step then also needs credentials (`spice chat --api-key <key>`). See the [api_key recipe](https://github.com/spiceai/cookbook/tree/trunk/api_key) for the full flow.
+
 **Step 1.** Store a memory directly
 
 ```shell
-curl -XPOST http://127.0.0.1:8090/v1/tool/store_memory -d '{"thoughts": ["Alice deserves a promotion"]}'
+curl -XPOST http://127.0.0.1:8090/v1/tools/store_memory -H "x-api-key: $SPICE_API_KEY" -d '{"thoughts": ["Alice deserves a promotion"]}'
 ```
 
 **Step 2.** Load stored memories
 
 ```shell
-curl -XPOST http://127.0.0.1:8090/v1/tool/load_memory -d '{"last": "10m"}'
+curl -XPOST http://127.0.0.1:8090/v1/tools/load_memory -H "x-api-key: $SPICE_API_KEY" -d '{"last": "10m"}'
 ```
 
 Output:

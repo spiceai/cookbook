@@ -3,6 +3,7 @@ from openai import APIConnectionError
 from dotenv import load_dotenv
 import argparse
 import json
+import re
 import sys
 from dataclasses import dataclass
 from typing import List, Dict
@@ -47,7 +48,43 @@ def create_summary(summary_input: SummaryInput) -> str:
 
 def get_data(sql: str) -> List[Dict]:
     """Execute SQL query against Spice and return results as list of dicts."""
-    return SpiceClient().query(sql).read_pandas().to_dict(orient="records")
+    df = SpiceClient().query(sql).read_pandas()
+    # Convert non-JSON-serializable types (e.g. pandas.Timestamp) to ISO strings
+    for col in df.columns:
+        if hasattr(df[col], "dt") or str(df[col].dtype).startswith("datetime"):
+            df[col] = df[col].astype(str)
+    return df.to_dict(orient="records")
+
+
+DATA_GLOBAL = "window.__DATA__"
+
+
+def inject_data(html: str, data: List[Dict]) -> str:
+    """Embed query results in the chart HTML so it renders standalone.
+
+    The model is asked to read its rows from `window.__DATA__`, but it sometimes
+    invents its own placeholder instead (`window.SALES_ROWS || []`,
+    `const rows = [];`). Define the global before any chart script runs, then
+    point whatever placeholder the model chose at it.
+    """
+    payload = f"<script>{DATA_GLOBAL} = {json.dumps(data)};</script>"
+
+    if "<head>" in html:
+        html = html.replace("<head>", f"<head>\n{payload}", 1)
+    elif "</head>" in html:
+        html = html.replace("</head>", f"{payload}\n</head>", 1)
+    else:
+        html = f"{payload}\n{html}"
+
+    # `window.<anything> || []` -> window.__DATA__
+    html = re.sub(r"window\.\w+\s*\|\|\s*\[\]", DATA_GLOBAL, html)
+    # `const|let|var <name> = [];` -> ... = window.__DATA__;
+    html = re.sub(
+        r"((?:const|let|var)\s+\w+\s*=\s*)\[\]\s*;",
+        rf"\1{DATA_GLOBAL};",
+        html,
+    )
+    return html
 
 
 def try_completion(client: OpenAI, model: str, msg: str) -> str:
@@ -81,6 +118,11 @@ def main():
         action="store_true",
         help="Skip generating the data summary"
     )
+    parser.add_argument(
+        "--output-html",
+        metavar="FILE",
+        help="Write a self-contained HTML file with the chart and data embedded"
+    )
     args = parser.parse_args()
 
     user_question = args.question
@@ -108,6 +150,12 @@ def main():
     print("DATA:")
     print("=" * 60)
     print(json.dumps(data, indent=2))
+
+    # Write self-contained HTML if requested
+    if args.output_html:
+        with open(args.output_html, "w", encoding="utf-8") as f:
+            f.write(inject_data(result.chart_js_html, data))
+        print(f"\nSelf-contained HTML written to {args.output_html}", file=sys.stderr)
 
     # Generate summary
     if not args.no_summary:

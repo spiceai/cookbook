@@ -1,6 +1,6 @@
 # Running in Docker
 
-Works with `v1.0+`
+Works with `v2.0+`
 
 This recipe demonstrates how to run Spice.ai OSS in a container using the official [spiceai/spiceai](https://hub.docker.com/r/spiceai/spiceai) Docker image. It shows how to:
 
@@ -25,7 +25,7 @@ cat Dockerfile
 Output:
 
 ```shell
-FROM spiceai/spiceai:latest-models
+FROM spiceai/spiceai:latest
 
 # Copy the Spicepod configuration file
 COPY spicepod.yaml /app/spicepod.yaml
@@ -43,6 +43,8 @@ EXPOSE 50051
 # Start the Spicepod
 
 ```
+
+> **Note:** Model and embedding support is built into the default `spiceai/spiceai` image from Spice `v2.0.0` onwards, which this recipe needs for the local `hf_minilm` embedding. Spice `v1.x` published this support as a separate `-models` image variant instead (for example `spiceai/spiceai:1.11.6-models`); that variant is no longer published for `v2.x`, so use the plain `latest` tag.
 
 Use Docker Compose to build and run the Docker image:
 
@@ -66,16 +68,15 @@ spiceai-mysql-sakila  | 2024-12-19T01:36:24.416215Z 0 [System] [MY-015015] [Serv
 spiceai-mysql-sakila  | 2024-12-19T01:36:24.544874Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.1.0) starting as process 7
 spiceai-mysql-sakila  | 2024-12-19T01:36:24.547827Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
 ...
-spiced-container      | 2024-12-19T01:36:24.772197Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 spiced-container      | 2024-12-19T01:36:24.772246Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 0.0.0.0:9090
 spiced-container      | 2024-12-19T01:36:24.772267Z  INFO runtime::flight: Spice Runtime Flight listening on 0.0.0.0:50051
 spiced-container      | 2024-12-19T01:36:24.772389Z  INFO runtime::http: Spice Runtime HTTP listening on 0.0.0.0:8090
-spiced-container      | 2024-12-19T01:36:24.888666Z  INFO runtime::init::embedding: Embedding [hf_minilm] ready to embed
-spiced-container      | 2024-12-19T01:36:24.888807Z  INFO runtime::init::dataset: Initializing dataset films
+spiced-container      | 2024-12-19T01:36:24.888666Z  INFO runtime::init::embedding: Embedding Model hf_minilm ready
+spiced-container      | 2024-12-19T01:36:24.888807Z  INFO runtime::init::dataset: Dataset films initializing...
 spiced-container      | 2024-12-19T01:36:24.888926Z  INFO runtime::init::model: Loading model [openai] from openai:gpt-4o...
-spiced-container      | 2024-12-19T01:36:24.889476Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+spiced-container      | 2024-12-19T01:36:24.889476Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 spiced-container      | 2024-12-19T01:36:24.904304Z  INFO runtime::init::dataset: Dataset films registered (mysql:film), acceleration (arrow), results cache enabled.
-spiced-container      | 2024-12-19T01:36:24.905805Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset films
+spiced-container      | 2024-12-19T01:36:24.905805Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset films
 spiced-container      | 2024-12-19T01:36:28.185593Z  INFO runtime::init::model: Model [openai] deployed, ready for inferencing
 ```
 
@@ -88,12 +89,13 @@ Dataset films registered (mysql:film), acceleration (arrow), results cache enabl
 You now have Spice running as a Docker container with Flight and HTTP ports exposed on ports `50051` and `8090`. Run `spice status` to access Spice.ai runtime information.
 
 ```shell
-NAME          ENDPOINT        STATUS
-http          0.0.0.0:8090    Ready
-flight        0.0.0.0:50051   Ready
-metrics       0.0.0.0:9090    Ready
-opentelemetry 127.0.0.1:50052 Ready
+http                 0.0.0.0:8090                   Ready
+flight               0.0.0.0:50051                  Ready
+metrics              0.0.0.0:9090                   Ready
+opentelemetry        0.0.0.0:50051                  Ready
 ```
+
+> **Note:** OpenTelemetry is served on the same gRPC port as Flight, so both rows report the Flight endpoint.
 
 ### SQL Search
 
@@ -129,40 +131,16 @@ Run `spice search`
 
 ```shell
 search> animals
-Rank 1, Score: 89.7, Datasets [spice.public.films]
-A Beautiful Story of a Dog And a Technical Writer who must Outgun a Student in A Balloon
+ Rank  Match                                                                                             Score   Dataset
+ 1     A Touching Reflection of a Crocodile And a Dog who must Chase a Hunter in An Abandoned Fun House  0.7381  spice.public.films
+ 2     A Amazing Saga of a Dog And a A Shark who must Challenge a Cat in The Sahara Desert               0.7374  spice.public.films
+ 3     A Boring Display of a Moose And a Squirrel who must Outrace a Teacher in A Shark Tank             0.7345  spice.public.films
+ ...
 
-Rank 2, Score: 89.4, Datasets [spice.public.films]
-A Epic Documentary of a Hunter And a Dog who must Outgun a Dog in A Balloon Factory
-
-Rank 3, Score: 89.0, Datasets [spice.public.films]
-A Boring Display of a Man And a Dog who must Redeem a Girl in A U-Boat
-
-Rank 4, Score: 88.7, Datasets [spice.public.films]
-A Insightful Story of a Boy And a Dog who must Redeem a Boy in Australia
-
-Rank 5, Score: 88.6, Datasets [spice.public.films]
-A Boring Story of a Womanizer And a Pioneer who must Face a Dog in California
-
-Rank 6, Score: 88.5, Datasets [spice.public.films]
-A Intrepid Saga of a Man And a Lumberjack who must Vanquish a Husband in The Outback
-
-Rank 7, Score: 88.4, Datasets [spice.public.films]
-A Thrilling Yarn of a Dog And a Dog who must Build a Husband in A Balloon
-
-Rank 8, Score: 88.3, Datasets [spice.public.films]
-A Fateful Story of a Husband And a Moose who must Vanquish a Boy in California
-
-Rank 9, Score: 88.0, Datasets [spice.public.films]
-A Intrepid Yarn of a Frisbee And a Dog who must Build a Astronaut in A Balloon Factory
-
-Rank 10, Score: 87.9, Datasets [spice.public.films]
-A Intrepid Reflection of a Waitress And a A Shark who must Kill a Squirrel in The Outback
-
-Time: 32ms. 10 results.
+Time: 0.045 seconds. 10 results.
 ```
 
-Or using API: https://docs.spiceai.org/api/http/search
+Or using API: https://docs.spiceai.org/api/HTTP/post-search
 
 ```shell
 curl -X POST http://localhost:8090/v1/search \
@@ -179,44 +157,56 @@ curl -X POST http://localhost:8090/v1/search \
   "results": [
     {
       "matches": {
-        "description": "A Beautiful Story of a Dog And a Technical Writer who must Outgun a Student in A Balloon"
+        "description": [
+          "A Touching Reflection of a Crocodile And a Dog who must Chase a Hunter in An Abandoned Fun House"
+        ]
       },
-      "score": 0.8974827855112448,
-      "dataset": "spice.public.films",
+      "data": {
+        "title": "STRICTLY SCARFACE",
+        "rental_rate": 2.99,
+        "release_year": 2006
+      },
+      "_score": 0.7381305772506472,
+      "dataset": "spice.public.films"
+    },
+    {
+      "matches": {
+        "description": [
+          "A Amazing Saga of a Dog And a A Shark who must Challenge a Cat in The Sahara Desert"
+        ]
+      },
+      "data": {
+        "title": "ORDER BETRAYED",
+        "release_year": 2006,
+        "rental_rate": 2.99
+      },
+      "_score": 0.7373867489232178,
+      "dataset": "spice.public.films"
+    },
+    {
+      "matches": {
+        "description": [
+          "A Boring Display of a Moose And a Squirrel who must Outrace a Teacher in A Shark Tank"
+        ]
+      },
       "data": {
         "rental_rate": 2.99,
-        "release_year": 2006,
-        "title": "POTLUCK MIXED"
-      }
-    },
-    {
-      "matches": {
-        "description": "A Epic Documentary of a Hunter And a Dog who must Outgun a Dog in A Balloon Factory"
-      },
-      "score": 0.8941260610769606,
-      "dataset": "spice.public.films",
-      "data": {
-        "title": "IGBY MAKER",
-        "rental_rate": 4.99,
+        "title": "LUCK OPUS",
         "release_year": 2006
-      }
-    },
-    {
-      "matches": {
-        "description": "A Boring Display of a Man And a Dog who must Redeem a Girl in A U-Boat"
       },
-      "score": 0.8896955774714774,
-      "dataset": "spice.public.films",
-      "data": {
-        "rental_rate": 0.99,
-        "title": "TIMBERLAND SKY",
-        "release_year": 2006
-      }
+      "_score": 0.7344745862880335,
+      "dataset": "spice.public.films"
     }
   ],
-  "duration_ms": 30
+  "duration_ms": 173
 }
 ```
+
+Each entry in `matches` is a list: a column can contribute more than one highlight to a single row, so the runtime always returns the highlights as an array.
+
+> **Version note:** The relevance score is returned in the `_score` field (leading underscore) on Spice `v2.0+`. On `v1.x` it was returned as `score` (no underscore).
+>
+> The matches and scores above are from Spice `v2.2.1+`. Earlier releases padded every input to the fixed length declared in the embedding model's `tokenizer.json`, so the padding dominated the vector of a short description and the search returned less relevant results with tightly clustered scores near `0.89`. See the [v2.2.1 release notes](https://github.com/spiceai/spiceai/releases/tag/v2.2.1).
 
 ### Using Language Model
 

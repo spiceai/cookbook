@@ -1,0 +1,59 @@
+version: v1
+kind: Spicepod
+name: mcp-server
+
+runtime:
+  task_history:
+    captured_output: truncated
+  auth:
+    api_key:
+      enabled: true
+      keys:
+        - foo:rw
+
+# GitHub data accelerated in-memory — sub-millisecond SQL from any MCP client
+datasets:
+  - from: github:github.com/spiceai/cookbook/issues
+    name: github_issues
+    description: GitHub issues — filterable by state, label, assignee, or milestone
+    params:
+      github_token: ${secrets:GITHUB_PERSONAL_ACCESS_TOKEN}
+      github_query_mode: search
+    time_column: updated_at
+    acceleration:
+      enabled: true
+      refresh_data_window: 90d
+      refresh_check_interval: 5m
+
+  - from: github:github.com/spiceai/cookbook/pulls
+    name: github_pulls
+    description: GitHub pull requests — open, merged, or closed, with review comments
+    params:
+      github_token: ${secrets:GITHUB_PERSONAL_ACCESS_TOKEN}
+      github_query_mode: search
+      github_include_comments: all
+    time_column: updated_at
+    acceleration:
+      enabled: true
+      refresh_data_window: 30d
+      refresh_check_interval: 5m
+
+  - from: github:github.com/spiceai/cookbook/commits
+    name: github_commits
+    description: Recent commits with author, message, and SHA
+    params:
+      github_token: ${secrets:GITHUB_PERSONAL_ACCESS_TOKEN}
+    acceleration:
+      enabled: true
+      refresh_sql: SELECT * FROM github_commits LIMIT 500
+
+# MCP servers — proxied through Spice's unified /v1/mcp endpoint
+tools:
+  # GitHub MCP server — write tools (create issues, comment, search code, etc.)
+  - name: github
+    from: mcp:npx
+    description: GitHub tools — create and update issues, review PRs, search code and repositories
+    params:
+      mcp_args: -y @modelcontextprotocol/server-github
+    env:
+      GITHUB_PERSONAL_ACCESS_TOKEN: ${secrets:GITHUB_PERSONAL_ACCESS_TOKEN}

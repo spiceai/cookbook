@@ -54,11 +54,9 @@ The following output is shown in the Spice runtime terminal:
 
 ```bash
 Spice.ai runtime starting...
-2024-07-23T00:20:01.012063Z  INFO spiced: Metrics listening on 127.0.0.1:9090
 2024-07-23T00:20:01.044050Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2024-07-23T00:20:01.044108Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2024-07-23T00:20:01.045430Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2024-07-23T00:20:01.047970Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2024-07-23T00:20:01.047970Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 ```
 
 **Step 5.** Configure Snowflake Dataset
@@ -83,7 +81,7 @@ datasets:
 The following output is shown in the Spice runtime terminal:
 
 ```bash
-2024-07-23T00:20:53.116572Z  INFO runtime: Dataset lineitem registered (snowflake:SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.LINEITEM), results cache enabled.
+2024-07-23T00:20:53.116572Z  INFO runtime::init::dataset: Dataset lineitem registered (snowflake:SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.LINEITEM), results cache enabled.
 ```
 
 **Step 6.** Run queries against the dataset using the Spice SQL REPL.
@@ -101,11 +99,11 @@ show tables;
 
 sql> show tables;
 +---------------+--------------+---------------+------------+
-| table_catalog | table_schema | table_name    | table_type |
+| table_catalog | table_schema |   table_name  | table_type |
+|    varchar    |    varchar   |    varchar    |   varchar  |
 +---------------+--------------+---------------+------------+
 | spice         | public       | lineitem      | BASE TABLE |
 | spice         | runtime      | task_history  | BASE TABLE |
-| spice         | runtime      | metrics       | BASE TABLE |
 +---------------+--------------+---------------+------------+
 
 Time: 0.032075708 seconds. 2 rows.
@@ -153,7 +151,7 @@ Output:
 Time: 1.398187833 seconds. 4 rows.
 ```
 
-**Step 7. (Optional)** Enable [Data Acceleration](https://docs.spiceai.org/data-accelerators)
+**Step 7. (Optional)** Enable [Data Acceleration](https://docs.spiceai.org/components/data-accelerators)
 
 Use text editor to update `spicepod.yaml`
 
@@ -194,10 +192,10 @@ Note: we use `refresh_sql` parameter in this example to specify exact data we re
 The following output is shown in the Spice runtime terminal confirming new configuration is applied.
 
 ```bash
-2024-07-23T00:23:29.327942Z  INFO runtime: Updating accelerated dataset lineitem...
-2024-07-23T00:23:29.657023Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset lineitem
-2024-07-23T00:23:52.413596Z  INFO runtime::accelerated_table::refresh_task: Loaded 6,001,215 rows (9.46 GiB) for dataset lineitem in 22s 756ms.
-2024-07-23T00:23:52.553037Z  INFO runtime: Dataset lineitem registered (snowflake:snowflake_sample_data.tpch_sf1.lineitem), acceleration (arrow), results cache enabled.
+2024-07-23T00:23:29.327942Z  INFO runtime::init::dataset: Accelerated Dataset lineitem updating...
+2024-07-23T00:23:29.657023Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset lineitem
+2024-07-23T00:23:52.413596Z  INFO runtime_table::accelerated::refresh_task: Loaded 6,001,215 rows (9.46 GiB) for dataset lineitem in 22s 756ms.
+2024-07-23T00:23:52.553037Z  INFO runtime::init::dataset: Dataset lineitem registered (snowflake:snowflake_sample_data.tpch_sf1.lineitem), acceleration (arrow), results cache enabled.
 ```
 
 Run _Pricing Summary Report Query_ using the Spice SQL REPL.

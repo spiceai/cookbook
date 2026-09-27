@@ -40,6 +40,8 @@ Add the following configuration to your `spicepod.yaml`:
 catalogs:
   - from: spice.ai/spiceai/tpch
     name: scp
+    params:
+      spiceai_region: us-east-1
 ```
 
 This will register the `scp` catalog to connect to the [`spiceai/tpch`](https://spice.ai/spiceai/tpch) app and load all available tables.
@@ -67,7 +69,8 @@ Use `show tables;` in the Spice SQL REPL to see the available datasets.
 ```bash
 sql> show tables;
 +---------------+--------------+--------------+------------+
-| table_catalog | table_schema | table_name   | table_type |
+| table_catalog | table_schema |  table_name  | table_type |
+|    varchar    |    varchar   |    varchar   |   varchar  |
 +---------------+--------------+--------------+------------+
 | scp           | tpch         | orders       | BASE TABLE |
 | scp           | tpch         | region       | BASE TABLE |
@@ -78,10 +81,9 @@ sql> show tables;
 | scp           | tpch         | customer     | BASE TABLE |
 | scp           | tpch         | partsupp     | BASE TABLE |
 | spice         | runtime      | task_history | BASE TABLE |
-| spice         | runtime      | metrics      | BASE TABLE |
 +---------------+--------------+--------------+------------+
 
-Time: 0.005605209 seconds. 10 rows.
+Time: 0.005605209 seconds. 9 rows.
 ```
 
 ## Step 8. Filter the included tables with `include`
@@ -92,6 +94,8 @@ Specify an `include` filter to limit the tables registered in the catalog.
 catalogs:
   - from: spice.ai/spiceai/tpch
     name: scp
+    params:
+      spiceai_region: us-east-1
     include:
       - tpch.part*
       - tpch.supplier
@@ -100,16 +104,16 @@ catalogs:
 ```bash
 sql> show tables;
 +---------------+--------------+---------------+------------+
-| table_catalog | table_schema | table_name    | table_type |
+| table_catalog | table_schema |   table_name  | table_type |
+|    varchar    |    varchar   |    varchar    |   varchar  |
 +---------------+--------------+---------------+------------+
-| spiceai       | tpch         | partsupp      | BASE TABLE |
-| spiceai       | tpch         | part          | BASE TABLE |
-| spiceai       | tpch         | supplier      | BASE TABLE |
+| scp           | tpch         | partsupp      | BASE TABLE |
+| scp           | tpch         | part          | BASE TABLE |
+| scp           | tpch         | supplier      | BASE TABLE |
 | spice         | runtime      | task_history  | BASE TABLE |
-| spice         | runtime      | metrics       | BASE TABLE |
 +---------------+--------------+---------------+------------+
 
-Time: 0.001866958 seconds. 9 rows.
+Time: 0.001866958 seconds. 4 rows.
 ```
 
 ## Step 9. Add the Quickstart Catalog
@@ -122,23 +126,25 @@ catalogs:
 
   - from: spice.ai/spiceai/quickstart
     name: quickstart
+    params:
+      spiceai_region: us-east-1
 ```
 
 ```bash
 spice sql
 sql> show tables;
 +---------------+--------------+--------------+------------+
-| table_catalog | table_schema | table_name   | table_type |
+| table_catalog | table_schema |  table_name  | table_type |
+|    varchar    |    varchar   |    varchar   |   varchar  |
 +---------------+--------------+--------------+------------+
-| spiceai       | tpch         | partsupp     | BASE TABLE |
-| spiceai       | tpch         | part         | BASE TABLE |
-| spiceai       | tpch         | supplier     | BASE TABLE |
+| scp           | tpch         | partsupp     | BASE TABLE |
+| scp           | tpch         | part         | BASE TABLE |
+| scp           | tpch         | supplier     | BASE TABLE |
 | quickstart    | public       | taxi_trips   | BASE TABLE |
 | spice         | runtime      | task_history | BASE TABLE |
-| spice         | runtime      | metrics      | BASE TABLE |
 +---------------+--------------+--------------+------------+
 
-Time: 0.011640125 seconds. 6 rows.
+Time: 0.011640125 seconds. 5 rows.
 
 sql> SELECT trip_distance, fare_amount FROM quickstart.public.taxi_trips LIMIT 10;
 +---------------+-------------+

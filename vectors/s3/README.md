@@ -1,8 +1,8 @@
 # Amazon S3 Vectors Engine with Spice.ai
 
-Works with `v1.8+`
+Works with `v2.0+`
 
-Spice.ai integrates Amazon S3 Vectors, launched in public preview at AWS Summit New York 2025, as a scalable vector index backend for embedding storage and similarity search. This recipe configures a dataset of GitHub pull requests from the `spiceai/spiceai` repository, embeds the `body` column using OpenAI, stores embeddings in S3 Vectors, and demonstrates semantic search via SQL and HTTP. Spice manages index creation, data synchronization, and query execution, enabling sub-second similarity queries on large datasets at ~$0.02/GB, reducing costs by up to 90% versus traditional vector databases.
+Spice.ai integrates Amazon S3 Vectors, launched in public preview at AWS Summit New York 2025, as a scalable vector index backend for embedding storage and similarity search. This recipe configures a dataset of GitHub pull requests from the `spiceai/cookbook` repository, embeds the `body` column using OpenAI, stores embeddings in S3 Vectors, and demonstrates semantic search via SQL and HTTP. Spice manages index creation, data synchronization, and query execution, enabling sub-second similarity queries on large datasets at ~$0.02/GB, reducing costs by up to 90% versus traditional vector databases.
 
 ## Prerequisites
 
@@ -10,12 +10,25 @@ Spice.ai integrates Amazon S3 Vectors, launched in public preview at AWS Summit 
 - Create `.env` file with:
   - `GITHUB_TOKEN`: GitHub personal access token ([guide](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic)).
   - `SPICE_OPENAI_API_KEY`: OpenAI API key.
-  - `S3_VECTORS_AWS_ACCESS_KEY_ID`, `S3_VECTORS_AWS_SECRET_ACCESS_KEY` (and `S3_VECTORS_AWS_SESSION_TOKEN` if using temporary credentials): AWS credentials for S3 Vectors access. For alternatives, see [S3 Vectors documentation](https://spiceai.org/docs/components/vectors/s3_vectors).
-- AWS account with an S3 Vectors-enabled bucket (e.g., `spiceai-cookbook` in `us-east-2`).
+  - `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` (and `AWS_SESSION_TOKEN` if using temporary credentials): AWS credentials for S3 Vectors access. For alternatives, see [S3 Vectors documentation](https://spiceai.org/docs/components/vectors/s3_vectors).
+- An S3 Vectors bucket in your own AWS account, set as `s3_vectors_bucket` in `spicepod.yaml`. Spice creates the *indexes* inside the bucket automatically, but not the bucket itself:
+
+  ```shell
+  aws s3vectors create-vector-bucket --vector-bucket-name <your-bucket> --region us-east-2
+  ```
+
+Instead of static keys, `s3_vectors_aws_iam_role_source` uses the AWS credential chain — `auto` (any chain provider, including an SSO profile), `metadata` (IMDS/ECS/EKS only), or `env`:
+
+```yaml
+s3_vectors_param: &s3_vectors_param
+  s3_vectors_bucket: <your-bucket>
+  s3_vectors_aws_region: us-east-2
+  s3_vectors_aws_iam_role_source: auto
+```
 
 ## Configuration
 
-Use the `spicepod.yaml` in this recipe directory. It pulls recent GitHub PRs, accelerates data for the last 7 days, embeds the `body` column, and stores vectors in S3 Vectors. The `row_id` uses `id` as the primary key for vector upsert. On ingestion, Spice embeds each PR's `body` using OpenAI and upserts to S3 Vectors with `id` as key, handling updates/deletions automatically.
+Use the `spicepod.yaml` in this recipe directory. It pulls recent GitHub PRs, accelerates data for the last 7 days, chunks and embeds the `body` column, and stores vectors in S3 Vectors. Chunking keeps large PR bodies, such as dependency update descriptions, within the embedding model's input limit. The `row_id` uses `id` to associate each chunk with its source PR; search results retain the PR's metadata.
 
 ## Run Spice
 
@@ -45,76 +58,56 @@ Search for PRs similar to "bugs in DuckDB":
 SELECT
     url,
     title,
-    score -- this is a computed value (i.e. not in `describe pulls;`).
+    _score -- this is a computed value (i.e. not in `describe pulls;`).
 FROM vector_search(pulls, 'bugs in DuckDB', 4)
-ORDER BY score DESC
+ORDER BY _score DESC
 LIMIT 4;
 ```
 
 Results:
 
 ```sql
-+----------------------------------------------+----------------------------------------------------------------------+---------------------+
-| url                                          | title    | score               |
-+----------------------------------------------+----------------------------------------------------------------------+---------------------+
-| https://github.com/spiceai/spiceai/pull/6496 | Update spiceai/duckdb-rs -> DuckDB 1.3.2 + index fix                 | 0.6213145852088928  |
-| https://github.com/spiceai/spiceai/pull/6491 | Use top-level table in full-text search `JOIN ON`                    | 0.35408276319503784 |
-| https://github.com/spiceai/spiceai/pull/6463 | Add integration tests for partitioning                               | 0.3499426245689392  |
-| https://github.com/spiceai/spiceai/pull/6499 | Add periodic tracing of data loading progress during dataset refresh | 0.3494341969490051  |
-+----------------------------------------------+----------------------------------------------------------------------+---------------------+
++----------------------------------------------+--------------------------------------------------------------------------------+--------------------+
+|                     url                      |                                     title                                      |       _score       |
+|                   varchar                    |                                    varchar                                     |      float64       |
++----------------------------------------------+--------------------------------------------------------------------------------+--------------------+
+| https://github.com/spiceai/cookbook/pull/576 | fix(localpod,duckdb): correct a truncated CSV header and a typo                 | 0.7042624683970505 |
+| https://github.com/spiceai/cookbook/pull/581 | Fix caching/sql_results recipe: correct dataset names, log lines, and Q1 output | 0.6822196713980645 |
+| https://github.com/spiceai/cookbook/pull/595 | docs: fix v2.2 cookbook validation issues                                      | 0.681723637898489  |
+| https://github.com/spiceai/cookbook/pull/590 | Add Mysql-Aurora CDC cookbook                                                  | 0.6804361755080721 |
++----------------------------------------------+--------------------------------------------------------------------------------+--------------------+
+
+4 rows.
 ```
 
-The `score` column (0-1, higher is more similar) is computed from distances returned by S3 Vectors.
+The `_score` column (0-1, higher is more similar) is computed from cosine distance. Because `refresh_data_window: 7d` only loads the last week of pull requests, the specific rows and scores you see will differ from the output above.
 
 ### Query Plan
 
 Examine execution:
 
 ```sql
-EXPLAIN SELECT url, title, score FROM vector_search(pulls, 'bugs in DuckDB', 4) ORDER BY score DESC LIMIT 4;
+EXPLAIN SELECT url, title, _score FROM vector_search(pulls, 'bugs in DuckDB', 4) ORDER BY _score DESC LIMIT 4;
 ```
 
-Plan:
+With acceleration enabled, the embeddings are materialized locally alongside the
+rows. The plan scores each body chunk with `cosine_distance`, groups by the PR's
+`id` to retain its best-matching chunk, and orders the resulting PRs by `_score`.
+S3 Vectors stores the embeddings durably; Spice writes the chunks to it during
+ingestion and can use the remote index when vectors are not available locally.
 
-```sql
-+---------------+-----------------------------------------------------------------------------------------------------------------------+
-| plan_type     | plan                                                      |
-+---------------+-----------------------------------------------------------------------------------------------------------------------+
-| logical_plan  | Sort: vector_search().score DESC NULLS FIRST, fetch=4     |
-|               |   Projection: vector_search().url, vector_search().title, vector_search().score                                       |
-|               |     BytesProcessedNode                                    |
-|               |       TableScan: vector_search() projection=[title, url, score]                                                       |
-| physical_plan | SortPreservingMergeExec: [score@2 DESC], fetch=4          |
-|               |   SortExec: TopK(fetch=4), expr=[score@2 DESC], preserve_partitioning=[true]                                          |
-|               |     ProjectionExec: expr=[url@1 as url, title@0 as title, score@2 as score]                                           |
-|               |       BytesProcessedExec                                  |
-|               |         ProjectionExec: expr=[title@1 as title, url@2 as url, score@0 as score]                                       |
-|               |           CoalesceBatchesExec: target_batch_size=8192     |
-|               |             CoalesceBatchesExec: target_batch_size=8192   |
-|               |               HashJoinExec: mode=Partitioned, join_type=Left, on=[(id@0, id@0)], projection=[score@1, title@3, url@4] |
-|               |                 CoalesceBatchesExec: target_batch_size=8192                                                           |
-|               |                   RepartitionExec: partitioning=Hash([id@0], 10), input_partitions=10                                 |
-|               |                     CoalesceBatchesExec: target_batch_size=8192                                                       |
-|               |                       ProjectionExec: expr=[key@0 as id, 1 - distance@1 as score]                                     |
-|               |                         RepartitionExec: partitioning=RoundRobinBatch(10), input_partitions=1                         |
-|               |                           BytesProcessedExec              |
-|               |                             **S3VectorsQueryExec: limit=4**                                                           |
-|               |                 CoalesceBatchesExec: target_batch_size=8192                                                           |
-|               |                   RepartitionExec: partitioning=Hash([id@0], 10), input_partitions=10                                 |
-|               |                     RepartitionExec: partitioning=RoundRobinBatch(10), input_partitions=1                             |
-|               |                       CoalesceBatchesExec: target_batch_size=8192                                                     |
-|               |                         BytesProcessedExec                |
-|               |                           SchemaCastScanExec              |
-|               |                             DataSourceExec: partitions=1, partition_sizes=[6]                                         |
-|               |                                                           |
-+---------------+-----------------------------------------------------------------------------------------------------------------------+
+Confirm the vectors reached S3:
+
+```shell
+aws s3vectors list-vectors \
+  --vector-bucket-name <your-bucket> \
+  --index-name pulls-body-my-embedding-model \
+  --region us-east-2 --query 'length(vectors)'
 ```
 
-The plan shows `S3VectorsQueryExec` for similarity search, joined via `HashJoinExec` with `DataSourceExec` to fetch fields like `title` and `url`.
+### Metadata Columns
 
-### Optimize with Metadata
-
-To avoid joins and push filters, uncomment metadata columns in `spicepod.yaml`:
+The `spicepod.yaml` in this recipe declares metadata alongside the embedded column:
 
 ```yaml
 columns:
@@ -123,6 +116,10 @@ columns:
       - from: my_embedding_model
         row_id:
           - id
+        chunking:
+          enabled: true
+          target_chunk_size: 512
+          trim_whitespace: true
   - name: title
     metadata:
       vectors: filterable
@@ -134,76 +131,66 @@ columns:
       vectors: filterable
 ```
 
-Restart:
+`filterable` metadata can be used in search predicates; `non-filterable` metadata is stored
+and returned but cannot be filtered on. These declarations shape the S3 Vectors index itself,
+visible on the created index:
 
 ```shell
-spice run
+aws s3vectors get-index \
+  --vector-bucket-name <your-bucket> \
+  --index-name pulls-body-my-embedding-model \
+  --region us-east-2
 ```
 
-Re-run the `EXPLAIN`:
-
-```sql
-EXPLAIN SELECT url, title, score FROM vector_search(pulls, 'bugs in DuckDB', 4) ORDER BY score DESC LIMIT 4;
+```json
+{
+  "index": {
+    "indexName": "pulls-body-my-embedding-model",
+    "dataType": "float32",
+    "dimension": 1536,
+    "distanceMetric": "cosine",
+    "metadataConfiguration": {
+      "nonFilterableMetadataKeys": [
+        "url"
+      ]
+    }
+  }
+}
 ```
 
-Plan:
-
-```sql
-+---------------+----------------------------------------------------------------------------------------+
-| plan_type     | plan                       |
-+---------------+----------------------------------------------------------------------------------------+
-| logical_plan  | Sort: vector_search().score DESC NULLS FIRST, fetch=4                                  |
-|               |   Projection: vector_search().url, vector_search().title, vector_search().score        |
-|               |     BytesProcessedNode     |
-|               |       TableScan: vector_search() projection=[title, url, score]                        |
-| physical_plan | SortPreservingMergeExec: [score@2 DESC], fetch=4                                       |
-|               |   SortExec: TopK(fetch=4), expr=[score@2 DESC], preserve_partitioning=[true]           |
-|               |     ProjectionExec: expr=[url@1 as url, title@0 as title, score@2 as score]            |
-|               |       BytesProcessedExec   |
-|               |         ProjectionExec: expr=[title@0 as title, url@1 as url, 1 - distance@2 as score] |
-|               |           RepartitionExec: partitioning=RoundRobinBatch(10), input_partitions=1        |
-|               |             BytesProcessedExec                                                         |
-|               |               **S3VectorsQueryExec: limit=4**                                          |
-|               |                            |
-+---------------+----------------------------------------------------------------------------------------+
-```
-
-Now, a single `S3VectorsQueryExec` retrieves all data, avoiding joins.
-
-Filter pushdown example:
+Filtering on a `filterable` column:
 
 ```sql
 EXPLAIN
-SELECT url, title, score
+SELECT url, title, _score
 FROM vector_search(pulls, 'bugs in DuckDB', 4)
 WHERE state = 'OPEN'
-ORDER BY score DESC
+ORDER BY _score DESC
 LIMIT 4;
 ```
 
 Plan:
 
 ```sql
-+---------------+----------------------------------------------------------------------------------------------------------------------+
-| plan_type     | plan                                                      |
-+---------------+----------------------------------------------------------------------------------------------------------------------+
-| logical_plan  | Sort: vector_search().score DESC NULLS FIRST, fetch=4     |
-|               |   Projection: vector_search().url, vector_search().title, vector_search().score                                       |
-|               |     BytesProcessedNode                                    |
-|               |       TableScan: vector_search() projection=[title, url, score], full_filters=[vector_search().state = Utf8("OPEN")]  |
-| physical_plan | SortPreservingMergeExec: [score@2 DESC], fetch=4          |
-|               |   SortExec: TopK(fetch=4), expr=[score@2 DESC], preserve_partitioning=[true]                                          |
-|               |     ProjectionExec: expr=[url@1 as url, title@0 as title, score@2 as score]                                           |
-|               |       BytesProcessedExec                                  |
-|               |         ProjectionExec: expr=[title@0 as title, url@1 as url, 1 - distance@2 as score]                                |
-|               |           RepartitionExec: partitioning=RoundRobinBatch(10), input_partitions=1                                       |
-|               |             BytesProcessedExec                            |
-|               |               **S3VectorsQueryExec: filter={state:{$eq:"OPEN"}} limit=4**                                             |
-|               |                                                           |
-+---------------+----------------------------------------------------------------------------------------------------------------------+
++---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------+
+|   plan_type   |                                                                  plan                                                                  |
+|    varchar    |                                                                varchar                                                                 |
++---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------+
+| physical_plan | SortExec: TopK(fetch=4), expr=[_score@2 DESC], preserve_partitioning=[false]                                                            |
+|               |   ProjectionExec: expr=[url@2 as url, title@1 as title, _score@3 as _score]                                                             |
+|               |     SortPreservingMergeExec: [_score@3 DESC NULLS LAST, id@0 ASC], fetch=4                                                              |
+|               |       SortExec: TopK(fetch=4), expr=[_score@3 DESC NULLS LAST, id@0 ASC], preserve_partitioning=[true]                                  |
+|               |         ProjectionExec: expr=[id@1 as id, title@3 as title, url@4 as url,                                                               |
+|               |                              1 - cosine_distance([...], body_embedding@0) as _score]                                                    |
+|               |           RepartitionExec: partitioning=RoundRobinBatch(18), input_partitions=1                                                          |
+|               |             FilterExec: state@2 = OPEN                                                                                                  |
+|               |               BytesProcessedExec                                                                                                        |
+|               |                 DataSourceExec: partitions=1, partition_sizes=[18]                                                                      |
++---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------+
 ```
 
-The filter is pushed to `S3VectorsQueryExec`, ensuring accurate top-K results.
+The predicate is applied before scoring, so the top-K is computed over matching rows only
+rather than filtered afterward.
 
 ## Search via HTTP
 
@@ -222,10 +209,14 @@ curl --request POST \
 		"url",
 		"title"
 	],
-	"where": "state='\''CLOSED'\''",
+	"where": "state='\''MERGED'\''",
 	"limit": 4
 }'
 ```
+
+`state` is one of `OPEN`, `MERGED`, or `CLOSED`; a 7-day window on an active repository
+typically holds only `OPEN` and `MERGED`, so filtering on `CLOSED` can legitimately return
+no results.
 
 Response:
 
@@ -234,7 +225,9 @@ Response:
   "results": [
     {
       "matches": {
-        "body": "## 📝 Summary\r\n- Update duckdb-rs to point at spiceai duckdb fork: https://github.com/spiceai/duckdb-rs/pull/20\r\n- DuckDB v1.3.2 + [index resolution fix](https://github.com/spiceai/duckdb/compare/v1.3.2...v1.3.2-index-resolution)\r\n"
+        "body": [
+          "## 📝 Summary\r\n- Update duckdb-rs to point at spiceai duckdb fork: https://github.com/spiceai/duckdb-rs/pull/20\r\n- DuckDB v1.3.2 + [index resolution fix](https://github.com/spiceai/duckdb/compare/v1.3.2...v1.3.2-index-resolution)\r\n"
+        ]
       },
       "data": {
         "url": "https://github.com/spiceai/spiceai/pull/6496",
@@ -243,12 +236,14 @@ Response:
       "primary_key": {
         "id": "PR_kwDOF31SUc6fp25h"
       },
-      "score": 0.6213145852088928,
+      "_score": 0.6213145852088928,
       "dataset": "pulls"
     },
     {
       "matches": {
-        "body": "## 📝 Summary\r\n\r\n<!-- What does this PR change? Why is it necessary? Keep it concise. -->\r\n\r\n## 🔗 Related\r\n\r\n<!-- Link to relevant issues, discussions, or other PRs. Use \"Closes #123\" to auto-close issues. Omit if none. -->\r\n\r\n## 🚨 Breaking Changes\r\n\r\n<!-- Describe breaking changes if any, or delete this section. -->\r\n<!-- If breaking, make sure the \"breaking change\" label is added. -->\r\n\r\n## 📚 Docs\r\n\r\n<!-- Note any required updates to docs, recipes, or guides. Omit if not applicable. -->\r\n\r\n## 👀 Notes for Reviewers\r\n\r\n<!-- Any areas needing special attention or questions for reviewers? Omitၓ Omit if none. -->\r\n"
+        "body": [
+          "## 📝 Summary\r\n\r\n<!-- What does this PR change? Why is it necessary? Keep it concise. -->\r\n\r\n## 🔗 Related\r\n\r\n<!-- Link to relevant issues, discussions, or other PRs. Use \"Closes #123\" to auto-close issues. Omit if none. -->\r\n\r\n## 🚨 Breaking Changes\r\n\r\n<!-- Describe breaking changes if any, or delete this section. -->\r\n<!-- If breaking, make sure the \"breaking change\" label is added. -->\r\n\r\n## 📚 Docs\r\n\r\n<!-- Note any required updates to docs, recipes, or guides. Omit if not applicable. -->\r\n\r\n## 👀 Notes for Reviewers\r\n\r\n<!-- Any areas needing special attention or questions for reviewers? Omitၓ Omit if none. -->\r\n"
+        ]
       },
       "data": {
         "url": "https://github.com/spiceai/spiceai/pull/6494",
@@ -257,12 +252,14 @@ Response:
       "primary_key": {
         "id": "PR_kwDOF31SUc6fpWVh"
       },
-      "score": 0.2575995922088623,
+      "_score": 0.2575995922088623,
       "dataset": "pulls"
     },
     {
       "matches": {
-        "body": "## 📝 Summary\r\n\r\n<!-- What does this PR change? Why is it necessary? Keep it concise. -->\r\n\r\n## 🔗 Related\r\n\r\n<!-- Link to relevant issues, discussions, or other PRs. Use \"Closes #123\" to auto-close issues. Omit if none. -->\r\n\r\n## 🚨 Breaking Changes\r\n\r\n<!-- Describe breaking changes if any, or delete this section. -->\r\n<!-- If breaking, make sure the \"breaking change\" label is added. -->\r\n\r\n## 📚 Docs\r\n\r\n<!-- Note any required updates to docs, recipes, or guides. Omit if not applicable. -->\r\n\r\n## 👀 Notes for Reviewers\r\n\r\n<!-- Any areas needing special attention or questions for reviewers? Omit if none. -->\r\n"
+        "body": [
+          "## 📝 Summary\r\n\r\n<!-- What does this PR change? Why is it necessary? Keep it concise. -->\r\n\r\n## 🔗 Related\r\n\r\n<!-- Link to relevant issues, discussions, or other PRs. Use \"Closes #123\" to auto-close issues. Omit if none. -->\r\n\r\n## 🚨 Breaking Changes\r\n\r\n<!-- Describe breaking changes if any, or delete this section. -->\r\n<!-- If breaking, make sure the \"breaking change\" label is added. -->\r\n\r\n## 📚 Docs\r\n\r\n<!-- Note any required updates to docs, recipes, or guides. Omit if not applicable. -->\r\n\r\n## 👀 Notes for Reviewers\r\n\r\n<!-- Any areas needing special attention or questions for reviewers? Omit if none. -->\r\n"
+        ]
       },
       "data": {
         "url": "https://github.com/spiceai/spiceai/pull/6520",
@@ -271,12 +268,14 @@ Response:
       "primary_key": {
         "id": "PR_kwDOF31SUc6fy91T"
       },
-      "score": 0.2575995922088623,
+      "_score": 0.2575995922088623,
       "dataset": "pulls"
     },
     {
       "matches": {
-        "body": "## Summary\r\nAdds a new `availability_monitor` configuration option to individual datasets to control whether the dataset availability monitor checks that specific dataset. This provides granular control over which datasets are monitored, preventing unnecessary remote calls that could wake up expensive warehouses.\r\n\r\n- Closes #5676\r\n\r\n## Usage\r\nUsers can now disable availability monitoring for specific datasets that might cause expensive warehouse wake-ups:\r\n\r\n```yaml\r\ndatasets:\r\n  - from: snowflake\r\n    name: expensive_table\r\n    availability_monitor: disabled\r\n  \r\n  - from: file://local_data.csv\r\n    name: local_data\r\n    availability_monitor: default\r\n```\r\n"
+        "body": [
+          "## Summary\r\nAdds a new `availability_monitor` configuration option to individual datasets to control whether the dataset availability monitor checks that specific dataset. This provides granular control over which datasets are monitored, preventing unnecessary remote calls that could wake up expensive warehouses.\r\n\r\n- Closes #5676\r\n\r\n## Usage\r\nUsers can now disable availability monitoring for specific datasets that might cause expensive warehouse wake-ups:\r\n\r\n```yaml\r\ndatasets:\r\n  - from: snowflake\r\n    name: expensive_table\r\n    availability_monitor: disabled\r\n  \r\n  - from: file://local_data.csv\r\n    name: local_data\r\n    availability_monitor: default\r\n```\r\n"
+        ]
       },
       "data": {
         "url": "https://github.com/spiceai/spiceai/pull/6482",
@@ -285,7 +284,7 @@ Response:
       "primary_key": {
         "id": "PR_kwDOF31SUc6fT_8S"
       },
-      "score": 0.24210351705551147,
+      "_score": 0.24210351705551147,
       "dataset": "pulls"
     }
   ],
@@ -295,56 +294,74 @@ Response:
 
 ## Chunking
 
-The Spice runtime can manage chunking, embedding and reaggregating chunks of datasets with large content. Spice loaded `spiceai.cookbook_readme`: all cookbook READMEs. Search, both HTTP and SQL can be queried as before.
+Both PR bodies and cookbook README content use chunking. Spice embeds the chunks
+and returns matching source rows through the same HTTP and SQL search APIs. Use
+`_match` to inspect the matching chunk within a README:
 
 ```SQL
 SELECT
     path,
-    match, -- The matching chunk within `content`
+    _match, -- The matching chunk within `content`
     length(content) as content_length,
-    score
+    _score
 FROM vector_search(spiceai.cookbook_readme, 'data governance and auditing')
-ORDER BY score DESC
+ORDER BY _score DESC
 LIMIT 3;
 ```
 
 ````
-+------------------------------------+------------------------------------------------------------------------------------------------------------+----------------+---------------------+
-| path                               | match                                                                                                      | content_length | score               |
-+------------------------------------+------------------------------------------------------------------------------------------------------------+----------------+---------------------+
-| guides/security-analyzer/README.md |                                                                                                            | 12797          | 0.4742743968963623  |
-|                                    | ```sql                                                                                                     |                |                     |
-|                                    | -- Normal query - single department access                                                                 |                |                     |
-|                                    | INSERT INTO query_audit_logs (user_id, query_text, database_name, schema_name, rows_affected, query_type)  |                |                     |
-|                                    | VALUES                                                                                                     |                |                     |
-|                                    | ('alice', 'SELECT * FROM employees WHERE department_id = 5', 'hr_db', 'public', 10, 'SELECT');             |                |                     |
-|                                    |                                                                                                            |                |                     |
-|                                    | -- Suspicious: Large data extraction                                                                       |                |                     |
-|                                    | INSERT INTO query_audit_logs (user_id, query_text, database_name, schema_name, rows_affected, query_type)  |                |                     |
-|                                    | VALUES                                                                                                     |                |                     |
-|                                    | ('bob', 'SELECT * FROM employees', 'hr_db', 'public', 5000, 'SELECT');                                     |                |                     |
-|                                    |                                                                                                            |                |                     |
-|                                    | -- Suspicious: Cross-schema access                                                                         |                |                     |
-|                                    | INSERT INTO query_audit_logs (user_id, query_text, database_name, schema_name, rows_affected, query_type)  |                |                     |
-|                                    | VALUES                                                                                                     |                |                     |
-|                                    | ('charlie', 'SELECT * FROM finance.salary_data', 'hr_db', 'finance', 100, 'SELECT'),                       |                |                     |
-|                                    | ('charlie', 'SELECT * FROM hr.employee_reviews', 'hr_db', 'hr', 200, 'SELECT'),                            |                |                     |
-|                                    | ('charlie', 'SELECT * FROM security.access_logs', 'hr_db', 'security', 300, 'SELECT');                     |                |                     |
-|                                    |                                                                                                            |                |                     |
-|                                    | -- Suspicious: Sequential data harvesting                                                                  |                |                     |
-|                                    | INSERT INTO query_audit_logs (user_id, query_text, database_name, schema_name, rows_affected, query_type)  |                |                     |
-|                                    | VALUES                                                                                                     |                |                     |
-|                                    | ('dave', 'SELECT email FROM customers WHERE region = ''West''', 'sales_db', 'public', 50, 'SELECT'),       |                |                     |
-|                                    | ('dave', 'SELECT phone FROM customers WHERE region = ''East''', 'sales_db', 'public', 50, 'SELECT'),       |                |                     |
-|                                    | ('dave', 'SELECT address FROM customers WHERE region = ''South''', 'sales_db', 'public', 50, 'SELECT');    |                |                     |
-|                                    | ```                                                                                                        |                |                     |
-|                                    | (truncated for brevity.)                                                                                   |                |                     |
-|                                    |                                                                                                            |                |                     |
-| catalogs/databricks/README.md      |                                                                                                            | 8567           | 0.3918001651763916  |
-|                                    | ```shell                                                                                                   |                |                     |
-|                                    | drop table <CATALOG_NAME>.<SCHEMA_NAME>.test_table_no_v2checkpoint;                                        |                |                     |
-|                                    | ```                                                                                                        |                |                     |
-|                                    | (truncated for brevity.)                                                                                   |                |                     |
++------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------+---------------------+
+|                path                |                                                                                           _match                                                                                           | content_length |        _score       |
+|               varchar              |                                                                                           varchar                                                                                          |      int32     |       float64       |
++------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------+---------------------+
+| guides/security-analyzer/README.md |                                                                                                                                                                                            | 12688          | 0.4630262851715088  |
+|                                    | -- Suspicious: Large data extraction                                                                                                                                                       |                |                     |
+|                                    | INSERT INTO query_audit_logs (user_id, query_text, database_name, schema_name, rows_affected, query_type)                                                                                  |                |                     |
+|                                    | VALUES                                                                                                                                                                                     |                |                     |
+|                                    | ('bob', 'SELECT * FROM employees', 'hr_db', 'public', 5000, 'SELECT');                                                                                                                     |                |                     |
+|                                    |                                                                                                                                                                                            |                |                     |
+|                                    | -- Suspicious: Cross-schema access                                                                                                                                                         |                |                     |
+|                                    | INSERT INTO query_audit_logs (user_id, query_text, database_name, schema_name, rows_affected, query_type)                                                                                  |                |                     |
+|                                    | VALUES                                                                                                                                                                                     |                |                     |
+|                                    | ('charlie', 'SELECT * FROM finance.salary_data', 'hr_db', 'finance', 100, 'SELECT'),                                                                                                       |                |                     |
+|                                    | ('charlie', 'SELECT * FROM hr.employee_reviews', 'hr_db', 'hr', 200, 'SELECT'),                                                                                                            |                |                     |
+|                                    | ('charlie', 'SELECT * FROM security.access_logs', 'hr_db', 'security', 300, 'SELECT');                                                                                                     |                |                     |
+|                                    |                                                                                                                                                                                            |                |                     |
+|                                    | -- Suspicious: Sequential data harvesting                                                                                                                                                  |                |                     |
+|                                    | INSERT INTO query_audit_logs (user_id, query_text, database_name, schema_name, rows_affected, query_type)                                                                                  |                |                     |
+|                                    | VALUES                                                                                                                                                                                     |                |                     |
+|                                    | ('dave', 'SELECT email FROM customers WHERE region = ''West''', 'sales_db', 'public', 50, 'SELECT'),                                                                                       |                |                     |
+|                                    | ('dave', 'SELECT phone FROM customers WHERE region = ''East''', 'sales_db', 'public', 50, 'SELECT'),                                                                                       |                |                     |
+|                                    | ('dave', 'SELECT address FROM customers WHERE region = ''South''', 'sales_db', 'public', 50, 'SELECT');                                                                                    |                |                     |
+|                                    | ```                                                                                                                                                                                        |                |                     |
+|                                    |                                                                                                                                                                                            |                |                     |
+|                                    | Our AI analysis provides rich context about these patterns:                                                                                                                                |                |                     |
+|                                    |                                                                                                                                                                                            |                |                     |
+|                                    | ```plaintext                                                                                                                                                                               |                |                     |
+|                                    | Based on the recent query patterns, several concerning behaviors have been identified:                                                                                                     |                |                     |
+|                                    |                                                                                                                                                                                            |                |                     |
+|                                    | 1. Sequential Data Harvesting (High Severity)                                                                                                                                              |                |                     |
+|                                    |    User 'dave' is systematically extracting customer PII (email, phone, address) across different regions.                                                                                 |                |                     |
+|                                    |    While each query appears legitimate, the pattern suggests a methodical data gathering operation.                                                                                        |                |                     |
+|                                    |                                                                                                                                                                                            |                |                     |
+|                                    |    Recommendations:                                                                                                                                                                        |                |                     |
+|                                    |    - Implement controls to detect cross-region PII access patterns                                                                                                                         |                |                     |
+|                                    |    - Review dave's role requirements for customer data access                                                                                                                              |                |                     |
+|                                    |    - Consider implementing aggregate-only views for customer data                                                                                                                          |                |                     |
+|                                    |                                                                                                                                                                                            |                |                     |
+|                                    | 2. Bulk Data Access (Medium Severity)                                                                                                                                                      |                |                     |
+|                                    |    User 'bob' extracted 5000 employee records in a single query.                                                                                                                           |                |                     |
+|                                    |    This could be legitimate ETL work but requires verification.                                                                                                                            |                |                     |
+|                                    |                                                                                                                                                                                            |                |                     |
+|                                    |    Recommendations:                                                                                                                                                                        |                |                     |
+|                                    |    - Verify if this is a scheduled data export                                                                                                                                             |                |                     |
+|                                    |    - Implement row-level security if bulk access isn't required                                                                                                                            |                |                     |
+|                                    |    - Add rate limiting for large data retrieval                                                                                                                                            |                |                     |
+| vectors/s3/README.md               |    | INSERT INTO query_audit_logs (user_id, query_text, database_name, schema_name, rows_affected, query_type)  |                |                     |                                   | 25486          | 0.44905054569244385 |
+|                                    | |                                    | VALUES                                                                                                     |                |                     | |                |                     |
+|                                    | |                                    | ('dave', 'SELECT email FROM customers WHERE region = ''West''', 'sales_db', 'public', 50, 'SELECT'),       |                |                     | |                |                     |
+|                                    | |                                    | ('dave', 'SELECT phone FROM customers WHERE region = ''East''', 'sales_db', 'public', 50, 'SELECT'),       |                |                     | |                |                     |
+...
 ````
 
 ```shell
@@ -365,22 +382,26 @@ curl --request POST \
   "results": [
     {
       "matches": {
-        "content": "\n```sql\n-- Normal query - single department access\nINSERT INTO query_audit_logs (user_id, query_text, database_name, schema_name, rows_affected, ..."
+        "content": [
+          "\n```sql\n-- Normal query - single department access\nINSERT INTO query_audit_logs (user_id, query_text, database_name, schema_name, rows_affected, ..."
+        ]
       },
       "primary_key": {
         "path": "guides/security-analyzer/README.md"
       },
-      "score": 0.4742351770401001,
+      "_score": 0.4742351770401001,
       "dataset": "spiceai.cookbook_readme"
     },
     {
       "matches": {
-        "content": "\n```shell\ndrop table <CATALOG_NAME>.<SCHEMA_NAME>.test_table_no_v2checkpoint;\n```\n\n**Verify table removal in Spice**: Observe that the table has beem removed in spice runtime log\n\n```shell\n2025-01-18T00:59:49.121835Z  INFO data_components::unity_catalog::provider: Refreshed schema <CATALOG_NAME>.<SCHEMA_NAME>. Tables removed: test_table_no_v2checkpoint.\n```\n\n## Step 8. Use Databricks Service Principal\n\nCreate a Databricks service ..."
+        "content": [
+          "\n```shell\ndrop table <CATALOG_NAME>.<SCHEMA_NAME>.test_table_no_v2checkpoint;\n```\n\n**Verify table removal in Spice**: Observe that the table has beem removed in spice runtime log\n\n```shell\n2025-01-18T00:59:49.121835Z  INFO data_components::unity_catalog::provider: Refreshed schema <CATALOG_NAME>.<SCHEMA_NAME>. Tables removed: test_table_no_v2checkpoint.\n```\n\n## Step 8. Use Databricks Service Principal\n\nCreate a Databricks service ..."
+        ]
       },
       "primary_key": {
         "path": "catalogs/databricks/README.md"
       },
-      "score": 0.3918114900588989,
+      "_score": 0.3918114900588989,
       "dataset": "spiceai.cookbook_readme"
     }
   ],
@@ -400,4 +421,4 @@ curl --request POST \
 
 - [S3 Vectors documentation](https://spiceai.org/docs/components/vectors/s3_vectors)
 - [Spice.ai S3 Vectors blog post](https://spiceai.org/blog/amazon-s3-vectors-with-spice)
-- [Amazon S3 Vectors](https://aws.amazon.com/s3/vectors/)
+- [Amazon S3 Vectors](https://aws.amazon.com/s3/features/vectors/)

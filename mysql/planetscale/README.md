@@ -24,7 +24,7 @@ Follow these steps to get started with federated SQL query against [Planetscale]
 - `[mysql_user]` with the username from the generated credentials in step 3.
 - `[mysql_db]` with the name of your Planetscale database.
 
-See the [datasets reference](https://docs.spiceai.org/reference/spicepod/datasets) for more dataset configuration options and [MySQL Data Connector](https://docs.spiceai.org/data-connectors/mysql) for more options on configuring a MySQL Data Connector.
+See the [datasets reference](https://docs.spiceai.org/reference/spicepod/datasets) for more dataset configuration options and [MySQL Data Connector](https://docs.spiceai.org/components/data-connectors/mysql) for more options on configuring a MySQL Data Connector.
 
 Ensure the `MYSQL_PASS` environment variable is set to the password for your Planetscale instance. Environment variables can be specified on the command line when running the Spice runtime, or in a `.env` file in the same directory as `spicepod.yaml`.
 

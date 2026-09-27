@@ -50,16 +50,18 @@ name: dual-dataset-registration
 
 datasets:
   # Federated table — available immediately at startup
-  - from: s3://spiceai-public-datasets/taxi_trips/
+  - from: s3://spiceai-demo-datasets/taxi_trips/2024/
     name: taxi_trips
     params:
       file_format: parquet
+      s3_auth: public
 
   # Accelerated copy — loads in the background
-  - from: s3://spiceai-public-datasets/taxi_trips/
+  - from: s3://spiceai-demo-datasets/taxi_trips/2024/
     name: taxi_trips_accelerated
     params:
       file_format: parquet
+      s3_auth: public
     ready_state: on_registration # Required for runtime to be ready while loading
     acceleration:
       enabled: true
@@ -70,6 +72,7 @@ datasets:
 
 Key points:
 
+- `s3_auth: public` forces unauthenticated access to the public bucket. Without it, Spice falls back to the default AWS credential chain, which fails if the local environment has invalid or expired AWS credentials configured.
 - `taxi_trips` is a federated dataset with no acceleration. It is ready the moment the runtime starts.
 - `taxi_trips_accelerated` points to the same source but has `acceleration.enabled: true`. The runtime begins loading data into a local DuckDB file as soon as it starts.
 - `ready_state: on_registration` is required on the accelerated dataset so the runtime becomes ready immediately. Without it the runtime waits for the acceleration to finish loading before marking itself ready, which blocks the federated dataset from serving queries.
@@ -85,9 +88,9 @@ spice run
 Shortly after startup you will see both datasets register. The federated table is ready immediately, while the accelerated copy begins loading:
 
 ```bash
-2025-03-24T10:00:01.123456Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-public-datasets/taxi_trips/), results cache enabled.
-2025-03-24T10:00:01.234567Z  INFO runtime::init::dataset: Dataset taxi_trips_accelerated registered (s3://spiceai-public-datasets/taxi_trips/), acceleration (duckdb:file), results cache enabled.
-2025-03-24T10:00:01.234890Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips_accelerated
+2025-03-24T10:00:01.123456Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), results cache enabled.
+2025-03-24T10:00:01.234567Z  INFO runtime::init::dataset: Dataset taxi_trips_accelerated registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (duckdb:file, 1800s refresh), results cache enabled.
+2025-03-24T10:00:01.234890Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips_accelerated
 ```
 
 ## Step 4. Query the federated table immediately
@@ -107,8 +110,9 @@ SELECT COUNT(*) AS total_trips FROM taxi_trips;
 ```output
 +-------------+
 | total_trips |
+|    int64    |
 +-------------+
-| 1547741     |
+| 2964624     |
 +-------------+
 ```
 
@@ -127,31 +131,55 @@ While still loading:
 ```json
 [
   {
-    "from": "s3://spiceai-public-datasets/taxi_trips/",
+    "from": "s3://spiceai-demo-datasets/taxi_trips/2024/",
     "name": "taxi_trips",
-    "status": "Ready"
+    "replication_enabled": false,
+    "acceleration_enabled": false,
+    "status": "Ready",
+    "properties": {
+      "search": "unsupported",
+      "vector_search": "unsupported"
+    }
   },
   {
-    "from": "s3://spiceai-public-datasets/taxi_trips/",
+    "from": "s3://spiceai-demo-datasets/taxi_trips/2024/",
     "name": "taxi_trips_accelerated",
-    "status": "Refreshing"
+    "replication_enabled": false,
+    "acceleration_enabled": true,
+    "status": "Refreshing",
+    "properties": {
+      "search": "unsupported",
+      "vector_search": "unsupported"
+    }
   }
 ]
 ```
 
-When the acceleration finishes:
+When the acceleration finishes, `taxi_trips_accelerated` reports `Ready`:
 
 ```json
 [
   {
-    "from": "s3://spiceai-public-datasets/taxi_trips/",
+    "from": "s3://spiceai-demo-datasets/taxi_trips/2024/",
     "name": "taxi_trips",
-    "status": "Ready"
+    "replication_enabled": false,
+    "acceleration_enabled": false,
+    "status": "Ready",
+    "properties": {
+      "search": "unsupported",
+      "vector_search": "unsupported"
+    }
   },
   {
-    "from": "s3://spiceai-public-datasets/taxi_trips/",
+    "from": "s3://spiceai-demo-datasets/taxi_trips/2024/",
     "name": "taxi_trips_accelerated",
-    "status": "Ready"
+    "replication_enabled": false,
+    "acceleration_enabled": true,
+    "status": "Ready",
+    "properties": {
+      "search": "unsupported",
+      "vector_search": "unsupported"
+    }
   }
 ]
 ```
@@ -159,7 +187,7 @@ When the acceleration finishes:
 The Spice runtime logs also confirm when the load completes:
 
 ```bash
-2025-03-24T10:03:45.678901Z  INFO runtime::accelerated_table::refresh_task: Loaded 1,547,741 rows () for dataset taxi_trips_accelerated in 3m 44s.
+2025-03-24T10:03:45.678901Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips_accelerated in 3m 44s.
 ```
 
 ## Step 6. Switch to the accelerated table
@@ -173,8 +201,9 @@ SELECT COUNT(*) AS total_trips FROM taxi_trips_accelerated;
 ```output
 +-------------+
 | total_trips |
+|    int64    |
 +-------------+
-| 1547741     |
+| 2964624     |
 +-------------+
 ```
 

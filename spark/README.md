@@ -24,7 +24,7 @@ cd cookbook/spark
 1. Navigate to `spark-3.5` folder and start the Docker Compose stack, which includes a Spark 3.5.6 instance and init notebook to load the NYC taxi trip parquet data:
 
 ```shell
-docker compose up -d
+docker compose up -d --build
 ```
 
 It will take about about 30 seconds to start the Spark instance and load the sample dataset.
@@ -83,14 +83,11 @@ spice run
 ```
 
 ```shell
-2025/01/14 02:52:58 INFO Checking for latest Spice runtime release...
-2025/01/14 02:52:59 INFO Spice.ai runtime starting...
-2025-01-13T17:53:00.171638Z  INFO runtime::init::dataset: No datasets were configured. If this is unexpected, check the Spicepod configuration.
+ INFO Spice.ai runtime starting...
+2025-01-13T17:53:00.171638Z  INFO runtime: No datasets or catalogs were configured. If this is unexpected, check the Spicepod configuration.
 2025-01-13T17:53:00.181202Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-01-13T17:53:00.181420Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
 2025-01-13T17:53:00.185632Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2025-01-13T17:53:00.185712Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2025-01-13T17:53:00.196585Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2025-01-13T17:53:00.196585Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 ```
 
 4. Configure a Spark dataset into the spicepod. Copy and paste the following `spicepod.yaml` configuration into your Spicepod.
@@ -120,22 +117,26 @@ spice sql
 ```
 
 ```
-Welcome to the Spice.ai SQL REPL! Type 'help' for help.
+Welcome to the Spice.ai SQL REPL! Type `help` or `?` for commands.
 
-show tables; -- list available tables
+Examples:
+  show tables;              -- list available tables
+  describe <table_name>;    -- show column types
+  nql <question>            -- natural language to SQL (requires a model)
+
 ```
 
 ```shell
 sql> show tables;
 +---------------+--------------+--------------+------------+
-| table_catalog | table_schema | table_name   | table_type |
+| table_catalog | table_schema |  table_name  | table_type |
+|    varchar    |    varchar   |    varchar   |   varchar  |
 +---------------+--------------+--------------+------------+
 | spice         | runtime      | task_history | BASE TABLE |
-| spice         | runtime      | metrics      | BASE TABLE |
 | spice         | public       | nyc_taxis    | BASE TABLE |
 +---------------+--------------+--------------+------------+
 
-Time: 0.031211 seconds. 3 rows.
+Time: 0.031211 seconds. 2 rows.
 ```
 
 7. Check the table structure of `nyc_taxis`.
@@ -145,29 +146,30 @@ describe nyc_taxis;
 ```
 
 ```shell
-+-----------------------+-----------------------------------------+-------------+
-| column_name           | data_type                               | is_nullable |
-+-----------------------+-----------------------------------------+-------------+
-| VendorID              | Int64                                   | YES         |
-| tpep_pickup_datetime  | Timestamp(Microsecond, Some("Etc/UTC")) | YES         |
-| tpep_dropoff_datetime | Timestamp(Microsecond, Some("Etc/UTC")) | YES         |
-| passenger_count       | Float64                                 | YES         |
-| trip_distance         | Float64                                 | YES         |
-| RatecodeID            | Float64                                 | YES         |
-| store_and_fwd_flag    | Utf8                                    | YES         |
-| PULocationID          | Int64                                   | YES         |
-| DOLocationID          | Int64                                   | YES         |
-| payment_type          | Int64                                   | YES         |
-| fare_amount           | Float64                                 | YES         |
-| extra                 | Float64                                 | YES         |
-| mta_tax               | Float64                                 | YES         |
-| tip_amount            | Float64                                 | YES         |
-| tolls_amount          | Float64                                 | YES         |
-| improvement_surcharge | Float64                                 | YES         |
-| total_amount          | Float64                                 | YES         |
-| congestion_surcharge  | Float64                                 | YES         |
-| airport_fee           | Float64                                 | YES         |
-+-----------------------+-----------------------------------------+-------------+
++--------------+-----------------------+--------------------------+-------------+
+| table_schema |      column_name      |         data_type        | is_nullable |
+|    varchar   |        varchar        |          varchar         |   varchar   |
++--------------+-----------------------+--------------------------+-------------+
+| public       | VendorID              | Int64                    | YES         |
+| public       | tpep_pickup_datetime  | Timestamp(µs, "Etc/UTC") | YES         |
+| public       | tpep_dropoff_datetime | Timestamp(µs, "Etc/UTC") | YES         |
+| public       | passenger_count       | Float64                  | YES         |
+| public       | trip_distance         | Float64                  | YES         |
+| public       | RatecodeID            | Float64                  | YES         |
+| public       | store_and_fwd_flag    | Utf8                     | YES         |
+| public       | PULocationID          | Int64                    | YES         |
+| public       | DOLocationID          | Int64                    | YES         |
+| public       | payment_type          | Int64                    | YES         |
+| public       | fare_amount           | Float64                  | YES         |
+| public       | extra                 | Float64                  | YES         |
+| public       | mta_tax               | Float64                  | YES         |
+| public       | tip_amount            | Float64                  | YES         |
+| public       | tolls_amount          | Float64                  | YES         |
+| public       | improvement_surcharge | Float64                  | YES         |
+| public       | total_amount          | Float64                  | YES         |
+| public       | congestion_surcharge  | Float64                  | YES         |
+| public       | airport_fee           | Float64                  | YES         |
++--------------+-----------------------+--------------------------+-------------+
 
 Time: 0.006024208 seconds. 19 rows.
 ```
@@ -205,10 +207,10 @@ docker compose down --volumes --rmi local
 
 ### Spark 4
 
-1. Navigate to `spark-4` folder and start the Docker Compose stack, which includes a Spark 4.0.0 instance and init notebook to load the NYC taxi trip parquet data:
+1. Navigate to `spark-4` folder and start the Docker Compose stack, which includes a Spark 4.0.3 instance and init notebook to load the NYC taxi trip parquet data:
 
 ```shell
-docker compose up -d
+docker compose up -d --build
 ```
 
 It will take about about 30 seconds to start the Spark instance and load the sample dataset.
@@ -231,15 +233,13 @@ spice run
 
 ```console
 Spice.ai OSS CLI v1.4.0-unstable-build.8eee8ad4b
-2025/06/10 10:46:32 INFO Checking for latest Spice runtime release...
-2025/06/10 10:46:32 INFO Spice.ai runtime starting...
+ INFO Spice.ai runtime starting...
 2025-06-10T01:46:32.725076Z  INFO spiced: Starting runtime v1.4.0-unstable-build.8eee8ad4b+models
-2025-06-10T01:46:32.742491Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2025-06-10T01:46:32.744098Z  INFO runtime::init::caching: Initialized search results cache;
-2025-06-10T01:46:33.592583Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
+2025-06-10T01:46:32.742491Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2025-06-10T01:46:32.744098Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
 2025-06-10T01:46:33.592555Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2025-06-10T01:46:33.599924Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2025-06-10T01:46:33.602360Z  INFO runtime::init::dataset: Initializing dataset nyc_taxis
+2025-06-10T01:46:33.602360Z  INFO runtime::init::dataset: Dataset nyc_taxis initializing...
 2025-06-10T01:46:36.494592Z  INFO runtime::init::dataset: Dataset nyc_taxis registered (spark:nyc_taxis), results cache enabled.
 2025-06-10T01:46:36.596578Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```

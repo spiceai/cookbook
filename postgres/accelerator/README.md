@@ -1,6 +1,6 @@
 # PostgreSQL Data Accelerator
 
-Works with `v1.0+`
+Works with `v1.0+`. As of Spice `v2.0`, the PostgreSQL Data Accelerator is an [Enterprise feature](https://spiceai.org/docs/components/data-accelerators/postgres) and requires an enterprise build of `spiced`. Community builds will log `The accelerator engine postgres is not available` and refuse to load the dataset.
 
 Follow these steps to get started with PostgreSQL as a Data Accelerator.
 
@@ -55,7 +55,7 @@ spice init postgres-demo
 cd postgres-demo
 ```
 
-**Step 3.** [Login](https://docs.spiceai.org/cli/reference/login) to use the [Spice.ai Data Connector](https://docs.spiceai.org/data-connectors/spiceai).
+**Step 3.** [Login](https://docs.spiceai.org/cli/reference/login) to use the [Spice.ai Data Connector](https://docs.spiceai.org/components/data-connectors/spiceai).
 
 ```bash
 spice login
@@ -79,9 +79,7 @@ The Spice runtime terminal will show that Spice Runtime is running.
 
 ```console
 Spice.ai runtime starting...
-2024-05-07T01:01:40.566270Z  INFO spiced: Metrics listening on 127.0.0.1:9090
 2024-05-07T01:01:40.566873Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2024-05-07T01:01:40.566960Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2024-05-07T01:01:40.568738Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 ```
 
@@ -94,6 +92,8 @@ name: postgres-demo
 datasets:
   - from: spice.ai/spiceai/quickstart/datasets/taxi_trips
     name: taxi_trips
+    params:
+      spiceai_region: us-east-1
     acceleration:
       enabled: true
       refresh_mode: full
@@ -108,12 +108,14 @@ datasets:
         pg_pass: ${env:PG_PASS}
 ```
 
+The `spiceai_region` parameter selects which Spice Cloud region to source the dataset from. Run `spice cloud regions` to list available regions.
+
 Save the changes to `spicepod.yaml`. The Spice runtime terminal will show that the dataset has been loaded:
 
 ```console
-2025-01-07T00:58:34.081889Z  INFO runtime::init::dataset: Dataset taxi_trips registered (spice.ai/spiceai/quickstart/datasets/taxi_trips), acceleration (postgres), results cache enabled.
-2025-01-07T00:58:34.083257Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
-2025-01-07T00:59:43.684903Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (8.41 GiB) for dataset taxi_trips in 1m 9s 601ms.
+2025-01-07T00:58:34.081889Z  INFO runtime::init::dataset: Dataset taxi_trips registered (spice.ai/spiceai/quickstart/datasets/taxi_trips), acceleration (postgres, 10s refresh), results cache enabled.
+2025-01-07T00:58:34.083257Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
+2025-01-07T00:59:43.684903Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (8.41 GiB) for dataset taxi_trips in 1m 9s 601ms.
 ```
 
 Follow the [getting started guide](https://docs.spiceai.org/getting-started) to get started with the Spice.ai runtime.

@@ -1,6 +1,6 @@
 version: v1
 kind: Spicepod
-name: http_tvmaze
+name: http_sample
 
 datasets:
   - from: https://api.tvmaze.com
@@ -10,3 +10,12 @@ datasets:
       client_timeout: 30s
       allowed_request_paths: '/shows/**,/search/people'
       request_query_filters: enabled
+
+  - from: https://dummyjson.com/products
+    name: products
+    params:
+      pagination: enabled
+      pagination_query_params: "skip={offset}&limit={limit}"
+      pagination_page_size: "30"
+      pagination_data_pointer: "/products"
+      pagination_max_pages: "10"

@@ -61,6 +61,12 @@ datasets:
     params:
       http_username: api-user
       http_password: ${secrets:API_KEY}
+    columns: # An HTTP response is one row of envelope columns, so the fields
+      - name: category # the refresh_sql filters on must be projected out of the JSON
+      - name: status
+      - name: details
+        metadata:
+          json_object: "*" # Every remaining key, as a JSON string
     acceleration:
       enabled: true
       engine: duckdb
@@ -83,13 +89,20 @@ name: customer-portal
 
 datasets:
   - from: https://customer-events.company.com/v1/interactions
-    name: customer-interactions
+    name: customer_interactions
     description: Customer support interactions and engagement history
     time_column: interaction_timestamp # Column used to track when data is updated
+    time_format: ISO8601 # Fields projected out of a JSON response are strings
     params:
       http_username: customer-service
       http_password: ${secrets:CUSTOMER_API_KEY}
       client_timeout: 30s
+    columns: # Project the response fields referenced below out of the JSON
+      - name: interaction_id
+      - name: interaction_timestamp
+      - name: details
+        metadata:
+          json_object: "*" # Every remaining key, as a JSON string
     acceleration:
       enabled: true
       engine: duckdb # Persist the accelerated data to a DuckDB file

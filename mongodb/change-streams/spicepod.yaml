@@ -1,0 +1,18 @@
+version: v1
+kind: Spicepod
+name: mongodb-change-streams
+
+datasets:
+  - from: mongodb:orders
+    name: orders
+    params:
+      mongodb_connection_string: ${secrets:MONGODB_CONNECTION_STRING}
+      mongodb_unnest_depth: 1
+    acceleration:
+      enabled: true
+      engine: duckdb
+      mode: file
+      refresh_mode: changes
+      primary_key: _id
+      on_conflict:
+        _id: upsert

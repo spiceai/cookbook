@@ -23,4 +23,9 @@ datasets:
         caching_ttl: 10s
         caching_stale_while_revalidate_ttl: 10s
         caching_stale_if_error: enabled
+        # `caching_stale_if_error: enabled` deliberately keeps expired entries as the
+        # fallback for a failing origin, so nothing above bounds what the accelerator
+        # stores. These two budgets do (both require v2.3.0+).
+        caching_max_size: 256MiB
+        caching_max_items: 10000
 

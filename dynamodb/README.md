@@ -1,6 +1,6 @@
 # DynamoDB Data Connector (AWS Hosted)
 
-Works with `v1.0+`
+Works with `v1.9.0+`
 
 This recipe demonstrates how to configure a Spice dataset to connect to an AWS-hosted DynamoDB table and query data from it.
 
@@ -77,8 +77,8 @@ If your credentials and region are correct, the dataset will load and logs outpu
 ```bash
 INFO runtime::init::dataset: Dataset sample_data initializing...
 INFO runtime::init::dataset: Dataset sample_data registered (dynamodb:sample_data), acceleration (arrow), results cache enabled.
-INFO runtime::accelerated_table::refresh_task: Loading data for dataset sample_data
-INFO runtime::accelerated_table::refresh_task: Loaded 2 rows (3.25 kiB) for dataset sample_data in 34ms.
+INFO runtime_table::accelerated::refresh_task: Loading data for dataset sample_data
+INFO runtime_table::accelerated::refresh_task: Loaded 2 rows (3.25 kiB) for dataset sample_data in 34ms.
 ```
 
 ---

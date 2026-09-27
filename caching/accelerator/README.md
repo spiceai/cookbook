@@ -74,8 +74,10 @@ spice sql
 Run a query to fetch the current time through the cache:
 
 ```sql
-SELECT request_path, content, fetched_at FROM time WHERE request_path = '/time';
+SELECT request_path, content, _fetched_at FROM time WHERE request_path = '/time';
 ```
+
+> **Version note:** The fetch-timestamp column is named `_fetched_at` (leading underscore) on Spice `v2.0+`. On `v1.x` it is `fetched_at` (no underscore) — use that name if you are running a `v1.x` release.
 
 ## Understanding the Configuration
 
@@ -97,6 +99,8 @@ datasets:
         caching_ttl: 10s
         caching_stale_while_revalidate_ttl: 10s
         caching_stale_if_error: enabled
+        caching_max_size: 256MiB
+        caching_max_items: 10000
 ```
 
 ### Key Configuration Options
@@ -108,6 +112,58 @@ datasets:
 | `caching_ttl`                        | `10s`     | Cache entries are considered fresh for 10 seconds              |
 | `caching_stale_while_revalidate_ttl` | `10s`     | Serve stale data for 10 seconds while refreshing in background |
 | `caching_stale_if_error`             | `enabled` | Return cached data if the upstream server returns an error     |
+| `caching_max_size`                   | `256MiB`  | Byte budget for the stored cache (`v2.3.0+`)                   |
+| `caching_max_items`                  | `10000`   | Row budget for the stored cache (`v2.3.0+`)                    |
+
+### What Bounds the Cache
+
+`caching_ttl` and `caching_stale_while_revalidate_ttl` bound how long an entry is
+*served*, not how long it is *stored*. With `caching_stale_if_error: enabled` an
+expired entry is deliberately kept, because it is the copy served when the origin
+fails — so those two TTLs evict nothing, and the accelerator grows with every
+distinct request it serves.
+
+`caching_max_size` and `caching_max_items` (`v2.3.0+`) are what bound it. Eviction is
+entry-granular: a cached response can span several rows, so the runtime ranks entries
+by their oldest page and removes all of an entry's rows together. Without a budget,
+`v2.3.0+` warns at startup:
+
+```console
+WARN runtime_table::accelerated::caching_eviction: Dataset 'time' sets `caching_stale_if_error: enabled` with no `caching_max_size` or `caching_max_items`, so no cached entry is ever evicted and the acceleration will grow without bound — expired entries are deliberately kept as fallback for a failing origin. Set a budget to bound it. For details, visit: https://spiceai.org/docs/components/data-accelerators/data-refresh#refresh-modes
+```
+
+A time-based bound is a separate mechanism, and the runtime warns separately when
+none is running. To add one, either set `caching_stale_if_error: disabled` — which
+evicts at `caching_ttl` + `caching_stale_while_revalidate_ttl`, giving up the
+stale-if-error fallback this recipe demonstrates — or declare a retention policy with
+all four of `retention_check_enabled: true`, `retention_period`,
+`retention_check_interval`, and the dataset's `time_column`. A policy missing any one
+of those starts nothing.
+
+### Two Warnings This Recipe's Config Still Prints
+
+The spicepod above sets both budgets, so the `caching_eviction` warning above is gone.
+Two others remain on every `spice run`, and neither means the configuration is wrong:
+
+```console
+WARN runtime::datafusion: Dataset 'time' sets `caching_stale_if_error: enabled` and has no retention policy running, so no cached entry is ever evicted and the accelerator grows with every distinct request it serves. ...
+WARN runtime_table::accelerated: Dataset time: `on_zero_results` is ignored when `refresh_mode: caching` is set. Caching mode always queries the source on a cache miss. Remove `on_zero_results` from the dataset configuration to silence this warning. ...
+```
+
+The first is the *time-based* bound described above: `caching_max_size` and
+`caching_max_items` bound how much is stored, not how old it gets, so the runtime still
+reports that nothing evicts by age. Adding a retention policy — or
+`caching_stale_if_error: disabled` — silences it, at the cost of the stale-if-error
+fallback this recipe demonstrates.
+
+The second fires for **every** `refresh_mode: caching` dataset, whether or not
+`on_zero_results` is set; this spicepod never sets it, so there is nothing to remove.
+Caching mode treats a zero-row accelerator result as a cache miss and always falls back
+to the source, which is what the warning is there to say.
+
+> **Note:** This recipe's DuckDB accelerator is in-memory (no `mode: file`), so the
+> cache starts empty on every `spice run`. Add `mode: file` under `acceleration` to
+> persist it across restarts.
 
 ## Experimenting with Caching Behavior
 
@@ -116,7 +172,7 @@ datasets:
 1. **First Query (Cache Miss)**: Run the query - it will take ~1 second (the server's default delay)
 
    ```sql
-   SELECT request_path, content, fetched_at FROM time WHERE request_path = '/time';
+   SELECT request_path, content, _fetched_at FROM time WHERE request_path = '/time';
    ```
 
 2. **Immediate Repeat (Cache Hit)**: Run the same query again - it returns instantly from cache
@@ -140,12 +196,12 @@ Query different paths to create separate cache entries:
 
 ```sql
 -- These create separate cache entries
-SELECT request_path, content, fetched_at FROM time WHERE request_path = '/time/1';
-SELECT request_path, content, fetched_at FROM time WHERE request_path = '/time/2';
-SELECT request_path, content, fetched_at FROM time WHERE request_path = '/time/3';
+SELECT request_path, content, _fetched_at FROM time WHERE request_path = '/time/1';
+SELECT request_path, content, _fetched_at FROM time WHERE request_path = '/time/2';
+SELECT request_path, content, _fetched_at FROM time WHERE request_path = '/time/3';
 
 -- View all cached entries
-SELECT request_path, content, fetched_at FROM time ORDER BY fetched_at DESC;
+SELECT request_path, content, _fetched_at FROM time ORDER BY _fetched_at DESC;
 ```
 
 ### Testing Response Delays
@@ -159,15 +215,18 @@ The `+` and `-` keys on the time server adjust response delay:
 
 ## Cache Schema
 
-The caching accelerator automatically adds metadata fields to cached data:
+The cached table carries the request and response metadata alongside the content — `describe time` lists all eight columns:
 
-| Field           | Type      | Description                       |
-| --------------- | --------- | --------------------------------- |
-| `request_path`  | String    | The URL path used for the request |
-| `request_query` | String    | Query parameters from the request |
-| `request_body`  | String    | Request body (for POST requests)  |
-| `content`       | String    | The response content              |
-| `fetched_at`    | Timestamp | When the data was fetched         |
+| Field              | Type            | Description                                                    |
+| ------------------ | --------------- | -------------------------------------------------------------- |
+| `request_path`     | `Utf8`          | The URL path used for the request                              |
+| `request_query`    | `Utf8`          | Query parameters from the request                              |
+| `request_body`     | `Utf8`          | Request body (for POST requests)                               |
+| `request_headers`  | `Utf8`          | Headers sent with the request                                  |
+| `content`          | `Utf8`          | The response content                                           |
+| `response_status`  | `UInt16`        | HTTP status code returned by the upstream server               |
+| `response_headers` | `Map`           | Response headers, as a map of string keys to string values     |
+| `_fetched_at`      | `Timestamp(ns)` | When the data was fetched (named `fetched_at` on Spice `v1.x`) |
 
 ## Use Cases
 
@@ -180,5 +239,5 @@ The caching accelerator is ideal for:
 
 ## Learn More
 
-- [Caching Accelerator Documentation](https://docs.spiceai.org/features/data-accelerators/refresh-modes/caching)
+- [Caching Accelerator Documentation](https://docs.spiceai.org/features/data-acceleration/refresh-modes/caching)
 - [HTTPS Connector Documentation](https://docs.spiceai.org/components/data-connectors/https)

@@ -36,10 +36,16 @@ This recipe demonstrates how to build an AI-powered data analyst that generates 
 
 4. **Set up Python environment:**
 
+   This recipe uses [`uv`](https://docs.astral.sh/uv/) for dependency management. If you don't have it installed:
+
    ```bash
-   python -m venv .venv
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-   pip install -r requirements.txt
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   ```
+
+   Then install dependencies (this will create the virtual environment automatically):
+
+   ```bash
+   uv sync
    ```
 
 ## How It Works
@@ -70,20 +76,24 @@ spice run
 You should see output indicating that Spice is loading datasets and models:
 
 ```
-2025-01-08T10:00:00.000Z  INFO runtime::init::dataset: Dataset sales registered...
-2025-01-08T10:00:00.100Z  INFO runtime::init::model: Model [visualisation_and_sql] deployed...
-2025-01-08T10:00:00.200Z  INFO runtime::init::model: Model [summary_maker] deployed...
+INFO runtime::init::dataset: Dataset sales initializing...
+INFO runtime::init::model: Loading model [visualisation_and_sql] from openai:gpt-5.2...
+INFO runtime::init::model: Model [visualisation_and_sql] deployed, ready for inferencing
+INFO runtime::init::model: Loading model [summary_maker] from openai:gpt-5.2...
+INFO runtime::init::model: Model [summary_maker] deployed, ready for inferencing
+INFO runtime::init::dataset: Dataset sales registered (s3://spiceai-demo-datasets/cleaned_sales_data.parquet), acceleration (arrow), results cache enabled. duration_ms=0
+INFO runtime_table::accelerated::refresh_task: Loading data for dataset sales
+INFO runtime_table::accelerated::refresh_task: Loaded 2,823 rows (1010.18 kiB) for dataset sales in 687ms.
 ```
 
 **Keep this terminal open.** Open a new terminal for the next steps.
 
 ### Step 2: Run the Visualization Generator
 
-In a new terminal, activate your virtual environment and run the main script:
+In a new terminal, run the main script via `uv`:
 
 ```bash
-source .venv/bin/activate
-python main.py "How has per month sales trended?"
+uv run main.py "How has per month sales trended?"
 ```
 
 The script will:
@@ -95,17 +105,20 @@ The script will:
 
 ### Step 3: View the Visualization
 
-The script outputs a Chart.js HTML snippet. To view it:
-
-1. Copy the HTML output
-2. Save it to a file (e.g., `chart.html`)
-3. Open in a web browser
-
-Or use this one-liner to open the visualization directly:
+Pass `--output-html` to write a self-contained HTML file. The script runs the
+generated SQL and embeds the results in the page, so the chart renders offline
+with no further wiring:
 
 ```bash
-python main.py "How has sales changed over time?" 2>/dev/null | head -n 50 > chart.html && open chart.html
+uv run main.py "How has sales changed over time?" --output-html chart.html
 ```
+
+Then open it in a browser (`open chart.html` on macOS, `xdg-open chart.html` on Linux).
+
+Without `--output-html`, the script prints the Chart.js HTML to stdout alongside
+the SQL, the query results, and the summary. That output is a human-readable
+report — don't redirect it straight into a `.html` file, as the section headers
+and the trailing sections are not valid HTML.
 
 ## Example Queries
 
@@ -113,13 +126,13 @@ Try these sample questions:
 
 ```bash
 # Sales trends
-python main.py "How has per month sales trended?"
-python main.py "What are the top 5 products by total sales?"
-python main.py "Show me quarterly revenue breakdown"
+uv run main.py "How has per month sales trended?"
+uv run main.py "What are the top 5 products by total sales?"
+uv run main.py "Show me quarterly revenue breakdown"
 
 # Product analysis
-python main.py "Which product lines have the highest sales?"
-python main.py "Compare sales between different countries"
+uv run main.py "Which product lines have the highest sales?"
+uv run main.py "Compare sales between different countries"
 ```
 
 ## Example Output
@@ -145,6 +158,9 @@ ORDER BY "year", "month";
   <body>
     <canvas id="salesTrendChart" width="600" height="400"></canvas>
     <script>
+      // The model reads rows from `window.__DATA__`, which `--output-html`
+      // defines from the query results before this script runs.
+      const rows = window.__DATA__ || [];
       // Chart configuration with line chart showing monthly sales trends
       ...
     </script>
@@ -155,6 +171,13 @@ ORDER BY "year", "month";
 **AI Summary:**
 
 > Sales show a strong seasonal pattern with peaks in November. The data from 2003-2005 shows consistent growth year-over-year, with November typically exceeding $1M in sales.
+
+## Command-Line Options
+
+| Flag | Description |
+| --- | --- |
+| `--output-html FILE` | Write a self-contained HTML file with the chart and query results embedded |
+| `--no-summary` | Skip the `summary_maker` step |
 
 ## Configuration
 
@@ -185,6 +208,19 @@ You can modify the system prompts in `spicepod.yaml` to:
 
 - Verify your `.env` file exists and contains a valid OpenAI API key
 - Make sure you're running from the `generative-visualisations` directory
+
+**Every x-axis label is identical (e.g. all `YYYY-MM`)**
+
+- Spice formats timestamps with strftime specifiers, so `to_char(ts, '%Y-%m')` is correct
+  while the Postgres-style `to_char(ts, 'YYYY-MM')` is returned verbatim as a literal
+  string rather than erroring. Re-run the question, or ask for the label built with
+  `EXTRACT` and `LPAD`.
+
+**The chart renders but the plot area is empty**
+
+- Check the generated config for `parsing: false` on a `type: 'time'` axis. Chart.js only
+  accepts numeric timestamps once parsing is disabled, so `Date` objects make the axis
+  silently fall back to the current month, placing the data off-scale.
 
 **SQL query errors**
 

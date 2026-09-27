@@ -1,6 +1,6 @@
 # HTTP Data Connector
 
-Works with `v1.0+`
+Works with `v2.0+`
 
 The HTTP(s) data connector enables querying data from HTTP(s) endpoints such as REST APIs. The connector supports dynamic query construction and data refresh through SQL-based filtering, making it ideal for integrating external APIs and web-hosted datasets into your Spice application.
 
@@ -8,7 +8,7 @@ This recipe demonstrates how to use the HTTP connector with the [TVMaze API](htt
 
 ## Pre-requisites
 
-- The latest version of Spice. [Install Spice](https://docs.spiceai.org/getting-started/installation)
+- The latest version of Spice. [Install Spice](https://docs.spiceai.org/getting-started)
 - An HTTP(s) endpoint that returns data in a [supported file format](https://docs.spiceai.org/components/data-connectors#object-store-file-formats)
 
 ## Configuration
@@ -81,21 +81,24 @@ spice run
 Example output:
 
 ```console
-2025/11/09 14:51:05 INFO Checking for latest Spice runtime release...
-2025/11/09 14:51:05 INFO Spice.ai runtime starting...
-2025-11-09T22:51:05.790767Z  INFO spiced: Starting runtime v1.9.0-unstable-build.521d6438f+models.metal
-2025-11-09T22:51:05.792981Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s
-2025-11-09T22:51:05.793020Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s
-2025-11-09T22:51:05.793031Z  INFO runtime::init::caching: Initialized embeddings cache; max size: 128.00 MiB, item ttl: 1s
-2025-11-09T22:51:06.136639Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2025-11-09T22:51:06.137090Z  INFO runtime::init::task_history: Task history enabled: retention_period=28800s, retention_check_interval=900s
-2025-11-09T22:51:06.137446Z  INFO runtime::init::dataset: Dataset tvmaze initializing...
-2025-11-09T22:51:06.137756Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2025-11-09T22:51:06.336540Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-11-09T22:51:06.367725Z  INFO runtime::init::dataset: Dataset tvmaze registered (https://api.tvmaze.com), results cache enabled.
-2025-11-09T22:51:06.671311Z  INFO runtime::management: Connected to Spice Cloud for management and monitoring
-2025-11-09T22:51:06.774002Z  INFO runtime: All components are loaded. Spice runtime is ready!
+ INFO Spice.ai runtime starting...
+2026-09-05T21:54:00.787858Z  INFO spiced: Starting runtime v2.2.1+models.metal
+...
+2026-09-05T21:54:00.793801Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2026-09-05T21:54:00.793829Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
+2026-09-05T21:54:00.793839Z  INFO runtime::init::caching: Initialized embeddings cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
+2026-09-05T21:54:00.795378Z  INFO runtime::init::task_history: Task history enabled: retention_period=28800s, retention_check_interval=900s
+2026-09-05T21:54:00.795492Z  INFO runtime::init::dataset: Loading datasets: 2 tasks dispatched, 0 skipped at accelerator init (of 2 total; localpod datasets may be chained).
+2026-09-05T21:54:00.795515Z  INFO runtime::init::dataset: Dataset tvmaze initializing...
+2026-09-05T21:54:00.795825Z  INFO runtime::init::dataset: Dataset products initializing...
+2026-09-05T21:54:00.799774Z  INFO runtime::init::dataset: Dataset products registered (https://dummyjson.com/products), results cache enabled. duration_ms=0
+2026-09-05T21:54:00.799774Z  INFO runtime::init::dataset: Dataset tvmaze registered (https://api.tvmaze.com), results cache enabled. duration_ms=0
+2026-09-05T21:54:00.901507Z  INFO runtime: All components are loaded. Spice runtime is ready!
+2026-09-05T21:54:00.994991Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2026-09-05T21:54:00.995358Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 ```
+
+The elided lines report the CPU and memory budgets the runtime derives for this host, so their values differ from machine to machine.
 
 **Step 3.** Run `spice sql` in a new terminal to start an interactive SQL query session.
 
@@ -113,7 +116,7 @@ This queries the Breaking Bad show details. The `content` column contains the fu
 
 ```console
 +--------------+---------------+--------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-----------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
-| request_path | request_query | request_body | content                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | response_status | response_headers                                                                                                                                                                                                                                                    | fetched_at          |
+| request_path | request_query | request_body | content                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | response_status | response_headers                                                                                                                                                                                                                                                    | _fetched_at         |
 +--------------+---------------+--------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-----------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
 | /shows/169   |               |              | {"id":169,"url":"https://www.tvmaze.com/shows/169/breaking-bad","name":"Breaking Bad","type":"Scripted","language":"English","genres":["Drama","Crime","Thriller"],"status":"Ended","runtime":60,"averageRuntime":60,"premiered":"2008-01-20","ended":"2019-10-11","officialSite":"http://www.amc.com/shows/breaking-bad","schedule":{"time":"22:00","days":["Sunday"]},"rating":{"average":9.2},"weight":99,"network":{"id":20,"name":"AMC","country":{"name":"United States","code":"US","timezone":"America/New_York"},"officialSite":null},"webChannel":null,"dvdCountry":null,"externals":{"tvrage":18164,"thetvdb":81189,"imdb":"tt0903747"},"image":{"medium":"https://static.tvmaze.com/uploads/images/medium_portrait/501/1253519.jpg","original":"https://static.tvmaze.com/uploads/images/original_untouched/501/1253519.jpg"},"summary":"<p><b>Breaking Bad</b> follows protagonist Walter White, a chemistry teacher who lives in New Mexico with his wife and teenage son who has cerebral palsy. White is diagnosed with Stage III cancer and given a prognosis of two years left to live. With a new sense of fearlessness based on his medical prognosis, and a desire to secure his family's financial security, White chooses to enter a dangerous world of drugs and crime and ascends to power in this world. The series explores how a fatal diagnosis such as White's releases a typical man from the daily concerns and constraints of normal society and follows his transformation from mild family man to a kingpin of the drug trade.</p>","updated":1769198028,"_links":{"self":{"href":"https://api.tvmaze.com/shows/169"},"previousepisode":{"href":"https://api.tvmaze.com/episodes/2007806","name":"El Camino: A Breaking Bad Movie"}}} | 200             | {server: nginx/1.24.0 (Ubuntu), date: Mon, 09 Mar 2026 08:45:28 GMT, content-type: application/json; charset=UTF-8, transfer-encoding: chunked, connection: keep-alive, vary: Accept-Encoding, access-control-allow-origin: *, cache-control: public, max-age=3600} | 2026-03-09T08:45:28 |
 +--------------+---------------+--------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-----------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
@@ -139,7 +142,7 @@ WHERE request_path = '/search/people'
   AND request_query IN ('q=michael', 'q=luke');
 ```
 
-This executes two separate API calls (one for each query parameter) and combines the results:
+This executes two separate API calls (one for each query parameter) and combines the results — 10 results per search term, for 20 rows in total:
 
 ```console
 +----------------+---------------+--------------+------------------------------------+
@@ -152,14 +155,14 @@ This executes two separate API calls (one for each query parameter) and combines
 | /search/people | q=luke        |              | {"score":0.5,"person":{...}}       |
 +----------------+---------------+--------------+------------------------------------+
 
-Time: 0.336182833 seconds. 40 rows.
+Time: 0.336182833 seconds. 20 rows.
 ```
 
 ## Advanced Usage
 
 ### Processing JSON Responses
 
-TVMaze API responses contain nested JSON. Use [JSON functions](/docs/reference/sql/json) to extract specific fields:
+TVMaze API responses contain nested JSON. Use [JSON functions](https://docs.spiceai.org/reference/sql/json) to extract specific fields:
 
 ```sql
 -- Extract show details from JSON response
@@ -183,6 +186,84 @@ SELECT
 FROM tvmaze
 WHERE request_path = '/shows/82';
 ```
+
+## Pagination
+
+The HTTP connector supports automatic pagination for REST APIs that return data across multiple pages. This recipe includes a second dataset that demonstrates query-parameter pagination with the [DummyJSON Products API](https://dummyjson.com/docs/products).
+
+### Configuration
+
+The `products` dataset in `spicepod.yaml` uses query-parameter pagination:
+
+```yaml
+datasets:
+  - from: https://dummyjson.com/products
+    name: products
+    params:
+      pagination: enabled
+      pagination_query_params: "skip={offset}&limit={limit}"
+      pagination_page_size: "30"
+      pagination_data_pointer: "/products"
+      pagination_max_pages: "10"
+```
+
+- **`pagination: enabled`** — Turns on pagination.
+- **`pagination_query_params`** — Template with `{offset}` and `{limit}` variables. Spice expands these automatically for each page (`skip=0&limit=30`, `skip=30&limit=30`, …).
+- **`pagination_page_size`** — Number of items per page. Also determines when to stop: if a page returns fewer rows than this value, pagination is complete.
+- **`pagination_max_pages`** — Safety limit on the number of pages to fetch.
+
+### Querying Paginated Data
+
+Count all products fetched across pages:
+
+```sql
+SELECT count(*) FROM products;
+```
+
+```console
++----------+
+| count(*) |
+|   int64  |
++----------+
+| 194      |
++----------+
+```
+
+All 194 products are returned transparently — Spice fetches 7 pages (30 items each, except the last page with 14) and combines them into a single result set.
+
+Inspect products and observe how `request_query` changes as rows span pages:
+
+```sql
+SELECT request_query,
+       json_get_str(content, 'title') AS title,
+       json_get_float(content, 'price') AS price
+FROM products
+LIMIT 35;
+```
+
+```console
++------------------+-------------------------------------------+---------+
+|   request_query  |                   title                   |  price  |
+|      varchar     |                  varchar                  | float64 |
++------------------+-------------------------------------------+---------+
+| skip=0&limit=30  | Essence Mascara Lash Princess             | 9.99    |
+| skip=0&limit=30  | Eyeshadow Palette with Mirror             | 19.99   |
+| skip=0&limit=30  | Powder Canister                           | 14.99   |
+| skip=0&limit=30  | Red Lipstick                              | 12.99   |
+| skip=0&limit=30  | Red Nail Polish                           | 8.99    |
+| ...              | ...                                       | ...     |
+| skip=0&limit=30  | Kiwi                                      | 2.49    |
+| skip=30&limit=30 | Lemon                                     | 0.79    |
+| skip=30&limit=30 | Milk                                      | 3.49    |
+| skip=30&limit=30 | Mulberry                                  | 4.99    |
+| skip=30&limit=30 | Nescafe Coffee                            | 7.99    |
+| skip=30&limit=30 | Potatoes                                  | 2.29    |
++------------------+-------------------------------------------+---------+
+```
+
+The first 30 rows come from page 1 (`skip=0&limit=30`), then rows from page 2 (`skip=30&limit=30`) follow automatically.
+
+For the full pagination parameter reference, see the [HTTP Data Connector documentation](https://docs.spiceai.org/components/data-connectors/https#pagination-parameters).
 
 ## Dynamic HTTP Connector Features
 

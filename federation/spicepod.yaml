@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/spiceai/spiceai/trunk/.schema/spicepod.schema.json
+version: v1
+kind: Spicepod
+name: federation
+
+datasets:
+  # Federated to the local Dremio instance on every query.
+  - from: dremio:datasets.taxi_trips
+    name: dremio_source
+    description: taxi trips in the local Dremio instance
+    params:
+      dremio_endpoint: grpc://localhost:32010
+
+  # The same Dremio dataset, accelerated locally with Arrow.
+  - from: dremio:datasets.taxi_trips
+    name: dremio_source_accelerated
+    description: taxi trips in the local Dremio instance, locally accelerated
+    params:
+      dremio_endpoint: grpc://localhost:32010
+    acceleration:
+      enabled: true
+
+  # Federated to S3 on every query.
+  - from: s3://spiceai-demo-datasets/cleaned_sales_data.parquet
+    name: s3_source
+    description: sales data in a public S3 bucket
+
+  # The same S3 dataset, accelerated locally with SQLite.
+  - from: s3://spiceai-demo-datasets/cleaned_sales_data.parquet
+    name: s3_source_accelerated
+    description: sales data in a public S3 bucket, locally accelerated
+    acceleration:
+      enabled: true
+      engine: sqlite

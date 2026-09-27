@@ -72,7 +72,7 @@ params:
   mode: delta_lake
   databricks_token: ${env:DATABRICKS_TOKEN}
   databricks_azure_storage_account_name: ${env:AZURE_ACCOUNT_NAME}
-  databricks_azure_account_key: ${env:AZURE_ACCOUNT_KEY}
+  databricks_azure_storage_account_key: ${env:AZURE_ACCOUNT_KEY}
 ```
 
 Set the `AZURE_ACCOUNT_NAME` and `AZURE_ACCOUNT_KEY` environment variables to the Azure storage account name and account key, respectively.
@@ -150,7 +150,13 @@ SELECT 1 AS id;
 
 ```shell
 >> spice sql
-Welcome to the Spice.ai SQL REPL! Type 'help' for help.
+Welcome to the Spice.ai SQL REPL! Type `help` or `?` for commands.
+
+Examples:
+  show tables;              -- list available tables
+  describe <table_name>;    -- show column types
+  nql <question>            -- natural language to SQL (requires a model)
+
 sql> select * from db_uc.<SCHEMA_NAME>.test_table_no_v2checkpoint;
 +----+
 | id |

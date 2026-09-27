@@ -5,6 +5,11 @@ name: tooling
 runtime:
   task_history:
     captured_output: truncated
+  auth:
+    api-key:
+      enabled: true
+      keys:
+        - ${ secrets:API_KEY }
 
 tools:
   - name: fs

@@ -1,0 +1,48 @@
+version: v1
+kind: Spicepod
+name: authorization
+
+runtime:
+  # Authenticate callers with OIDC/JWT. The demo issuer is a static file server
+  # (see serve-jwks.py) — in production this is your identity provider.
+  auth:
+    oidc:
+      issuer_url: http://127.0.0.1:9999
+      audience:
+        - spice-cookbook
+      # Map JWT claims onto the identity fields the Cedar policies read.
+      claims:
+        user_id: sub   # -> current_user_id()
+        org_id: org    # -> current_org_id()
+        roles:         # -> current_user_has_role(...) / Spice::Role membership
+          - roles
+
+  # Enforce Cedar authorization policies on every query. `deny` means a request
+  # is refused unless a policy explicitly permits it.
+  authorization:
+    enabled: true
+    default: deny
+    provider: local
+    policies:
+      - name: tenant-isolation
+        path: ./policies/tenant-isolation.cedar
+      - name: deal-ownership
+        path: ./policies/deal-ownership.cedar
+      - name: pii-masking
+        path: ./policies/pii-masking.cedar
+      - name: rbac-salaries
+        path: ./policies/rbac-salaries.cedar
+
+datasets:
+  - name: customers
+    from: file:./data/customers.csv
+    params:
+      file_format: csv
+  - name: deals
+    from: file:./data/deals.csv
+    params:
+      file_format: csv
+  - name: salaries
+    from: file:./data/salaries.csv
+    params:
+      file_format: csv

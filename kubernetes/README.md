@@ -53,9 +53,8 @@ Output:
 ```bash
 2024-11-27T21:55:48.116059Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 0.0.0.0:9090
 2024-11-27T21:55:48.116119Z  INFO runtime::flight: Spice Runtime Flight listening on 0.0.0.0:50051
-2024-11-27T21:55:48.116053Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 0.0.0.0:50052
 2024-11-27T21:55:48.116548Z  INFO runtime::http: Spice Runtime HTTP listening on 0.0.0.0:8090
-2024-11-27T21:55:48.116578Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2024-11-27T21:55:48.116578Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 ```
 
 **Step 4.** Run the Spice SQL REPL inside the running pod:
@@ -71,15 +70,16 @@ show tables;
 ```
 
 ```sql
-+---------------+--------------+---------------+------------+
-| table_catalog | table_schema | table_name    | table_type |
-+---------------+--------------+---------------+------------+
-| spice         | runtime      | metrics       | BASE TABLE |
-| spice         | runtime      | task_history  | BASE TABLE |
-+---------------+--------------+---------------+------------+
++---------------+--------------+--------------+------------+
+| table_catalog | table_schema |  table_name  | table_type |
+|    varchar    |    varchar   |    varchar   |   varchar  |
++---------------+--------------+--------------+------------+
+| spice         | runtime      | task_history | BASE TABLE |
+| spice         | runtime      | metrics      | BASE TABLE |
++---------------+--------------+--------------+------------+
 ```
 
-**Step 6.** Create a `values.yaml` file to configure the Spice deployment. See [Spice Helm Values](https://spiceai.org/docs/deployment/kubernetes#values) for more deails.
+**Step 6.** Create a `values.yaml` file to configure the Spice deployment. See [Spice Helm Values](https://spiceai.org/docs/deployment/kubernetes/helm) for more details.
 
 ```bash
 cat <<EOF > values.yaml
@@ -131,7 +131,8 @@ show tables;
 
 ```sql
 +---------------+--------------+-----------------------+------------+
-| table_catalog | table_schema | table_name            | table_type |
+| table_catalog | table_schema |       table_name      | table_type |
+|    varchar    |    varchar   |        varchar        |   varchar  |
 +---------------+--------------+-----------------------+------------+
 | spice         | public       | taxi_trips_customized | BASE TABLE |
 | spice         | runtime      | task_history          | BASE TABLE |
@@ -144,29 +145,30 @@ describe taxi_trips_customized;
 ```
 
 ```sql
-+-----------------------+------------------------------+-------------+
-| column_name           | data_type                    | is_nullable |
-+-----------------------+------------------------------+-------------+
-| VendorID              | Int32                        | YES         |
-| tpep_pickup_datetime  | Timestamp(Microsecond, None) | YES         |
-| tpep_dropoff_datetime | Timestamp(Microsecond, None) | YES         |
-| passenger_count       | Int64                        | YES         |
-| trip_distance         | Float64                      | YES         |
-| RatecodeID            | Int64                        | YES         |
-| store_and_fwd_flag    | Utf8                         | YES         |
-| PULocationID          | Int32                        | YES         |
-| DOLocationID          | Int32                        | YES         |
-| payment_type          | Int64                        | YES         |
-| fare_amount           | Float64                      | YES         |
-| extra                 | Float64                      | YES         |
-| mta_tax               | Float64                      | YES         |
-| tip_amount            | Float64                      | YES         |
-| tolls_amount          | Float64                      | YES         |
-| improvement_surcharge | Float64                      | YES         |
-| total_amount          | Float64                      | YES         |
-| congestion_surcharge  | Float64                      | YES         |
-| Airport_fee           | Float64                      | YES         |
-+-----------------------+------------------------------+-------------+
++--------------+-----------------------+---------------+-------------+
+| table_schema |      column_name      |   data_type   | is_nullable |
+|    varchar   |        varchar        |    varchar    |   varchar   |
++--------------+-----------------------+---------------+-------------+
+| public       | VendorID              | Int32         | YES         |
+| public       | tpep_pickup_datetime  | Timestamp(µs) | YES         |
+| public       | tpep_dropoff_datetime | Timestamp(µs) | YES         |
+| public       | passenger_count       | Int64         | YES         |
+| public       | trip_distance         | Float64       | YES         |
+| public       | RatecodeID            | Int64         | YES         |
+| public       | store_and_fwd_flag    | Utf8          | YES         |
+| public       | PULocationID          | Int32         | YES         |
+| public       | DOLocationID          | Int32         | YES         |
+| public       | payment_type          | Int64         | YES         |
+| public       | fare_amount           | Float64       | YES         |
+| public       | extra                 | Float64       | YES         |
+| public       | mta_tax               | Float64       | YES         |
+| public       | tip_amount            | Float64       | YES         |
+| public       | tolls_amount          | Float64       | YES         |
+| public       | improvement_surcharge | Float64       | YES         |
+| public       | total_amount          | Float64       | YES         |
+| public       | congestion_surcharge  | Float64       | YES         |
+| public       | Airport_fee           | Float64       | YES         |
++--------------+-----------------------+---------------+-------------+
 
 Time: 0.006071083 seconds. 19 rows.
 ```

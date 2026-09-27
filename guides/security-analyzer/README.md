@@ -93,6 +93,7 @@ datasets:
       refresh_check_interval: 5s
       retention_check_enabled: true
       retention_period: 30d
+      retention_check_interval: 1h
     params:
       pg_host: ${env:PG_HOST}
       pg_port: ${env:PG_PORT}
@@ -106,7 +107,7 @@ Let's break down these configuration choices:
 
 - `refresh_mode: append` optimizes for real-time log ingestion by only appending new data based on the `time_column`
 - `refresh_check_interval: 5s` provides near-real-time analysis
-- `retention_period: 30d` keeps a month of history for pattern analysis
+- `retention_period: 30d` with `retention_check_interval: 1h` keeps a month of history for pattern analysis, sweeping expired rows hourly. Both are required: without `retention_check_interval` the retention check never starts, and in `append` mode nothing else evicts old rows.
 
 ## Adding AI-Powered Analysis
 
@@ -257,6 +258,18 @@ if __name__ == "__main__":
     print("Starting Query Pattern Analyzer")
     analyzer = QueryPatternAnalyzer()
     analyzer.analyze_patterns()
+```
+
+## Running the Analyzer
+
+Start the runtime, then run the analyzer in a second terminal:
+
+```bash
+spice run
+```
+
+```bash
+uv run analyzer.py
 ```
 
 ## Testing the System

@@ -319,7 +319,7 @@ execute("""
    - Use pre-computed results or caching
 
 2. **Processing millions of rows**
-   - 100 row batch limit
+   - 1000 row batch limit
    - Consider batch processing offline
 
 3. **Simple text operations**
@@ -351,6 +351,6 @@ execute("""
 - **AI SQL Function** (this recipe): See [README.md](./README.md)
 - **Text-to-SQL**: [../text-to-sql/README.md](../text-to-sql/README.md)
 - **Chat & Tools**: [../openai_sdk/README.md](../openai_sdk/README.md)
-- **Vector Search**: [../vectors/README.md](../vectors/) and [../search/README.md](../search/README.md)
+- **Vector Search**: [../vectors/s3/README.md](../vectors/s3/README.md) and [../search/README.md](../search/README.md)
 - **Evaluations**: [../evals/README.md](../evals/README.md)
 - **Memory**: [../llm-memory/README.md](../llm-memory/README.md)

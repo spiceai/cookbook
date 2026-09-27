@@ -6,3 +6,8 @@ acceleration/indexes/spicepod.yaml
 *-qs/
 bin/
 obj/
+.env
+.spice/
+
+# Stray runtime PID files from `spice run` / `spiced` in a recipe directory
+pid

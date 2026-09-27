@@ -25,6 +25,7 @@ datasets:
     params:
       github_token: ${secrets:GITHUB_TOKEN}
       include: "docs/**/*.md"
+      file_format: md
     acceleration:
       enabled: true
     columns:
@@ -34,10 +35,9 @@ datasets:
             row_id:
               - path
             chunking:
-              enabled: false
+              enabled: true
               target_chunk_size: 256
               overlap_size: 64
-              file_format: md
 
 embeddings:
   - from: openai:text-embedding-3-small
@@ -64,21 +64,25 @@ spice run
 Result:
 
 ```shell
-2025/01/21 01:19:43 INFO Checking for latest Spice runtime release...
-2025/01/21 01:19:44 INFO Spice.ai runtime starting...
-2025-01-20T16:19:45.056778Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
+ INFO Spice.ai runtime starting...
 2025-01-20T16:19:45.057495Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-01-20T16:19:45.057562Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-01-20T16:19:45.061178Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2025-01-20T16:19:45.544466Z  INFO runtime::init::embedding: Embedding [embeddings-model] ready to embed
-2025-01-20T16:19:45.544649Z  INFO runtime::init::dataset: Initializing dataset spiceai.docs
-2025-01-20T16:19:45.544669Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2025-01-20T16:19:45.544466Z  INFO runtime::init::embedding: Embedding Model embeddings-model ready
+2025-01-20T16:19:45.544649Z  INFO runtime::init::dataset: Dataset spiceai.docs initializing...
+2025-01-20T16:19:45.544669Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-01-20T16:19:45.544761Z  INFO runtime::init::model: Loading model [chat-model] from openai:gpt-4o...
 2025-01-20T16:19:46.164600Z  INFO runtime::init::dataset: Dataset spiceai.docs registered (github:github.com/spiceai/spiceai/files/trunk), acceleration (arrow), results cache enabled.
-2025-01-20T16:19:46.165929Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset spiceai.docs
+2025-01-20T16:19:46.165929Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset spiceai.docs
 2025-01-20T16:19:46.534044Z  INFO runtime::init::model: Model [chat-model] deployed, ready for inferencing
-2025-01-20T16:19:49.394003Z  INFO runtime::accelerated_table::refresh_task: Loaded 93 rows (1.28 MiB) for dataset spiceai.docs in 3s 228ms.
+2025-01-20T16:19:49.394003Z  INFO runtime_table::accelerated::refresh_task: Loaded 93 rows (1.28 MiB) for dataset spiceai.docs in 3s 228ms.
 ```
+
+At startup the runtime logs `WARN runtime_parameters: Ignoring parameter
+'file_format': not supported for connector github.` — this is expected and
+harmless. The GitHub connector has no `file_format` parameter, but the chunker
+reads the dataset's `file_format` directly and uses it to pick the Markdown-aware
+splitter, which is what the setting is for here. Removing it falls back to the
+plain text splitter.
 
 ## SQL Search
 
@@ -134,9 +138,11 @@ Result
   "results": [
     {
       "matches": {
-        "content": "# Metrics Naming\n\n## TL;DR\n\n**Metric Naming Guide**: Prioritize Developer Experience (DX) with intuitive, ..."
+        "content": [
+          "# Metrics Naming\n\n## TL;DR\n\n**Metric Naming Guide**: Prioritize Developer Experience (DX) with intuitive, ..."
+        ]
       },
-      "score": 0.7941223368131454,
+      "_score": 0.7941223368131454,
       "dataset": "spiceai.docs",
       "data": {
         "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/dev/metrics.md"
@@ -144,9 +150,11 @@ Result
     },
     {
       "matches": {
-        "content": "# Criteria Definitions\n\n## RC\n\nAcronym for \"Release Candidate\". Identifies a version that is eligible for ..."
+        "content": [
+          "# Criteria Definitions\n\n## RC\n\nAcronym for \"Release Candidate\". Identifies a version that is eligible for ..."
+        ]
       },
-      "score": 0.7145749783070606,
+      "_score": 0.7145749783070606,
       "dataset": "spiceai.docs",
       "data": {
         "download_url": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/docs/criteria/definitions.md"
@@ -156,6 +164,8 @@ Result
   "duration_ms": 745
 }
 ```
+
+> **Version note:** The relevance score is returned in the `_score` field (leading underscore) on Spice `v2.0+`. On `v1.x` it was returned as `score` (no underscore).
 
 ## Utilizing a natural language query
 

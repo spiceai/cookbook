@@ -1,0 +1,7 @@
+version: v1
+kind: Spicepod
+name: ducklake-catalog-recipe
+
+catalogs:
+  - from: ducklake:metadata.ducklake
+    name: my_lakehouse

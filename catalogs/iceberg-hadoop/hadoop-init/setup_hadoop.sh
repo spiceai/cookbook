@@ -1,9 +1,5 @@
 #!/bin/bash
 
-mc alias set minio http://minio:9000 admin password
-mc mb minio/hadoop
-mc anonymous set public minio/hadoop
-
 ARCH=$(uname -m)
 VERSION="v1.3.2"
 
@@ -42,12 +38,12 @@ EOF
 spark.conf.set("spark.sql.catalog.hadoop", "org.apache.iceberg.spark.SparkCatalog")
 spark.conf.set("spark.sql.catalog.hadoop.type", "hadoop")
 spark.conf.set("spark.sql.catalog.hadoop.warehouse", "s3a://hadoop")
-spark.conf.set("spark.sql.catalog.hadoop.s3.endpoint", "http://minio:9000")
+spark.conf.set("spark.sql.catalog.hadoop.s3.endpoint", "http://rustfs:9000")
 spark.conf.set("spark.sql.defaultCatalog", "hadoop")
 
 spark.sparkContext.hadoopConfiguration.set("fs.s3a.access.key", "admin")
 spark.sparkContext.hadoopConfiguration.set("fs.s3a.secret.key", "password")
-spark.sparkContext.hadoopConfiguration.set("fs.s3a.endpoint", "http://minio:9000")
+spark.sparkContext.hadoopConfiguration.set("fs.s3a.endpoint", "http://rustfs:9000")
 spark.sparkContext.hadoopConfiguration.set("fs.s3a.connection.ssl.enabled", "false")
 spark.sparkContext.hadoopConfiguration.set("fs.s3a.path.style.access", "true")
 spark.sparkContext.hadoopConfiguration.set("fs.s3a.aws.credentials.provider", "org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider")

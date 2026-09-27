@@ -1,6 +1,6 @@
 # Spice on Databricks - Delta Lake and Spark Connect
 
-Works with `v1.0+`
+Works with `v1.4.0+`
 
 Spice can read data straight from a Databricks instance. This recipe will create an app, configure Databricks, load and query a dataset directly from Delta Lake Tables through `mode: delta_lake` and from Databricks instance through `mode: spark_connect`. It assumes:
 
@@ -38,7 +38,6 @@ Spice can read data straight from a Databricks instance. This recipe will create
    >>> spice run
    2024-03-27T05:27:52.696536Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
    2024-03-27T05:27:52.696543Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-   2024-03-27T05:27:52.696606Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
    ```
 
 4. Configure a Databricks dataset into the spicepod. The table provided must be a reference to a table in the Databricks unity catalog.
@@ -65,54 +64,59 @@ Spice can read data straight from a Databricks instance. This recipe will create
 6. Confirm that the runtime has registered the new table (in the original terminal)
 
    ```shell
-   2024-03-27T05:27:54.051229Z  INFO runtime: Dataset my_table registered (databricks:spice_data.public.awesome_table), results cache enabled.
+   2024-03-27T05:27:54.051229Z  INFO runtime::init::dataset: Dataset my_table registered (databricks:spice_data.public.awesome_table), results cache enabled.
    ```
 
 7. Check the table exists from the Spice REPL
 
    ```shell
    >>> spice sql
-   Welcome to the Spice.ai SQL REPL! Type 'help' for help.
+   Welcome to the Spice.ai SQL REPL! Type `help` or `?` for commands.
 
-   show tables; -- list available tables
+   Examples:
+     show tables;              -- list available tables
+     describe <table_name>;    -- show column types
+     nql <question>            -- natural language to SQL (requires a model)
+
    sql> show tables;
    +---------------+--------------+---------------+------------+
-   | table_catalog | table_schema | table_name    | table_type |
+   | table_catalog | table_schema |   table_name  | table_type |
+   |    varchar    |    varchar   |    varchar    |   varchar  |
    +---------------+--------------+---------------+------------+
    | spice         | public       | my_table      | BASE TABLE |
    | spice         | runtime      | task_history  | BASE TABLE |
-   | spice         | runtime      | metrics       | BASE TABLE |
    +---------------+--------------+---------------+------------+
 
    Time: 0.008540708 seconds
    ```
 
    ```shell
-   sql> describe spice.public.my_table;
-   +-----------------------+------------------------------+-------------+
-   | column_name           | data_type                    | is_nullable |
-   +-----------------------+------------------------------+-------------+
-   | VendorID              | Int32                        | YES         |
-   | tpep_pickup_datetime  | Timestamp(Microsecond, None) | YES         |
-   | tpep_dropoff_datetime | Timestamp(Microsecond, None) | YES         |
-   | passenger_count       | Int64                        | YES         |
-   | trip_distance         | Float64                      | YES         |
-   | RatecodeID            | Int64                        | YES         |
-   | store_and_fwd_flag    | LargeUtf8                    | YES         |
-   | PULocationID          | Int32                        | YES         |
-   | DOLocationID          | Int32                        | YES         |
-   | payment_type          | Int64                        | YES         |
-   | fare_amount           | Float64                      | YES         |
-   | extra                 | Float64                      | YES         |
-   | mta_tax               | Float64                      | YES         |
-   | tip_amount            | Float64                      | YES         |
-   | tolls_amount          | Float64                      | YES         |
-   | improvement_surcharge | Float64                      | YES         |
-   | total_amount          | Float64                      | YES         |
-   | congestion_surcharge  | Float64                      | YES         |
-   | Airport_fee           | Float64                      | YES         |
-   +-----------------------+------------------------------+-------------+
-   Time: 0.00507075 seconds
+   sql> describe my_table;
+   +--------------+-----------------------+---------------+-------------+
+   | table_schema |      column_name      |   data_type   | is_nullable |
+   |    varchar   |        varchar        |    varchar    |   varchar   |
+   +--------------+-----------------------+---------------+-------------+
+   | public       | VendorID              | Int32         | YES         |
+   | public       | tpep_pickup_datetime  | Timestamp(µs) | YES         |
+   | public       | tpep_dropoff_datetime | Timestamp(µs) | YES         |
+   | public       | passenger_count       | Int64         | YES         |
+   | public       | trip_distance         | Float64       | YES         |
+   | public       | RatecodeID            | Int64         | YES         |
+   | public       | store_and_fwd_flag    | LargeUtf8     | YES         |
+   | public       | PULocationID          | Int32         | YES         |
+   | public       | DOLocationID          | Int32         | YES         |
+   | public       | payment_type          | Int64         | YES         |
+   | public       | fare_amount           | Float64       | YES         |
+   | public       | extra                 | Float64       | YES         |
+   | public       | mta_tax               | Float64       | YES         |
+   | public       | tip_amount            | Float64       | YES         |
+   | public       | tolls_amount          | Float64       | YES         |
+   | public       | improvement_surcharge | Float64       | YES         |
+   | public       | total_amount          | Float64       | YES         |
+   | public       | congestion_surcharge  | Float64       | YES         |
+   | public       | Airport_fee           | Float64       | YES         |
+   +--------------+-----------------------+---------------+-------------+
+   Time: 0.00507075 seconds. 19 rows.
    ```
 
 8. Query against the Databricks table. Since the table isn't accelerated, the spice runtime will make a network call to the object storage service.
@@ -121,7 +125,7 @@ Spice can read data straight from a Databricks instance. This recipe will create
    >>> spice sql
    sql> SELECT avg(total_amount), avg(tip_amount), count(1), passenger_count FROM my_table  GROUP BY passenger_count ORDER BY passenger_count ASC;
    +----------------------------+--------------------------+-----------------+-----------------+
-   | AVG(my_table.total_amount) | AVG(my_table.tip_amount) | COUNT(Int64(1)) | passenger_count |
+   | avg(my_table.total_amount) | avg(my_table.tip_amount) | count(Int64(1)) | passenger_count |
    +----------------------------+--------------------------+-----------------+-----------------+
    | 25.327816939456696         | 3.072259971396788        | 31465           | 0               |
    | 26.20523044549061          | 3.3712622884681065       | 2188739         | 1               |
@@ -155,8 +159,8 @@ To improve the query performance, the Databricks dataset can be accelerated.
    ```shell
    >>> spice datasets
 
-   FROM                                       NAME     REPLICATION ACCELERATION DEPENDSON STATUS
-   databricks:spice_data.public.awesome_table my_table false       true                   Ready
+    NAME      FROM                                        REPLICATION  ACCELERATION  STATUS  ERROR
+    my_table  databricks:spice_data.public.awesome_table  false        true          Ready
    ```
 
 3. Rerun the query
@@ -165,7 +169,7 @@ To improve the query performance, the Databricks dataset can be accelerated.
    >>> spice sql
    sql> select avg(total_amount), avg(tip_amount), count(1), passenger_count from my_table  group by passenger_count order by passenger_count asc;
    +----------------------------+--------------------------+-----------------+-----------------+
-   | AVG(my_table.total_amount) | AVG(my_table.tip_amount) | COUNT(Int64(1)) | passenger_count |
+   | avg(my_table.total_amount) | avg(my_table.tip_amount) | count(Int64(1)) | passenger_count |
    +----------------------------+--------------------------+-----------------+-----------------+
    | 25.32781693945653          | 3.072259971396793        | 31465           | 0               |
    | 26.205230445474996         | 3.3712622884680052       | 2188739         | 1               |
@@ -209,9 +213,9 @@ Note: A dataset can be accelerated when configured by specifying yes (y) to `loc
    kind: Spicepod
    name: databricks_demo_spark_connect
    datasets:
-   - from: databricks:<catalog>.<schema>.<table>
-      name: my_table
-      params:
+     - from: databricks:<catalog>.<schema>.<table>
+       name: my_table
+       params:
          mode: spark_connect
          databricks_endpoint: ${ secrets:DATABRICKS_HOST }
          databricks_token: ${ secrets:DATABRICKS_TOKEN }
@@ -222,12 +226,10 @@ Note: A dataset can be accelerated when configured by specifying yes (y) to `loc
 
    ```shell
    >>> spice run
-   2025-01-15T04:44:40.207555Z  INFO runtime::init::dataset: Initializing dataset my_table
+   2025-01-15T04:44:40.207555Z  INFO runtime::init::dataset: Dataset my_table initializing...
    2025-01-15T04:44:40.208013Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-   2025-01-15T04:44:40.208015Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
    2025-01-15T04:44:40.208823Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-   2025-01-15T04:44:40.211694Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-   2025-01-15T04:44:40.238106Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+   2025-01-15T04:44:40.238106Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
    2025-01-15T04:44:41.299484Z  INFO runtime::init::dataset: Dataset my_table registered (databricks:<catalog>.<schema>.<table>), results cache enabled.
    ```
 
@@ -235,16 +237,20 @@ Note: A dataset can be accelerated when configured by specifying yes (y) to `loc
 
    ```shell
    >>> spice sql
-   Welcome to the Spice.ai SQL REPL! Type 'help' for help.
+   Welcome to the Spice.ai SQL REPL! Type `help` or `?` for commands.
 
-   show tables; -- list available tables
+   Examples:
+     show tables;              -- list available tables
+     describe <table_name>;    -- show column types
+     nql <question>            -- natural language to SQL (requires a model)
+
    sql> show tables;
    +---------------+--------------+---------------+------------+
-   | table_catalog | table_schema | table_name    | table_type |
+   | table_catalog | table_schema |   table_name  | table_type |
+   |    varchar    |    varchar   |    varchar    |   varchar  |
    +---------------+--------------+---------------+------------+
    | spice         | public       | my_table      | BASE TABLE |
    | spice         | runtime      | task_history  | BASE TABLE |
-   | spice         | runtime      | metrics       | BASE TABLE |
    +---------------+--------------+---------------+------------+
 
    Time: 0.008540708 seconds
@@ -285,9 +291,9 @@ Note: A dataset can be accelerated when configured by specifying yes (y) to `loc
    kind: Spicepod
    name: databricks_demo_sql_warehouse
    datasets:
-   - from: databricks:<catalog>.<schema>.<table>
-      name: customer
-      params:
+     - from: databricks:<catalog>.<schema>.<table>
+       name: customer
+       params:
          mode: sql_warehouse
          databricks_endpoint: ${ secrets:DATABRICKS_HOST }
          databricks_token: ${ secrets:DATABRICKS_TOKEN }
@@ -299,9 +305,8 @@ Note: A dataset can be accelerated when configured by specifying yes (y) to `loc
    ```shell
    >>> spice run
    2025-05-16T17:29:08.062816Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-   2025-05-16T17:29:08.063208Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-   2025-05-16T17:29:08.065607Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-   2025-05-16T17:29:08.068465Z  INFO runtime::init::dataset: Initializing dataset customer
+   2025-05-16T17:29:08.065607Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+   2025-05-16T17:29:08.068465Z  INFO runtime::init::dataset: Dataset customer initializing...
    2025-05-16T17:29:08.084175Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
    2025-05-16T17:29:15.290665Z  INFO runtime::init::dataset: Dataset customer registered (databricks:<catalog>.<schema>.<table>), results cache enabled.
    2025-05-16T17:29:15.393903Z  INFO runtime: All components are loaded. Spice runtime is ready!
@@ -311,12 +316,17 @@ Note: A dataset can be accelerated when configured by specifying yes (y) to `loc
 
    ```shell
    >>> spice sql
-   Welcome to the Spice.ai SQL REPL! Type 'help' for help.
+   Welcome to the Spice.ai SQL REPL! Type `help` or `?` for commands.
 
-   show tables; -- list available tables
+   Examples:
+     show tables;              -- list available tables
+     describe <table_name>;    -- show column types
+     nql <question>            -- natural language to SQL (requires a model)
+
    sql> show tables;
    +---------------+--------------+--------------+------------+
-   | table_catalog | table_schema | table_name   | table_type |
+   | table_catalog | table_schema |  table_name  | table_type |
+   |    varchar    |    varchar   |    varchar   |   varchar  |
    +---------------+--------------+--------------+------------+
    | spice         | runtime      | task_history | BASE TABLE |
    | spice         | public       | customer     | BASE TABLE |
@@ -325,7 +335,7 @@ Note: A dataset can be accelerated when configured by specifying yes (y) to `loc
    Time: 0.035188167 seconds. 2 rows.
    ```
 
-6. Query against the Databricks table connected with `mode: spark_connect`
+6. Query against the Databricks table connected with `mode: sql_warehouse`
 
    ```shell
    sql> select * from customer limit 1;
@@ -363,9 +373,9 @@ Create a Databricks service principal by following the [Databricks documentation
    kind: Spicepod
    name: databricks_demo_spark_connect
    datasets:
-   - from: databricks:<catalog>.<schema>.<table>
-      name: my_table
-      params:
+     - from: databricks:<catalog>.<schema>.<table>
+       name: my_table
+       params:
          mode: spark_connect
          databricks_endpoint: ${ secrets:DATABRICKS_HOST }
          databricks_client_id: ${ secrets:DATABRICKS_CLIENT_ID }
@@ -377,12 +387,10 @@ Create a Databricks service principal by following the [Databricks documentation
 
    ```shell
    >>> spice run
-   2025-01-15T04:44:40.207555Z  INFO runtime::init::dataset: Initializing dataset my_table
+   2025-01-15T04:44:40.207555Z  INFO runtime::init::dataset: Dataset my_table initializing...
    2025-01-15T04:44:40.208013Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-   2025-01-15T04:44:40.208015Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
    2025-01-15T04:44:40.208823Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-   2025-01-15T04:44:40.211694Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-   2025-01-15T04:44:40.238106Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+   2025-01-15T04:44:40.238106Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
    2025-01-15T04:44:41.299484Z  INFO runtime::init::dataset: Dataset my_table registered (databricks:<catalog>.<schema>.<table>), results cache enabled.
    ```
 
@@ -390,16 +398,20 @@ Create a Databricks service principal by following the [Databricks documentation
 
    ```shell
    >>> spice sql
-   Welcome to the Spice.ai SQL REPL! Type 'help' for help.
+   Welcome to the Spice.ai SQL REPL! Type `help` or `?` for commands.
 
-   show tables; -- list available tables
+   Examples:
+     show tables;              -- list available tables
+     describe <table_name>;    -- show column types
+     nql <question>            -- natural language to SQL (requires a model)
+
    sql> show tables;
    +---------------+--------------+---------------+------------+
-   | table_catalog | table_schema | table_name    | table_type |
+   | table_catalog | table_schema |   table_name  | table_type |
+   |    varchar    |    varchar   |    varchar    |   varchar  |
    +---------------+--------------+---------------+------------+
    | spice         | public       | my_table      | BASE TABLE |
    | spice         | runtime      | task_history  | BASE TABLE |
-   | spice         | runtime      | metrics       | BASE TABLE |
    +---------------+--------------+---------------+------------+
 
    Time: 0.008540708 seconds

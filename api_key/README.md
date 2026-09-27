@@ -35,8 +35,9 @@ Expected response:
 ```shell
 $ curl -XPOST -i http://localhost:8090/v1/sql -d 'SELECT 1'
 HTTP/1.1 401 Unauthorized
+vary: origin, access-control-request-method, access-control-request-headers
 content-length: 12
-date: Thu, 07 Nov 2024 01:52:00 GMT
+date: Sun, 13 Sep 2026 12:19:38 GMT
 
 Unauthorized
 ```
@@ -50,12 +51,17 @@ curl -H "Content-Type: text/plain" -H "x-api-key: foobar" -XPOST -i http://local
 Output:
 
 ```shell
-curl -H "x-api-key: foobar" -H 'Content-Type: text/plain' -XPOST -i http://localhost:8090/v1/sql -d 'SELECT 1'
+$ curl -H "Content-Type: text/plain" -H "x-api-key: foobar" -XPOST -i http://localhost:8090/v1/sql -d 'SELECT 1'
 HTTP/1.1 200 OK
-content-type: text/plain; charset=utf-8
+content-type: application/json
 x-cache: Miss from spiceai
-content-length: 16
-date: Thu, 07 Nov 2024 01:53:20 GMT
+results-cache-status: MISS
+results-cache-scope: user
+vary: Authorization, X-API-Key, Cookie
+vary: origin, access-control-request-method, access-control-request-headers
+spice-trace-id: a058f3d2b44f600e05be59eca570fa71
+transfer-encoding: chunked
+date: Sun, 13 Sep 2026 12:19:44 GMT
 
 [{"Int64(1)":1}]
 ```
@@ -67,7 +73,7 @@ date: Thu, 07 Nov 2024 01:53:20 GMT
 
 ```bash
 $ spice pods
-2025/06/16 12:45:49 ERROR listing spiced pods error="unauthorized: invalid or missing Spice API key"
+ERROR unauthorized: invalid or missing Spice API key. Run `spice login` or set SPICE_API_KEY.
 ```
 
 1. Now, run `spice pods` with the API key
@@ -75,8 +81,8 @@ $ spice pods
 ```bash
 $ spice pods --api-key foobar
 
-VERSION NAME    DATASETSCOUNT MODELSCOUNT DEPENDENCIESCOUNT
-v1      api_key 0             0           0
+ NAME     VERSION  DATASETS  MODELS  DEPENDENCIES
+ api_key  v1       0         0       0
 ```
 
 ## SQL REPL
@@ -88,7 +94,7 @@ v1      api_key 0             0           0
 $ spice sql
 
 sql> select 1;
-Authentication Error Access denied. Invalid credentials.
+Authentication Failed: Invalid credentials. Verify credentials and try again.
 ```
 
 1. Re-open the SQL REPL with the API key and try the query again:
@@ -99,6 +105,7 @@ $ spice sql --api-key foobar
 sql> select 1;
 +----------+
 | Int64(1) |
+|   int64  |
 +----------+
 | 1        |
 +----------+

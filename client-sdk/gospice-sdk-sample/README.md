@@ -6,13 +6,12 @@ Use the [gospice SDK](https://github.com/spiceai/gospice) to query Spice from Go
 
 ## What This Sample Includes
 
-
 - `main.go`: Query a local Spice runtime, including a parameterized query.
 - `cloud/main.go`: Query Spice.ai Cloud with inline replacement values.
 
 ## Prerequisites
 
-- [Go](https://go.dev/) 1.24+
+- [Go](https://go.dev/) 1.25+
 - [Spice CLI](https://docs.spiceai.org/getting-started) for local mode
 
 ## Local Quick Start
@@ -31,17 +30,14 @@ spice run
 Sample runtime logs:
 
 ```text
-2024/11/27 16:24:27 INFO Checking for latest Spice runtime release...
-2024/11/27 16:24:27 INFO Spice.ai runtime starting...
-2024-11-28T00:24:28.411072Z  INFO runtime::init::dataset: Initializing dataset taxi_trips
+ INFO Spice.ai runtime starting...
+2024-11-28T00:24:28.411072Z  INFO runtime::init::dataset: Dataset taxi_trips initializing...
 2024-11-28T00:24:28.416797Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2024-11-28T00:24:28.416827Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
 2024-11-28T00:24:28.419672Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2024-11-28T00:24:28.421199Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2024-11-28T00:24:28.607738Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2024-11-28T00:24:28.607738Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2024-11-28T00:24:29.247902Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled.
-2024-11-28T00:24:29.249355Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
-2024-11-28T00:24:37.106088Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (419.31 MiB) for dataset taxi_trips in 7s 856ms.
+2024-11-28T00:24:29.249355Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
+2024-11-28T00:24:37.106088Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 7s 856ms.
 ```
 
 Run the Go sample in another terminal:
@@ -92,6 +88,6 @@ Expected output is a list of tables from `show tables;`.
 ## Links
 
 - [gospice SDK](https://github.com/spiceai/gospice)
-- [Go package](https://pkg.go.dev/github.com/spiceai/gospice/v6)
+- [Go package](https://pkg.go.dev/github.com/spiceai/gospice/v8)
 - [Spice.ai Cloud](https://spice.ai)
 - [Spice.ai documentation](https://docs.spiceai.org)

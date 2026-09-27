@@ -40,14 +40,11 @@ Spice supports reading data directly from Delta Lake tables. This recipe will cr
 
    ```shell
    >>> spice run
-   2025/01/17 16:30:47 INFO Checking for latest Spice runtime release...
-   2025/01/17 16:30:47 INFO Spice.ai runtime starting...
-   2025-01-18T00:30:48.557502Z  INFO runtime::init::dataset: Initializing dataset delta_lake_table
+    INFO Spice.ai runtime starting...
+   2025-01-18T00:30:48.557502Z  INFO runtime::init::dataset: Dataset delta_lake_table initializing...
    2025-01-18T00:30:48.561170Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-   2025-01-18T00:30:48.561514Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
    2025-01-18T00:30:48.569153Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-   2025-01-18T00:30:48.574811Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-   2025-01-18T00:30:48.758689Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+   2025-01-18T00:30:48.758689Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
    2025-01-18T00:30:49.116731Z  INFO runtime::init::dataset: Dataset delta_lake_table registered (delta_lake:s3:<s3://my_bucket/path/to/s3/delta/table/>), results cache enabled.
    ```
 
@@ -59,19 +56,23 @@ Spice supports reading data directly from Delta Lake tables. This recipe will cr
 
    ```shell
    >>> spice sql
-    Welcome to the Spice.ai SQL REPL! Type 'help' for help.
+    Welcome to the Spice.ai SQL REPL! Type `help` or `?` for commands.
 
-    show tables; -- list available tables
+    Examples:
+      show tables;              -- list available tables
+      describe <table_name>;    -- show column types
+      nql <question>            -- natural language to SQL (requires a model)
+
     sql> show tables;
     +---------------+--------------+------------------+------------+
-    | table_catalog | table_schema | table_name       | table_type |
+    | table_catalog | table_schema |    table_name    | table_type |
+    |    varchar    |    varchar   |      varchar     |   varchar  |
     +---------------+--------------+------------------+------------+
     | spice         | runtime      | task_history     | BASE TABLE |
-    | spice         | runtime      | metrics          | BASE TABLE |
     | spice         | public       | delta_lake_table | BASE TABLE |
     +---------------+--------------+------------------+------------+
 
-    Time: 0.004799292 seconds. 3 rows.
+    Time: 0.004799292 seconds. 2 rows.
    ```
 
 6. Query against the Delta Lake table.

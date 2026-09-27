@@ -1,0 +1,13 @@
+version: v1
+kind: Spicepod
+name: postgres-catalog-recipe
+
+catalogs:
+  - from: pg
+    name: pg
+    params:
+      pg_host: localhost
+      pg_port: 5432
+      pg_db: tpch
+      pg_user: ${secrets:PG_USER}
+      pg_sslmode: disable

@@ -109,6 +109,14 @@ sudo chmod 600 postgres.key
 sudo chcon -Rt svirt_sandbox_file_t postgres.key
 ```
 
+## macOS: Tighten key file permissions
+
+`openssl ecparam -genkey` writes `postgres.key` as `0644` by default. Postgres 18 refuses to start with `FATAL: private key file "/var/lib/postgresql/postgres.key" has group or world access`. Tighten the mode before starting the container; Docker Desktop will bind-mount the file into the container with the same permissions:
+
+```bash
+chmod 600 postgres.key
+```
+
 ### Start `postgres`
 
 Start a `postgres` instance with TLS enabled using Docker compose.
@@ -126,13 +134,11 @@ spice run -- --tls-enabled true --tls-certificate-file ./spiced.crt --tls-key-fi
 ```
 
 ```bash
-2024-08-05T19:59:09.203647Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
 2024-08-05T19:59:09.203554Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2024-08-05T19:59:09.204194Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2024-08-05T19:59:09.204194Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2024-08-05T19:59:09.205240Z  INFO runtime: Endpoints secured with TLS using certificate: CN=spiced.localhost, OU=IT, O=Widgets, Inc., L=Seattle, S=Washington, C=US
 2024-08-05T19:59:09.205622Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2024-08-05T19:59:09.211074Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2024-08-05T19:59:09.286775Z  INFO runtime: Dataset customer_addresses registered (postgres:customer_addresses), results cache enabled.
+2024-08-05T19:59:09.286775Z  INFO runtime::init::dataset: Dataset customer_addresses registered (postgres:customer_addresses), results cache enabled.
 ```
 
 ## Verify the TLS connection
@@ -170,9 +176,13 @@ SELECT * FROM customer_addresses LIMIT 5;
 ```
 
 ```bash
-Welcome to the Spice.ai SQL REPL! Type 'help' for help.
+Welcome to the Spice.ai SQL REPL! Type `help` or `?` for commands.
 
-show tables; -- list available tables
+Examples:
+  show tables;              -- list available tables
+  describe <table_name>;    -- show column types
+  nql <question>            -- natural language to SQL (requires a model)
+
 sql> SELECT * FROM customer_addresses LIMIT 5;
 +----+------------+------------+----------------------------+----------------------+--------------------+--------------+---------------+--------------+--------------+
 | id | first_name | last_name  | email                      | res_address          | work_address       | country      | state         | phone_1      | phone_2      |

@@ -1,0 +1,26 @@
+version: v1
+kind: Spicepod
+name: postgres-cdc-catalog-recipe
+
+catalogs:
+  - from: pg
+    name: pg
+    include:
+      - 'public.*'
+    params:
+      pg_host: localhost
+      pg_port: 5432
+      pg_db: tpch
+      pg_user: ${secrets:PG_USER}
+      pg_sslmode: disable
+    # Bootstrap and CDC-accelerate every discovered table with zero per-table
+    # configuration. Each table is snapshotted once, then kept live from the
+    # PostgreSQL WAL through a single shared replication slot.
+    acceleration:
+      refresh_mode: changes
+      # Persist the acceleration so a restart resumes from the replication slot
+      # instead of re-snapshotting every table. Without a file mode the default
+      # is `memory`, which starts empty on every run.
+      mode: file
+      params:
+        cayenne_file_path: .spice/data/pg-catalog

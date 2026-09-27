@@ -1,6 +1,6 @@
 # Using OpenAI's Responses API with Spice
 
-Works with `v1.10+`
+Works with `v1.6+`
 
 This recipe shows how Spice integrates with [OpenAI's Responses API](https://platform.openai.com/docs/api-reference/responses), OpenAI's most advanced interface for generating model responses, supporting both hosted and custom tool calls. This recipe also covers how to use the OpenAI SDK's support for the Responses API to connect to compatible models running on Spice.
 
@@ -8,7 +8,7 @@ This recipe shows how Spice integrates with [OpenAI's Responses API](https://pla
 
 - Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation)
 - `OPENAI_API_KEY` is set in `.env`. To acquire an OpenAI API Key, see [OpenAI's Guide](https://platform.openai.com/account/api-keys).
-- Python >= 3.10
+- Python >= 3.12
 - Python package manager (`pip` or `uv`)
 
 ## How to run
@@ -27,28 +27,26 @@ spice run
 ```
 
 ```console
-2025-08-25T23:34:30.324620Z  INFO spiced: Starting runtime v1.6.0-unstable-build.54c06a350-dev+models
-2025-08-25T23:34:30.325913Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2025-08-25T23:34:30.326072Z  INFO runtime::init::caching: Initialized search results cache;
-2025-08-25T23:34:31.163684Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-08-25T23:34:31.164965Z  INFO runtime::init::dataset: Dataset taxi_trips initializing...
-2025-08-25T23:34:31.165957Z  INFO runtime::init::model: Loading model [gpt-4o-responses] from openai:gpt-4o...
-2025-08-25T23:34:31.163684Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2025-08-25T23:34:31.177013Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2025-08-25T23:34:31.992304Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow, 10s refresh), results cache enabled.
-2025-08-25T23:34:31.993720Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
-2025-08-25T23:34:34.491656Z  INFO runtime::init::model: Model [gpt-4o-responses] deployed, ready for inferencing
-2025-08-25T23:34:42.538074Z  INFO runtime::accelerated_table::refresh_task: Dataset taxi_trips received 2,358,416 records
-2025-08-25T23:34:46.359978Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (399.41 MiB) for dataset taxi_trips in 14s 366ms.
-2025-08-25T23:34:46.453673Z  INFO runtime: All components are loaded. Spice runtime is ready!
+INFO spiced: Starting runtime v2.3.0+models.metal
+INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
+INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+INFO runtime::init::dataset: Dataset taxi_trips initializing...
+INFO runtime::init::model: Loading model [gpt-4o-responses] from openai:gpt-4o...
+INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled. duration_ms=0
+INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
+INFO runtime::init::model: Model [gpt-4o-responses] deployed, ready for inferencing
+INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 7s 474ms.
+INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
 ## Using OpenAI-hosted tools
 
-In a separate terminal, start a chat session against the Spice runtime with the Responses API enabled:
+In a separate terminal, start a chat session against the Spice runtime. The Responses API is enabled by the model's `responses_api: enabled` param in `spicepod.yaml`, so no extra flag is needed:
 
 ```
-spice chat --responses
+spice chat --model gpt-4o-responses
 ```
 
 Ask the model to retrieve today's news via web search, one of OpenAI's hosted tools.
@@ -184,7 +182,7 @@ Verify this output by, in a separate terminal, starting an interactive SQL query
 spice sql
 ```
 
-Then, query using SQL the `taxi_trips` dataset for the titles of the five most recently created PRs.
+Then, query the `taxi_trips` dataset using SQL for the five highest-fare trips.
 
 ```sql
 SELECT fare_amount, tpep_pickup_datetime, tpep_dropoff_datetime, passenger_count, VendorID FROM taxi_trips ORDER BY fare_amount DESC LIMIT 5;

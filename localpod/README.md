@@ -14,7 +14,7 @@ datasets:
     name: time_series
     description: taxi trips in s3
     params:
-      file_format: parquet
+      file_format: csv
     acceleration:
       enabled: true
       refresh_check_interval: 15s
@@ -25,11 +25,14 @@ datasets:
       enabled: true
       engine: duckdb
       mode: file
+      refresh_check_interval: 10s
 ```
 
 :::note
 
 The parent dataset must have `refresh_mode` set to `full` in order for the `localpod` data connector to function. See [here](https://docs.spiceai.org/components/data-connectors/localpod#synchronized-refreshes) for more information
+
+The CSV fixture contains one typed seed row so the file connector resolves concrete column types when the runtime starts. A header-only CSV resolves its columns as `Null`, and subsequent full refreshes preserve that initial schema.
 
 :::
 
@@ -41,28 +44,23 @@ You should see terminal output like so:
 
 ```shell
 $ spice run
-2024/10/29 18:31:38 INFO Checking for latest Spice runtime release...
-2024/10/29 18:31:38 INFO Spice.ai runtime starting...
-2024-10-30T01:31:38.912802Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2024-10-30T01:31:38.913151Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
-2024-10-30T01:31:38.913247Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2024-10-30T01:31:38.921580Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2024-10-30T01:31:39.112883Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2024-10-30T01:31:39.123137Z  INFO runtime: Tool [search] ready to use
-2024-10-30T01:31:39.123166Z  INFO runtime: Tool [table_schema] ready to use
-2024-10-30T01:31:39.123172Z  INFO runtime: Tool [sql] ready to use
-2024-10-30T01:31:39.123180Z  INFO runtime: Tool [list_datasets] ready to use
-2024-10-30T01:31:39.123183Z  INFO runtime: Tool [get_readiness] ready to use
-2024-10-30T01:31:39.123187Z  INFO runtime: Tool [random_sample] ready to use
-2024-10-30T01:31:39.123193Z  INFO runtime: Tool [sample_distinct_columns] ready to use
-2024-10-30T01:31:39.123197Z  INFO runtime: Tool [top_n_sample] ready to use
-2024-10-30T01:31:39.125295Z  INFO runtime: Dataset time_series registered (file:data.csv), acceleration (arrow, 15s refresh), results cache enabled.
-2024-10-30T01:31:39.126352Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset time_series
-2024-10-30T01:31:39.128337Z  INFO runtime::accelerated_table::refresh_task: Loaded 0 rows for dataset time_series in 1ms.
-2024-10-30T01:31:39.136703Z  INFO runtime::datafusion: Localpod dataset local_time_series synchronizing refreshes with parent table time_series
-2024-10-30T01:31:39.136764Z  INFO runtime: Dataset local_time_series registered (localpod:time_series), acceleration (duckdb:file, 10s refresh), results cache enabled.
-2024-10-30T01:31:39.137955Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset local_time_series
-2024-10-30T01:31:39.139139Z  INFO runtime::accelerated_table::refresh_task: Loaded 0 rows for dataset local_time_series in 1ms.
+ INFO Spice.ai runtime starting...
+2026-09-24T15:46:28.639648Z  INFO spiced: Starting runtime v2.3.2+models.metal
+2026-09-24T15:46:28.642754Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2026-09-24T15:46:28.642780Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
+2026-09-24T15:46:28.642793Z  INFO runtime::init::caching: Initialized embeddings cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
+2026-09-24T15:46:28.644686Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2026-09-24T15:46:28.645041Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2026-09-24T15:46:28.652730Z  INFO runtime::init::dataset: Loading datasets: 1 tasks dispatched, 0 skipped at accelerator init (of 2 total; localpod datasets may be chained).
+2026-09-24T15:46:28.652776Z  INFO runtime::init::dataset: Dataset local_time_series initializing...
+2026-09-24T15:46:28.655274Z  INFO runtime::init::dataset: Dataset time_series registered (file:data.csv), acceleration (arrow, 15s refresh), results cache enabled. duration_ms=0
+2026-09-24T15:46:28.656620Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset time_series
+2026-09-24T15:46:28.657844Z  INFO runtime_table::accelerated::refresh_task: Loaded 1 rows (384.00 B) for dataset time_series in 1ms.
+2026-09-24T15:46:28.664894Z  INFO runtime::datafusion: Localpod dataset local_time_series synchronizing refreshes with parent table time_series
+2026-09-24T15:46:28.665318Z  INFO runtime::init::dataset: Dataset local_time_series registered (localpod:time_series), acceleration (duckdb:file, 10s refresh), results cache enabled. duration_ms=8
+2026-09-24T15:46:28.666606Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset local_time_series
+2026-09-24T15:46:28.671346Z  INFO runtime_table::accelerated::refresh_task: Loaded 1 rows (384.00 B) for dataset local_time_series in 4ms.
+2026-09-24T15:46:28.767918Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
 ### Querying the `localpod`
@@ -75,25 +73,26 @@ $ spice sql
 sql> SELECT COUNT(*) FROM time_series;
 +----------+
 | count(*) |
+|   int64  |
 +----------+
-| 0        |
+| 1        |
 +----------+
 
-Time: 0.004800375 seconds. 1 rows.
+Time: 0.001709125 seconds. 1 rows.
 sql> SELECT COUNT(*) FROM local_time_series;
 +----------+
 | count(*) |
+|   int64  |
 +----------+
-| 0        |
+| 1        |
 +----------+
 
-
-Time: 0.005054417 seconds. 1 rows.
+Time: 0.001861500 seconds. 1 rows.
 ```
 
 ### Updating the parent dataset
 
-Let's insert new data into the parent dataset and see the `localpod` update. In a new terminal, navigate to this sample directory and run the following:
+Replace the seed data with 1,000 generated rows and observe the `localpod` update. In a new terminal, navigate to this sample directory and run the following:
 
 ```shell
 ./generate_data.sh
@@ -102,8 +101,8 @@ Let's insert new data into the parent dataset and see the `localpod` update. In 
 In the terminal where `spice run` is running, you should see a message indicating the new data is loaded:
 
 ```shell
-2024-10-30T01:37:24.266411Z  INFO runtime::accelerated_table::refresh_task: Loaded 1,000 rows (48.16 kiB) for dataset time_series in 3ms.
-2024-10-30T01:37:24.266422Z  INFO runtime::accelerated_table::refresh_task: Loaded 1,000 rows (48.16 kiB) for dataset local_time_series in 3ms.
+2026-09-24T15:46:58.687136Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (24.28 kiB) for dataset time_series in 13ms.
+2026-09-24T15:46:58.687180Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (24.28 kiB) for dataset local_time_series in 13ms.
 ```
 
 And the same SQL queries as above will give updated results:
@@ -112,19 +111,40 @@ And the same SQL queries as above will give updated results:
 sql> SELECT COUNT(*) FROM time_series;
 +----------+
 | count(*) |
+|   int64  |
 +----------+
 | 1000     |
 +----------+
 
-Time: 0.006115708 seconds. 1 rows.
+Time: 0.001220625 seconds. 1 rows.
 sql> SELECT COUNT(*) FROM local_time_series;
 +----------+
 | count(*) |
+|   int64  |
 +----------+
 | 1000     |
 +----------+
 
-Time: 0.005385625 seconds. 1 rows.
+Time: 0.002321541 seconds. 1 rows.
 ```
 
-The `local_time_series` dataset is faster because it's accelerated locally using [DuckDB](https://docs.spiceai.org/components/data-accelerators/duckdb)
+Validate that both datasets contain the generated values, not only the same number of rows:
+
+```console
+sql> SELECT 'time_series' dataset, COUNT(*) rows, COUNT(timestamp) timestamp_values,
+  COUNT(val1) val1_values, SUM(val1) val1_sum, SUM(val2) val2_sum
+  FROM time_series
+  UNION ALL
+  SELECT 'local_time_series' dataset, COUNT(*) rows, COUNT(timestamp) timestamp_values,
+  COUNT(val1) val1_values, SUM(val1) val1_sum, SUM(val2) val2_sum
+  FROM local_time_series;
++-------------------+-------+------------------+-------------+----------+----------+
+|      dataset      |  rows | timestamp_values | val1_values | val1_sum | val2_sum |
+|      varchar      | int64 |       int64      |    int64    |   int64  |   int64  |
++-------------------+-------+------------------+-------------+----------+----------+
+| time_series       | 1000  | 1000             | 1000        | 49500    | 49500    |
+| local_time_series | 1000  | 1000             | 1000        | 49500    | 49500    |
++-------------------+-------+------------------+-------------+----------+----------+
+```
+
+The `local_time_series` dataset is accelerated locally using [DuckDB](https://docs.spiceai.org/components/data-accelerators/duckdb) in file mode.

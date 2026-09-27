@@ -2,13 +2,12 @@
 
 Works with `v1.0+`
 
-
 Use [spicepy](https://github.com/spiceai/spicepy) to query Spice from Python.
 
 ## What This Sample Includes
 
 - `sample.py`: Query a local Spice runtime, including a parameterized query.
-- `main_cloud.py`: Query Spice.ai Cloud with inline replacement values.
+- `main_cloud.py`: Query Spice.ai Cloud, reading the API key from the `SPICE_API_KEY` environment variable.
 
 ## Prerequisites
 
@@ -36,17 +35,14 @@ spice run
 Sample runtime logs:
 
 ```text
-2025/01/27 11:53:58 INFO Checking for latest Spice runtime release...
-2025/01/27 11:54:01 INFO Spice.ai runtime starting...
-2025-01-27T19:54:01.956890Z  INFO runtime::init::dataset: Initializing dataset taxi_trips
+ INFO Spice.ai runtime starting...
+2025-01-27T19:54:01.956890Z  INFO runtime::init::dataset: Dataset taxi_trips initializing...
 2025-01-27T19:54:01.957325Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-01-27T19:54:01.957341Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
 2025-01-27T19:54:01.958254Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2025-01-27T19:54:01.959596Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2025-01-27T19:54:02.157072Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2025-01-27T19:54:02.157072Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-01-27T19:54:02.866819Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow, 10s refresh), results cache enabled.
-2025-01-27T19:54:02.868324Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
-2025-01-27T19:54:13.743056Z  INFO runtime::accelerated_table::refresh_task: Loaded 2,964,624 rows (399.41 MiB) for dataset taxi_trips in 10s 874ms.
+2025-01-27T19:54:02.868324Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
+2025-01-27T19:54:13.743056Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 10s 874ms.
 ```
 
 Run the Python sample in another terminal:
@@ -86,7 +82,7 @@ Set your API key for the commands in this README:
 export SPICE_API_KEY="your_api_key"
 ```
 
-The cloud snippet keeps an inline API key placeholder by design. Replace the API key placeholder in `main_cloud.py` with `${SPICE_API_KEY}`, then run:
+`main_cloud.py` reads that variable with `os.environ["SPICE_API_KEY"]`, so run it as is:
 
 ```bash
 uv run main_cloud.py
@@ -97,6 +93,5 @@ Expected output is a table list from `show tables;`.
 ## Links
 
 - [spicepy SDK](https://github.com/spiceai/spicepy)
-- [PyPI package](https://pypi.org/project/spicepy/)
 - [Spice.ai Cloud](https://spice.ai)
 - [Spice.ai documentation](https://docs.spiceai.org)

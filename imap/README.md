@@ -1,12 +1,12 @@
 # IMAP Data Connector
 
-Works with `v1.0+`
+Works with `v1.1.0+`
 
 Follow these steps to get started with the IMAP Data Connector, connecting to an IMAP server with a plain username and password.
 
 ## Pre-requisites
 
-- The latest version of Spice. [Install Spice](https://docs.spiceai.org/getting-started/installation).
+- The latest version of Spice. [Install Spice](https://docs.spiceai.org/getting-started).
 - An IMAP server with configured mailboxes, to login using a username (email) and password.
 
 ## Steps
@@ -42,10 +42,9 @@ IMAP_PASSWORD=my_password
 Once started, the mailbox should be registered in the Spice Runtime logs:
 
 ```console
-2025-02-02T23:25:23.876322Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2025-02-02T23:25:23.876386Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-02-02T23:25:23.877307Z  INFO runtime::init::dataset: Initializing dataset awesome_mailbox
-2025-02-02T23:25:23.877477Z  INFO runtime::init::results_cache: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2025-02-02T23:25:23.877307Z  INFO runtime::init::dataset: Dataset awesome_mailbox initializing...
+2025-02-02T23:25:23.877477Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-02-02T23:25:23.878156Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-02-02T23:25:23.887277Z  INFO runtime::init::dataset: Dataset awesome_mailbox registered (imap:awesome@example.com), results cache enabled.
 ```

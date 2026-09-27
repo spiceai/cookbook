@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/spiceai/spiceai/trunk/.schema/spicepod.schema.json
+version: v1
+kind: Spicepod
+name: dremio-demo
+
+datasets:
+  - from: dremio:datasets.taxi_trips
+    name: taxi_trips
+    description: taxi trips data in the local Dremio instance
+    params:
+      dremio_endpoint: grpc://localhost:32010
+    acceleration:
+      enabled: true

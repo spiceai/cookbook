@@ -70,6 +70,12 @@ datasets:
     params:
       http_username: api-user
       http_password: ${secrets:API_KEY}
+    columns: # An HTTP response is one row of envelope columns, so the fields
+      - name: category # the refresh_sql filters on must be projected out of the JSON
+      - name: status
+      - name: details
+        metadata:
+          json_object: "*" # Every remaining key, as a JSON string
     acceleration:
       enabled: true
       engine: duckdb
@@ -92,13 +98,20 @@ name: customer-portal
 
 datasets:
   - from: https://customer-events.company.com/v1/interactions
-    name: customer-interactions
+    name: customer_interactions
     description: Customer support interactions and engagement history
     time_column: interaction_timestamp # Column used to track when data is updated
+    time_format: ISO8601 # Fields projected out of a JSON response are strings
     params:
       http_username: customer-service
       http_password: ${secrets:CUSTOMER_API_KEY}
       client_timeout: 30s
+    columns: # Project the response fields referenced below out of the JSON
+      - name: interaction_id
+      - name: interaction_timestamp
+      - name: details
+        metadata:
+          json_object: "*" # Every remaining key, as a JSON string
     acceleration:
       enabled: true
       engine: duckdb # Persist the accelerated data to a DuckDB file
@@ -141,7 +154,7 @@ By default the Spice runtime only listens on the localhost interface, meaning it
 ```yaml
 containers:
   - name: spiceai
-    image: spiceai/spiced:latest
+    image: spiceai/spiceai:latest
     imagePullPolicy: Always
     workingDir: /app
     command:
@@ -153,8 +166,6 @@ containers:
         "0.0.0.0:9090",
         "--flight",
         "0.0.0.0:50051",
-        "--open_telemetry",
-        "0.0.0.0:50052",
       ]
 ```
 
@@ -167,7 +178,7 @@ Consider using an autoscaler such as the [Kubernetes Horizontal Pod Autoscaler](
 
 High availability is achieved by running multiple replicas in Kubernetes. Node selectors and taints can be used to ensure that the runtime pods are scheduled across specific nodes to improve fault tolerance. Consistent health checks and readiness probes verify that each replica contains the correct data and is ready to serve requests. Rolling updates combined with specific resource requests and limits help maintain uninterrupted service during maintenance and outages.
 
-Monitoring and alerting form a vital part of sustaining system stability. Spice provides several [metrics](https://spiceai.org/docs/features/observability#metrics) that can be used to monitor the runtime.
+Monitoring and alerting form a vital part of sustaining system stability. Spice provides several [metrics](https://spiceai.org/docs/features/observability#available-metrics) that can be used to monitor the runtime.
 
 Network security relies on secure communication channels and access controls. Transport Layer Security (TLS) secures data in transit, while authentication and network policies restrict access to sensitive APIs. In some environments, a service mesh provides further security measures. Regular audits and updates address emerging vulnerabilities. For more information about network security in Kubernetes, consult the [Kubernetes Network Policies documentation](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
 

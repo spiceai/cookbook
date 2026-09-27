@@ -53,7 +53,10 @@ datasets:
       debezium_transport: kafka
       debezium_message_format: json
       kafka_bootstrap_servers: localhost:19092
-      kafka_security_protocol: PLAINTEXT
+      kafka_security_protocol: SASL_PLAINTEXT
+      kafka_sasl_mechanism: SCRAM-SHA-256
+      kafka_sasl_username: ${secrets:KAFKA_USERNAME}
+      kafka_sasl_password: ${secrets:KAFKA_PASSWORD}
     acceleration:
       enabled: true
       engine: sqlite
@@ -64,7 +67,7 @@ datasets:
 Spice runtime is already configured to run with the debug level of information, with environment variable configured in `cdc-debezium/.env`
 
 ```bash
-SPICED_LOG="spiced=DEBUG,runtime=DEBUG,data_components=DEBUG,cache=DEBUG"
+SPICED_LOG="runtime_table::accelerated::refresh_task::changes=TRACE,runtime::accelerated_table::refresh_task::changes=TRACE,info"
 ```
 
 Ensure the current directory is `cdc-debezium`, and start the spice runtime with the following command
@@ -76,9 +79,9 @@ spice run
 Observe that it consumes all of the changes. It should look like:
 
 ```bash
-2024-07-01T12:39:22.207145Z  INFO runtime: Dataset cdc registered (debezium:cdc.public.customer_addresses), acceleration (sqlite:file, changes), results cache enabled.
-2024-07-01T12:39:22.677117Z  INFO runtime::accelerated_table::refresh_task::changes: Upserting data row for cdc with id=3
-2024-07-01T12:39:22.692018Z  INFO runtime::accelerated_table::refresh_task::changes: Upserting data row for cdc with id=4
+2026-05-06T18:28:22.326698Z  INFO runtime::init::dataset: Dataset cdc registered (debezium:cdc.public.customer_addresses), acceleration (sqlite:file, changes), results cache enabled.
+2026-05-06T18:28:23.828971Z TRACE runtime_table::accelerated::refresh_task::changes: Processing append/change stream batch: dataset=cdc, rows=50, sub-batches=1
+2026-05-06T18:28:23.828986Z TRACE runtime_table::accelerated::refresh_task::changes: Processing upsert batch for cdc with 50 rows
 ...
 ```
 
@@ -105,7 +108,8 @@ VALUES
 Notice that the Spice log shows the change.
 
 ```bash
-2024-08-26T22:29:48.540739Z DEBUG runtime::accelerated_table::refresh_task::changes: Upserting data row for cdc with id=100
+2026-09-09T20:58:53.982874Z TRACE runtime_table::accelerated::refresh_task::changes: Processing append/change stream batch: dataset=cdc, rows=1, sub-batches=1
+2026-09-09T20:58:53.993595Z TRACE runtime_table::accelerated::refresh_task::changes: Append/change stream batch sub-batch processed dataset=cdc op="upsert" rows=1 duration_ms=10.546417
 ```
 
 Querying the data again from the `spice sql` REPL will show the new record.
@@ -117,7 +121,7 @@ SELECT * FROM cdc;
 Now let's see what happens when we stop Spice and restart it. The data should still be there and it should not replay all of the changes from the beginning.
 
 ```bash
-2024-08-26T22:30:16.715586Z  INFO runtime: Dataset cdc registered (debezium:cdc.public.customer_addresses), acceleration (sqlite:file, changes), results cache enabled.
+2024-08-26T22:30:16.715586Z  INFO runtime::init::dataset: Dataset cdc registered (debezium:cdc.public.customer_addresses), acceleration (sqlite:file, changes), results cache enabled.
 ```
 
 Stop spice with `Ctrl+C`
@@ -129,11 +133,9 @@ Observe that it doesn't replay the changes and the data is still there. Only new
 ```bash
 Spice.ai runtime starting...
 2024-07-29T23:22:04.303861Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2024-07-29T23:22:04.303925Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
 2024-07-29T23:22:04.304011Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2024-07-29T23:22:04.303850Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2024-07-29T23:22:04.306271Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
-2024-07-29T23:22:04.331209Z  INFO runtime: Dataset cdc registered (debezium:cdc.public.customer_addresses), acceleration (sqlite:file, changes), results cache enabled.
+2024-07-29T23:22:04.303850Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2024-07-29T23:22:04.331209Z  INFO runtime::init::dataset: Dataset cdc registered (debezium:cdc.public.customer_addresses), acceleration (sqlite:file, changes), results cache enabled.
 ```
 
 ## Clean up

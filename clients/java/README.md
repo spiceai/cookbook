@@ -6,7 +6,7 @@ This guide demonstrates how to use Java to query Spice via the Apache Arrow Flig
 
 ## Requirements
 
-- Java 11 or newer
+- JDK 17 or newer
 - [Maven](https://maven.apache.org/) installed
 - [Spice CLI](https://docs.spiceai.org/getting-started) installed and Spice OSS runtime available
 
@@ -36,8 +36,7 @@ spice run
 ### 4. Run the Java client
 
 ```bash
-MAVEN_OPTS="--add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED" \
-mvn exec:java \
+mvn exec:exec \
   -Dexec.mainClass="MessagingServiceApp"
 ```
 
@@ -61,4 +60,4 @@ addon10
 ## Learn more
 
 - [Spice OSS Documentation](https://docs.spiceai.org/)
-- [Apache Arrow Flight SQL JDBC](https://arrow.apache.org/docs/java/reference/org/apache/arrow/flight/sql/FlightSqlClient.html)
+- [Apache Arrow Flight SQL JDBC](https://arrow.apache.org/java/current/flight_sql_jdbc_driver.html)

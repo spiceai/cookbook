@@ -1,6 +1,6 @@
 # Live Orders Analytics with Apache Kafka Data Connector
 
-Works with `v1.0+`
+Works with `v1.6.0+`
 
 In this recipe, you'll learn how to combine real-time data streaming from Kafka with other datasets using federated queries. The setup uses Apache Kafka with a test producer generating order events to the `orders_events` topic. The Spice runtime consumes these events, keeping an accelerated `orders` dataset updated in real time, enabling you to join this live data with other sources (such as S3 TPC-H benchmark data) for powerful analytics.
 
@@ -67,10 +67,9 @@ Observe that Spice loads data from the configured Kafka topic into the `orders` 
 
 ```bash
 2025-08-24T05:06:40.084870Z  INFO spiced: Starting runtime v1.6.0-unstable-build.d7fadb4c2-dev+models
-2025-08-24T05:06:40.086387Z  INFO runtime::init::caching: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
-2025-08-24T05:06:40.086548Z  INFO runtime::init::caching: Initialized search results cache;
+2025-08-24T05:06:40.086387Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2025-08-24T05:06:40.086548Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
 2025-08-24T05:06:40.525189Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-08-24T05:06:40.534247Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
 2025-08-24T05:06:40.538475Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-08-24T05:06:40.575784Z  INFO runtime::init::dataset: Dataset nation initializing...
 2025-08-24T05:06:40.575784Z  INFO runtime::init::dataset: Dataset supplier initializing...
@@ -84,6 +83,11 @@ Observe that Spice loads data from the configured Kafka topic into the `orders` 
 2025-08-24T05:06:54.167452Z DEBUG runtime::accelerated_table::refresh_task::changes: Inserting data row for orders
 ...
 ```
+
+The transcript above is from `v1.6.0`. From `v2.2.0` the accelerated-table code moved to its own
+`runtime-table` crate, so those two records read
+`runtime_table::accelerated::refresh_task::changes` instead. The `SPICED_LOG` filter in `kafka/.env`
+names both targets, so the recipe shows them on either version.
 
 Run `spice sql` in a separate terminal to query the data
 
@@ -131,15 +135,15 @@ LIMIT 5;
 Output:
 
 ```shell
-+-------------------------------+--------------------+-----------------+--------------------+----------+------------+--------------------+
-| timestampt                    | c_name             | customer_nation | s_name             | quantity | unit_price | order_revenue      |
-+-------------------------------+--------------------+-----------------+--------------------+----------+------------+--------------------+
-| 1970-01-01T00:00:01.756008276 | Customer#000000032 | MOROCCO         | Supplier#000000035 | 59       | 599.66     | 35379.939999999995 |
-| 1970-01-01T00:00:01.756008275 | Customer#000000462 | VIETNAM         | Supplier#000000084 | 18       | 337.26     | 6070.68            |
-| 1970-01-01T00:00:01.756008274 | Customer#000000995 | JORDAN          | Supplier#000000048 | 50       | 198.77     | 9938.5             |
-| 1970-01-01T00:00:01.756008273 | Customer#000000493 | MOZAMBIQUE      | Supplier#000000127 | 17       | 321.59     | 5467.03            |
-| 1970-01-01T00:00:01.756008272 | Customer#000000042 | ETHIOPIA        | Supplier#000000075 | 21       | 440.78     | 9256.38            |
-+-------------------------------+--------------------+-----------------+--------------------+----------+------------+--------------------+
++---------------------+--------------------+-----------------+--------------------+----------+------------+--------------------+
+| timestampt          | c_name             | customer_nation | s_name             | quantity | unit_price | order_revenue      |
++---------------------+--------------------+-----------------+--------------------+----------+------------+--------------------+
+| 2025-08-24T04:04:36 | Customer#000000032 | MOROCCO         | Supplier#000000035 | 59       | 599.66     | 35379.939999999995 |
+| 2025-08-24T04:04:35 | Customer#000000462 | VIETNAM         | Supplier#000000084 | 18       | 337.26     | 6070.68            |
+| 2025-08-24T04:04:34 | Customer#000000995 | JORDAN          | Supplier#000000048 | 50       | 198.77     | 9938.5             |
+| 2025-08-24T04:04:33 | Customer#000000493 | MOZAMBIQUE      | Supplier#000000127 | 17       | 321.59     | 5467.03            |
+| 2025-08-24T04:04:32 | Customer#000000042 | ETHIOPIA        | Supplier#000000075 | 21       | 440.78     | 9256.38            |
++---------------------+--------------------+-----------------+--------------------+----------+------------+--------------------+
 ```
 
 ## KPI Example: Last-Hour Orders Snapshot
