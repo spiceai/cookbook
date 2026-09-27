@@ -1,6 +1,6 @@
 # In-Memory Results Caching
 
-Works with `v1.10+`
+Works with `v2.0+`
 
 > Spice.ai OSS supports in-memory caching of query results to improve performance for bursts of requests and non-accelerated results, such as refresh data returned [on zero results](https://docs.spiceai.org/features/data-acceleration/data-refresh#behavior-on-zero-results).
 >
