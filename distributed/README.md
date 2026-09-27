@@ -96,9 +96,15 @@ The Spice scheduler will now start:
 
 ### Step 4: Start the Spice Executor
 
-A scheduler requires at least one executor to perform queries. In a new terminal window, change directory back to the distributed query cookbook to access the certificates and start the executor.
+A scheduler requires at least one executor to perform queries. In a new terminal window, change directory back to the distributed query cookbook.
 
-A Spice executor does not require a `spicepod.yaml`, as the scheduler will sync dataset information with executors when executing queries:
+Each Spice runtime claims the directory it starts in, and the scheduler already holds this one. Starting a second runtime here fails with `another runtime is already running in this directory`, so create a directory for the executor and start it from there:
+
+```bash
+mkdir -p executor1 && cd executor1
+```
+
+A Spice executor does not require a `spicepod.yaml`, as the scheduler will sync dataset information with executors when executing queries. It reads its certificates from `~/.spice/pki`:
 
 ```bash
 ~/.spice/bin/spiced --role executor \
