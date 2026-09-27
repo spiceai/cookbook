@@ -1,5 +1,5 @@
 """
-Seed a local Unity Catalog instance with realistic sample data via MinIO (S3).
+Seed a local Unity Catalog instance with realistic sample data via RustFS (S3).
 
 Creates a 'samples' schema in the 'unity' catalog with:
 - customers: Customer dimension table (100 rows)
@@ -7,7 +7,7 @@ Creates a 'samples' schema in the 'unity' catalog with:
 - orders: Order fact table (500 rows)
 - order_items: Order line items fact table (~1500 rows)
 
-Writes Delta Lake tables to MinIO S3 and registers them in Unity Catalog.
+Writes Delta Lake tables to RustFS (S3) and registers them in Unity Catalog.
 """
 
 import os
@@ -18,12 +18,12 @@ from deltalake import write_deltalake
 from datetime import date
 import random
 
-UC_URL = "http://unitycatalog:8081"
+UC_URL = "http://unitycatalog:8080"
 CATALOG = "unity"
 SCHEMA = "samples"
 
 S3_BUCKET = os.environ.get("S3_BUCKET", "unity-catalog")
-AWS_ENDPOINT_URL = os.environ.get("AWS_ENDPOINT_URL", "http://minio:9000")
+AWS_ENDPOINT_URL = os.environ.get("AWS_ENDPOINT_URL", "http://rustfs:9000")
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "minio")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "minio123")
 
