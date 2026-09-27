@@ -4,6 +4,8 @@ Works with `v1.0+`
 
 The Iceberg Catalog Connector enables Spice to query and write to Iceberg tables in an Iceberg catalog.
 
+> **Note:** The local Iceberg catalog in this recipe stores its data in [RustFS](https://github.com/rustfs/rustfs), an S3-compatible object store. Earlier versions used MinIO, whose open-source server and client are archived: the `minio/minio` and `minio/mc` images can no longer be pulled.
+
 [![Watch the Spice.ai OSS Iceberg Catalog connector demo](https://img.youtube.com/vi/Akq39ml8LO0/hqdefault.jpg)](https://www.youtube.com/embed/Akq39ml8LO0)
 
 ## Prerequisites
@@ -112,16 +114,17 @@ order by
 Output:
 
 ```bash
-+--------------+--------------+-------------+-----------------+-------------------+---------------------+-----------+--------------+----------+-------------+
-| l_returnflag | l_linestatus | sum_qty     | sum_base_price  | sum_disc_price    | sum_charge          | avg_qty   | avg_price    | avg_disc | count_order |
-+--------------+--------------+-------------+-----------------+-------------------+---------------------+-----------+--------------+----------+-------------+
-| A            | F            | 37734107.00 | 56586554400.73  | 53758257134.8700  | 55909065222.827692  | 25.522005 | 38273.129734 | 0.049985 | 1478493     |
-| N            | F            | 991417.00   | 1487504710.38   | 1413082168.0541   | 1469649223.194375   | 25.516471 | 38284.467760 | 0.050093 | 38854       |
-| N            | O            | 73416597.00 | 110112303006.41 | 104608220776.3836 | 108796375788.183317 | 25.502437 | 38249.282778 | 0.049996 | 2878807     |
-| R            | F            | 37719753.00 | 56568041380.90  | 53741292684.6040  | 55889619119.831932  | 25.505793 | 38250.854626 | 0.050009 | 1478870     |
-+--------------+--------------+-------------+-----------------+-------------------+---------------------+-----------+--------------+----------+-------------+
++--------------+--------------+------------+--------------------+--------------------+--------------------+--------------------+--------------------+----------------------+-------------+
+| l_returnflag | l_linestatus |   sum_qty  |   sum_base_price   |   sum_disc_price   |     sum_charge     |       avg_qty      |      avg_price     |       avg_disc       | count_order |
+|    varchar   |    varchar   |   float64  |       float64      |       float64      |       float64      |       float64      |       float64      |        float64       |    int64    |
++--------------+--------------+------------+--------------------+--------------------+--------------------+--------------------+--------------------+----------------------+-------------+
+| A            | F            | 37734107.0 | 56586554400.72999  | 53758257134.86979  | 55909065222.82766  | 25.522005853257337 | 38273.12973462167  | 0.049985295838460536 | 1478493     |
+| N            | F            | 991417.0   | 1487504710.3799992 | 1413082168.0540988 | 1469649223.1943753 | 25.516471920522985 | 38284.46776084828  | 0.050093426674216755 | 38854       |
+| N            | O            | 73416597.0 | 110112303006.41022 | 104608220776.38258 | 108796375788.18262 | 25.50243798906978  | 38249.282778043205 | 0.049996474234010685 | 2878807     |
+| R            | F            | 37719753.0 | 56568041380.90029  | 53741292684.60385  | 55889619119.83172  | 25.50579361269077  | 38250.854626099856 | 0.050009405830189806 | 1478870     |
++--------------+--------------+------------+--------------------+--------------------+--------------------+--------------------+--------------------+----------------------+-------------+
 
-Time: 0.186233833 seconds. 4 rows.
+Time: 0.4264595 seconds. 4 rows.
 ```
 
 ## Step 6. Write to Iceberg tables
@@ -168,11 +171,12 @@ VALUES (5, 'ANTARCTICA', 'A cold and remote region');
 ```
 
 ```bash
-+-------+
-| count |
-+-------+
-| 1     |
-+-------+
++--------+
+|  count |
+| uint64 |
++--------+
+| 1      |
++--------+
 ```
 
 Example: Insert a new nation into the nation table:
@@ -183,11 +187,12 @@ VALUES (25, 'PENGUINIA', 5, 'A vibrant home for brave penguins in Antarctica');
 ```
 
 ```bash
-+-------+
-| count |
-+-------+
-| 1     |
-+-------+
++--------+
+|  count |
+| uint64 |
++--------+
+| 1      |
++--------+
 ```
 
 Verify the inserts by querying the tables:
@@ -197,9 +202,9 @@ SELECT * FROM ice.tpch_sf1.region WHERE r_regionkey = 5;
 SELECT * FROM ice.tpch_sf1.nation WHERE n_nationkey = 25;
 ```
 
-## Step 7. View the Iceberg tables in MinIO
+## Step 7. View the Iceberg tables in RustFS
 
-Navigate to [http://localhost:9001](http://localhost:9001) and login with `admin` and `password`. View the `iceberg` bucket to see the created Iceberg tables.
+Navigate to [http://localhost:9001/rustfs/console/](http://localhost:9001/rustfs/console/) and log in with `admin` and `password`. View the `iceberg` bucket to see the created Iceberg tables.
 
 ## Step 8. Clean up
 

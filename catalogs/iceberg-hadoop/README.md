@@ -4,14 +4,16 @@ Works with `v1.6.0+`
 
 The Iceberg Catalog Connector supports connecting to Hadoop catalogs, locally or on S3-compatible object storage.
 
-This recipe uses the Spice Runtime to connect to a TPCH dataset, configured on a MinIO Object Store.
+This recipe uses the Spice Runtime to connect to a TPCH dataset, configured on a [RustFS](https://github.com/rustfs/rustfs) S3-compatible object store.
+
+> **Note:** Earlier versions of this recipe used MinIO. The open-source MinIO server and client are archived: the `minio/minio` and `minio/mc` images can no longer be pulled, and `dl.min.io` returns `410 Gone` for the client binary, so the recipe now runs on RustFS instead.
 
 ## Prerequisites
 
-- Docker is installed, to run the sample MinIO object store service with Hadoop catalog.
+- Docker is installed, to run the sample RustFS object store service with Hadoop catalog.
 - Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation).
 
-## Step 1: Start the MinIO Server.
+## Step 1: Start the RustFS Server.
 
 Clone the Spice cookbook repository and navigate to the `iceberg-hadoop` directory:
 
@@ -20,7 +22,7 @@ git clone https://github.com/spiceai/cookbook.git # Skip if already cloned
 cd cookbook/catalogs/iceberg-hadoop
 ```
 
-Use the provided Docker Compose file to start a MinIO server, which sets up with a TPCH dataset:
+Use the provided Docker Compose file to start a RustFS server, create the `hadoop` bucket, and load a TPCH dataset into it with Spark:
 
 ```bash
 docker compose up -d
@@ -64,7 +66,8 @@ Example output:
 
 ```console
 +-------------+-------------+---------------------------------------------------------------------------------------------------------------------+
-| r_regionkey | r_name      | r_comment                                                                                                           |
+| r_regionkey |    r_name   |                                                      r_comment                                                      |
+|    int32    |   varchar   |                                                       varchar                                                       |
 +-------------+-------------+---------------------------------------------------------------------------------------------------------------------+
 | 0           | AFRICA      | ar packages. regular excuses among the ironic requests cajole fluffily blithely final requests. furiously express p |
 | 1           | AMERICA     | s are. furiously even pinto bea                                                                                     |
@@ -72,6 +75,8 @@ Example output:
 | 3           | EUROPE      | e dolphins are furiously about the carefully                                                                        |
 | 4           | MIDDLE EAST |  foxes boost furiously along the carefully dogged tithes. slyly regular orbits according to the special epit        |
 +-------------+-------------+---------------------------------------------------------------------------------------------------------------------+
+
+Time: 0.008017584 seconds. 5 rows.
 ```
 
 ## Step 4: Cleanup.
