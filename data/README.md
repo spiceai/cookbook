@@ -9,9 +9,12 @@ Data files referenced by multiple recipes, usually via a relative path such as
 | `taxi_zone_lookup.csv`           | NYC TLC taxi zone lookup table.                                                              |
 | `taxi_trips/taxi_trips.parquet`  | 100,000 NYC yellow taxi trips from January 2024.                                             |
 
-The `dremio` and `federation` recipes mount this directory into their local Dremio
-container and expose it as a Dremio source named `datasets`, where the `taxi_trips`
-folder becomes the physical dataset `datasets.taxi_trips`.
+The `dremio` recipe mounts this directory into its local Dremio container and exposes
+it as a Dremio source named `datasets`, where the `taxi_trips` folder becomes the
+physical dataset `datasets.taxi_trips`.
+
+The `federation` recipe mounts this directory into its local PostgreSQL container and
+loads `taxi_zone_lookup.csv` into the `taxi_zones` table.
 
 ## Regenerating `taxi_trips/taxi_trips.parquet`
 

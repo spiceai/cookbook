@@ -3,9 +3,9 @@ all: start
 
 .PHONY: start
 start:
-	@echo "Starting Dremio container..."
-	@docker compose up --detach
-	@./setup-dremio.sh
+	@echo "Starting PostgreSQL container..."
+	@docker compose up --detach --wait
+	@docker compose exec postgres psql -U postgres -d taxi -c 'SELECT COUNT(*) AS taxi_zones FROM taxi_zones;'
 
 .PHONY: clean
 clean:
