@@ -1,17 +1,26 @@
-# Self-hosted Dremio Community Edition (dremio-oss) for the federated SQL query recipe.
+# PostgreSQL for the federated SQL query recipe.
 #
-#   9047  - Dremio web UI and REST API
-#   32010 - Arrow Flight endpoint, used by the Spice Dremio data connector
+# On first start, init/taxi_zones.sql creates the `taxi_zones` table and loads it
+# from the cookbook `data` directory, which is mounted read-only at /data.
+#
+# The host port is 15432 so it doesn't clash with a PostgreSQL server already
+# listening on 5432.
 services:
-  dremio:
-    image: dremio/dremio-oss:26.0.5
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: taxi
     ports:
-      - '9047:9047'
-      - '32010:32010'
+      - '15432:5432'
     volumes:
-      # The cookbook `data` directory, exposed to Dremio as the `datasets` source.
-      - ../data:/opt/dremio/datasets:ro
-      - dremio-data:/opt/dremio/data
-
-volumes:
-  dremio-data:
+      - ./init:/docker-entrypoint-initdb.d:ro
+      - ../data:/data:ro
+    healthcheck:
+      # Checked over TCP: during initialization PostgreSQL only listens on its Unix socket,
+      # so this passes only once the init scripts have finished.
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d taxi -h localhost']
+      interval: 2s
+      timeout: 5s
+      retries: 30

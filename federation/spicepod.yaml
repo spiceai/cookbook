@@ -4,31 +4,46 @@ kind: Spicepod
 name: federation
 
 datasets:
-  # Federated to the local Dremio instance on every query.
-  - from: dremio:datasets.taxi_trips
-    name: dremio_source
-    description: taxi trips in the local Dremio instance
+  # NYC yellow taxi trips stored as Parquet in a public S3 bucket.
+  # Federated to S3 on every query. s3_auth: public skips the AWS credential chain.
+  - from: s3://spiceai-demo-datasets/taxi_trips/2024/
+    name: taxi_trips
+    description: NYC yellow taxi trips from January 2024, stored in S3
     params:
-      dremio_endpoint: grpc://localhost:32010
+      file_format: parquet
+      s3_auth: public
 
-  # The same Dremio dataset, accelerated locally with Arrow.
-  - from: dremio:datasets.taxi_trips
-    name: dremio_source_accelerated
-    description: taxi trips in the local Dremio instance, locally accelerated
+  # The same S3 dataset, accelerated locally in memory with Arrow.
+  - from: s3://spiceai-demo-datasets/taxi_trips/2024/
+    name: taxi_trips_accelerated
+    description: NYC yellow taxi trips from January 2024, stored in S3, locally accelerated
     params:
-      dremio_endpoint: grpc://localhost:32010
+      file_format: parquet
+      s3_auth: public
     acceleration:
       enabled: true
 
-  # Federated to S3 on every query.
-  - from: s3://spiceai-demo-datasets/cleaned_sales_data.parquet
-    name: s3_source
-    description: sales data in a public S3 bucket
+  # NYC taxi zone lookup table in the local PostgreSQL instance.
+  # Federated to PostgreSQL on every query. pg_pass is read from SPICE_PG_PASS in .env.
+  - from: postgres:taxi_zones
+    name: taxi_zones
+    description: NYC taxi zones, stored in PostgreSQL
+    params:
+      pg_host: localhost
+      pg_port: 15432
+      pg_db: taxi
+      pg_user: postgres
+      pg_sslmode: disable
 
-  # The same S3 dataset, accelerated locally with SQLite.
-  - from: s3://spiceai-demo-datasets/cleaned_sales_data.parquet
-    name: s3_source_accelerated
-    description: sales data in a public S3 bucket, locally accelerated
+  # The same PostgreSQL table, accelerated locally in memory with Arrow.
+  - from: postgres:taxi_zones
+    name: taxi_zones_accelerated
+    description: NYC taxi zones, stored in PostgreSQL, locally accelerated
+    params:
+      pg_host: localhost
+      pg_port: 15432
+      pg_db: taxi
+      pg_user: postgres
+      pg_sslmode: disable
     acceleration:
       enabled: true
-      engine: sqlite

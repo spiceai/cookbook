@@ -10,7 +10,7 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 
 ### Core scenarios
 
-- [Federated SQL Query](./federation/README.md) - Query data from S3 and a self-hosted Dremio instance in a single query.
+- [Federated SQL Query](./federation/README.md) - Join data from S3 and PostgreSQL in a single query.
 - [Cayenne Data Accelerator](./cayenne/README.md)
 - [Async Queries](./async-queries/README.md) - Submit long-running SQL queries and retrieve results asynchronously.
 - [Hybrid-Search](./search/README.md) - Combine keyword and vector search for improved retrieval.
