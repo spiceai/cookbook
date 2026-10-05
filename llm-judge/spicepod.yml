@@ -39,7 +39,7 @@ models:
     params:
       parameterized_prompt: enabled
       openai_api_key: ${ secrets:SPICE_OPENAI_API_KEY }
-      openai_response_format:
+      response_format:
         type: json_schema
         json_schema:
           name: math_reasoning
@@ -80,7 +80,7 @@ models:
       parameterized_prompt: enabled
       openai_api_key: ${ secrets:SPICE_OPENAI_API_KEY }
       tools: sql
-      openai_response_format:
+      response_format:
         type: json_schema
         json_schema:
           name: math_reasoning
