@@ -1,6 +1,6 @@
 # Generative Visualizations
 
-Works with `v1.8+`
+Works with `v2.0+`
 
 This recipe demonstrates how to build an AI-powered data analyst that generates SQL queries and interactive Chart.js visualizations from natural language questions.
 
@@ -52,14 +52,14 @@ This recipe demonstrates how to build an AI-powered data analyst that generates 
 
 This recipe uses two AI models working together:
 
-1. **`visualisation_and_sql`** (GPT-5.2) - Takes a natural language question and:
+1. **`visualisation_and_sql`** (GPT-6 Luna) - Takes a natural language question and:
    - Explores available datasets using the `list_datasets` tool
    - Inspects table schemas using the `table_schema` tool
    - Generates a SQL query using the `sql` tool
    - Creates a Chart.js HTML snippet to visualize the results
    - Returns structured JSON with both the SQL and visualization code
 
-2. **`summary_maker`** (GPT-5.2) - Takes the query results and:
+2. **`summary_maker`** (GPT-6 Luna) - Takes the query results and:
    - Analyzes trends and patterns in the data
    - Generates a human-readable summary of insights
 
@@ -77,9 +77,9 @@ You should see output indicating that Spice is loading datasets and models:
 
 ```
 INFO runtime::init::dataset: Dataset sales initializing...
-INFO runtime::init::model: Loading model [visualisation_and_sql] from openai:gpt-5.2...
+INFO runtime::init::model: Loading model [visualisation_and_sql] from openai:gpt-6-luna...
 INFO runtime::init::model: Model [visualisation_and_sql] deployed, ready for inferencing
-INFO runtime::init::model: Loading model [summary_maker] from openai:gpt-5.2...
+INFO runtime::init::model: Loading model [summary_maker] from openai:gpt-6-luna...
 INFO runtime::init::model: Model [summary_maker] deployed, ready for inferencing
 INFO runtime::init::dataset: Dataset sales registered (s3://spiceai-demo-datasets/cleaned_sales_data.parquet), acceleration (arrow), results cache enabled. duration_ms=0
 INFO runtime_table::accelerated::refresh_task: Loading data for dataset sales
@@ -186,8 +186,8 @@ ORDER BY "year", "month";
 The `spicepod.yaml` configures:
 
 - **Dataset**: Sales data from S3 with acceleration enabled for faster queries
-- **visualisation_and_sql model**: GPT-5.2 with SQL tools and structured JSON output
-- **summary_maker model**: GPT-5.2 for data analysis and summarization
+- **visualisation_and_sql model**: GPT-6 Luna with SQL tools and structured JSON output
+- **summary_maker model**: GPT-6 Luna for data analysis and summarization
 
 ### Customizing the Models
 
