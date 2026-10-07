@@ -1,0 +1,19 @@
+version: v2
+kind: Spicepod
+name: spiceai-catalog
+
+catalogs:
+  - from: spice.ai/spiceai/tpch
+    name: scp
+    params:
+      spiceai_region: us-east-1
+      spiceai_api_key: ${secrets:SPICE_SPICEAI_API_KEY}
+    include:
+      - tpch.part*
+      - tpch.supplier
+
+  - from: spice.ai/spiceai/quickstart
+    name: quickstart
+    params:
+      spiceai_region: us-east-1
+      spiceai_api_key: ${secrets:SPICE_SPICEAI_API_KEY}

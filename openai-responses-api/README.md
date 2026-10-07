@@ -1,6 +1,6 @@
 # Using OpenAI's Responses API with Spice
 
-Works with `v1.6+`
+Works with `v2.0+`
 
 This recipe shows how Spice integrates with [OpenAI's Responses API](https://platform.openai.com/docs/api-reference/responses), OpenAI's most advanced interface for generating model responses, supporting both hosted and custom tool calls. This recipe also covers how to use the OpenAI SDK's support for the Responses API to connect to compatible models running on Spice.
 
@@ -32,11 +32,11 @@ INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB
 INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
 INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 INFO runtime::init::dataset: Dataset taxi_trips initializing...
-INFO runtime::init::model: Loading model [gpt-4o-responses] from openai:gpt-4o...
+INFO runtime::init::model: Loading model [gpt-6-luna-responses] from openai:gpt-6-luna...
 INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled. duration_ms=0
 INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
-INFO runtime::init::model: Model [gpt-4o-responses] deployed, ready for inferencing
+INFO runtime::init::model: Model [gpt-6-luna-responses] deployed, ready for inferencing
 INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 7s 474ms.
 INFO runtime: All components are loaded. Spice runtime is ready!
 ```
@@ -46,7 +46,7 @@ INFO runtime: All components are loaded. Spice runtime is ready!
 In a separate terminal, start a chat session against the Spice runtime. The Responses API is enabled by the model's `responses_api: enabled` param in `spicepod.yaml`, so no extra flag is needed:
 
 ```
-spice chat --model gpt-4o-responses
+spice chat --model gpt-6-luna-responses
 ```
 
 Ask the model to retrieve today's news via web search, one of OpenAI's hosted tools.

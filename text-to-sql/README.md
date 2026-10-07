@@ -1,6 +1,6 @@
 # Text-to-SQL (NSQL)
 
-Works with `v1.0+`
+Works with `v2.0+`
 
 This recipe demonstrates how to use Spice.ai as an intelligent text-to-SQL interface, so you can query your data using natural language instead of writing SQL manually.
 
@@ -422,7 +422,7 @@ Now that you understand text-to-SQL with Spice, explore:
 
 - Keep data sampling off with `"sample_data_enabled": false` (the default)
 - Focus sampling on specific datasets with the `"datasets"` parameter
-- Use a more powerful model (e.g., GPT-4 instead of GPT-3.5)
+- Use a more capable model (for example, `gpt-6-sol` instead of `gpt-6-luna`)
 
 **Inaccurate SQL generation:**
 

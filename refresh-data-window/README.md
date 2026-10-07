@@ -1,6 +1,6 @@
 # Refresh Data Window
 
-Works with `v1.0+`
+Works with `v2.0+`
 
 `refresh_data_window` is a duration parameter that filters data refresh source queries for time-series to recent data (duration into past from now).
 
@@ -22,7 +22,7 @@ cd refresh-data-window-recipe
 **Step 2.** Add a new dataset
 
 ```bash
-version: v1
+version: v2
 kind: Spicepod
 name: refresh-data-window-recipe
 datasets:
@@ -103,7 +103,7 @@ Time: 0.002656291 seconds. 5 rows.
 **Step 4.** Edit spicepod.yaml to add `refresh_data_window`
 
 ```bash
-version: v1
+version: v2
 kind: Spicepod
 name: refresh-data-window-recipe
 datasets:

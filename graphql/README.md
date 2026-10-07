@@ -1,6 +1,6 @@
 # GraphQL Data Connector
 
-Works with `v1.0+`
+Works with `v2.0+`
 
 Follow these steps to get started with GraphQL as a Data Connector.
 
@@ -26,7 +26,7 @@ datasets:
   - from: graphql:https://api.github.com/graphql
     name: stargazers
     params:
-      graphql_auth_token: ${env:GH_TOKEN}
+      graphql_auth_token: ${secrets:GH_TOKEN}
       json_pointer: /data/repository/stargazers/edges
       graphql_query: |
         {

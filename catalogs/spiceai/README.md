@@ -1,6 +1,6 @@
 # Spice.ai Cloud Platform Catalog Connector
 
-Works with `v1.0+`
+Works with `v2.0+`
 
 The Spice.ai Cloud Platform Catalog Connector makes querying datasets in the Spice.ai Cloud Platform simple.
 

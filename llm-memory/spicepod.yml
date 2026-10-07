@@ -1,4 +1,4 @@
-version: v1
+version: v2
 kind: Spicepod
 name: llm-memory
 
@@ -9,7 +9,10 @@ datasets:
 
 models:
   - name: chat_model
-    from: openai:gpt-4o
+    from: openai:gpt-6-luna
     params:
+      # gpt-6-luna accepts function tools on chat completions only with reasoning_effort none.
+      reasoning_effort: none
       tools: memory
       openai_api_key: ${secrets:SPICE_OPENAI_API_KEY}
+      system_prompt: Before you answer, call load_memory to recall what you know about the user. Store new facts about the user with store_memory.
