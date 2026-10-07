@@ -12,6 +12,7 @@ datasets:
       acceleration:
           enabled: true
           engine: cayenne
+          mode: memory
 
 models:
     # Model that can invoke OpenAI's Chat Completions API and OpenAI's Responses API

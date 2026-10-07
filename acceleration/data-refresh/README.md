@@ -80,6 +80,7 @@ datasets:
     acceleration:
       enabled: true
       engine: cayenne
+      mode: memory
       refresh_mode: full
       refresh_sql: select * from taxi_trips where passenger_count = 2
 ```

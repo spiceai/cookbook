@@ -35,6 +35,7 @@ datasets:
     acceleration:
       enabled: true
       engine: cayenne
+      mode: memory
 ```
 
 **Step 3.** Run spice and check number of rows in `taxi_trips`
@@ -117,6 +118,7 @@ datasets:
     acceleration:
       enabled: true
       engine: cayenne
+      mode: memory
       refresh_data_window: 35040h # 4 years, this will evict 5 rows of data from the dataset
 ```
 

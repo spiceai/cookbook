@@ -29,6 +29,7 @@ datasets:
     acceleration:
       enabled: true
       engine: cayenne
+      mode: memory
     columns:
       - name: content
         embeddings:

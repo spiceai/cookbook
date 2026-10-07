@@ -15,6 +15,7 @@ datasets:
     acceleration:
       enabled: true
       engine: cayenne
+      mode: memory
 
 models:
   - name: visualisation_and_sql

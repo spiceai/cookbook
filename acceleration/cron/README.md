@@ -57,6 +57,7 @@ datasets:
     acceleration:
       enabled: true
       engine: cayenne
+      mode: memory
       refresh_cron: "*/30 * * * * *"
 ```
 
