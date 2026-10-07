@@ -80,7 +80,7 @@ Example output:
 2026-09-09T12:17:19.544699Z  INFO runtime::init::dataset: Dataset stargazers initializing...
 2026-09-09T12:17:19.743259Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2026-09-09T12:17:19.743556Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2026-09-09T12:17:23.168435Z  INFO runtime::init::dataset: Dataset stargazers registered (graphql:https://api.github.com/graphql), acceleration (arrow), results cache enabled. duration_ms=4
+2026-09-09T12:17:23.168435Z  INFO runtime::init::dataset: Dataset stargazers registered (graphql:https://api.github.com/graphql), acceleration (cayenne), results cache enabled. duration_ms=4
 2026-09-09T12:17:23.170112Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset stargazers
 2026-09-09T12:17:34.037609Z  INFO runtime_table::accelerated::refresh_task: Dataset stargazers received 301 records (200.33 kiB uncompressed) in 10s, 18.44 kiB/s
 2026-09-09T12:17:44.977917Z  INFO runtime_table::accelerated::refresh_task: Dataset stargazers received 801 records (535.35 kiB uncompressed) in 21s, 24.55 kiB/s

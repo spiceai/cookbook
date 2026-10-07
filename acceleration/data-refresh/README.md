@@ -79,6 +79,7 @@ datasets:
       file_format: parquet
     acceleration:
       enabled: true
+      engine: cayenne
       refresh_mode: full
       refresh_sql: select * from taxi_trips where passenger_count = 2
 ```
@@ -88,7 +89,7 @@ Save the file and note that the dataset has been updated:
 ```console
 2026-08-05T12:07:15.397249Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
 2026-08-05T12:07:17.674699Z  INFO runtime_table::accelerated::refresh_task: Loaded 405,103 rows (55.13 MiB) for dataset taxi_trips in 2s 277ms.
-2026-08-05T12:07:18.827981Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled.
+2026-08-05T12:07:18.827981Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (cayenne), results cache enabled.
 ```
 
 Swap to the Spice SQL REPL and enter:

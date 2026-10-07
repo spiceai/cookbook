@@ -12,6 +12,7 @@ datasets:
       file_format: md
     acceleration:
       enabled: true
+      engine: cayenne
     columns:
       - name: content
         embeddings:

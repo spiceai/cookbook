@@ -11,4 +11,5 @@ datasets:
       s3_auth: public
     acceleration:
       enabled: true
+      engine: cayenne
       refresh_data_window: 35040h # 4 years, this will evict 5 rows of data from the dataset

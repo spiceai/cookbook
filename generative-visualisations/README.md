@@ -81,7 +81,7 @@ INFO runtime::init::model: Loading model [visualisation_and_sql] from openai:gpt
 INFO runtime::init::model: Model [visualisation_and_sql] deployed, ready for inferencing
 INFO runtime::init::model: Loading model [summary_maker] from openai:gpt-6-luna...
 INFO runtime::init::model: Model [summary_maker] deployed, ready for inferencing
-INFO runtime::init::dataset: Dataset sales registered (s3://spiceai-demo-datasets/cleaned_sales_data.parquet), acceleration (arrow), results cache enabled. duration_ms=0
+INFO runtime::init::dataset: Dataset sales registered (s3://spiceai-demo-datasets/cleaned_sales_data.parquet), acceleration (cayenne), results cache enabled. duration_ms=0
 INFO runtime_table::accelerated::refresh_task: Loading data for dataset sales
 INFO runtime_table::accelerated::refresh_task: Loaded 2,823 rows (1010.18 kiB) for dataset sales in 687ms.
 ```

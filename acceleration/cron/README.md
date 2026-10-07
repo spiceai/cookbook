@@ -56,6 +56,7 @@ datasets:
       file_format: parquet
     acceleration:
       enabled: true
+      engine: cayenne
       refresh_cron: "*/30 * * * * *"
 ```
 
@@ -73,7 +74,7 @@ After the initial load, observe that the `taxi_trips` dataset refreshes on every
 2025-06-09T06:27:33.626530Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2025-06-09T06:27:33.627071Z  INFO runtime::init::dataset: Dataset taxi_trips initializing...
 2025-06-09T06:27:33.630576Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2025-06-09T06:27:35.928527Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled.
+2025-06-09T06:27:35.928527Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (cayenne), results cache enabled.
 2025-06-09T06:27:35.929924Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
 2025-06-09T06:27:50.915273Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 14s 985ms.
 2025-06-09T06:27:50.986350Z  INFO runtime: All components are loaded. Spice runtime is ready!

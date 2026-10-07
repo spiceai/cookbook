@@ -14,6 +14,7 @@ datasets:
       file_format: parquet
     acceleration:
       enabled: true
+      engine: cayenne
 
 models:
   - name: visualisation_and_sql
