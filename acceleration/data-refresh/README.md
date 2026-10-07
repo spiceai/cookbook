@@ -1,6 +1,6 @@
 # Advanced Data Refresh
 
-Works with `v1.0+`
+Works with `v2.0+`
 
 Data refresh for accelerated datasets can be configured and tuned for specific scenarios.
 
@@ -68,7 +68,7 @@ The `spiceai/quickstart` Spicepod does not set `refresh_check_interval`, so the 
 The `spicepod.yaml` should be as below:
 
 ```yaml
-version: v1
+version: v2
 kind: Spicepod
 name: quickstart
 datasets:
