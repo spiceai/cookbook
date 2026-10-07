@@ -1,6 +1,6 @@
 # In-Memory Arrow Data Accelerator
 
-Works with `v1.0+`
+Works with `v2.0+`
 
 Create a connector instance using sample data and accelerate it using In-Memory Arrow Data Accelerator.
 
@@ -20,7 +20,7 @@ cd arrow-acceleration-qs
 **Step 2.** Configure s3 dataset: copy and paste the YAML below to `spicepod.yaml` in the Spice app.
 
 ```yaml
-version: v1
+version: v2
 kind: Spicepod
 name: arrow-acceleration-qs
 datasets:
@@ -91,7 +91,7 @@ Time: 1.072190667 seconds. 10 rows.
 **Step 5.** Update the `spicepod.yaml` to enable In-Memory Arrow acceleration.
 
 ```yaml
-version: v1
+version: v2
 kind: Spicepod
 name: arrow-acceleration-qs
 datasets:
