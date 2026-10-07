@@ -31,4 +31,5 @@ datasets:
         }
     acceleration:
       enabled: true
+      engine: cayenne
       refresh_mode: full

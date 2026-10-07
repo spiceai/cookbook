@@ -34,7 +34,7 @@ INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 INFO runtime::init::dataset: Dataset taxi_trips initializing...
 INFO runtime::init::model: Loading model [gpt-6-luna-responses] from openai:gpt-6-luna...
 INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled. duration_ms=0
+INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (cayenne), results cache enabled. duration_ms=0
 INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
 INFO runtime::init::model: Model [gpt-6-luna-responses] deployed, ready for inferencing
 INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 7s 474ms.

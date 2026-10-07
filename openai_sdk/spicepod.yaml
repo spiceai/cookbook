@@ -10,6 +10,7 @@ datasets:
       file_format: parquet
     acceleration:
       enabled: true
+      engine: cayenne
 
 models:
   - name: openai

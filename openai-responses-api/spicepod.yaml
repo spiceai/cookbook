@@ -11,6 +11,7 @@ datasets:
           file_format: parquet
       acceleration:
           enabled: true
+          engine: cayenne
 
 models:
     # Model that can invoke OpenAI's Chat Completions API and OpenAI's Responses API

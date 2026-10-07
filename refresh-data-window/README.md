@@ -34,6 +34,7 @@ datasets:
       s3_auth: public
     acceleration:
       enabled: true
+      engine: cayenne
 ```
 
 **Step 3.** Run spice and check number of rows in `taxi_trips`
@@ -44,7 +45,7 @@ datasets:
 2026-09-13T12:09:52.088606Z  INFO runtime::init::dataset: Dataset taxi_trips initializing...
 2026-09-13T12:09:52.288168Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2026-09-13T12:09:52.288514Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2026-09-13T12:09:53.154126Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled. duration_ms=0
+2026-09-13T12:09:53.154126Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (cayenne), results cache enabled. duration_ms=0
 2026-09-13T12:09:53.155485Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
 2026-09-13T12:09:57.995471Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 4s 839ms.
 2026-09-13T12:09:58.030404Z  INFO runtime: All components are loaded. Spice runtime is ready!
@@ -115,6 +116,7 @@ datasets:
       s3_auth: public
     acceleration:
       enabled: true
+      engine: cayenne
       refresh_data_window: 35040h # 4 years, this will evict 5 rows of data from the dataset
 ```
 
@@ -124,7 +126,7 @@ Check if dataset has been reloaded
 2026-09-13T12:10:02.904824Z  INFO runtime::init::dataset: Accelerated Dataset taxi_trips updating...
 2026-09-13T12:10:03.991227Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
 2026-09-13T12:10:12.436828Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,619 rows (399.38 MiB) for dataset taxi_trips in 8s 445ms.
-2026-09-13T12:10:13.551412Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled. duration_ms=0
+2026-09-13T12:10:13.551412Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (cayenne), results cache enabled. duration_ms=0
 
 ```
 
