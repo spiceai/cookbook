@@ -1,4 +1,4 @@
-version: v1
+version: v2
 kind: Spicepod
 name: openai_responses_api
 
@@ -14,8 +14,8 @@ datasets:
 
 models:
     # Model that can invoke OpenAI's Chat Completions API and OpenAI's Responses API
-    - from: openai:gpt-4o
-      name: gpt-4o-responses
+    - from: openai:gpt-6-luna
+      name: gpt-6-luna-responses
       params:
           openai_api_key: ${secrets:OPENAI_API_KEY}
           responses_api: enabled

@@ -1,4 +1,4 @@
-version: v1
+version: v2
 kind: Spicepod
 name: text-to-sql
 
@@ -12,7 +12,7 @@ datasets:
       enabled: true
 
 models:
-  - from: openai:gpt-4o-mini
+  - from: openai:gpt-6-luna
     name: nsql
     params:
       openai_api_key: ${ secrets:SPICE_OPENAI_API_KEY }

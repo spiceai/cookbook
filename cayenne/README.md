@@ -1,6 +1,6 @@
 # Cayenne Data Accelerator
 
-Works with `v1.9+`
+Works with `v2.0+`
 
 This recipe will walkthrough how to accelerate a local copy of the taxi trips dataset stored in S3 using Cayenne as the data accelerator engine.
 
@@ -20,7 +20,7 @@ cd cayenne-acceleration-qs
 **Step 2.** Configure s3 dataset: copy and paste the YAML below to `spicepod.yaml` in the Spice app.
 
 ```yaml
-version: v1
+version: v2
 kind: Spicepod
 name: cayenne-acceleration-qs
 datasets:
@@ -86,7 +86,7 @@ Time: 1.256426375 seconds. 10 rows.
 **Step 5.** Update the `spicepod.yaml` to enable Cayenne acceleration.
 
 ```yaml
-version: v1
+version: v2
 kind: Spicepod
 name: cayenne-acceleration-qs
 datasets:

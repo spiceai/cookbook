@@ -1,4 +1,4 @@
-version: v1
+version: v2
 kind: Spicepod
 name: graphql
 
@@ -6,7 +6,7 @@ datasets:
   - from: graphql:https://api.github.com/graphql
     name: stargazers
     params:
-      graphql_auth_token: ${env:GH_TOKEN}
+      graphql_auth_token: ${secrets:GH_TOKEN}
       json_pointer: /data/repository/stargazers/edges
       graphql_query: |
         {

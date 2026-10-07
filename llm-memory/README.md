@@ -1,6 +1,6 @@
 # LLM Memory: Persistent Memory for Language Models with Spice
 
-Works with `v1.0+`
+Works with `v2.0+`
 
 Spice provides persistent memory capabilities for language models, enabling them to retain key information from conversations across sessions. This feature supports building more context-aware and intelligent applications by maintaining memory continuity.
 
@@ -30,7 +30,7 @@ spice run
 ```shell
  INFO Spice.ai runtime starting...
 2025-01-27T19:29:50.856594Z  INFO runtime::init::dataset: Dataset llm_memory initializing...
-2025-01-27T19:29:50.857758Z  INFO runtime::init::model: Loading model [chat_model] from openai:gpt-4o...
+2025-01-27T19:29:50.857758Z  INFO runtime::init::model: Loading model [chat_model] from openai:gpt-6-luna...
 2025-01-27T19:29:50.858938Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2025-01-27T19:29:50.859210Z  INFO runtime::init::dataset: Dataset llm_memory registered (memory:store).
 2025-01-27T19:29:50.865516Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090

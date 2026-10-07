@@ -1,6 +1,6 @@
 # DuckDB Data Accelerator
 
-Works with `v1.0+`
+Works with `v2.0+`
 
 This recipe will walkthrough how to accelerate a local copy of the taxi trips dataset stored in S3 using DuckDB as the data accelerator engine.
 
@@ -22,7 +22,7 @@ cd duckdb-acceleration-qs
 **Step 2.** Configure s3 dataset: copy and paste the YAML below to `spicepod.yaml` in the Spice app.
 
 ```yaml
-version: v1
+version: v2
 kind: Spicepod
 name: duckdb-acceleration-qs
 datasets:
@@ -86,7 +86,7 @@ Time: 4.684086261 seconds. 10 rows.
 **Step 5.** Update the `spicepod.yaml` to enable DuckDB acceleration.
 
 ```yaml
-version: v1
+version: v2
 kind: Spicepod
 name: duckdb-acceleration-qs
 datasets:

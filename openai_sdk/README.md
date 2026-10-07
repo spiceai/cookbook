@@ -1,6 +1,6 @@
 # Spice with the OpenAI SDK
 
-Works with `v1.0+`
+Works with `v2.0+`
 
 One of Spice's best features is to act in place of the OpenAI API. Even better, you don't even have to be running OpenAI behind Spice! You can run OpenAI, Anthropic or HuggingFace models over your data and use existing tools that are compatible with the OpenAI API.
 
@@ -31,7 +31,7 @@ Output:
 2025-01-13T21:27:41.702275Z  INFO runtime::init::dataset: Dataset taxi_trips initializing...
 2025-01-13T21:27:41.704347Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2025-01-13T21:27:41.704514Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-01-13T21:27:41.703575Z  INFO runtime::init::model: Loading model [openai] from openai:gpt-4o...
+2025-01-13T21:27:41.703575Z  INFO runtime::init::model: Loading model [openai] from openai:gpt-6-luna...
 2025-01-13T21:27:41.902271Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-01-13T21:27:42.242310Z  INFO runtime::init::model: Model [openai] deployed, ready for inferencing
 2025-01-13T21:27:42.576976Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow, 10s refresh), results cache enabled.

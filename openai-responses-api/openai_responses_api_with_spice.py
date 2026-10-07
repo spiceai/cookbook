@@ -5,7 +5,7 @@ def main():
     client = OpenAI(base_url="http://localhost:8090/v1", api_key="anything")
 
     response = client.responses.create(
-        model="gpt-4o-responses",
+        model="gpt-6-luna-responses",
         input="What datasets do you have access to?",
     )
 

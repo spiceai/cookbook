@@ -1,6 +1,6 @@
 # OpenAI Models
 
-Works with `v1.0+`
+Works with `v2.0+`
 
 This recipe demonstrates how to use OpenAI models in Spice.ai.
 
@@ -46,9 +46,11 @@ embeddings:
       openai_api_key: ${secrets:OPENAI_API_KEY}
 
 models:
-  - from: openai:gpt-4o
+  - from: openai:gpt-6-luna
     name: chat-model
     params:
+      # gpt-6-luna accepts function tools on chat completions only with reasoning_effort none.
+      reasoning_effort: none
       openai_api_key: ${secrets:OPENAI_API_KEY}
       tools: auto
       system_prompt: |
@@ -70,7 +72,7 @@ Result:
 2025-01-20T16:19:45.544466Z  INFO runtime::init::embedding: Embedding Model embeddings-model ready
 2025-01-20T16:19:45.544649Z  INFO runtime::init::dataset: Dataset spiceai.docs initializing...
 2025-01-20T16:19:45.544669Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
-2025-01-20T16:19:45.544761Z  INFO runtime::init::model: Loading model [chat-model] from openai:gpt-4o...
+2025-01-20T16:19:45.544761Z  INFO runtime::init::model: Loading model [chat-model] from openai:gpt-6-luna...
 2025-01-20T16:19:46.164600Z  INFO runtime::init::dataset: Dataset spiceai.docs registered (github:github.com/spiceai/spiceai/files/trunk), acceleration (arrow), results cache enabled.
 2025-01-20T16:19:46.165929Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset spiceai.docs
 2025-01-20T16:19:46.534044Z  INFO runtime::init::model: Model [chat-model] deployed, ready for inferencing
