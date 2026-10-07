@@ -10,5 +10,4 @@ datasets:
       file_format: parquet
     acceleration:
       enabled: true
-      refresh_check_interval: 30s
       refresh_mode: full

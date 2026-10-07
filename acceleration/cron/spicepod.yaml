@@ -11,4 +11,5 @@ datasets:
     acceleration:
       enabled: true
       engine: cayenne
-      refresh_cron: "*/30 * * * * *"
+      # Uncomment to reload taxi_trips every 30 seconds, as in the README.
+      # refresh_cron: "*/30 * * * * *"
