@@ -1,6 +1,6 @@
 # Cron-based Dataset Refresh
 
-Works with `v1.4.0+`
+Works with `v2.0+`
 
 Spice supports specifying cron schedules for accelerated datasets, to refresh datasets on defined schedules.
 
@@ -44,7 +44,7 @@ In the `acceleration` section, add a `refresh_cron` parameter with a value of `*
 The `spicepod.yaml` should be as below:
 
 ```yaml
-version: v1
+version: v2
 kind: Spicepod
 name: quickstart
 
