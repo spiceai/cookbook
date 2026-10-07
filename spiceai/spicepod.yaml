@@ -1,0 +1,11 @@
+version: v2
+kind: Spicepod
+name: spiceai
+
+datasets:
+  - from: spice.ai/spiceai/quickstart/datasets/taxi_trips
+    name: taxi_trips
+    description: Taxi trips in New York City
+    params:
+      spiceai_region: us-east-1
+      spiceai_api_key: ${secrets:SPICE_SPICEAI_API_KEY}
