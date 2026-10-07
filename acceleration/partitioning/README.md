@@ -1,6 +1,6 @@
 # Dataset Partitioning
 
-Works with `v1.11.0+`
+Works with `v2.0+`
 
 This recipe demonstrates how to partition accelerated datasets to improve query performance by enabling partition pruning for queries. Partitioning groups rows into separate files based on an expression, allowing Spice to skip reading unnecessary partitions during queries.
 
@@ -20,7 +20,7 @@ cd partitioning-qs
 **Step 2.** Configure the taxi trips dataset: copy and paste the YAML below to `spicepod.yaml` in the Spice app.
 
 ```yaml
-version: v1
+version: v2
 kind: Spicepod
 name: partitioning-qs
 datasets:
@@ -104,7 +104,7 @@ Notice that without partitioning, Spice must scan the entire dataset for this qu
 Add the `partition_by` parameter to partition the dataset into 50 buckets based on the `PULocationID` column:
 
 ```yaml
-version: v1
+version: v2
 kind: Spicepod
 name: partitioning-qs
 datasets:
