@@ -1,0 +1,29 @@
+version: v2
+kind: Spicepod
+name: huggingface
+
+datasets:
+  # A folder of Parquet files. No parameters: the connector infers the format from the
+  # files in the folder. `_location` adds a column with each row's source file and commit.
+  - from: hf://datasets/stanfordnlp/imdb/plain_text/
+    name: imdb
+    description: IMDB movie reviews labeled by sentiment
+    metadata:
+      _location: enabled
+
+  # SciFact, from the MTEB retrieval benchmark: claims (JSONL), paper abstracts (JSONL),
+  # and the relevance judgments that link them (TSV).
+  - from: hf://datasets/mteb/scifact/queries.jsonl
+    name: scifact_queries
+    description: SciFact scientific claims
+  - from: hf://datasets/mteb/scifact/corpus.jsonl
+    name: scifact_corpus
+    description: SciFact paper abstracts
+  - from: hf://datasets/mteb/scifact/qrels/test.tsv
+    name: scifact_qrels
+    description: SciFact test-split relevance judgments (claim id, abstract id, score)
+
+  # One file of GSM8K, pinned to a commit so that its contents never change.
+  - from: hf://datasets/openai/gsm8k@740312add88f781978c0658806c59bc2815b9866/main/test-00000-of-00001.parquet
+    name: gsm8k
+    description: GSM8K grade-school math word problems, test split
