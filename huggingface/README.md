@@ -96,7 +96,7 @@ spice run
 2026-10-08T22:21:52.474036Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
-The elided lines report the CPU, memory, and cache budgets the runtime derives for this host, so their values differ from machine to machine.
+The elided lines report settings the runtime derives for this host, such as its CPU budget and cache sizes, so their values differ from machine to machine.
 
 Registering a dataset lists its files and infers its schema. These datasets are federated: no local copy is made, and each query reads the files it needs from the Hub.
 
@@ -235,7 +235,7 @@ The revision and the path together select exactly the files a dataset reads:
 
 ## Step 6. Accelerate a dataset with Cayenne
 
-A federated query that needs the review text downloads all 80 MiB of the IMDB folder:
+A federated query that needs the review text downloads all 80 MiB of the IMDB folder, so its time depends on your connection:
 
 ```sql
 SELECT label, round(avg(character_length(text))) AS avg_chars FROM imdb GROUP BY label ORDER BY label;
@@ -254,7 +254,7 @@ SELECT label, round(avg(character_length(text))) AS avg_chars FROM imdb GROUP BY
 Time: 7.895663417 seconds. 3 rows.
 ```
 
-To keep a local copy of the dataset, add an `acceleration` block to the `imdb` dataset in `spicepod.yaml`:
+To load the dataset into Spice instead, add an `acceleration` block to the `imdb` dataset in `spicepod.yaml`:
 
 ```yaml
   - from: hf://datasets/stanfordnlp/imdb/plain_text/
@@ -267,18 +267,21 @@ To keep a local copy of the dataset, add an `acceleration` block to the `imdb` d
       engine: cayenne
 ```
 
-Save the file. `spice run` reloads the Spicepod and loads the dataset into [Cayenne](https://spiceai.org/docs/components/data-accelerators/cayenne):
+Save the file. `spice run` reloads the Spicepod and loads the dataset into [Cayenne](https://spiceai.org/docs/components/data-accelerators/cayenne). The load time depends on your connection:
 
 ```console
 2026-10-08T22:24:35.374866Z  INFO runtime::init::dataset: Accelerated Dataset imdb updating...
 ...
 2026-10-08T22:24:36.275313Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset imdb
-2026-10-08T22:24:46.752861Z  INFO runtime_table::accelerated::refresh_task: Dataset imdb received 90,000 records (124.64 MiB uncompressed) in 10s, 12.32 MiB/s
 2026-10-08T22:24:47.913343Z  INFO runtime_table::accelerated::refresh_task: Loaded 100,000 rows (138.68 MiB) for dataset imdb in 11s 638ms.
 2026-10-08T22:24:48.369388Z  INFO runtime::init::dataset: Dataset imdb registered (hf://datasets/stanfordnlp/imdb/plain_text/), acceleration (cayenne), results cache enabled. duration_ms=0
 ```
 
-Run the same query again. It now reads the local copy:
+On this first reload, `spice run` may also log `` WARN runtime::init::pods_watcher: `runtime.task_history` changed, but it is applied when spiced starts ... Restart spiced to apply it. `` The edit doesn't change `runtime.task_history`, so no restart is needed. See [spiceai/spiceai#14001](https://github.com/spiceai/spiceai/issues/14001).
+
+Cayenne holds this copy in memory. To store it on disk instead, in `.spice/data/`, add `mode: file` under `acceleration`.
+
+Run the same query again. It now reads the accelerated copy:
 
 ```sql
 SELECT label, round(avg(character_length(text))) AS avg_chars FROM imdb GROUP BY label ORDER BY label;
@@ -297,7 +300,7 @@ SELECT label, round(avg(character_length(text))) AS avg_chars FROM imdb GROUP BY
 Time: 0.003760083 seconds. 3 rows.
 ```
 
-With the reviews local, full-text exploration is interactive. For example, how do the reviews that mention a "masterpiece" split by label?
+With the reviews accelerated, full-text exploration is interactive. For example, how do the reviews that mention a "masterpiece" split by label?
 
 ```sql
 SELECT label, count(*) AS reviews FROM imdb WHERE text ILIKE '%masterpiece%' GROUP BY label ORDER BY label;
@@ -316,7 +319,7 @@ SELECT label, count(*) AS reviews FROM imdb WHERE text ILIKE '%masterpiece%' GRO
 Time: 0.005317708 seconds. 3 rows.
 ```
 
-An accelerated dataset is read from the Hub once per refresh, not once per query. A refresh reads the latest commit of the branch in `from`, so run `spice refresh imdb` to pick up changes to the dataset, or see [Data Refresh](https://spiceai.org/docs/features/data-acceleration/data-refresh) to refresh on a schedule.
+An accelerated dataset is read from the Hub once per refresh, not once per query, and each refresh reads the latest commit of the branch in `from`. To pick up changes to the dataset, run `spice refresh imdb` in another terminal; the runtime logs `Loaded 100,000 rows ...` when the refresh finishes. To refresh on a schedule, see [Data Refresh](https://spiceai.org/docs/features/data-acceleration/data-refresh).
 
 ## Private and gated datasets
 
@@ -324,13 +327,13 @@ Private datasets, and gated datasets whose access conditions you must accept fir
 
 1. For a gated dataset, open the dataset's page on the Hub and accept its access conditions with your account.
 
-2. Add the token to `.env.local` in this directory, which the cookbook's `.gitignore` keeps out of Git. Use an editor rather than `echo`, so the token stays out of your shell history:
+2. Add the token to `.env.local` in this directory, which the cookbook's `.gitignore` keeps out of Git. Open the file in an editor rather than using `echo`, so the token stays out of your shell history, and add this line:
 
-   ```bash
+   ```text
    HF_TOKEN=<your-hugging-face-token>
    ```
 
-3. Add the dataset to `spicepod.yaml` with the `hf_token` parameter:
+3. Add the dataset to `spicepod.yaml`:
 
    ```yaml
      - from: hf://datasets/<owner>/<dataset>/
@@ -339,16 +342,18 @@ Private datasets, and gated datasets whose access conditions you must accept fir
          hf_token: ${secrets:HF_TOKEN}
    ```
 
-When a dataset doesn't set `hf_token`, the connector loads it from the `hf_token` secret, which the default `env` secret store reads from `HF_TOKEN` in `.env.local` or in the environment. A token therefore applies to every Hugging Face dataset in the Spicepod, and authenticated requests also get higher Hub rate limits.
+   Setting `hf_token` is optional. When a dataset doesn't set it, the connector loads the token from the `hf_token` secret, which the default `env` secret store reads from `HF_TOKEN` in `.env.local` or in the environment. A token in `.env.local` therefore applies to every Hugging Face dataset in the Spicepod. Authenticated requests also get higher Hub rate limits.
 
-Without access, the dataset fails to load and `spice datasets` reports why:
+4. Stop `spice run` with `Ctrl+C` and start it again, so that it loads the token from `.env.local`.
+
+Without access, a dataset fails to load, and `spice datasets` reports why. For example, this is the gated [meta-llama/Llama-3.1-8B-evals](https://huggingface.co/datasets/meta-llama/Llama-3.1-8B-evals) dataset, read without a token:
 
 ```console
  NAME           FROM                                                                                      REPLICATION  ACCELERATION  STATUS  ERROR
  gated_metrics  hf://datasets/meta-llama/Llama-3.1-8B-evals@~parquet/Llama-3.1-8B-evals__metrics/latest/  false        false         Error   Insufficient permissions to access the dataset gated_metrics (hf). Hugging Face dataset 'meta-llama/Llama-3.1-8B-evals' is gated and no `hf_token` is set: accept its access conditions at https://huggingface.co/datasets/meta-llama/Llama-3.1-8B-evals with the account `hf_token` belongs to. See: https://github.com/spiceai/spiceai/blob/trunk/docs/features/huggingface-connector.md
 ```
 
-With a token whose account hasn't accepted the conditions, the message reads `... is gated: accept its access conditions at ...` instead.
+When `hf_token` is set but can't read the dataset, the message reads `... is gated: accept its access conditions at ...` instead.
 
 ## Troubleshooting
 
@@ -356,13 +361,13 @@ When a dataset doesn't load, run `spice datasets` in another terminal: its `ERRO
 
 | Error                                                                                  | Fix                                                                                                                                                         |
 | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `'qrels' in dataset 'mteb/scifact' holds files of more than one format (.jsonl, .tsv)` | The folder in `from` holds more than one data format. Narrow `from` to a file or a glob, such as `hf://datasets/mteb/scifact/qrels/*.tsv`, or set `file_format`. |
+| `'qrels' in dataset 'mteb/scifact' holds files of more than one format (.jsonl, .tsv)` | The folder in `from` holds more than one data format. Narrow `from` to a file or a glob, such as `hf://datasets/mteb/scifact/qrels/*.tsv`, or set `file_format` (for example `file_format: tsv`) under the dataset's `params`. |
 | `Insufficient permissions ... is gated and no hf_token is set`                         | Set a token, as in [Private and gated datasets](#private-and-gated-datasets).                                                                              |
-| `Insufficient permissions ... is gated: accept its access conditions`                  | Accept the dataset's access conditions on the Hub with the account the token belongs to.                                                                   |
+| `Insufficient permissions ... is gated: accept its access conditions`                  | Check that the token is valid, and accept the dataset's access conditions on the Hub with the account the token belongs to.                                  |
 
 ## Clean up
 
-Stop `spice run` with `Ctrl+C`. The accelerated copy of IMDB is in the `.spice/` directory, which you can delete. To restore the original `spicepod.yaml`, run `git checkout -- spicepod.yaml`.
+Stop `spice run` with `Ctrl+C`. The accelerated copy of IMDB is in memory, so stopping Spice removes it. If you added `mode: file`, delete the `.spice/` directory to remove the copy on disk. To restore the original `spicepod.yaml`, run `git checkout -- spicepod.yaml`.
 
 ## Learn more
 
