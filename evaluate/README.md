@@ -17,7 +17,7 @@ Jev is a System One evaluation model with calibrated probabilities. Any configur
 ## Prerequisites
 
 - Spice v2.4.0-rc.1 or later with model support installed ([Getting Started](https://spiceai.org/docs/getting-started)).
-- A TypeSafe API key.
+- A TypeSafe API key and an OpenAI API key.
 - `curl` installed.
 
 ## How to run
@@ -35,13 +35,14 @@ Copy the example environment file:
 cp .env.example .env
 ```
 
-Set `TYPESAFE_API_KEY` in `.env` to your TypeSafe API key:
+Set both API keys in `.env`:
 
 ```dotenv
 TYPESAFE_API_KEY=your_typesafe_api_key
+OPENAI_API_KEY=your_openai_api_key
 ```
 
-The included `spicepod.yaml` defines the model:
+The included `spicepod.yaml` defines both models:
 
 ```yaml
 version: v1
@@ -53,6 +54,11 @@ models:
     name: jev
     params:
       typesafe_api_key: ${secrets:TYPESAFE_API_KEY}
+
+  - from: openai:gpt-6-luna
+    name: gpt-6-luna
+    params:
+      openai_api_key: ${secrets:OPENAI_API_KEY}
 ```
 
 Start the Spice runtime:
@@ -61,7 +67,7 @@ Start the Spice runtime:
 spice run
 ```
 
-Keep this terminal open. Once the model is ready, open a second terminal to send the request below.
+Keep this terminal open. Once both models are ready, open a second terminal to send the request below.
 
 ## Evaluate a support message with Jev
 
@@ -133,23 +139,7 @@ The response may also include `usage` with `input_tokens` and `output_tokens` wh
 
 ## Evaluate with GPT-6 Luna
 
-Any configured chat model can use `/v1/evaluate` without additional evaluation configuration. To try the same questions with OpenAI GPT-6 Luna, replace the `models` section in `spicepod.yaml` with:
-
-```yaml
-models:
-  - from: openai:gpt-6-luna
-    name: gpt-6-luna
-    params:
-      openai_api_key: ${secrets:OPENAI_API_KEY}
-```
-
-Set `OPENAI_API_KEY` in `.env` to your OpenAI API key:
-
-```dotenv
-OPENAI_API_KEY=your_openai_api_key
-```
-
-Stop the runtime with `Ctrl+C` and start it again with `spice run`. Once the model is ready, send the same questions to GPT-6 Luna:
+Any configured chat model can use `/v1/evaluate` without additional evaluation configuration. GPT-6 Luna is already loaded by the same Spicepod. Send the same questions with `"model": "gpt-6-luna"`:
 
 ```console
 curl --fail-with-body -sS http://localhost:8090/v1/evaluate \

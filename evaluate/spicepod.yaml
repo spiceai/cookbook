@@ -7,3 +7,8 @@ models:
     name: jev
     params:
       typesafe_api_key: ${secrets:TYPESAFE_API_KEY}
+
+  - from: openai:gpt-6-luna
+    name: gpt-6-luna
+    params:
+      openai_api_key: ${secrets:OPENAI_API_KEY}
