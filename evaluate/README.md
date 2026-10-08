@@ -2,7 +2,7 @@
 
 Works with `v2.4.0-rc.1+`
 
-This recipe uses `POST /v1/evaluate` to evaluate a support message with [TypeSafe Jev](https://typesafe.ai). One request checks whether the message is urgent, selects a support team, and scores its tone against a rubric.
+This recipe uses `POST /v1/evaluate` to evaluate a support message with an OpenAI chat model. Any chat model configured in a Spicepod can use the same endpoint without additional evaluation configuration. One request checks whether the message is urgent, selects a support team, and scores its tone against a rubric.
 
 The endpoint accepts a `state` string, object, or array and a map of questions. Each question has one of three types:
 
@@ -12,12 +12,12 @@ The endpoint accepts a `state` string, object, or array and a map of questions. 
 | `choice` | Select from named options. | The selected option, each option's probability, and confidence. |
 | `score` | Evaluate against an ordered rubric of 2–10 levels. | A probability-weighted score, the rubric legend, each level's probability, and confidence. |
 
-Jev is a System One evaluation model with calibrated probabilities. Any configured chat model can also answer evaluation requests; its probabilities are estimates. See [Using a chat model](#using-a-chat-model) for an alternative configuration.
+Chat-model probabilities are the model's own estimates and are not calibrated. You can also use [TypeSafe Jev](https://typesafe.ai), a System One evaluation model with calibrated probabilities; see [Using TypeSafe Jev](#using-typesafe-jev).
 
 ## Prerequisites
 
 - Spice v2.4.0-rc.1 or later with model support installed ([Getting Started](https://spiceai.org/docs/getting-started)).
-- A TypeSafe API key.
+- An OpenAI API key.
 - `curl` installed.
 
 ## How to run
@@ -35,10 +35,10 @@ Copy the example environment file:
 cp .env.example .env
 ```
 
-Set `TYPESAFE_API_KEY` in `.env` to your TypeSafe API key:
+Set `OPENAI_API_KEY` in `.env` to your OpenAI API key:
 
 ```dotenv
-TYPESAFE_API_KEY=your_typesafe_api_key
+OPENAI_API_KEY=your_openai_api_key
 ```
 
 The included `spicepod.yaml` defines the model:
@@ -49,10 +49,10 @@ kind: Spicepod
 name: evaluate
 
 models:
-  - from: typesafe:jev
-    name: jev
+  - from: openai:gpt-4o-mini
+    name: judge
     params:
-      typesafe_api_key: ${secrets:TYPESAFE_API_KEY}
+      openai_api_key: ${secrets:OPENAI_API_KEY}
 ```
 
 Start the Spice runtime:
@@ -71,7 +71,7 @@ The request's `model` is the name defined in the Spicepod. The question names (`
 curl --fail-with-body -sS http://localhost:8090/v1/evaluate \
   -H 'Content-Type: application/json' \
   -d '{
-    "model": "jev",
+    "model": "judge",
     "state": "Help! My payouts have been failing for 3 days.",
     "questions": {
       "is_urgent": {
@@ -95,11 +95,11 @@ curl --fail-with-body -sS http://localhost:8090/v1/evaluate \
   }'
 ```
 
-A successful request returns HTTP 200 with an `answers` entry for each question. The following response is illustrative; model versions and numerical values vary:
+A successful request returns HTTP 200 with an `answers` entry for each question. The following response is illustrative; numerical values vary:
 
 ```json
 {
-  "model": "jev-1.13.0",
+  "model": "judge",
   "answers": {
     "is_urgent": {
       "type": "noul",
@@ -131,25 +131,27 @@ In this example:
 
 The response may also include `usage` with `input_tokens` and `output_tokens` when the provider reports token counts.
 
-## Using a chat model
+## Using TypeSafe Jev
 
-To use an OpenAI chat model instead of Jev, replace the `models` section in `spicepod.yaml` with:
+To use TypeSafe Jev instead of a chat model, replace the `models` section in `spicepod.yaml` with:
 
 ```yaml
 models:
-  - from: openai:gpt-4o-mini
-    name: judge
+  - from: typesafe:jev
+    name: jev
     params:
-      openai_api_key: ${secrets:OPENAI_API_KEY}
+      typesafe_api_key: ${secrets:TYPESAFE_API_KEY}
 ```
 
-Set `OPENAI_API_KEY` in `.env` to your OpenAI API key:
+Set `TYPESAFE_API_KEY` in `.env` to your TypeSafe API key:
 
 ```dotenv
-OPENAI_API_KEY=your_openai_api_key
+TYPESAFE_API_KEY=your_typesafe_api_key
 ```
 
-Stop the runtime with `Ctrl+C` and start it again with `spice run`. Send the same evaluation request with `"model": "judge"`. The answer structure is the same, but a chat model's probabilities are its own estimates and are not calibrated.
+Stop the runtime with `Ctrl+C` and start it again with `spice run`. Send the same evaluation request with `"model": "jev"`. The answer structure is the same, with calibrated probabilities and a provider-reported model version in the response.
+
+Jev uses `/v1/evaluate` and does not support `/v1/chat/completions` or `spice chat`.
 
 ## Troubleshooting
 
@@ -160,8 +162,6 @@ Stop the runtime with `Ctrl+C` and start it again with `spice run`. Send the sam
 | HTTP 401 or 403 | Check the API key in `.env` and your provider account's access to the model. Restart Spice after updating the key. |
 | HTTP 429 | Wait before retrying and check the provider's request limits. |
 | HTTP 500 with a chat model | Read the response body and runtime logs. A chat model that repeatedly returns malformed evaluation answers causes the request to fail. |
-
-Jev uses `/v1/evaluate` and does not support `/v1/chat/completions` or `spice chat`.
 
 ## Learn More
 

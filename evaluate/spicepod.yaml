@@ -3,7 +3,7 @@ kind: Spicepod
 name: evaluate
 
 models:
-  - from: typesafe:jev
-    name: jev
+  - from: openai:gpt-4o-mini
+    name: judge
     params:
-      typesafe_api_key: ${secrets:TYPESAFE_API_KEY}
+      openai_api_key: ${secrets:OPENAI_API_KEY}
