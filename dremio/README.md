@@ -83,7 +83,7 @@ spice run
 2026-08-21T16:37:22.944424Z  INFO runtime::init::dataset: Dataset taxi_trips initializing...
 2026-08-21T16:37:23.143965Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2026-08-21T16:37:23.144245Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2026-08-21T16:37:23.289412Z  INFO runtime::init::dataset: Dataset taxi_trips registered (dremio:datasets.taxi_trips), acceleration (arrow), results cache enabled. duration_ms=0
+2026-08-21T16:37:23.289412Z  INFO runtime::init::dataset: Dataset taxi_trips registered (dremio:datasets.taxi_trips), acceleration (cayenne), results cache enabled. duration_ms=0
 2026-08-21T16:37:23.290602Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
 2026-08-21T16:37:23.803270Z  INFO runtime_table::accelerated::refresh_task: Loaded 100,000 rows (27.91 MiB) for dataset taxi_trips in 512ms.
 2026-08-21T16:37:23.898677Z  INFO runtime: All components are loaded. Spice runtime is ready!

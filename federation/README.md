@@ -70,7 +70,7 @@ datasets:
       file_format: parquet
       s3_auth: public
 
-  # The same S3 dataset, accelerated locally in memory with Arrow.
+  # The same S3 dataset, accelerated locally in memory.
   - from: s3://spiceai-demo-datasets/taxi_trips/2024/
     name: taxi_trips_accelerated
     description: NYC yellow taxi trips from January 2024, stored in S3, locally accelerated
@@ -92,7 +92,7 @@ datasets:
       pg_user: postgres
       pg_sslmode: disable
 
-  # The same PostgreSQL table, accelerated locally in memory with Arrow.
+  # The same PostgreSQL table, accelerated locally in memory.
   - from: postgres:taxi_zones
     name: taxi_zones_accelerated
     description: NYC taxi zones, stored in PostgreSQL, locally accelerated
@@ -121,13 +121,13 @@ The accelerated datasets load a local copy of their source on startup. `taxi_tri
 2026-10-01T16:44:20.498495Z  INFO runtime::init::dataset: Dataset taxi_zones initializing...
 2026-10-01T16:44:20.498504Z  INFO runtime::init::dataset: Dataset taxi_trips_accelerated initializing...
 2026-10-01T16:44:20.539682Z  INFO runtime::init::dataset: Dataset taxi_zones registered (postgres:taxi_zones), results cache enabled. duration_ms=0
-2026-10-01T16:44:20.540439Z  INFO runtime::init::dataset: Dataset taxi_zones_accelerated registered (postgres:taxi_zones), acceleration (arrow), results cache enabled. duration_ms=0
+2026-10-01T16:44:20.540439Z  INFO runtime::init::dataset: Dataset taxi_zones_accelerated registered (postgres:taxi_zones), acceleration (cayenne), results cache enabled. duration_ms=0
 2026-10-01T16:44:20.541813Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_zones_accelerated
 2026-10-01T16:44:20.544007Z  INFO runtime_table::accelerated::refresh_task: Loaded 265 rows (30.46 kiB) for dataset taxi_zones_accelerated in 2ms.
 2026-10-01T16:44:20.698053Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2026-10-01T16:44:20.698339Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2026-10-01T16:44:21.527428Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), results cache enabled. duration_ms=0
-2026-10-01T16:44:21.535643Z  INFO runtime::init::dataset: Dataset taxi_trips_accelerated registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow), results cache enabled. duration_ms=0
+2026-10-01T16:44:21.535643Z  INFO runtime::init::dataset: Dataset taxi_trips_accelerated registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (cayenne), results cache enabled. duration_ms=0
 2026-10-01T16:44:21.536846Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips_accelerated
 2026-10-01T16:44:31.487572Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips_accelerated in 9s 950ms.
 2026-10-01T16:44:31.546775Z  INFO runtime: All components are loaded. Spice runtime is ready!
@@ -227,7 +227,7 @@ ORDER BY trips DESC
 LIMIT 10;
 ```
 
-The same rows are returned, served from the in-memory Arrow copies without contacting S3 or PostgreSQL. The query takes milliseconds instead of seconds:
+The same rows are returned, served from the in-memory accelerated copies without contacting S3 or PostgreSQL. The query takes milliseconds instead of seconds:
 
 ```output
 Time: 0.0255035 seconds. 10 rows.

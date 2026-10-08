@@ -50,15 +50,15 @@ spice run
 2025-07-16T15:17:14.162218Z  INFO runtime::init::dataset: Dataset spiceai.stargazers initializing...
 2025-07-16T15:17:14.162515Z  INFO runtime::init::dataset: Dataset spiceai.files initializing...
 2025-07-16T15:17:14.166935Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2025-07-16T15:17:15.311687Z  INFO runtime::init::dataset: Dataset spiceai.commits registered (github:github.com/spiceai/spiceai/commits), acceleration (arrow), results cache enabled.
+2025-07-16T15:17:15.311687Z  INFO runtime::init::dataset: Dataset spiceai.commits registered (github:github.com/spiceai/spiceai/commits), acceleration (cayenne), results cache enabled.
 2025-07-16T15:17:15.313347Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset spiceai.commits
-2025-07-16T15:17:15.507378Z  INFO runtime::init::dataset: Dataset spiceai.stargazers registered (github:github.com/spiceai/spiceai/stargazers), acceleration (arrow), results cache enabled.
+2025-07-16T15:17:15.507378Z  INFO runtime::init::dataset: Dataset spiceai.stargazers registered (github:github.com/spiceai/spiceai/stargazers), acceleration (cayenne), results cache enabled.
 2025-07-16T15:17:15.508684Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset spiceai.stargazers
-2025-07-16T15:17:16.406635Z  INFO runtime::init::dataset: Dataset spiceai.files registered (github:github.com/spiceai/spiceai/files/trunk), acceleration (arrow), results cache enabled.
+2025-07-16T15:17:16.406635Z  INFO runtime::init::dataset: Dataset spiceai.files registered (github:github.com/spiceai/spiceai/files/trunk), acceleration (cayenne), results cache enabled.
 2025-07-16T15:17:16.407961Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset spiceai.files
-2025-07-16T15:17:16.772995Z  INFO runtime::init::dataset: Dataset spiceai.issues registered (github:github.com/spiceai/spiceai/issues), acceleration (arrow), results cache enabled.
+2025-07-16T15:17:16.772995Z  INFO runtime::init::dataset: Dataset spiceai.issues registered (github:github.com/spiceai/spiceai/issues), acceleration (cayenne), results cache enabled.
 2025-07-16T15:17:16.774218Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset spiceai.issues
-2025-07-16T15:17:17.447103Z  INFO runtime::init::dataset: Dataset apache.members registered (github:github.com/apache/members), acceleration (arrow), results cache enabled.
+2025-07-16T15:17:17.447103Z  INFO runtime::init::dataset: Dataset apache.members registered (github:github.com/apache/members), acceleration (cayenne), results cache enabled.
 2025-07-16T15:17:17.448839Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset apache.members
 ```
 

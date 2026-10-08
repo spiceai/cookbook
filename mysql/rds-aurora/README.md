@@ -134,7 +134,7 @@ You should see the dataset load and the accelerator perform its first full refre
 
 ```
 2025-01-13T12:00:00Z  INFO runtime::init::dataset: Dataset customers initializing...
-2025-01-13T12:00:00Z  INFO runtime::init::dataset: Dataset customers registered (mysql:testdb.customers), acceleration (arrow, 10s refresh), results cache enabled.
+2025-01-13T12:00:00Z  INFO runtime::init::dataset: Dataset customers registered (mysql:testdb.customers), acceleration (cayenne, 10s refresh), results cache enabled.
 2025-01-13T12:00:00Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset customers
 2025-01-13T12:00:00Z  INFO runtime_table::accelerated::refresh_task: Loaded 3 rows (3.52 kiB) for dataset customers in 30ms.
 2025-01-13T12:00:00Z  INFO runtime: All components are loaded. Spice runtime is ready!
