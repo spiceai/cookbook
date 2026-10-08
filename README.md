@@ -37,6 +37,7 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 - [DeepSeek Model](./deepseek/README.md) - Use DeepSeek model through Spice.
 - [Filesystem Hosted Model](./models/filesystem/README.md) - Use models hosted directly on filesystems.
 - [Web Search Tools using Perplexity](./websearch/README.md) - Give LLMs web search access via Perplexity.
+- [Evaluate API](./evaluate/README.md) - Evaluate unstructured data with typed questions using TypeSafe Jev or a chat model.
 - [Language Model Evaluations](./evals/README.md) - Use Spice to evaluate language models.
 - [LLM as a Judge](./llm-judge/README.md) - Define LLM judge models to evaluate other models.
 - [OpenAI Responses API](./openai-responses-api/README.md) - Use OpenAI's Responses API with Spice

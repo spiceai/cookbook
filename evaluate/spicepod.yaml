@@ -1,0 +1,9 @@
+version: v1
+kind: Spicepod
+name: evaluate
+
+models:
+  - from: typesafe:jev
+    name: jev
+    params:
+      typesafe_api_key: ${secrets:TYPESAFE_API_KEY}
