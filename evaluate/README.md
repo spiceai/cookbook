@@ -181,18 +181,6 @@ curl --fail-with-body -sS http://localhost:8090/v1/evaluate \
 
 The response uses the same `answers` structure and reports `"model": "gpt-6-luna"`. Its numerical values will differ. Chat-model probabilities are the model's own estimates and are not calibrated.
 
-## Troubleshooting
-
-| Symptom | What to check |
-| --- | --- |
-| `curl` cannot connect | Keep `spice run` running and check that the HTTP API is listening on port 8090. |
-| HTTP 404 | Check that the request's `model` matches the Spicepod model name and that the model loaded successfully. Use Spice v2.4.0-rc.1 or later for `/v1/evaluate`. |
-| HTTP 401 or 403 | Check the API key in `.env` and your provider account's access to the model. Restart Spice after updating the key. |
-| HTTP 429 | Wait before retrying and check the provider's request limits. |
-| HTTP 500 with a chat model | Read the response body and runtime logs. A chat model that repeatedly returns malformed evaluation answers causes the request to fail. |
-
-Jev uses `/v1/evaluate` and does not support `/v1/chat/completions` or `spice chat`.
-
 ## Learn More
 
 - [Evaluate API](https://github.com/spiceai/spiceai/blob/trunk/docs/features/models/evaluate.md)
