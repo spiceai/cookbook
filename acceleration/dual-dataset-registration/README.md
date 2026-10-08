@@ -67,7 +67,6 @@ datasets:
       enabled: true
       engine: duckdb
       mode: file
-      refresh_check_interval: 30m
 ```
 
 Key points:
@@ -77,7 +76,6 @@ Key points:
 - `taxi_trips_accelerated` points to the same source but has `acceleration.enabled: true`. The runtime begins loading data into a local DuckDB file as soon as it starts.
 - `ready_state: on_registration` is required on the accelerated dataset so the runtime becomes ready immediately. Without it the runtime waits for the acceleration to finish loading before marking itself ready, which blocks the federated dataset from serving queries.
 - `mode: file` writes the accelerated data to disk instead of memory, avoiding out-of-memory crashes for large tables.
-- `refresh_check_interval: 30m` re-checks the source every 30 minutes after the initial load.
 
 ## Step 3. Start the Spice runtime
 
@@ -89,7 +87,7 @@ Shortly after startup you will see both datasets register. The federated table i
 
 ```bash
 2025-03-24T10:00:01.123456Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), results cache enabled.
-2025-03-24T10:00:01.234567Z  INFO runtime::init::dataset: Dataset taxi_trips_accelerated registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (duckdb:file, 1800s refresh), results cache enabled.
+2025-03-24T10:00:01.234567Z  INFO runtime::init::dataset: Dataset taxi_trips_accelerated registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (duckdb:file), results cache enabled.
 2025-03-24T10:00:01.234890Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips_accelerated
 ```
 
