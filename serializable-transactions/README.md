@@ -193,8 +193,10 @@ UPDATE savings  SET balance = balance + 5000 WHERE id = 'alice';
 COMMIT;"
 ```
 
-```json
-{"code":400,"message":"assertion failed: gate expression was false or NULL"}
+The request fails with HTTP `400`:
+
+```console
+Execution error: assertion failed: gate expression was false or NULL
 ```
 
 Balances are unchanged (checking still 800, savings still 200) — the debit that was staged
