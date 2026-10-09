@@ -16,7 +16,7 @@ cd cookbook/acceleration/indexes
 Indexes only make a difference on large datasets. This dataset is 1.5GB bytes, decompressed into 7+GB in-memory.
 
 ```bash
-wget https://public-data.spiceai.org/large_eth_traces.parquet
+curl -O https://public-data.spiceai.org/large_eth_traces.parquet
 ```
 
 **Step 2.** Start Spice
