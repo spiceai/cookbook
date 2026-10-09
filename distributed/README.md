@@ -146,7 +146,7 @@ Submit a query with `spice query`. The CLI submits the query to the scheduler an
 it completes:
 
 ```bash
-spice query "select * from data limit 10;"
+spice query "select * from data order by id limit 10;"
 ```
 
 ```console

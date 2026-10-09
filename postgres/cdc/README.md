@@ -60,7 +60,7 @@ SELECT 'Seeded ' || COUNT(*) || ' orders' AS result FROM orders;
 EOF
 ```
 
-> The `orders` table has a primary key, so its default `REPLICA IDENTITY` covers `UPDATE` and `DELETE` events. A table without a primary key would need `ALTER TABLE ... REPLICA IDENTITY FULL` before it can be streamed.
+> The `orders` table has a primary key, so its default `REPLICA IDENTITY` covers `UPDATE` and `DELETE` events. A table without a primary key needs two changes before it can be streamed: run `ALTER TABLE ... REPLICA IDENTITY FULL` on the source, and set `acceleration.primary_key` in the Spicepod to a column (or columns) that uniquely identifies a row. With `REPLICA IDENTITY FULL` alone, the dataset fails with `no primary key available. Set acceleration.primary_key on the dataset` and never becomes ready.
 
 ---
 
