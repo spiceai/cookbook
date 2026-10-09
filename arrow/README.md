@@ -102,6 +102,7 @@ datasets:
       file_format: parquet
     acceleration:
       enabled: true
+      engine: arrow
 ```
 
 **Step 6.** Save the changes in Spice app and observe the dataset updating and accelerating.

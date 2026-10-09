@@ -44,7 +44,7 @@ PG_PASS=hGG3ellothere$$$$
 
 ## Step 3: Writing Data into Redshift
 
-> **Note:** The `write` spicepod accelerates data into Redshift using the PostgreSQL data accelerator (`engine: postgresql`). This accelerator is _not_ included in the released Spice binaries — tagged releases are built without the `postgres-accel` feature, so a stock-installed runtime rejects the dataset with `The accelerator engine postgres is not available. Valid engines are arrow, cayenne, duckdb, and sqlite.` Build and run Spice with the feature enabled, e.g. `cargo run --release --features release,models,postgres-accel -p spiced`. (The `read` spicepod in Step 4 uses the default in-memory `arrow` accelerator and runs on the standard binary.)
+> **Note:** The `write` spicepod accelerates data into Redshift using the PostgreSQL data accelerator (`engine: postgresql`). This accelerator is _not_ included in the released Spice binaries — tagged releases are built without the `postgres-accel` feature, so a stock-installed runtime rejects the dataset with `The accelerator engine postgres is not available. Valid engines are arrow, cayenne, duckdb, and sqlite.` Build and run Spice with the feature enabled, e.g. `cargo run --release --features release,models,postgres-accel -p spiced`. (The `read` spicepod in Step 4 uses the default accelerator and runs on the standard binary.)
 
 To write data into Redshift, navigate to the `write` directory and start Spice using the following command:
 
@@ -228,27 +228,27 @@ You should see this output in your terminal window:
 2025-08-01T01:15:40.308603Z  INFO runtime::init::dataset: Dataset supplier initializing...
 2025-08-01T01:15:40.308684Z  INFO runtime::init::dataset: Dataset partsupp initializing...
 2025-08-01T01:15:40.308770Z  INFO runtime::init::dataset: Dataset lineitem initializing...
-2025-08-01T01:15:40.995606Z  INFO runtime::init::dataset: Dataset orders registered (postgres:public.orders), acceleration (arrow), results cache enabled.
+2025-08-01T01:15:40.995606Z  INFO runtime::init::dataset: Dataset orders registered (postgres:public.orders), acceleration (cayenne), results cache enabled.
 2025-08-01T01:15:40.996460Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset orders
 2025-08-01T01:15:41.374001Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (146.19 kiB) for dataset orders in 377ms.
-2025-08-01T01:15:41.481632Z  INFO runtime::init::dataset: Dataset region registered (postgres:public.region), acceleration (arrow), results cache enabled.
+2025-08-01T01:15:41.481632Z  INFO runtime::init::dataset: Dataset region registered (postgres:public.region), acceleration (cayenne), results cache enabled.
 2025-08-01T01:15:41.482800Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset region
 2025-08-01T01:15:41.563571Z  INFO runtime_table::accelerated::refresh_task: Loaded 5 rows (14.45 kiB) for dataset region in 80ms.
-2025-08-01T01:15:41.798712Z  INFO runtime::init::dataset: Dataset part registered (postgres:public.part), acceleration (arrow), results cacheenabled.
+2025-08-01T01:15:41.798712Z  INFO runtime::init::dataset: Dataset part registered (postgres:public.part), acceleration (cayenne), results cacheenabled.
 2025-08-01T01:15:41.799995Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset part
 2025-08-01T01:15:41.926069Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (161.36 kiB) for dataset part in 126ms.
-2025-08-01T01:15:42.142538Z  INFO runtime::init::dataset: Dataset nation registered (postgres:public.nation), acceleration (arrow), results cache enabled.
+2025-08-01T01:15:42.142538Z  INFO runtime::init::dataset: Dataset nation registered (postgres:public.nation), acceleration (cayenne), results cache enabled.
 2025-08-01T01:15:42.143810Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset nation
 2025-08-01T01:15:42.219842Z  INFO runtime_table::accelerated::refresh_task: Loaded 25 rows (19.55 kiB) for dataset nation in 76ms.
-2025-08-01T01:15:42.480982Z  INFO runtime::init::dataset: Dataset customer registered (postgres:public.customer), acceleration (arrow), results cache enabled.
+2025-08-01T01:15:42.480982Z  INFO runtime::init::dataset: Dataset customer registered (postgres:public.customer), acceleration (cayenne), results cache enabled.
 2025-08-01T01:15:42.482235Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset customer
 2025-08-01T01:15:42.826813Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (269.18 kiB) for dataset customer in 344ms.
-2025-08-01T01:15:42.886263Z  INFO runtime::init::dataset: Dataset supplier registered (postgres:public.supplier), acceleration (arrow), results cache enabled.
+2025-08-01T01:15:42.886263Z  INFO runtime::init::dataset: Dataset supplier registered (postgres:public.supplier), acceleration (cayenne), results cache enabled.
 2025-08-01T01:15:42.887628Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset supplier
 2025-08-01T01:15:43.250965Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (185.00 kiB) for dataset supplier in 363ms.
-2025-08-01T01:15:43.386852Z  INFO runtime::init::dataset: Dataset partsupp registered (postgres:public.partsupp), acceleration (arrow), results cache enabled.
+2025-08-01T01:15:43.386852Z  INFO runtime::init::dataset: Dataset partsupp registered (postgres:public.partsupp), acceleration (cayenne), results cache enabled.
 2025-08-01T01:15:43.388171Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset partsupp
-2025-08-01T01:15:43.830328Z  INFO runtime::init::dataset: Dataset lineitem registered (postgres:public.lineitem), acceleration (arrow), results cache enabled.
+2025-08-01T01:15:43.830328Z  INFO runtime::init::dataset: Dataset lineitem registered (postgres:public.lineitem), acceleration (cayenne), results cache enabled.
 2025-08-01T01:15:43.831713Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset lineitem
 2025-08-01T01:15:43.898640Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (160.55 kiB) for dataset partsupp in 510ms.
 2025-08-01T01:15:44.157564Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (171.93 kiB) for dataset lineitem in 325ms.
