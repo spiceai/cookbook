@@ -140,7 +140,7 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 - [Data Retention Policy](./retention/README.md) - Evict data older than a specified duration.
 - [Refresh Data Window](./refresh-data-window/README.md) - Filter data refresh to only recent data.
 - [Advanced Data Refresh](./acceleration/data-refresh/README.md) - Configure and tune data refresh for accelerated datasets.
-- [Data Quality with Constraints](./acceleration/constraints/README.md) - Enforce data quality constraints on accelerated datasets.
+- [Data Quality with Primary Keys](./acceleration/constraints/README.md) - Keep one row per primary key in an accelerated dataset, and the newest version of each key by time.
 
 ## Client SDKs - Recipes for querying data from Spice with language-specific SDKs
 

@@ -3,10 +3,11 @@ kind: Spicepod
 name: constraints
 
 datasets:
+  # One row per user, updated in place in Postgres.
   - from: postgres:users
     name: users
     time_column: updated_at
-    params:
+    params: &pg
       pg_host: localhost
       pg_port: 15432
       pg_db: postgres
@@ -22,3 +23,16 @@ datasets:
       primary_key: email
       indexes:
         username: enabled
+
+  # A history table: every plan change is a new row, and rows can arrive out of order.
+  - from: postgres:user_plan_changes
+    name: user_plans
+    time_column: changed_at
+    params: *pg
+    acceleration:
+      enabled: true
+      engine: cayenne
+      refresh_mode: append
+      refresh_check_interval: 5s
+      refresh_append_overlap: 1d # re-read a day back, so late changes are seen
+      primary_key: email
