@@ -15,11 +15,10 @@ datasets:
       pg_sslmode: disable
     acceleration:
       enabled: true
-      engine: duckdb
+      engine: cayenne
       refresh_mode: append
       refresh_check_interval: 5s
+      refresh_append_overlap: 1m # re-read recent rows so late updates load
       primary_key: email
       indexes:
         username: enabled
-      on_conflict:
-        email: upsert

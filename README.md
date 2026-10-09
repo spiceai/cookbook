@@ -86,6 +86,7 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 - [GitHub Data Connector](./github/README.md) - Query GitHub repository data.
 - [GraphQL Data Connector](./graphql/README.md) - Connect to GraphQL endpoints.
 - [HTTP Data Connector](./http/README.md) - Query data from HTTP(s) endpoints like REST APIs.
+- [Hugging Face Data Connector](./huggingface/README.md) - Query and accelerate datasets on the Hugging Face Hub.
 - [MongoDB Data Connector](./mongodb/connector/README.md) - Connect to MongoDB as a data source.
 - [MSSQL (Microsoft SQL Server) Data Connector](./mssql/README.md) - Query across multiple SQL Server instances.
 - [ODBC Data Connector](./odbc/README.md) - Connect to databases via ODBC.

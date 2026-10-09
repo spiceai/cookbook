@@ -67,6 +67,10 @@ websocat wss://jetstream2.us-east.bsky.network/subscribe\?wantedCollections=app.
 [info] INSERTED 250 ROWS; TOTAL 500
 ```
 
+Bluesky post timestamps come from the posting client, and a few are dated in the future. The script skips posts dated more than a minute ahead and logs `SKIPPED n FUTURE-DATED ROWS`. Spice appends only rows newer than the newest `created_at` it already has, so a single future-dated post would stop all later posts from loading.
+
+The Jetstream connection can drop without an error. If `TOTAL` stops increasing, press `Ctrl-C` and run the same command again; it appends to the existing file.
+
 ## Step 3. Start Spice and Search!
 
 _In a new terminal_, start Spice. It will embed, full-text index, and ingest the latest data. Additionally, the `file` connector is using fsnotify to watch it for updates, to eagerly ingest data.
@@ -214,6 +218,12 @@ from rrf(
 ## Step 4. Enable agentic support
 
 Stop Spice, and go to `spicepod.yml` and uncomment the `models` block. Update the `.env` file with your OpenAI key. Then start Spice again.
+
+> **Note:** The full-text index is held in memory and is not rebuilt from the existing acceleration when Spice restarts ([spiceai/spiceai#14618](https://github.com/spiceai/spiceai/issues/14618)). After a restart, `text_search` returns no results for posts loaded before the restart, while `vector_search` keeps working. Until that is fixed, remove the acceleration before restarting so Spice reloads and re-indexes all posts:
+>
+> ```bash
+> rm -rf .spice
+> ```
 
 ```bash
 spice run
