@@ -99,7 +99,7 @@ Time: 0.007991375 seconds. 1 rows.
 
 Notice that without partitioning, Spice must scan the entire dataset for this query.
 
-**Step 5.** Update the `spicepod.yaml` to enable partitioning by pickup location.
+**Step 5.** Stop the Spice runtime (`Ctrl+C` in its terminal), then update the `spicepod.yaml` to enable partitioning by pickup location.
 
 Add the `partition_by` parameter to partition the dataset into 50 buckets based on the `PULocationID` column:
 
@@ -123,7 +123,14 @@ datasets:
 
 The `bucket(50, PULocationID)` function hashes the `PULocationID` column and distributes rows into 50 partition files. This enables partition pruning for queries that filter on `PULocationID`.
 
-**Step 6.** Restart the Spice app and observe the dataset being loaded with partitioning.
+**Step 6.** Delete the existing acceleration data, then start the Spice runtime again. Spice does not re-partition data it has already accelerated, so the dataset must be reloaded from the source to use the new `partition_by`.
+
+```bash
+rm -rf .spice/data
+spice run
+```
+
+Observe the dataset being loaded with partitioning:
 
 ```bash
 2026-08-15T12:11:09.653803Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
