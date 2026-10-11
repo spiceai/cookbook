@@ -3,15 +3,15 @@ kind: Spicepod
 name: rds_postgresql
 
 datasets:
-  - from: postgres:[remote_table_path]
-    name: [local_table_name]
+  - from: postgres:public.customers
+    name: customers
     params:
-      pg_host: [Host]
-      pg_db: [Database name]
-      pg_port: [Port]
-      pg_user: [User]
-      pg_pass: ${env:PG_PASS}
-      pg_sslmode: prefer
+      pg_host: ${env:RDS_ENDPOINT}
+      pg_port: '5432'
+      pg_db: testdb
+      pg_user: postgres
+      pg_pass: ${secrets:PG_PASS}
+      pg_sslmode: require # "verify-full" is default
     acceleration:
       enabled: true
       refresh_mode: full

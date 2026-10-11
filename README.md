@@ -36,10 +36,9 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 - [xAI Models](./models/xai/README.md) - Use xAI models such as Grok.
 - [DeepSeek Model](./deepseek/README.md) - Use DeepSeek model through Spice.
 - [Filesystem Hosted Model](./models/filesystem/README.md) - Use models hosted directly on filesystems.
-- [Web Search Tools using Perplexity](./websearch/README.md) - Give LLMs web search access via Perplexity.
 - [Language Model Evaluations](./evals/README.md) - Use Spice to evaluate language models.
 - [LLM as a Judge](./llm-judge/README.md) - Define LLM judge models to evaluate other models.
-- [OpenAI Responses API](./openai-responses-api/README.md) - Use OpenAI's Responses API with Spice
+- [OpenAI Responses API](./openai-responses-api/README.md) - Use OpenAI's Responses API with Spice, including hosted tools such as web search.
 - [Model Context Protocol (MCP)](./mcp/README.md) - Connect to MCP servers and use MCP tools with Spice.
 
 ### Data Acceleration - Materializing & accelerating data locally with Data Accelerators
