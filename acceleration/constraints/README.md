@@ -1,16 +1,23 @@
-# Accelerated table data quality with constraint enforcement
+# Accelerated table data quality with primary keys
 
 Works with `v2.4+`
 
-This recipe demonstrates how to use Spice to enforce constraints on locally accelerated data. This can be especially useful when you have a `refresh_mode: append` accelerated dataset and the data can be updated in the datasource.
+This recipe demonstrates how a `primary_key` keeps one row per key in a Cayenne acceleration, and how a `time_column` decides which version of a key is kept. This is especially useful for a `refresh_mode: append` dataset whose source updates rows in place or keeps a history of every change.
 
-By specifying a `time_column` on the dataset with `refresh_mode: append` on the acceleration, Spice will automatically pull in all changes from the datasource that have occurred after the max timestamp in the accelerated dataset. This can present a problem if the datasource updates the data and it appears as a new row in the accelerated dataset, when it should have updated an existing row.
+With `refresh_mode: append`, Spice fetches the rows whose `time_column` is later than the newest one already accelerated. An updated row arrives again as a new row, and Cayenne applies one rule to it, with nothing else to configure:
 
-This sample will have a local Postgres database with a table `users` and a Spice runtime that accelerates the data from the `users` table. A Spicepod will set `email` as the `primary_key`, so the accelerated table keeps one row for each email. The Spicepod uses the `cayenne` acceleration engine. The Spicepod will also specify a `time_column` of `updated_at` to ensure that the Spice runtime only pulls in changes from the datasource that have occurred after the max `updated_at` timestamp in the accelerated dataset. A worker service will update the `users` table in the Postgres database with changes to the `users` table every 4 seconds. This will cause the Spice runtime to pull in the changes and enforce the constraint.
+| `primary_key` | `time_column` | A key that appears more than once |
+| ------------- | ------------- | --------------------------------- |
+| not set       | any           | Every row is kept.                |
+| set           | not set       | One row per key: the version that arrived last. |
+| set           | set           | One row per key: the newest by `time_column`. |
 
-Once you've verified that the constraint is being enforced, try removing the `primary_key` line from the Spicepod and observe the behavior. Instead of the rows being updated in place, new rows are added every time Spice refreshes the data. The count of rows grows, but the count of distinct emails stays at 5.
+This sample runs a local Postgres database with two tables, and a Spice runtime that accelerates both:
 
-The `on_conflict` setting is deprecated and will be removed in Spice 3.0. This recipe does not use it. With the `cayenne` engine, `primary_key` alone keeps one row for each key.
+- `users` holds one row per user. A worker service increments a random user's `items_bought` every 4 seconds, and a trigger sets `updated_at`. The `users` dataset keeps exactly one row per `email`, updated in place.
+- `user_plan_changes` is a history table: every plan change is a new row, and the rows were inserted out of time order. The `user_plans` dataset reads it with `primary_key: email` and `time_column: changed_at`, so it keeps each user's current plan. A late row with an older `changed_at` never replaces a newer one, even when `refresh_append_overlap` re-reads it.
+
+The `on_conflict` setting is deprecated and will be removed in Spice 3.0. This recipe does not use it: with the `cayenne` engine, `primary_key` and `time_column` decide which row is kept.
 
 ## Prerequisites
 
@@ -42,49 +49,131 @@ cd cookbook/acceleration/constraints
 spice run
 ```
 
-## Spice SQL REPL
+At startup, Spice states the rule it inferred for each dataset:
 
-Run queries using the Spice SQL REPL to explore the data and ensure the constraints are being kept.
-
-`spice sql`
-
-```bash
-Welcome to the Spice.ai SQL REPL! Type `help` or `?` for commands.
-
-Examples:
-  show tables;              -- list available tables
-  describe <table_name>;    -- show column types
-  nql <question>            -- natural language to SQL (requires a model)
-
-sql> show tables;
-+---------------+--------------+--------------+------------+
-| table_catalog | table_schema |  table_name  | table_type |
-|    varchar    |    varchar   |    varchar   |   varchar  |
-+---------------+--------------+--------------+------------+
-| spice         | runtime      | metrics      | BASE TABLE |
-| spice         | runtime      | task_history | BASE TABLE |
-| spice         | public       | users        | BASE TABLE |
-+---------------+--------------+--------------+------------+
-
-Time: 0.001582833 seconds. 3 rows.
-sql> select email, username, items_bought, last_login from users order by email;
-+-------------------------+----------+--------------+---------------------+
-|          email          | username | items_bought |      last_login     |
-|         varchar         |  varchar |     int64    |    timestamp[ns]    |
-+-------------------------+----------+--------------+---------------------+
-| alice@sample.com        | alice    | 16           | 2023-11-21T19:23:34 |
-| bob@umbrellacorp.com    | bob      | 17           | 2024-06-17T12:20:19 |
-| clint@bobsumbrellas.com | clint    | 20           | 2024-04-13T08:12:46 |
-| dobbie@hogwarts.ac.uk   | dobbie   | 13           | 2024-03-04T03:13:04 |
-| eddie@edslawncare.com   | eddie    | 15           | 2024-02-29T23:59:59 |
-+-------------------------+----------+--------------+---------------------+
-
-Time: 0.002530792 seconds. 5 rows.
+```console
+INFO runtime::init::dataset: Dataset 'users' keeps one row per 'email': the newest by 'updated_at', or the version that arrived last when times are equal.
+INFO runtime::init::dataset: Dataset 'user_plans' keeps one row per 'email': the newest by 'changed_at', or the version that arrived last when times are equal.
 ```
 
-The `items_bought` values change as the worker updates rows. Run the query again and the values change, but the table keeps 5 rows.
+## One row per key, updated in place
 
-Exit the Spice SQL REPL with `exit`
+In another terminal, open the Spice SQL REPL:
+
+```bash
+spice sql
+```
+
+The worker updates `users` every 4 seconds, and each update arrives as a new row on the next refresh. The `primary_key` replaces the stored row instead of adding another one, so there is still one row per email. The `items_bought` values depend on how long the worker has been running:
+
+```sql
+select email, username, items_bought from users order by email;
+```
+
+```console
++-------------------------+----------+--------------+
+|          email          | username | items_bought |
+|         varchar         |  varchar |     int64    |
++-------------------------+----------+--------------+
+| alice@sample.com        | alice    | 0            |
+| bob@umbrellacorp.com    | bob      | 1            |
+| clint@bobsumbrellas.com | clint    | 1            |
+| dobbie@hogwarts.ac.uk   | dobbie   | 2            |
+| eddie@edslawncare.com   | eddie    | 0            |
++-------------------------+----------+--------------+
+
+Time: 0.001509375 seconds. 5 rows.
+```
+
+```sql
+select count(*) as rows, count(distinct email) as emails from users;
+```
+
+```console
++-------+--------+
+|  rows | emails |
+| int64 |  int64 |
++-------+--------+
+| 5     | 5      |
++-------+--------+
+
+Time: 0.001392042 seconds. 1 rows.
+```
+
+## The newest version by time
+
+`user_plan_changes` holds three versions for `alice@sample.com`: `free` at 10:00, `enterprise` at 12:00 and `pro` at 11:00, inserted in that order. The newest by `changed_at` is kept, not the last one inserted:
+
+```sql
+select email, plan, changed_at from user_plans order by email;
+```
+
+```console
++----------------------+------------+---------------------+
+|         email        |    plan    |      changed_at     |
+|        varchar       |   varchar  |    timestamp[ns]    |
++----------------------+------------+---------------------+
+| alice@sample.com     | enterprise | 2024-06-01T12:00:00 |
+| bob@umbrellacorp.com | pro        | 2024-06-01T09:00:00 |
++----------------------+------------+---------------------+
+
+Time: 0.000935333 seconds. 2 rows.
+```
+
+Now insert a late row: a change for Alice at 11:30, older than the `enterprise` version already loaded. Run this in a third terminal:
+
+```bash
+docker exec constraints-postgres-1 psql -U postgres -c \
+  "INSERT INTO user_plan_changes VALUES ('alice@sample.com', 'free', '2024-06-01 11:30:00');"
+```
+
+`refresh_append_overlap: 1d` makes each refresh re-read rows up to a day older than the newest loaded one, so the late row is fetched. It is older than the stored version, so Alice stays on `enterprise`. Wait a few seconds for a refresh, then query again:
+
+```sql
+select email, plan, changed_at from user_plans order by email;
+```
+
+```console
++----------------------+------------+---------------------+
+|         email        |    plan    |      changed_at     |
+|        varchar       |   varchar  |    timestamp[ns]    |
++----------------------+------------+---------------------+
+| alice@sample.com     | enterprise | 2024-06-01T12:00:00 |
+| bob@umbrellacorp.com | pro        | 2024-06-01T09:00:00 |
++----------------------+------------+---------------------+
+
+Time: 0.00092075 seconds. 2 rows.
+```
+
+A newer change does replace the stored version:
+
+```bash
+docker exec constraints-postgres-1 psql -U postgres -c \
+  "INSERT INTO user_plan_changes VALUES ('bob@umbrellacorp.com', 'enterprise', '2024-06-01 13:00:00');"
+```
+
+```sql
+select email, plan, changed_at from user_plans order by email;
+```
+
+```console
++----------------------+------------+---------------------+
+|         email        |    plan    |      changed_at     |
+|        varchar       |   varchar  |    timestamp[ns]    |
++----------------------+------------+---------------------+
+| alice@sample.com     | enterprise | 2024-06-01T12:00:00 |
+| bob@umbrellacorp.com | enterprise | 2024-06-01T13:00:00 |
++----------------------+------------+---------------------+
+
+Time: 0.000904834 seconds. 2 rows.
+```
+
+Exit the Spice SQL REPL with `exit`.
+
+## Things to try
+
+- Remove `time_column` from the `user_plans` dataset. Spice then keeps the version that arrived last, which can differ between refreshes, and logs that at startup. Because `refresh_mode: append` needs a `time_column` to know which rows are new, also set `refresh_mode: full`.
+- Remove `primary_key` from a dataset. Every row is kept, so `user_plans` returns every plan change instead of one row per user.
 
 ## Clean up
 
