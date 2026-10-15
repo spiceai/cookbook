@@ -11,7 +11,7 @@ runtime:
       keys:
         - foo:rw
 
-# GitHub data accelerated in-memory — sub-millisecond SQL from any MCP client
+# GitHub data accelerated locally — sub-millisecond SQL from any MCP client
 datasets:
   - from: github:github.com/spiceai/cookbook/issues
     name: github_issues
