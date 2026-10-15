@@ -12,19 +12,19 @@ Requires `time_column` and `time_format` (optional) to also be configured. Only 
 
 ## Steps
 
-**Step 1.** Initialize and start Spice
+**Step 1.** Clone the cookbook repository and go to the recipe folder
 
 ```bash
-spice init refresh-data-window-recipe
-cd refresh-data-window-recipe
+git clone https://github.com/spiceai/cookbook.git
+cd cookbook/refresh-data-window
 ```
 
-**Step 2.** Add a new dataset
+**Step 2.** Look at the dataset in `spicepod.yaml`. It does not set `refresh_data_window` yet, so Spice loads all of the data.
 
-```bash
+```yaml
 version: v2
 kind: Spicepod
-name: refresh-data-window-recipe
+name: refresh-data-window
 datasets:
   - from: s3://spiceai-demo-datasets/taxi_trips/2024/
     name: taxi_trips
@@ -37,7 +37,11 @@ datasets:
       engine: cayenne
 ```
 
-**Step 3.** Run spice and check number of rows in `taxi_trips`
+**Step 3.** Run Spice and check the number of rows in `taxi_trips`
+
+```bash
+spice run
+```
 
 ```bash
  INFO Spice.ai runtime starting...
@@ -101,12 +105,12 @@ select * from taxi_trips order by tpep_pickup_datetime limit 5;
 Time: 0.002656291 seconds. 5 rows.
 ```
 
-**Step 4.** Edit spicepod.yaml to add `refresh_data_window`
+**Step 4.** Keep Spice running. Edit `spicepod.yaml` to add `refresh_data_window`, then save the file.
 
-```bash
+```yaml
 version: v2
 kind: Spicepod
-name: refresh-data-window-recipe
+name: refresh-data-window
 datasets:
   - from: s3://spiceai-demo-datasets/taxi_trips/2024/
     name: taxi_trips
@@ -117,10 +121,10 @@ datasets:
     acceleration:
       enabled: true
       engine: cayenne
-      refresh_data_window: 35040h # 4 years, this will evict 5 rows of data from the dataset
+      refresh_data_window: 35040h # 4 years: only load rows with a pickup time in the last 4 years
 ```
 
-Check if dataset has been reloaded
+Spice reloads the dataset. Check if dataset has been reloaded
 
 ```bash
 2026-09-13T12:10:02.904824Z  INFO runtime::init::dataset: Accelerated Dataset taxi_trips updating...
@@ -130,7 +134,7 @@ Check if dataset has been reloaded
 
 ```
 
-Check the number of rows again, and it shows 5 rows difference. The previous 5 earliest records are excluded after reloading.
+Check the number of rows again. Spice now loads only the rows where `tpep_pickup_datetime` is in the 4 years before the current time. The window moves with the current time, so the number of excluded rows depends on the date you run the recipe. In the output below, the 5 earliest records (from 2002 and 2009) are excluded after reloading.
 
 ```sql
 select count(1) from taxi_trips;

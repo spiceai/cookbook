@@ -276,6 +276,14 @@ acceleration:
   refresh_check_interval: 10s
 ```
 
+If you use temporary credentials (for example from AWS STS, `aws sso login`, or an assumed role), the access key and secret key are not sufficient. Add the session token to the `.env` file as `SPICE_S3_SESSION_TOKEN=<aws_session_token>` and add the `s3_session_token` parameter to the dataset:
+
+```bash
+  s3_session_token: ${secrets:SPICE_S3_SESSION_TOKEN}
+```
+
+Temporary credentials expire. When they expire, get new credentials, update the `.env` file, and restart the Spice runtime.
+
 If the login credentials were entered correctly, the dataset will have loaded into the runtime. The following output is shown in the Spice runtime terminal:
 
 ```bash

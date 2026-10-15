@@ -9,7 +9,7 @@ Enable API key authentication with:
 ```yaml
 runtime:
   auth:
-    api_key:
+    api-key:
       enabled: true
       keys:
         - ${ env:API_KEY }

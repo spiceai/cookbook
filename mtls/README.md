@@ -159,7 +159,7 @@ openssl req -new -x509 -key foreign-ca.key -out foreign-ca.pem -days 365 -subj "
 # Create a client cert signed by the foreign CA
 openssl ecparam -genkey -name prime256v1 -out foreign-client.key
 openssl req -new -key foreign-client.key -out foreign-client.csr -subj "/CN=foreign-client"
-openssl x509 -req -in foreign-client.csr -CA foreign-ca.pem -CAkey foreign-ca.key \
+openssl x509 -req -in foreign-client.csr -CA foreign-ca.pem -CAkey foreign-ca.key -CAcreateserial \
   -out foreign-client.crt -days 365 -sha256
 
 # Try to connect — rejected at the TLS handshake
