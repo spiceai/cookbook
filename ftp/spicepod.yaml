@@ -14,3 +14,15 @@ datasets:
       enabled: true
       refresh_mode: full
       refresh_check_interval: 10s
+
+  - from: sftp://localhost/data/customers.csv
+    name: customers_sftp
+    params:
+      file_format: csv
+      sftp_user: user
+      sftp_pass: ${env:SFTP_PASS}
+      sftp_port: 20022
+    acceleration:
+      enabled: true
+      refresh_mode: full
+      refresh_check_interval: 10s
