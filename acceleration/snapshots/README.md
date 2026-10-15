@@ -93,8 +93,10 @@ spice run
 On first boot the acceleration file does not exist locally, so Spice loads from S3 and refreshes the dataset. After the initial refresh completes you should see a log similar to:
 
 ```bash
-2025-10-09T12:53:15.146396Z  INFO runtime_acceleration::snapshot: Snapshot uploaded. dataset=taxi_trips snapshot=quickstart/month=2025-10/day=2025-10-09/dataset=taxi_trips/taxi_trips_20251009T125314Z.db size=2109440
+2026-10-15T03:46:02.267902Z  INFO runtime_acceleration::snapshot: Snapshot created dataset=taxi_trips snapshot=quickstart/month=2026-10/day=2026-10-15/dataset=taxi_trips/taxi_trips_20261015T034559Z_01a13daab32b7981b1124869c9186f0d.duckdb size_bytes=1060864 duration_ms=2672.1 sha=947fc7cb8fd89dbad5fa30a880ef621bb2669c03531d746a6e1a0a9e185695f2
 ```
+
+Each snapshot object is named `<dataset>_<UTC timestamp>_<UUIDv7>.<engine extension>`, so DuckDB snapshots end in `.duckdb`.
 
 Verify the snapshot appeared in your bucket using the AWS CLI or console.
 
@@ -111,8 +113,7 @@ spice run
 This time the startup logs show the snapshot bootstrap:
 
 ```bash
-2025-10-09T12:50:44.270378Z  INFO runtime_acceleration::snapshot: Downloading snapshot. dataset=taxi_trips snapshot=s3://my-snapshots-prod/quickstart/month=2025-10/day=2025-10-09/dataset=taxi_trips/taxi_trips_20251009T082107Z.db snapshot_id=1
-2025-10-09T12:50:44.412962Z  INFO runtime_acceleration::snapshot: Snapshot downloaded to taxi.db. dataset=taxi_trips snapshot=s3://my-snapshots-prod/quickstart/month=2025-10/day=2025-10-09/dataset=taxi_trips/taxi_trips_20251009T082107Z.db size=1847296
+2026-10-15T03:46:40.400313Z  INFO runtime_acceleration::snapshot: Snapshot restored to taxi_trips.db dataset=taxi_trips snapshot=s3://my-snapshots-prod/quickstart/month=2026-10/day=2026-10-15/dataset=taxi_trips/taxi_trips_20261015T034559Z_01a13daab32b7981b1124869c9186f0d.duckdb size_bytes=1060864 sha=947fc7cb8fd89dbad5fa30a880ef621bb2669c03531d746a6e1a0a9e185695f2
 ```
 
 Spice skips the full refresh and immediately serves queries, dramatically reducing warm-up time.
@@ -125,7 +126,7 @@ Snapshots can be fine-tuned per dataset:
 - `create_only`: generate snapshots after refreshes without bootstrapping from them.
 - `disabled`: opt out for specific datasets even when the pod-wide snapshots block is present.
 
-Try switching `acceleration.snapshots` to `bootstrap_only` and restarting to observe that Spice fetches the existing snapshot but skips writing a new version after refreshes.
+Spice downloads a snapshot only when the local acceleration file does not exist. Try switching `acceleration.snapshots` to `bootstrap_only`, stopping Spice, removing `taxi_trips.db`, and restarting to observe that Spice restores the existing snapshot but skips writing a new version after refreshes.
 
 ## Step 7. Handle bootstrap failures
 
@@ -135,7 +136,11 @@ The top-level `bootstrap_on_failure_behavior` controls what happens if the newes
 - `fallback`: automatically attempt older snapshot files.
 - `warn`: log a warning and continue with an empty acceleration (default).
 
-Set the value to `warn`, remove the snapshot file from S3, and restart to see how Spice warns and performs a regular refresh when no snapshot is available.
+Set the value to `warn`, stop Spice, remove the snapshot file from S3 and the local `taxi_trips.db`, and restart to see how Spice warns and performs a regular refresh when no snapshot is available:
+
+```bash
+WARN runtime_acceleration::snapshot: Failed to bootstrap snapshot; continuing without a downloaded snapshot. dataset=taxi_trips location=quickstart error=Failed to download snapshot ...
+```
 
 ## Summary
 
