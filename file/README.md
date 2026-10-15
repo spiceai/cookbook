@@ -147,7 +147,7 @@ Then execute a query on the `docs` dataset.
 select location from docs;
 ```
 
-Expected output:
+Expected output (row order can vary). The dataset reads every Markdown file in the directory, so this recipe's own `README.md` is included:
 
 ```text
 +----------------------------+
@@ -156,6 +156,7 @@ Expected output:
 +----------------------------+
 | path/to/file/clickhouse.md |
 | path/to/file/debezium.md   |
+| path/to/file/README.md     |
 | path/to/file/ducklake.md   |
 | path/to/file/iceberg.md    |
 +----------------------------+

@@ -21,4 +21,4 @@ RUN curl -fL https://public-data.spiceai.org/tpch_sf1/region/region.parquet     
 WORKDIR /app
 COPY load-tpch.py .
 
-CMD ["python", "load-tpch.py"]
+CMD ["python", "-u", "load-tpch.py"]
