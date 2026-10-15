@@ -2,7 +2,7 @@
 
 Works with `v2.0+`
 
-The Microsoft SQL Server Catalog Connector enables Spice to automatically discover and query all schemas and tables in an MSSQL database. This recipe demonstrates the connector using the standard TPC-H benchmark dataset (Scale Factor 0.1) with full foreign key constraints defined between tables.
+The Microsoft SQL Server Catalog Connector enables Spice to automatically discover and query all schemas and tables in an MSSQL database. This recipe demonstrates the connector using the standard TPC-H benchmark dataset (Scale Factor 1) with full foreign key constraints defined between tables.
 
 ## Prerequisites
 
@@ -55,12 +55,12 @@ The TPC-H schema includes the following foreign key relationships:
 | `lineitem` | `l_orderkey`                   | `orders(o_orderkey)`               |
 | `lineitem` | `(l_partkey, l_suppkey)`       | `partsupp(ps_partkey, ps_suppkey)` |
 
-## Step 2. Go to the Spicepod directory
-
-The `mssql-catalog-recipe` directory already contains the `spicepod.yaml` file (shown in Step 4) and a `.env.example` file. Do not run `spice init`.
+## Step 2. Create a new directory and initialize a Spicepod
 
 ```bash
+mkdir mssql-catalog-recipe
 cd mssql-catalog-recipe
+spice init
 ```
 
 ## Step 3. Configure credentials
@@ -78,7 +78,7 @@ echo "MSSQL_USERNAME=sa" > .env
 echo "MSSQL_PASSWORD=SpiceDemo1!" >> .env
 ```
 
-## Step 4. Review the Microsoft SQL Server Catalog Connector in `spicepod.yaml`
+## Step 4. Add the Microsoft SQL Server Catalog Connector to `spicepod.yaml`
 
 ```yaml
 version: v1
@@ -107,8 +107,8 @@ spice run
 Observe that Spice discovers all schemas and tables in the `tpch` database:
 
 ```bash
-2026-10-15T06:18:43.270961Z  INFO runtime::init::catalog: Registering catalog 'ms' for mssql
-2026-10-15T06:18:45.186008Z  INFO runtime::init::catalog: Registered catalog 'ms' with 1 schema and 8 tables
+2025-05-19T10:00:00.000000Z  INFO runtime::init::catalog: Registering catalog 'ms' for mssql
+2025-05-19T10:00:00.500000Z  INFO runtime::init::catalog: Registered catalog 'ms' with 1 schema and 8 tables
 ```
 
 ## Step 6. Query the SQL Server catalog
@@ -130,22 +130,17 @@ SHOW TABLES;
 | table_catalog | table_schema |  table_name  | table_type |
 |    varchar    |    varchar   |    varchar   |   varchar  |
 +---------------+--------------+--------------+------------+
-| ms            | dbo          | supplier     | BASE TABLE |
 | ms            | dbo          | region       | BASE TABLE |
-| ms            | dbo          | customer     | BASE TABLE |
-| ms            | dbo          | orders       | BASE TABLE |
-| ms            | dbo          | partsupp     | BASE TABLE |
 | ms            | dbo          | nation       | BASE TABLE |
 | ms            | dbo          | part         | BASE TABLE |
+| ms            | dbo          | supplier     | BASE TABLE |
+| ms            | dbo          | customer     | BASE TABLE |
+| ms            | dbo          | partsupp     | BASE TABLE |
+| ms            | dbo          | orders       | BASE TABLE |
 | ms            | dbo          | lineitem     | BASE TABLE |
 | spice         | runtime      | task_history | BASE TABLE |
-| spice         | runtime      | metrics      | BASE TABLE |
 +---------------+--------------+--------------+------------+
-
-Time: 0.001717875 seconds. 10 rows.
 ```
-
-The order of the tables can be different.
 
 Query a table using the three-part `catalog.schema.table` name:
 
@@ -188,16 +183,16 @@ ORDER BY l_returnflag, l_linestatus;
 ```
 
 ```
-+--------------+--------------+---------------+----------------+-----------------+--------------------+---------------+---------------+---------------+-------------+
-| l_returnflag | l_linestatus |    sum_qty    | sum_base_price |  sum_disc_price |     sum_charge     |    avg_qty    |   avg_price   |    avg_disc   | count_order |
-+--------------+--------------+---------------+----------------+-----------------+--------------------+---------------+---------------+---------------+-------------+
-| A            | F            | 3774200.00    | 5320753880.69  | 5054096266.6828 | 5256751331.449234  | 25.537587     | 36002.123829  | 0.050144      | 147790      |
-| N            | F            | 95257.00      | 133737795.84   | 127132372.6512  | 132286291.229445   | 25.300664     | 35521.326916  | 0.049394      | 3765        |
-| N            | O            | 7350414.00    | 10358309235.26 | 9839988630.9747 | 10233485783.131724 | 25.546131     | 35999.976489  | 0.050097      | 287731      |
-| R            | F            | 3785523.00    | 5337950526.47  | 5071818532.9420 | 5274405503.049367  | 25.525943     | 35994.029214  | 0.049989      | 148301      |
-+--------------+--------------+---------------+----------------+-----------------+--------------------+---------------+---------------+---------------+-------------+
++--------------+--------------+-------------+-----------------+-------------------+---------------------+-----------+--------------+----------+-------------+
+| l_returnflag | l_linestatus | sum_qty     | sum_base_price  | sum_disc_price    | sum_charge          | avg_qty   | avg_price    | avg_disc | count_order |
++--------------+--------------+-------------+-----------------+-------------------+---------------------+-----------+--------------+----------+-------------+
+| A            | F            | 37734107.00 | 56586554400.73  | 53758257134.87    | 55909065222.83      | 25.522005 | 38273.129734 | 0.049985 | 1478493     |
+| N            | F            | 991417.00   | 1487504710.38   | 1413082168.05     | 1469649223.19       | 25.516471 | 38284.467760 | 0.050093 | 38854       |
+| N            | O            | 73416597.00 | 110112303006.41 | 104608220776.38   | 108796375788.18     | 25.502437 | 38249.282778 | 0.049996 | 2878807     |
+| R            | F            | 37719753.00 | 56568041380.90  | 53741292684.60    | 55889619119.83      | 25.505793 | 38250.854626 | 0.050009 | 1478870     |
++--------------+--------------+-------------+-----------------+-------------------+---------------------+-----------+--------------+----------+-------------+
 
-Time: 0.784812833 seconds. 4 rows.
+Time: 0.812 seconds. 4 rows.
 ```
 
 Run a cross-table join using the foreign key relationships:
@@ -216,16 +211,16 @@ ORDER BY r.r_name, num_customers DESC;
 ```
 
 ```
-+-------------+----------------+---------------+---------------+
-|    region   |     nation     | num_customers |  avg_balance  |
-+-------------+----------------+---------------+---------------+
-| AFRICA      | MOROCCO        | 620           | 4366.45       |
-| AFRICA      | ETHIOPIA       | 616           | 4384.92       |
++-------------+----------------+---------------+-------------+
+| region      | nation         | num_customers | avg_balance |
++-------------+----------------+---------------+-------------+
+| AFRICA      | MOZAMBIQUE     | 1102          | 4571.98     |
+| AFRICA      | ETHIOPIA       | 1098          | 4627.11     |
 ...
-| MIDDLE EAST | SAUDI ARABIA   | 543           | 4573.21       |
-+-------------+----------------+---------------+---------------+
+| MIDDLE EAST | SAUDI ARABIA   | 1067          | 4540.05     |
++-------------+----------------+---------------+-------------+
 
-Time: 0.056650125 seconds. 25 rows.
+Time: 0.045 seconds. 25 rows.
 ```
 
 ## Step 7. Clean up

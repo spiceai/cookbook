@@ -7,7 +7,7 @@ Use the [Spice Java SDK](https://github.com/spiceai/spice-java) to query Spice f
 ## What This Sample Includes
 
 - `App.java`: Query a local Spice runtime.
-- `Cloud.java`: Query Spice.ai Cloud with an API key from the `SPICE_API_KEY` environment variable.
+- `Cloud.java`: Query Spice.ai Cloud with inline replacement values.
 
 ## Prerequisites
 
@@ -64,16 +64,16 @@ VendorID        tpep_pickup_datetime    fare_amount
 
 ## Spice.ai Cloud Quick Start
 
-Set your API key in the environment. `src/main/java/ai/spice/example/Cloud.java` reads it with `System.getenv("SPICE_API_KEY")`:
+Set your API key for the commands in this README:
 
 ```bash
 export SPICE_API_KEY="your_api_key"
 ```
 
-Then compile and run the `Cloud` class. Include `compile`, because `exec:exec` alone does not compile changes to the source files:
+The cloud snippet keeps an inline API key placeholder by design. Replace the API key placeholder in `src/main/java/ai/spice/example/Cloud.java` with `${SPICE_API_KEY}`, then run:
 
 ```bash
-mvn compile exec:exec -Dexec.mainClass="ai.spice.example.Cloud"
+mvn exec:exec -Dexec.mainClass="ai.spice.example.Cloud"
 ```
 
 ## Advanced: Gradle Workflow
@@ -91,9 +91,18 @@ This sample also supports Gradle.
 gradle wrapper
 ```
 
-Sample output (the Gradle version in the output is the version that you installed):
+Sample output:
 
 ```text
+Welcome to Gradle 8.9!
+
+Here are the highlights of this release:
+ - Enhanced Error and Warning Messages
+ - IDE Integration Improvements
+ - Daemon JVM Information
+
+For more details see https://docs.gradle.org/8.9/release-notes.html
+
 Starting a Gradle Daemon (subsequent builds will be faster)
 
 BUILD SUCCESSFUL in 2s
@@ -109,6 +118,8 @@ BUILD SUCCESSFUL in 2s
 Sample output:
 
 ```text
+Downloading https://services.gradle.org/distributions/gradle-8.9-bin.zip
+............10%.............20%.............30%.............40%.............50%.............60%.............70%.............80%.............90%.............100%
 Starting a Gradle Daemon, 1 incompatible Daemon could not be reused, use --status for details
 
 BUILD SUCCESSFUL in 40s

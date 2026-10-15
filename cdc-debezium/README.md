@@ -64,42 +64,31 @@ datasets:
       refresh_mode: changes
 ```
 
+Spice runtime is already configured to run with the debug level of information, with environment variable configured in `cdc-debezium/.env`
+
+```bash
+SPICED_LOG="runtime_table::accelerated::refresh_task::changes=TRACE,runtime::accelerated_table::refresh_task::changes=TRACE,info"
+```
+
 Ensure the current directory is `cdc-debezium`, and start the spice runtime with the following command
 
 ```bash
 spice run
 ```
 
-Observe that the dataset is registered. It should look like:
+Observe that it consumes all of the changes. It should look like:
 
 ```bash
-2026-10-15T06:03:39.185035Z  INFO runtime::init::dataset: Dataset cdc registered (debezium:cdc.public.customer_addresses), acceleration (sqlite:file, changes), results cache enabled. duration_ms=4
-2026-10-15T06:03:40.817926Z  INFO runtime: All components are loaded. Spice runtime is ready!
+2026-05-06T18:28:22.326698Z  INFO runtime::init::dataset: Dataset cdc registered (debezium:cdc.public.customer_addresses), acceleration (sqlite:file, changes), results cache enabled.
+2026-05-06T18:28:23.828971Z TRACE runtime_table::accelerated::refresh_task::changes: Processing append/change stream batch: dataset=cdc, rows=50, sub-batches=1
+2026-05-06T18:28:23.828986Z TRACE runtime_table::accelerated::refresh_task::changes: Processing upsert batch for cdc with 50 rows
+...
 ```
 
-If Debezium has not created the Kafka topic yet, Spice can log a `WARN` that it failed to load the dataset `cdc`. Spice tries again and loads the dataset when the topic is available.
-
-Spice does not log each change that it applies. Use SQL to make sure that Spice consumed the changes. Run `spice sql` in a separate terminal to query the data
+Run `spice sql` in a separate terminal to query the data
 
 ```sql
 SELECT * FROM cdc;
-```
-
-Count the rows. The initial state of the `customer_addresses` table has 51 rows:
-
-```sql
-SELECT count(*) FROM cdc;
-```
-
-```bash
-+----------+
-| count(*) |
-|   int64  |
-+----------+
-| 51       |
-+----------+
-
-Time: 0.002231875 seconds. 1 rows.
 ```
 
 Now let's make some changes to the Postgres database and observe that Spice consumes the changes.
@@ -116,40 +105,38 @@ VALUES
 (100, 'John', 'Doe', 'john@doe.com');
 ```
 
-Query the data again from the `spice sql` REPL. After a few seconds, the new record is in the accelerated dataset:
-
-```sql
-SELECT * FROM cdc WHERE id = 100;
-```
+Notice that the Spice log shows the change.
 
 ```bash
-+-------+------------+-----------+--------------+-------------+--------------+---------+---------+---------+---------+
-|   id  | first_name | last_name |     email    | res_address | work_address | country |  state  | phone_1 | phone_2 |
-| int32 |   varchar  |  varchar  |    varchar   |   varchar   |    varchar   | varchar | varchar | varchar | varchar |
-+-------+------------+-----------+--------------+-------------+--------------+---------+---------+---------+---------+
-| 100   | John       | Doe       | john@doe.com |             |              |         |         |         |         |
-+-------+------------+-----------+--------------+-------------+--------------+---------+---------+---------+---------+
-
-Time: 0.003222416 seconds. 1 rows.
+2026-09-09T20:58:53.982874Z TRACE runtime_table::accelerated::refresh_task::changes: Processing append/change stream batch: dataset=cdc, rows=1, sub-batches=1
+2026-09-09T20:58:53.993595Z TRACE runtime_table::accelerated::refresh_task::changes: Append/change stream batch sub-batch processed dataset=cdc op="upsert" rows=1 duration_ms=10.546417
 ```
 
-`SELECT count(*) FROM cdc;` now returns `52`.
+Querying the data again from the `spice sql` REPL will show the new record.
+
+```sql
+SELECT * FROM cdc;
+```
 
 Now let's see what happens when we stop Spice and restart it. The data should still be there and it should not replay all of the changes from the beginning.
+
+```bash
+2024-08-26T22:30:16.715586Z  INFO runtime::init::dataset: Dataset cdc registered (debezium:cdc.public.customer_addresses), acceleration (sqlite:file, changes), results cache enabled.
+```
 
 Stop spice with `Ctrl+C`
 
 Restart Spice with `spice run`
 
-Observe that it doesn't replay the changes and the data is still there. Spice continues from the Kafka offsets that it saved, and only new changes will be consumed. It can take up to a minute before the runtime is ready:
+Observe that it doesn't replay the changes and the data is still there. Only new changes will be consumed.
 
 ```bash
-2026-10-15T06:04:07.790425Z  INFO runtime::init::dataset: Dataset cdc registered (debezium:cdc.public.customer_addresses), acceleration (sqlite:file, changes), results cache enabled. duration_ms=3
-2026-10-15T06:04:48.902137Z  INFO data_components::kafka: Restored Kafka consumer offsets from sidecar
-2026-10-15T06:04:49.995292Z  INFO runtime: All components are loaded. Spice runtime is ready!
+Spice.ai runtime starting...
+2024-07-29T23:22:04.303861Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2024-07-29T23:22:04.304011Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2024-07-29T23:22:04.303850Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2024-07-29T23:22:04.331209Z  INFO runtime::init::dataset: Dataset cdc registered (debezium:cdc.public.customer_addresses), acceleration (sqlite:file, changes), results cache enabled.
 ```
-
-Run `SELECT count(*) FROM cdc;` again in `spice sql`. It returns the same number of rows as before the restart, plus any rows that you inserted while Spice was stopped.
 
 ## Clean up
 

@@ -10,14 +10,3 @@ services:
       - '40000-40009:40000-40009/tcp'
     volumes:
       - './data:/home/user'
-  sftp-server:
-    image: lscr.io/linuxserver/openssh-server:10.3_p1-r1-ls239
-    container_name: my-sftp-server
-    environment:
-      - USER_NAME=user
-      - USER_PASSWORD=123
-      - PASSWORD_ACCESS=true
-    ports:
-      - '20022:2222/tcp'
-    volumes:
-      - './data:/data:ro'

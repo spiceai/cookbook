@@ -9,27 +9,22 @@ Follow these steps to get started with FTP/SFTP as a Data Connector.
 - Docker
 - Spice.ai runtime installed (see [Getting Started](https://docs.spiceai.org/getting-started))
 
-**Step 1.** Start a local FTP server and a local SFTP server via Docker Compose. Both servers share the same demo csv data.
+**Step 1.** Start a local FTP server preloaded with demo csv data via Docker Compose.
 
 ```bash
 git clone https://github.com/spiceai/cookbook # Skip if already cloned
 cd cookbook/ftp
-make # Start the FTP and SFTP servers
+make # Start the FTP server
 ```
-
-The `spicepod.yaml` file loads the same `customers.csv` file two times:
-
-- `customers` uses the FTP server (`ftp://localhost/customers.csv`, port `20021`).
-- `customers_sftp` uses the SFTP server (`sftp://localhost/data/customers.csv`, port `20022`).
 
 **Step 2.** Start the Spice runtime.
 
-Set the environment variables `FTP_PASS` and `SFTP_PASS` to the passwords for your FTP and SFTP servers. This can be specified on the command line when running the Spice runtime, or in a `.env` file in the same directory as `spicepod.yaml`.
+Set the environment variable `FTP_PASS`/`SFTP_PASS` to the password for your FTP server. This can be specified on the command line when running the Spice runtime, or in a `.env` file in the same directory as `spicepod.yaml`.
 
-i.e. to set the passwords for the demo servers in a `.env` file:
+i.e. to set the password in a `.env` file:
 
 ```bash
-printf "FTP_PASS=123\nSFTP_PASS=123\n" > .env
+echo "FTP_PASS=123" > .env
 ```
 
 ```bash
@@ -39,15 +34,16 @@ spice run
 Output:
 
 ```console
-2026-10-15T06:01:20.376099Z  INFO runtime::init::dataset: Dataset customers_sftp initializing...
-2026-10-15T06:01:20.376181Z  INFO runtime::init::dataset: Dataset customers initializing...
-2026-10-15T06:01:20.955893Z  INFO runtime::init::dataset: Dataset customers_sftp registered (sftp://localhost/data/customers.csv), acceleration (cayenne, 10s refresh), results cache enabled. duration_ms=445
-2026-10-15T06:01:20.956062Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset customers_sftp
-2026-10-15T06:01:21.030279Z  INFO runtime_table::accelerated::refresh_task: Loaded 100 rows (17.94 kiB) for dataset customers_sftp in 74ms.
-2026-10-15T06:01:21.085905Z  INFO runtime::init::dataset: Dataset customers registered (ftp://localhost/customers.csv), acceleration (cayenne, 10s refresh), results cache enabled. duration_ms=406
-2026-10-15T06:01:21.085927Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset customers
-2026-10-15T06:01:21.242553Z  INFO runtime_table::accelerated::refresh_task: Loaded 100 rows (17.94 kiB) for dataset customers in 156ms.
-2026-10-15T06:01:21.290845Z  INFO runtime: All components are loaded. Spice runtime is ready!
+2025-06-09T17:59:19.959978Z  INFO spiced: Starting runtime v1.4.0-rc.1+models
+2025-06-09T17:59:19.961855Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
+2025-06-09T17:59:19.962011Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
+2025-06-09T17:59:21.486798Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2025-06-09T17:59:21.491284Z  INFO runtime::init::dataset: Dataset customers initializing...
+2025-06-09T17:59:21.492025Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2025-06-09T17:59:21.633945Z  INFO runtime::init::dataset: Dataset customers registered (ftp://localhost/customers.csv), acceleration (cayenne, 10s refresh), results cache enabled.
+2025-06-09T17:59:21.635123Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset customers
+2025-06-09T17:59:21.707071Z  INFO runtime_table::accelerated::refresh_task: Loaded 100 rows (23.05 kiB) for dataset customers in 71ms.
+2025-06-09T17:59:21.735570Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
 See the [datasets reference](https://docs.spiceai.org/reference/spicepod/datasets) for more dataset configuration options.
@@ -77,24 +73,6 @@ Output:
 +-----------+--------------------+--------------------------------+-------------+-----------------+-----------+--------------+-------------------------------------------------------------------------------------------------------+
 
 Time: 0.011731833 seconds. 5 rows.
-```
-
-Query the same data through SFTP:
-
-```sql
-select count(*) from customers_sftp;
-```
-
-Output:
-
-```console
-+----------+
-| count(*) |
-+----------+
-| 100      |
-+----------+
-
-Time: 0.001904958 seconds. 1 rows.
 ```
 
 **Step 4.** Exit Spice SQL REPL by running `exit`, and clean up the demo environment:
