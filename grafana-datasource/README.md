@@ -37,7 +37,7 @@ Open a second terminal and run the following command to start Grafana in Docker:
 1. Log in with the default credentials `admin`/`admin`, skip the password change prompt.
    ![screenshot](./img/grafana-datasource-1.png)
 
-1. Navigate to Administation -> Plugins and data -> Plugins.
+1. Navigate to Administration -> Plugins and data -> Plugins.
 
 1. Select "State: All", and search for "Infinity". Install and click on "Add new data source".
    ![screenshot](./img/grafana-datasource-7.png)

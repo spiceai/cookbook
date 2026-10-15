@@ -15,7 +15,7 @@ This recipe will use a demo instance of MySQL with a dataset generated using SQL
 **Step 0.** Optional. Start a MySQL instance using Docker, if MySQL is not installed.
 
 ```bash
-docker run -d --name mysql-spice-demo -e MYSQL_ROOT_PASSWORD=123 -e MYSQL_DATABASE=spice_demo -e MYSQL_PASSWORD=123 -p 3306:3306 mysql:8.0
+docker run -d --name mysql-spice-demo -e MYSQL_ROOT_PASSWORD=123 -e MYSQL_DATABASE=spice_demo -p 3306:3306 mysql:8.0
 ```
 
 **Step 1.** Create a sample MySQL database and generate a testing table using stored procedure.
@@ -31,7 +31,7 @@ docker exec -it mysql-spice-demo mysql -u root -p123 --port 3306
 Using the MySQL console, create a sample database named `spice_demo`.
 
 ```SQL
-CREATE DATABASE spice_demo;
+CREATE DATABASE IF NOT EXISTS spice_demo;
 USE spice_demo;
 ```
 
