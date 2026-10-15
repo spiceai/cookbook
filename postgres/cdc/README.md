@@ -1,6 +1,6 @@
 # PostgreSQL CDC (Logical Replication)
 
-Works with `v2.0+`
+Works with `v2.4+`
 
 This recipe demonstrates how to stream real-time changes from a PostgreSQL table into Spice using native Change Data Capture (CDC) over [logical replication](https://www.postgresql.org/docs/current/logical-replication.html) (WAL streaming). Inserts, updates, and deletes propagate automatically to the Spice accelerator — no Debezium or Kafka required.
 
@@ -70,14 +70,17 @@ EOF
 spice run
 ```
 
+The dataset is accelerated with [Cayenne](https://spiceai.org/docs/components/data-accelerators/cayenne) (`engine: cayenne`), which keeps one row per `primary_key` and applies each change in source order, so inserts, updates, and deletes need no `on_conflict` setting.
+
 You should see the dataset bootstrap from a consistent snapshot and then transition to live WAL streaming:
 
 ```
-2025-01-13T12:00:00Z  INFO runtime::init::dataset: Dataset orders initializing...
-2025-01-13T12:00:00Z  INFO runtime::init::dataset: Dataset orders registered (postgres:orders), acceleration (duckdb:file, changes).
-2025-01-13T12:00:00Z  INFO data_components::postgres_replication::slot: Created new replication slot slot=spice_orders publication=spice_orders_pub consistent_lsn=0/1A2B3C48 snapshot=0/1A2B3C48
-2025-01-13T12:00:00Z  INFO data_components::postgres_replication::bootstrap: initial snapshot bootstrap complete dataset=orders rows=3 expected=Some(3)
-2025-01-13T12:00:00Z  INFO runtime: All components are loaded. Spice runtime is ready!
+2026-10-15T04:51:55.917921Z  INFO runtime::init::dataset: Dataset orders initializing...
+2026-10-15T04:51:55.958710Z  INFO runtime::init::dataset: Dataset 'orders' keeps one row per 'id', applying each source change in order.
+2026-10-15T04:51:56.446452Z  INFO runtime::init::dataset: Dataset orders registered (postgres:orders), acceleration (cayenne:file, changes), results cache enabled. duration_ms=465
+2026-10-15T04:51:56.487418Z  INFO data_components::postgres_replication::slot: Created new replication slot slot=spice_orders publication=spice_orders_pub consistent_lsn=0/194C270 snapshot=0/194C270
+2026-10-15T04:51:56.514251Z  INFO data_components::postgres_replication::bootstrap: initial snapshot bootstrap complete dataset=orders rows=3 expected=None
+2026-10-15T04:51:58.077338Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
 ---
