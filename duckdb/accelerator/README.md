@@ -60,7 +60,7 @@ spice sql
 Query the `taxi_trips` dataset, observing the long query time.
 
 ```sql
-select "VendorID", tpep_pickup_datetime, tpep_dropoff_datetime, passenger_count from taxi_trips limit 10;
+select "VendorID", tpep_pickup_datetime, tpep_dropoff_datetime, passenger_count from taxi_trips order by tpep_pickup_datetime, tpep_dropoff_datetime, "VendorID", passenger_count limit 10;
 ```
 
 ```
@@ -68,19 +68,19 @@ select "VendorID", tpep_pickup_datetime, tpep_dropoff_datetime, passenger_count 
 | VendorID | tpep_pickup_datetime | tpep_dropoff_datetime | passenger_count |
 |   int32  |     timestamp[us]    |     timestamp[us]     |      int64      |
 +----------+----------------------+-----------------------+-----------------+
-| 2        | 2024-01-13T03:18:09  | 2024-01-13T03:24:37   | 1               |
-| 2        | 2024-01-13T03:52:58  | 2024-01-13T04:01:18   | 1               |
-| 2        | 2024-01-13T03:26:02  | 2024-01-13T03:34:43   | 1               |
-| 2        | 2024-01-13T03:53:44  | 2024-01-13T04:10:56   | 1               |
-| 2        | 2024-01-13T02:58:28  | 2024-01-13T03:14:33   | 1               |
-| 2        | 2024-01-13T03:54:24  | 2024-01-13T04:03:58   | 1               |
-| 2        | 2024-01-13T03:06:55  | 2024-01-13T03:50:08   | 3               |
-| 2        | 2024-01-13T03:22:26  | 2024-01-13T03:30:50   | 2               |
-| 2        | 2024-01-13T03:21:19  | 2024-01-13T03:46:54   | 1               |
-| 1        | 2024-01-13T03:13:35  | 2024-01-13T03:40:25   | 1               |
+| 2        | 2002-12-31T22:59:39  | 2002-12-31T23:05:41   | 1               |
+| 2        | 2002-12-31T22:59:39  | 2002-12-31T23:05:41   | 1               |
+| 2        | 2009-01-01T00:24:09  | 2009-01-01T01:13:00   | 2               |
+| 2        | 2009-01-01T23:30:39  | 2009-01-02T00:01:39   | 1               |
+| 2        | 2009-01-01T23:58:40  | 2009-01-02T00:01:40   | 1               |
+| 2        | 2023-12-31T23:39:17  | 2023-12-31T23:42:00   | 2               |
+| 2        | 2023-12-31T23:41:02  | 2023-12-31T23:48:03   | 1               |
+| 2        | 2023-12-31T23:47:28  | 2023-12-31T23:57:07   | 2               |
+| 2        | 2023-12-31T23:49:12  | 2024-01-01T00:04:32   | 1               |
+| 2        | 2023-12-31T23:54:27  | 2024-01-01T00:13:12   | 1               |
 +----------+----------------------+-----------------------+-----------------+
 
-Time: 4.684086261 seconds. 10 rows.
+Time: 5.518708875 seconds. 10 rows.
 ```
 
 **Step 5.** Update the `spicepod.yaml` to enable DuckDB acceleration.
@@ -112,10 +112,12 @@ datasets:
 2024-09-12T23:09:11.477553Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 16s 167ms.
 ```
 
+At startup, Spice can also log a `WARN` that it capped the DuckDB memory limit to fit the memory available to the process. This message is expected when `duckdb_memory_limit` is not set, and you can ignore it for this recipe.
+
 **Step 7.** Run a query against the `taxi_trips` dataset again, observing the fast query time.
 
 ```sql
-select "VendorID", tpep_pickup_datetime, tpep_dropoff_datetime, passenger_count from taxi_trips limit 10;
+select "VendorID", tpep_pickup_datetime, tpep_dropoff_datetime, passenger_count from taxi_trips order by tpep_pickup_datetime, tpep_dropoff_datetime, "VendorID", passenger_count limit 10;
 ```
 
 ```
@@ -123,19 +125,19 @@ select "VendorID", tpep_pickup_datetime, tpep_dropoff_datetime, passenger_count 
 | VendorID | tpep_pickup_datetime | tpep_dropoff_datetime | passenger_count |
 |   int32  |     timestamp[us]    |     timestamp[us]     |      int64      |
 +----------+----------------------+-----------------------+-----------------+
-| 2        | 2024-01-13T03:18:09  | 2024-01-13T03:24:37   | 1               |
-| 2        | 2024-01-13T03:52:58  | 2024-01-13T04:01:18   | 1               |
-| 2        | 2024-01-13T03:26:02  | 2024-01-13T03:34:43   | 1               |
-| 2        | 2024-01-13T03:53:44  | 2024-01-13T04:10:56   | 1               |
-| 2        | 2024-01-13T02:58:28  | 2024-01-13T03:14:33   | 1               |
-| 2        | 2024-01-13T03:54:24  | 2024-01-13T04:03:58   | 1               |
-| 2        | 2024-01-13T03:06:55  | 2024-01-13T03:50:08   | 3               |
-| 2        | 2024-01-13T03:22:26  | 2024-01-13T03:30:50   | 2               |
-| 2        | 2024-01-13T03:21:19  | 2024-01-13T03:46:54   | 1               |
-| 1        | 2024-01-13T03:13:35  | 2024-01-13T03:40:25   | 1               |
+| 2        | 2002-12-31T22:59:39  | 2002-12-31T23:05:41   | 1               |
+| 2        | 2002-12-31T22:59:39  | 2002-12-31T23:05:41   | 1               |
+| 2        | 2009-01-01T00:24:09  | 2009-01-01T01:13:00   | 2               |
+| 2        | 2009-01-01T23:30:39  | 2009-01-02T00:01:39   | 1               |
+| 2        | 2009-01-01T23:58:40  | 2009-01-02T00:01:40   | 1               |
+| 2        | 2023-12-31T23:39:17  | 2023-12-31T23:42:00   | 2               |
+| 2        | 2023-12-31T23:41:02  | 2023-12-31T23:48:03   | 1               |
+| 2        | 2023-12-31T23:47:28  | 2023-12-31T23:57:07   | 2               |
+| 2        | 2023-12-31T23:49:12  | 2024-01-01T00:04:32   | 1               |
+| 2        | 2023-12-31T23:54:27  | 2024-01-01T00:13:12   | 1               |
 +----------+----------------------+-----------------------+-----------------+
 
-Time: 0.015658908 seconds. 10 rows.
+Time: 0.020399 seconds. 10 rows.
 ```
 
 ## Learn more
