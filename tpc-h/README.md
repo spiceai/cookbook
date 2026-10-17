@@ -69,6 +69,7 @@ show tables;
 | table_catalog | table_schema |  table_name  | table_type |
 |    varchar    |    varchar   |    varchar   |   varchar  |
 +---------------+--------------+--------------+------------+
+| spice         | runtime      | metrics      | BASE TABLE |
 | spice         | runtime      | task_history | BASE TABLE |
 | spice         | tpch         | customer     | BASE TABLE |
 | spice         | tpch         | region       | BASE TABLE |
@@ -80,7 +81,7 @@ show tables;
 | spice         | tpch         | supplier     | BASE TABLE |
 +---------------+--------------+--------------+------------+
 
-Time: 0.006163958 seconds. 9 rows.
+Time: 0.006163958 seconds. 10 rows.
 ```
 
 Run _Pricing Summary Report Query (Q1)_. More information about TPC-H and all the queries involved can be found in the official [TPC Benchmark H Standard Specification](https://www.tpc.org/tpc_documents_current_versions/pdf/tpc-h_v2.17.1.pdf).

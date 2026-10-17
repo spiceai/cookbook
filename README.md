@@ -36,11 +36,10 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 - [xAI Models](./models/xai/README.md) - Use xAI models such as Grok.
 - [DeepSeek Model](./deepseek/README.md) - Use DeepSeek model through Spice.
 - [Filesystem Hosted Model](./models/filesystem/README.md) - Use models hosted directly on filesystems.
-- [Web Search Tools using Perplexity](./websearch/README.md) - Give LLMs web search access via Perplexity.
 - [Evaluate API](./evaluate/README.md) - Evaluate unstructured data with typed questions using TypeSafe Jev, then an OpenAI chat model.
 - [Language Model Evaluations](./evals/README.md) - Use Spice to evaluate language models.
 - [LLM as a Judge](./llm-judge/README.md) - Define LLM judge models to evaluate other models.
-- [OpenAI Responses API](./openai-responses-api/README.md) - Use OpenAI's Responses API with Spice
+- [OpenAI Responses API](./openai-responses-api/README.md) - Use OpenAI's Responses API with Spice, including hosted tools such as web search.
 - [Model Context Protocol (MCP)](./mcp/README.md) - Connect to MCP servers and use MCP tools with Spice.
 
 ### Data Acceleration - Materializing & accelerating data locally with Data Accelerators
@@ -87,6 +86,7 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 - [GitHub Data Connector](./github/README.md) - Query GitHub repository data.
 - [GraphQL Data Connector](./graphql/README.md) - Connect to GraphQL endpoints.
 - [HTTP Data Connector](./http/README.md) - Query data from HTTP(s) endpoints like REST APIs.
+- [Hugging Face Data Connector](./huggingface/README.md) - Query and accelerate datasets on the Hugging Face Hub.
 - [MongoDB Data Connector](./mongodb/connector/README.md) - Connect to MongoDB as a data source.
 - [MSSQL (Microsoft SQL Server) Data Connector](./mssql/README.md) - Query across multiple SQL Server instances.
 - [ODBC Data Connector](./odbc/README.md) - Connect to databases via ODBC.
@@ -140,7 +140,7 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 - [Data Retention Policy](./retention/README.md) - Evict data older than a specified duration.
 - [Refresh Data Window](./refresh-data-window/README.md) - Filter data refresh to only recent data.
 - [Advanced Data Refresh](./acceleration/data-refresh/README.md) - Configure and tune data refresh for accelerated datasets.
-- [Data Quality with Constraints](./acceleration/constraints/README.md) - Enforce data quality constraints on accelerated datasets.
+- [Data Quality with Primary Keys](./acceleration/constraints/README.md) - Keep one row per primary key in an accelerated dataset, and the newest version of each key by time.
 
 ## Client SDKs - Recipes for querying data from Spice with language-specific SDKs
 

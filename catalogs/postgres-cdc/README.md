@@ -160,7 +160,7 @@ the catalog accelerates:
 > to durable storage.
 
 > **Per-table acceleration settings are not configurable here.** `primary_key`,
-> `on_conflict`, `indexes` and other per-dataset overrides remain exclusively on
+> `indexes` and other per-dataset overrides remain exclusively on
 > an individual dataset's own `acceleration` block. Each table's CDC key is
 > resolved from its `REPLICA IDENTITY`: a primary key (`DEFAULT`) or a unique
 > index (`USING INDEX`) becomes the key, and `REPLICA IDENTITY FULL` works too

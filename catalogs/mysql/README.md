@@ -53,12 +53,10 @@ The TPC-H schema includes the following foreign key relationships:
 | `lineitem` | `l_orderkey`                   | `orders(o_orderkey)`            |
 | `lineitem` | `(l_partkey, l_suppkey)`       | `partsupp(ps_partkey, ps_suppkey)` |
 
-## Step 2. Create a new directory and initialize a Spicepod
+## Step 2. Go to the Spicepod directory
 
 ```bash
-mkdir mysql-catalog-recipe
 cd mysql-catalog-recipe
-spice init
 ```
 
 ## Step 3. Configure credentials
@@ -69,7 +67,9 @@ Create a `.env` file with the database credentials:
 echo "MYSQL_USER=root" > .env
 ```
 
-## Step 4. Add the MySQL Catalog Connector to `spicepod.yaml`
+## Step 4. Review the MySQL Catalog Connector in `spicepod.yaml`
+
+The `spicepod.yaml` in this directory configures the connector:
 
 ```yaml
 version: v1
@@ -130,6 +130,9 @@ SHOW TABLES;
 | spice         | runtime      | task_history | BASE TABLE |
 +---------------+--------------+--------------+------------+
 ```
+
+`SHOW TABLES` also lists the `information_schema` views (`tables`, `views`, `columns`, `df_settings`, `schemata`,
+`routines`, `parameters`) of each catalog.
 
 Query a table using the three-part `catalog.database.table` name:
 
@@ -202,34 +205,34 @@ ORDER BY r.r_name, num_customers DESC, nation;
 
 ```
 +-------------+----------------+---------------+---------------+
-|   region    |     nation     | num_customers |  avg_balance  |
-|   varchar   |    varchar     |     int64     | decimal(19,6) |
+|    region   |     nation     | num_customers |  avg_balance  |
+|   varchar   |     varchar    |     int64     | decimal(19,2) |
 +-------------+----------------+---------------+---------------+
-| AFRICA      | KENYA          | 5992          | 4573.860000   |
-| AFRICA      | MOZAMBIQUE     | 5974          | 4523.420000   |
-| AFRICA      | ETHIOPIA       | 5952          | 4467.370000   |
-| AFRICA      | ALGERIA        | 5925          | 4442.700000   |
-| AFRICA      | MOROCCO        | 5921          | 4496.790000   |
-| AMERICA     | CANADA         | 6020          | 4489.260000   |
-| AMERICA     | BRAZIL         | 5999          | 4471.020000   |
-| AMERICA     | UNITED STATES  | 5983          | 4565.650000   |
-| AMERICA     | ARGENTINA      | 5975          | 4485.000000   |
-| AMERICA     | PERU           | 5975          | 4444.570000   |
-| ASIA        | INDONESIA      | 6161          | 4533.430000   |
-| ASIA        | INDIA          | 6042          | 4517.320000   |
-| ASIA        | CHINA          | 6024          | 4438.950000   |
-| ASIA        | VIETNAM        | 6008          | 4507.660000   |
-| ASIA        | JAPAN          | 5948          | 4522.270000   |
-| EUROPE      | FRANCE         | 6100          | 4436.010000   |
-| EUROPE      | ROMANIA        | 6100          | 4544.850000   |
-| EUROPE      | RUSSIA         | 6078          | 4517.580000   |
-| EUROPE      | UNITED KINGDOM | 6011          | 4514.660000   |
-| EUROPE      | GERMANY        | 5908          | 4452.740000   |
-| MIDDLE EAST | JORDAN         | 6033          | 4457.380000   |
-| MIDDLE EAST | IRAN           | 6009          | 4467.340000   |
-| MIDDLE EAST | EGYPT          | 5995          | 4520.490000   |
-| MIDDLE EAST | IRAQ           | 5963          | 4514.440000   |
-| MIDDLE EAST | SAUDI ARABIA   | 5904          | 4480.980000   |
+| AFRICA      | KENYA          | 5992          | 4573.86       |
+| AFRICA      | MOZAMBIQUE     | 5974          | 4523.42       |
+| AFRICA      | ETHIOPIA       | 5952          | 4467.37       |
+| AFRICA      | ALGERIA        | 5925          | 4442.70       |
+| AFRICA      | MOROCCO        | 5921          | 4496.79       |
+| AMERICA     | CANADA         | 6020          | 4489.26       |
+| AMERICA     | BRAZIL         | 5999          | 4471.02       |
+| AMERICA     | UNITED STATES  | 5983          | 4565.65       |
+| AMERICA     | ARGENTINA      | 5975          | 4485.00       |
+| AMERICA     | PERU           | 5975          | 4444.57       |
+| ASIA        | INDONESIA      | 6161          | 4533.43       |
+| ASIA        | INDIA          | 6042          | 4517.32       |
+| ASIA        | CHINA          | 6024          | 4438.95       |
+| ASIA        | VIETNAM        | 6008          | 4507.66       |
+| ASIA        | JAPAN          | 5948          | 4522.27       |
+| EUROPE      | FRANCE         | 6100          | 4436.01       |
+| EUROPE      | ROMANIA        | 6100          | 4544.85       |
+| EUROPE      | RUSSIA         | 6078          | 4517.58       |
+| EUROPE      | UNITED KINGDOM | 6011          | 4514.66       |
+| EUROPE      | GERMANY        | 5908          | 4452.74       |
+| MIDDLE EAST | JORDAN         | 6033          | 4457.38       |
+| MIDDLE EAST | IRAN           | 6009          | 4467.34       |
+| MIDDLE EAST | EGYPT          | 5995          | 4520.49       |
+| MIDDLE EAST | IRAQ           | 5963          | 4514.44       |
+| MIDDLE EAST | SAUDI ARABIA   | 5904          | 4480.98       |
 +-------------+----------------+---------------+---------------+
 
 Time: 0.102868 seconds. 25 rows.

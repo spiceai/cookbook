@@ -195,7 +195,7 @@ The following output is shown in the Spice runtime terminal confirming new confi
 2024-07-23T00:23:29.327942Z  INFO runtime::init::dataset: Accelerated Dataset lineitem updating...
 2024-07-23T00:23:29.657023Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset lineitem
 2024-07-23T00:23:52.413596Z  INFO runtime_table::accelerated::refresh_task: Loaded 6,001,215 rows (9.46 GiB) for dataset lineitem in 22s 756ms.
-2024-07-23T00:23:52.553037Z  INFO runtime::init::dataset: Dataset lineitem registered (snowflake:snowflake_sample_data.tpch_sf1.lineitem), acceleration (arrow), results cache enabled.
+2024-07-23T00:23:52.553037Z  INFO runtime::init::dataset: Dataset lineitem registered (snowflake:snowflake_sample_data.tpch_sf1.lineitem), acceleration (cayenne), results cache enabled.
 ```
 
 Run _Pricing Summary Report Query_ using the Spice SQL REPL.

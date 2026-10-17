@@ -13,7 +13,7 @@ datasets:
       file_format: parquet
       s3_auth: public
 
-  # The same S3 dataset, accelerated locally in memory with Arrow.
+  # The same S3 dataset, accelerated locally in memory.
   - from: s3://spiceai-demo-datasets/taxi_trips/2024/
     name: taxi_trips_accelerated
     description: NYC yellow taxi trips from January 2024, stored in S3, locally accelerated
@@ -35,7 +35,7 @@ datasets:
       pg_user: postgres
       pg_sslmode: disable
 
-  # The same PostgreSQL table, accelerated locally in memory with Arrow.
+  # The same PostgreSQL table, accelerated locally in memory.
   - from: postgres:taxi_zones
     name: taxi_zones_accelerated
     description: NYC taxi zones, stored in PostgreSQL, locally accelerated

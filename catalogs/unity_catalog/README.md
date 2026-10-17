@@ -66,6 +66,9 @@ show tables;
 +---------------+--------------+--------------+------------+
 ```
 
+`show tables` also lists the `information_schema` views (`tables`, `views`, `columns`, `df_settings`, `schemata`,
+`routines`, `parameters`) of each catalog.
+
 ```sql
 SELECT * FROM uc.samples.customers LIMIT 5;
 ```
@@ -89,7 +92,7 @@ SELECT c.first_name, c.last_name, c.segment, COUNT(o.order_id) AS order_count
 FROM uc.samples.customers c
 JOIN uc.samples.orders o ON c.customer_id = o.customer_id
 GROUP BY c.first_name, c.last_name, c.segment
-ORDER BY order_count DESC
+ORDER BY order_count DESC, c.last_name, c.first_name
 LIMIT 10;
 ```
 
@@ -98,16 +101,16 @@ LIMIT 10;
 | first_name | last_name |     segment    | order_count |
 |   varchar  |  varchar  |     varchar    |    int64    |
 +------------+-----------+----------------+-------------+
-| Emma       | Thompson  | Corporate      | 12          |
 | David      | Brown     | Consumer       | 12          |
+| Emma       | Thompson  | Corporate      | 12          |
 | Barbara    | Anderson  | Enterprise     | 10          |
 | Sarah      | Miller    | Enterprise     | 10          |
 | Ava        | Brown     | Consumer       | 9           |
-| William    | Moore     | Enterprise     | 9           |
-| David      | Jones     | Small Business | 9           |
 | Karen      | Hernandez | Enterprise     | 9           |
+| David      | Jones     | Small Business | 9           |
+| William    | Moore     | Enterprise     | 9           |
 | Oliver     | White     | Corporate      | 9           |
-| Oliver     | Lee       | Small Business | 8           |
+| Liam       | Brown     | Consumer       | 8           |
 +------------+-----------+----------------+-------------+
 ```
 

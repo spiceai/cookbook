@@ -63,31 +63,23 @@ Ensure the current directory is `kafka`, and start the Spice runtime:
 spice run
 ```
 
-Observe that Spice loads data from the configured Kafka topic into the `orders` dataset
+Observe that Spice registers the Kafka-backed `orders` dataset and loads the TPC-H dimension tables from S3:
 
 ```bash
-2025-08-24T05:06:40.084870Z  INFO spiced: Starting runtime v1.6.0-unstable-build.d7fadb4c2-dev+models
-2025-08-24T05:06:40.086387Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
-2025-08-24T05:06:40.086548Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
-2025-08-24T05:06:40.525189Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-08-24T05:06:40.538475Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2025-08-24T05:06:40.575784Z  INFO runtime::init::dataset: Dataset nation initializing...
-2025-08-24T05:06:40.575784Z  INFO runtime::init::dataset: Dataset supplier initializing...
-2025-08-24T05:06:40.575821Z  INFO runtime::init::dataset: Dataset customer initializing...
-2025-08-24T05:06:40.575839Z  INFO runtime::init::dataset: Dataset orders initializing...
-2025-08-24T05:06:40.628259Z  INFO runtime::init::dataset: Dataset orders registered (kafka:orders_events), acceleration (duckdb:file, append), results cache enabled.
-2025-08-24T05:06:41.527790Z  INFO runtime::init::dataset: Dataset nation registered (s3://spiceai-demo-datasets/tpch/nation/), acceleration (duckdb:file), results cache enabled.
-2025-08-24T05:06:41.531264Z  INFO runtime::init::dataset: Dataset customer registered (s3://spiceai-demo-datasets/tpch/customer/), acceleration (duckdb:file), results cache enabled.
-2025-08-24T05:06:41.531332Z  INFO runtime::init::dataset: Dataset supplier registered (s3://spiceai-demo-datasets/tpch/supplier/), acceleration (duckdb:file), results cache enabled.
-2025-08-24T05:06:54.138084Z DEBUG runtime::accelerated_table::refresh_task::changes: Inserting data row for orders
-2025-08-24T05:06:54.167452Z DEBUG runtime::accelerated_table::refresh_task::changes: Inserting data row for orders
-...
+2026-10-09T00:30:55.796671Z  INFO spiced: Starting runtime v2.4.0-rc.1+models (allocator: jemalloc)
+2026-10-09T00:30:56.001804Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2026-10-09T00:30:56.002078Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2026-10-09T00:30:56.729700Z  INFO runtime::init::dataset: Dataset nation registered (s3://spiceai-demo-datasets/tpch/nation/), acceleration (duckdb:file), results cache enabled.
+2026-10-09T00:30:56.960993Z  INFO runtime::init::dataset: Dataset orders registered (kafka:orders_events), acceleration (duckdb:file, append), results cache enabled.
+2026-10-09T00:30:56.988297Z  INFO runtime::init::dataset: Dataset supplier registered (s3://spiceai-demo-datasets/tpch/supplier/), acceleration (duckdb:file), results cache enabled.
+2026-10-09T00:30:56.994440Z  INFO runtime::init::dataset: Dataset customer registered (s3://spiceai-demo-datasets/tpch/customer/), acceleration (duckdb:file), results cache enabled.
+2026-10-09T00:30:57.449639Z  INFO runtime_table::accelerated::refresh_task: Loaded 25 rows (2.59 kiB) for dataset nation in 718ms.
+2026-10-09T00:30:58.107733Z  INFO runtime_table::accelerated::refresh_task: Loaded 10,000 rows (1.68 MiB) for dataset supplier in 1s 118ms.
+2026-10-09T00:30:59.275105Z  INFO runtime_table::accelerated::refresh_task: Loaded 150,000 rows (29.12 MiB) for dataset customer in 2s 279ms.
+2026-10-09T00:30:59.324916Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
-The transcript above is from `v1.6.0`. From `v2.2.0` the accelerated-table code moved to its own
-`runtime-table` crate, so those two records read
-`runtime_table::accelerated::refresh_task::changes` instead. The `SPICED_LOG` filter in `kafka/.env`
-names both targets, so the recipe shows them on either version.
+Messages from the topic are appended to `orders` in batches, without a log line per message. Query the dataset to watch new orders arrive: the count grows by about one per second, the producer's rate.
 
 Run `spice sql` in a separate terminal to query the data
 

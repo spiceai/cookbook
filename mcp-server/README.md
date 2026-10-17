@@ -29,7 +29,7 @@ Your AI assistant gets one connection point that gives it:
     │                                                 │
     │  github__*  ── stdio ──► npx @mcp/server-github │
     │                                                 │
-    │  datasets (Arrow, in-memory)                    │
+    │  datasets (accelerated in memory)               │
     │    github_issues   ◄── GitHub API               │
     │    github_pulls    ◄── GitHub API               │
     │    github_commits  ◄── GitHub API               │
@@ -82,10 +82,10 @@ Spice loads GitHub data into memory and launches the GitHub MCP server subproces
 2026-09-12T12:04:46.999770Z  INFO runtime::http::routes: Enabled API key authentication on HTTP routes
 2026-09-12T12:04:47.000953Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 GitHub MCP Server running on stdio
-2026-09-12T12:04:48.422999Z  INFO runtime::init::dataset: Dataset github_issues registered (github:github.com/spiceai/cookbook/issues), acceleration (arrow, 300s refresh), results cache enabled. duration_ms=4
+2026-09-12T12:04:48.422999Z  INFO runtime::init::dataset: Dataset github_issues registered (github:github.com/spiceai/cookbook/issues), acceleration (cayenne, 300s refresh), results cache enabled. duration_ms=4
 2026-09-12T12:04:49.065134Z  INFO runtime_table::accelerated::refresh_task: Loaded 4 rows (1.53 MiB) for dataset github_issues in 640ms.
-2026-09-12T12:04:50.436538Z  INFO runtime::init::dataset: Dataset github_pulls registered (github:github.com/spiceai/cookbook/pulls), acceleration (arrow, 300s refresh), results cache enabled. duration_ms=0
-2026-09-12T12:04:50.660468Z  INFO runtime::init::dataset: Dataset github_commits registered (github:github.com/spiceai/cookbook/commits), acceleration (arrow), results cache enabled. duration_ms=6
+2026-09-12T12:04:50.436538Z  INFO runtime::init::dataset: Dataset github_pulls registered (github:github.com/spiceai/cookbook/pulls), acceleration (cayenne, 300s refresh), results cache enabled. duration_ms=0
+2026-09-12T12:04:50.660468Z  INFO runtime::init::dataset: Dataset github_commits registered (github:github.com/spiceai/cookbook/commits), acceleration (cayenne), results cache enabled. duration_ms=6
 2026-09-12T12:05:08.156863Z  INFO runtime_table::accelerated::refresh_task: Loaded 500 rows (1.51 MiB) for dataset github_commits in 17s 494ms.
 2026-09-12T12:05:09.750891Z  INFO runtime_table::accelerated::refresh_task: Loaded 69 rows (7.37 MiB) for dataset github_pulls in 19s 312ms.
 2026-09-12T12:05:09.757459Z  INFO runtime: All components are loaded. Spice runtime is ready!

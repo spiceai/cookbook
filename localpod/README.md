@@ -53,7 +53,7 @@ $ spice run
 2026-09-24T15:46:28.645041Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
 2026-09-24T15:46:28.652730Z  INFO runtime::init::dataset: Loading datasets: 1 tasks dispatched, 0 skipped at accelerator init (of 2 total; localpod datasets may be chained).
 2026-09-24T15:46:28.652776Z  INFO runtime::init::dataset: Dataset local_time_series initializing...
-2026-09-24T15:46:28.655274Z  INFO runtime::init::dataset: Dataset time_series registered (file:data.csv), acceleration (arrow, 15s refresh), results cache enabled. duration_ms=0
+2026-09-24T15:46:28.655274Z  INFO runtime::init::dataset: Dataset time_series registered (file:data.csv), acceleration (cayenne, 15s refresh), results cache enabled. duration_ms=0
 2026-09-24T15:46:28.656620Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset time_series
 2026-09-24T15:46:28.657844Z  INFO runtime_table::accelerated::refresh_task: Loaded 1 rows (384.00 B) for dataset time_series in 1ms.
 2026-09-24T15:46:28.664894Z  INFO runtime::datafusion: Localpod dataset local_time_series synchronizing refreshes with parent table time_series

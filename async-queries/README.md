@@ -94,6 +94,20 @@ SPICE_CONFIG_DIR=~/.spice/executor1 ~/.spice/bin/spiced --role executor \
 2026-03-02T12:01:01.000000Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
+To add a second executor on this host, give it its own certificate, instance directory and ports. On Spice `v2.5+`, also give it its own `SPICE_INSTANCE_ID`: without one, both executors use the host name as their identity, and the scheduler sends tasks to only one of them. See [Add a Second Executor on the Same Host](../distributed/README.md#step-6-add-a-second-executor-on-the-same-host).
+
+```bash
+spice cluster tls add executor2
+SPICE_CONFIG_DIR=~/.spice/executor2 SPICE_INSTANCE_ID=executor2 ~/.spice/bin/spiced --role executor \
+  --http 127.0.0.1:9091 \
+  --scheduler-address 127.0.0.1:50052 \
+  --node-mtls-ca-certificate-file ~/.spice/pki/ca.crt \
+  --node-mtls-certificate-file ~/.spice/pki/executor2.crt \
+  --node-mtls-key-file ~/.spice/pki/executor2.key \
+  --node-bind-address 127.0.0.1:50063 \
+  --node-advertise-address 127.0.0.1
+```
+
 ### Step 5: Submit an Async Query via HTTP
 
 In a new terminal, submit a query using `curl`:

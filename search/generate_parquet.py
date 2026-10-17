@@ -5,7 +5,7 @@ import json
 import polars as pl
 from pathlib import Path
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 logging.basicConfig(level=logging.INFO, format='[info] %(message)s')
 logger = logging.getLogger(__name__)
@@ -48,12 +48,23 @@ def normalize_record(record, rkey=None):
     return normalized
 
 def process_batch(records):
-    """Process a batch of records and append to parquet file"""
+    """Process a batch of records and append to parquet file. Returns the number of rows written."""
     if not records:
-        return
+        return 0
 
     # Normalize all records to ensure consistent schema
     normalized_records = [normalize_record(record['record'], record['rkey']) for record in records]
+
+    # createdAt is set by the posting client and can be hours in the future. Spice's
+    # append refresh only loads rows newer than the newest created_at it already has,
+    # so one future-dated post would stop all later posts from being ingested.
+    cutoff = datetime.now(timezone.utc) + timedelta(minutes=1)
+    kept = [r for r in normalized_records if r['created_at'] is None or r['created_at'] <= cutoff]
+    if len(kept) < len(normalized_records):
+        logger.info(f"SKIPPED {len(normalized_records) - len(kept)} FUTURE-DATED ROWS")
+    normalized_records = kept
+    if not normalized_records:
+        return 0
 
     # Create DataFrame from normalized records
     df = pl.DataFrame(normalized_records)
@@ -87,6 +98,8 @@ def process_batch(records):
         # Create new file
         df.write_parquet(PARQUET_FILE)
 
+    return len(normalized_records)
+
 def main():
     logger.info(f"boot!")
     records = []
@@ -115,9 +128,9 @@ def main():
                 records.append({'record': record, 'rkey': rkey})
 
                 if len(records) >= BATCH_SIZE:
-                    process_batch(records)
-                    total_count += len(records)
-                    logger.info(f"INSERTED {len(records)} ROWS; TOTAL {total_count}")
+                    written = process_batch(records)
+                    total_count += written
+                    logger.info(f"INSERTED {written} ROWS; TOTAL {total_count}")
                     records = []
 
             except json.JSONDecodeError as e:
@@ -129,9 +142,9 @@ def main():
 
     # Process remaining records
     if records:
-        process_batch(records)
-        total_count += len(records)
-        logger.info(f"INSERTED {len(records)} ROWS; TOTAL {total_count}")
+        written = process_batch(records)
+        total_count += written
+        logger.info(f"INSERTED {written} ROWS; TOTAL {total_count}")
 
     logger.info(f"Processing complete. Total records: {total_count}")
     logger.info(f"Data saved to: {PARQUET_FILE}")

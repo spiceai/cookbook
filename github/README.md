@@ -9,13 +9,18 @@ This recipe will use the [spiceai/spiceai](https://github.com/spiceai/spiceai) r
 - Spice is installed (see the [Getting Started](https://docs.spiceai.org/getting-started) documentation).
 - GitHub personal access token, [Learn more](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic) how to create one.
 
-  Grant the token both of these scopes:
+  Grant the token all three of these scopes:
 
   - `repo` — for the `files`, `issues`, `pulls`, and `commits` datasets.
   - `read:user` (or `user:email`) — the `stargazers` and `members` datasets select
     the user `email` field, which GitHub only returns for tokens with one of these
-    scopes. Without it those two datasets fail to load with `Your token has not
-    been granted the required scopes to execute this query`.
+    scopes.
+  - `read:org` — the `members` dataset reads organization members, which GitHub
+    only returns for tokens with this scope.
+
+  Without `read:user` and `read:org`, the `stargazers` and `members` datasets fail
+  to load with `Your token has not been granted the required scopes to execute
+  this query`.
 
   [![Watch the Spice.ai local GitHub connector demo](https://img.youtube.com/vi/mxwt0HEF1VQ/hqdefault.jpg)](https://www.youtube.com/embed/mxwt0HEF1VQ)
 
@@ -50,15 +55,15 @@ spice run
 2025-07-16T15:17:14.162218Z  INFO runtime::init::dataset: Dataset spiceai.stargazers initializing...
 2025-07-16T15:17:14.162515Z  INFO runtime::init::dataset: Dataset spiceai.files initializing...
 2025-07-16T15:17:14.166935Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2025-07-16T15:17:15.311687Z  INFO runtime::init::dataset: Dataset spiceai.commits registered (github:github.com/spiceai/spiceai/commits), acceleration (arrow), results cache enabled.
+2025-07-16T15:17:15.311687Z  INFO runtime::init::dataset: Dataset spiceai.commits registered (github:github.com/spiceai/spiceai/commits), acceleration (cayenne), results cache enabled.
 2025-07-16T15:17:15.313347Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset spiceai.commits
-2025-07-16T15:17:15.507378Z  INFO runtime::init::dataset: Dataset spiceai.stargazers registered (github:github.com/spiceai/spiceai/stargazers), acceleration (arrow), results cache enabled.
+2025-07-16T15:17:15.507378Z  INFO runtime::init::dataset: Dataset spiceai.stargazers registered (github:github.com/spiceai/spiceai/stargazers), acceleration (cayenne), results cache enabled.
 2025-07-16T15:17:15.508684Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset spiceai.stargazers
-2025-07-16T15:17:16.406635Z  INFO runtime::init::dataset: Dataset spiceai.files registered (github:github.com/spiceai/spiceai/files/trunk), acceleration (arrow), results cache enabled.
+2025-07-16T15:17:16.406635Z  INFO runtime::init::dataset: Dataset spiceai.files registered (github:github.com/spiceai/spiceai/files/trunk), acceleration (cayenne), results cache enabled.
 2025-07-16T15:17:16.407961Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset spiceai.files
-2025-07-16T15:17:16.772995Z  INFO runtime::init::dataset: Dataset spiceai.issues registered (github:github.com/spiceai/spiceai/issues), acceleration (arrow), results cache enabled.
+2025-07-16T15:17:16.772995Z  INFO runtime::init::dataset: Dataset spiceai.issues registered (github:github.com/spiceai/spiceai/issues), acceleration (cayenne), results cache enabled.
 2025-07-16T15:17:16.774218Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset spiceai.issues
-2025-07-16T15:17:17.447103Z  INFO runtime::init::dataset: Dataset apache.members registered (github:github.com/apache/members), acceleration (arrow), results cache enabled.
+2025-07-16T15:17:17.447103Z  INFO runtime::init::dataset: Dataset apache.members registered (github:github.com/apache/members), acceleration (cayenne), results cache enabled.
 2025-07-16T15:17:17.448839Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset apache.members
 ```
 

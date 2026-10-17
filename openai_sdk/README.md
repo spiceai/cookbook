@@ -34,7 +34,7 @@ Output:
 2025-01-13T21:27:41.703575Z  INFO runtime::init::model: Loading model [openai] from openai:gpt-6-luna...
 2025-01-13T21:27:41.902271Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
 2025-01-13T21:27:42.242310Z  INFO runtime::init::model: Model [openai] deployed, ready for inferencing
-2025-01-13T21:27:42.576976Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (arrow, 10s refresh), results cache enabled.
+2025-01-13T21:27:42.576976Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (cayenne), results cache enabled.
 2025-01-13T21:27:42.578442Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset taxi_trips
 2025-01-13T21:27:53.260052Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 10s 681ms.
 ```

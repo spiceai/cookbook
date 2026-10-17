@@ -18,5 +18,3 @@ datasets:
       mode: file
       refresh_mode: changes
       primary_key: id
-      on_conflict:
-        id: upsert

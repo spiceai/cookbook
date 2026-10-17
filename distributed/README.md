@@ -146,7 +146,7 @@ Submit a query with `spice query`. The CLI submits the query to the scheduler an
 it completes:
 
 ```bash
-spice query "select * from data limit 10;"
+spice query "select * from data order by id limit 10;"
 ```
 
 ```console
@@ -192,6 +192,44 @@ job, and the executor receiving and executing its tasks:
 2026-08-02T12:11:49.148640Z  INFO ballista_executor::execution_loop: Done with task TID 2 019FC-263-30F-124214/2.0/0.0
 2026-08-02T12:11:49.148703Z  INFO ballista_executor: Task 2 finished with operator_metrics array size 3
 ```
+
+### Step 6: Add a Second Executor on the Same Host
+
+Spice `v2.5+` identifies each scheduler and executor in a cluster by the `SPICE_INSTANCE_ID` environment variable. When it is not set, the identity is the host name, so two executors, or two schedulers, on one host must each set a distinct `SPICE_INSTANCE_ID`. Earlier versions do not use `SPICE_INSTANCE_ID` in a cluster, and the commands below work with them too.
+
+The executor from Step 4 uses the host name as its identity. To add a second executor, open a new terminal window, change directory back to the distributed query cookbook, and create a certificate and a directory for it:
+
+```bash
+spice cluster tls add executor2
+mkdir -p executor2 && cd executor2
+```
+
+Start the second executor with its own `SPICE_INSTANCE_ID` and ports:
+
+```bash
+SPICE_INSTANCE_ID=executor2 ~/.spice/bin/spiced --role executor \
+  --http 127.0.0.1:9091 \
+  --scheduler-address 127.0.0.1:50052 \
+  --node-mtls-ca-certificate-file ~/.spice/pki/ca.crt \
+  --node-mtls-certificate-file ~/.spice/pki/executor2.crt \
+  --node-mtls-key-file ~/.spice/pki/executor2.key \
+  --node-bind-address 127.0.0.1:50063 \
+  --node-advertise-address 127.0.0.1
+```
+
+The scheduler logs that the cluster has two executors:
+
+```console
+2026-10-15T08:01:27.997029Z  INFO runtime::cluster: Cluster executor slots updated executor_count=2 total_slots=32
+```
+
+Queries from Step 5 now run tasks on both executors. When two executors share an identity, the scheduler logs this error and sends tasks to only one of them:
+
+```console
+2026-10-15T07:58:37.005725Z ERROR runtime::cluster::service: Another running instance uses SPICE_INSTANCE_ID 'my-host' at state location 'file:///tmp/spice-cluster'. Give each instance its own SPICE_INSTANCE_ID (for example the pod name).
+```
+
+To recover, stop both executors and start them again as shown in Step 4 and in this step.
 
 ## Learn More
 

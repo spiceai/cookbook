@@ -1,6 +1,6 @@
 # Serializable Transactions with Durable Write-Back (Balance Transfer)
 
-Works with `v2.2+`
+Works with `v2.4+`
 
 This recipe demonstrates **gated serializable transactions** on Cayenne-accelerated
 tables backed by PostgreSQL. You submit a whole `BEGIN … COMMIT` body — a gate plus one
@@ -84,6 +84,17 @@ Copy [`spicepod.yaml`](./spicepod.yaml) and [`.env`](./.env) into your Spice app
 tables are accelerated by Cayenne with `write_mode: write_back` and share the default
 Cayenne metastore, so a transaction spanning both commits atomically. See the file for
 the full annotated configuration.
+
+> **Version note:** On `v2.2.x` and `v2.3.x`, durable write-back also needs an
+> `on_conflict` upsert on the primary key. Add it to each dataset's `acceleration` block:
+>
+> ```yaml
+>       on_conflict:
+>         id: upsert
+> ```
+>
+> From `v2.4`, Cayenne keeps one row per `primary_key` without it. Setting `on_conflict`
+> there logs a warning that Cayenne no longer uses it.
 
 ---
 
@@ -182,8 +193,10 @@ UPDATE savings  SET balance = balance + 5000 WHERE id = 'alice';
 COMMIT;"
 ```
 
-```json
-{"code":400,"message":"assertion failed: gate expression was false or NULL"}
+The request fails with HTTP `400`:
+
+```console
+Execution error: assertion failed: gate expression was false or NULL
 ```
 
 Balances are unchanged (checking still 800, savings still 200) — the debit that was staged

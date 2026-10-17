@@ -140,18 +140,19 @@ SHOW TABLES;
 | table_catalog | table_schema |  table_name  | table_type |
 |    varchar    |    varchar   |    varchar   |   varchar  |
 +---------------+--------------+--------------+------------+
-| spice         | runtime      | task_history | BASE TABLE |
-| my_lakehouse  | main         | customer     | BASE TABLE |
+| my_lakehouse  | main         | orders       | BASE TABLE |
 | my_lakehouse  | main         | lineitem     | BASE TABLE |
+| my_lakehouse  | main         | customer     | BASE TABLE |
+| my_lakehouse  | main         | region       | BASE TABLE |
 | my_lakehouse  | main         | nation       | BASE TABLE |
+| my_lakehouse  | main         | part         | BASE TABLE |
 | my_lakehouse  | main         | partsupp     | BASE TABLE |
 | my_lakehouse  | main         | supplier     | BASE TABLE |
-| my_lakehouse  | main         | part         | BASE TABLE |
-| my_lakehouse  | main         | region       | BASE TABLE |
-| my_lakehouse  | main         | orders       | BASE TABLE |
+| spice         | runtime      | metrics      | BASE TABLE |
+| spice         | runtime      | task_history | BASE TABLE |
 +---------------+--------------+--------------+------------+
 
-Time: 0.001980541 seconds. 9 rows.
+Time: 0.000846541 seconds. 10 rows.
 ```
 
 `SHOW TABLES` reflects registration order, which varies between runs. It takes no
@@ -160,7 +161,7 @@ Time: 0.001980541 seconds. 9 rows.
 ```sql
 SELECT table_catalog, table_schema, table_name, table_type
 FROM information_schema.tables
-WHERE table_catalog = 'my_lakehouse'
+WHERE table_catalog = 'my_lakehouse' AND table_schema = 'main'
 ORDER BY table_name;
 ```
 
@@ -201,13 +202,13 @@ LIMIT 5;
 ```text
 +---------+---------------+---------------+
 |  nation | num_customers |  avg_balance  |
-| varchar |     int64     | decimal(19,6) |
+| varchar |     int64     | decimal(19,2) |
 +---------+---------------+---------------+
-| IRAN    | 72            | 4206.760000   |
-| MOROCCO | 72            | 5484.470000   |
-| CANADA  | 69            | 4116.120000   |
-| BRAZIL  | 68            | 3635.300000   |
-| JAPAN   | 67            | 4962.460000   |
+| IRAN    | 72            | 4206.76       |
+| MOROCCO | 72            | 5484.47       |
+| CANADA  | 69            | 4116.12       |
+| BRAZIL  | 68            | 3635.30       |
+| JAPAN   | 67            | 4962.46       |
 +---------+---------------+---------------+
 
 Time: 0.010695833 seconds. 5 rows.
@@ -217,7 +218,9 @@ Several nations tie on `num_customers`, so `nation` is added as a tie-break to m
 the ordering deterministic.
 
 `c_acctbal` is a `decimal(15,2)` column, so `AVG` and `ROUND` return a decimal
-rather than a float — the values print with the full decimal scale.
+rather than a float. In Spice v2.4, `ROUND(..., 2)` reduces the scale to 2, so the values
+print as `decimal(19,2)`. Spice v2.3 and earlier keep the scale of `AVG` and print
+`decimal(19,6)` values such as `4206.760000`.
 
 ## Step 6. Enable read-write access (optional)
 
@@ -293,6 +296,8 @@ datasets:
 ```
 
 This is useful when you only need specific tables or want to configure each dataset independently (e.g., with different acceleration settings).
+
+Run this Spicepod from the directory where you created the catalog in Step 2. The catalog was created with a relative path (`ATTACH 'ducklake:metadata.ducklake'`), so DuckLake records its data files as relative paths (`metadata.ducklake.files/...`) and resolves them against the directory Spice runs in. From another directory, every query fails with `Cannot open file "metadata.ducklake.files/..."`, even when `ducklake_connection_string` is an absolute path. To use the catalog from anywhere, create it with an absolute data path, for example `ATTACH 'ducklake:/abs/path/metadata.ducklake' AS my_lakehouse (DATA_PATH '/abs/path/data/');`.
 
 ## Using with Cloud Storage (S3)
 

@@ -76,7 +76,7 @@ If your credentials and region are correct, the dataset will load and logs outpu
 
 ```bash
 INFO runtime::init::dataset: Dataset sample_data initializing...
-INFO runtime::init::dataset: Dataset sample_data registered (dynamodb:sample_data), acceleration (arrow), results cache enabled.
+INFO runtime::init::dataset: Dataset sample_data registered (dynamodb:sample_data), acceleration (cayenne), results cache enabled.
 INFO runtime_table::accelerated::refresh_task: Loading data for dataset sample_data
 INFO runtime_table::accelerated::refresh_task: Loaded 2 rows (3.25 kiB) for dataset sample_data in 34ms.
 ```
