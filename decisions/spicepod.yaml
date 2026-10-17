@@ -1,6 +1,6 @@
 version: v1
 kind: Spicepod
-name: evaluate
+name: decisions
 
 models:
   - from: typesafe:jev
