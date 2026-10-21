@@ -140,19 +140,18 @@ SHOW TABLES;
 | table_catalog | table_schema |  table_name  | table_type |
 |    varchar    |    varchar   |    varchar   |   varchar  |
 +---------------+--------------+--------------+------------+
-| my_lakehouse  | main         | orders       | BASE TABLE |
-| my_lakehouse  | main         | lineitem     | BASE TABLE |
-| my_lakehouse  | main         | customer     | BASE TABLE |
-| my_lakehouse  | main         | region       | BASE TABLE |
 | my_lakehouse  | main         | nation       | BASE TABLE |
 | my_lakehouse  | main         | part         | BASE TABLE |
-| my_lakehouse  | main         | partsupp     | BASE TABLE |
+| my_lakehouse  | main         | region       | BASE TABLE |
+| my_lakehouse  | main         | customer     | BASE TABLE |
 | my_lakehouse  | main         | supplier     | BASE TABLE |
-| spice         | runtime      | metrics      | BASE TABLE |
+| my_lakehouse  | main         | partsupp     | BASE TABLE |
+| my_lakehouse  | main         | orders       | BASE TABLE |
+| my_lakehouse  | main         | lineitem     | BASE TABLE |
 | spice         | runtime      | task_history | BASE TABLE |
 +---------------+--------------+--------------+------------+
 
-Time: 0.000846541 seconds. 10 rows.
+Time: 0.001033208 seconds. 9 rows.
 ```
 
 `SHOW TABLES` reflects registration order, which varies between runs. It takes no
