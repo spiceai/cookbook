@@ -70,6 +70,7 @@ Set the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables to
 ```yaml
 params:
   mode: delta_lake
+  databricks_endpoint: <instance-id>.cloud.databricks.com
   databricks_token: ${env:DATABRICKS_TOKEN}
   databricks_azure_storage_account_name: ${env:AZURE_ACCOUNT_NAME}
   databricks_azure_storage_account_key: ${env:AZURE_ACCOUNT_KEY}
@@ -82,6 +83,7 @@ Set the `AZURE_ACCOUNT_NAME` and `AZURE_ACCOUNT_KEY` environment variables to th
 ```yaml
 params:
   mode: delta_lake
+  databricks_endpoint: <instance-id>.cloud.databricks.com
   databricks_token: ${env:DATABRICKS_TOKEN}
   databricks_google_service_account: </path/to/service-account.json>
 ```
@@ -171,7 +173,7 @@ sql> select * from db_uc.<SCHEMA_NAME>.test_table_no_v2checkpoint;
 drop table <CATALOG_NAME>.<SCHEMA_NAME>.test_table_no_v2checkpoint;
 ```
 
-**Verify table removal in Spice**: Observe that the table has beem removed in spice runtime log
+**Verify table removal in Spice**: Observe that the table has been removed in spice runtime log
 
 ```shell
 2025-01-18T00:59:49.121835Z  INFO data_components::unity_catalog::provider: Refreshed schema <CATALOG_NAME>.<SCHEMA_NAME>. Tables removed: test_table_no_v2checkpoint.
