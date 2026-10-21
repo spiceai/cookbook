@@ -16,9 +16,7 @@ datasets:
       pg_replication_initial_snapshot: 'auto'
     acceleration:
       enabled: true
-      engine: duckdb
+      engine: cayenne
       mode: file
       refresh_mode: changes
       primary_key: id
-      on_conflict:
-        id: upsert
