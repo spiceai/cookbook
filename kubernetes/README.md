@@ -155,7 +155,7 @@ describe taxi_trips_customized;
 | public       | passenger_count       | Int64         | YES         |
 | public       | trip_distance         | Float64       | YES         |
 | public       | RatecodeID            | Int64         | YES         |
-| public       | store_and_fwd_flag    | Utf8          | YES         |
+| public       | store_and_fwd_flag    | LargeUtf8     | YES         |
 | public       | PULocationID          | Int32         | YES         |
 | public       | DOLocationID          | Int32         | YES         |
 | public       | payment_type          | Int64         | YES         |
@@ -170,7 +170,7 @@ describe taxi_trips_customized;
 | public       | Airport_fee           | Float64       | YES         |
 +--------------+-----------------------+---------------+-------------+
 
-Time: 0.006071083 seconds. 19 rows.
+Time: 0.001194292 seconds. 19 rows.
 ```
 
 ```sql
