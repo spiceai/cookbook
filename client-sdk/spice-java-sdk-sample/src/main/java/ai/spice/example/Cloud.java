@@ -16,7 +16,7 @@ public class Cloud {
                 .withFlightAddress(URI.create("grpc+tls://us-east-1-prod-aws-flight.spiceai.io"))
                 .build()
         ) {
-            FlightStream stream = client.query(
+            FlightStream stream = client.sql(
                 "show tables;"
             );
 
