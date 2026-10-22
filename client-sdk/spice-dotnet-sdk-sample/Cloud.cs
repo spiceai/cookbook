@@ -11,6 +11,6 @@ public class Cloud
             .WithFlightAddress("flight.spiceai.io:443")
             .WithTls(true)
 			.Build();
-		var data = await client.Query("show tables;");
+		var data = await client.SqlAsync("show tables;");
 	}
 }

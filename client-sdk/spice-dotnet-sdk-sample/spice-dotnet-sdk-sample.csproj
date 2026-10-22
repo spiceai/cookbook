@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SpiceAI" Version="0.3.0" />
+    <PackageReference Include="SpiceAI" Version="0.5.0" />
   </ItemGroup>
 
 </Project>
