@@ -2,7 +2,7 @@
 
 Works with `v2.0+`
 
-Run Spice as an MCP server and connect your AI assistant (Claude Desktop, Cursor, VS Code, or any MCP client) to it. This recipe loads GitHub issues, pull requests, and commits as accelerated, in-memory datasets and exposes the [GitHub MCP server](https://github.com/modelcontextprotocol/servers-archived/tree/main/src/github) through a single unified endpoint at `/v1/mcp`.
+Run Spice as an MCP server and connect your AI assistant (Claude Desktop, Cursor, VS Code, or any MCP client) to it. This recipe loads GitHub issues, pull requests, and commits as locally accelerated datasets and exposes the [GitHub MCP server](https://github.com/modelcontextprotocol/servers-archived/tree/main/src/github) through a single unified endpoint at `/v1/mcp`.
 
 > **Note:** This recipe proxies the reference `@modelcontextprotocol/server-github` package, which has been moved to [`modelcontextprotocol/servers-archived`](https://github.com/modelcontextprotocol/servers-archived/tree/main/src/github) and is marked deprecated on npm. It still installs and runs via `npx`, so the recipe works as written. For new work, GitHub now maintains [`github/github-mcp-server`](https://github.com/github/github-mcp-server) as the supported replacement.
 
@@ -29,7 +29,7 @@ Your AI assistant gets one connection point that gives it:
     │                                                 │
     │  github__*  ── stdio ──► npx @mcp/server-github │
     │                                                 │
-    │  datasets (accelerated in memory)               │
+    │  datasets (accelerated locally)                 │
     │    github_issues   ◄── GitHub API               │
     │    github_pulls    ◄── GitHub API               │
     │    github_commits  ◄── GitHub API               │
@@ -75,23 +75,21 @@ GITHUB_PERSONAL_ACCESS_TOKEN=ghp_...
 spice run
 ```
 
-Spice loads GitHub data into memory and launches the GitHub MCP server subprocess. Expect the initial load to take 20–60 seconds.
+Spice loads GitHub data into local accelerations and launches the GitHub MCP server subprocess. Expect the initial load to take 20–60 seconds.
 
 ```console
-2026-09-12T12:04:46.677499Z  INFO spiced: Starting runtime v2.3.0+models.metal
-2026-09-12T12:04:46.999770Z  INFO runtime::http::routes: Enabled API key authentication on HTTP routes
-2026-09-12T12:04:47.000953Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-GitHub MCP Server running on stdio
-2026-09-12T12:04:48.422999Z  INFO runtime::init::dataset: Dataset github_issues registered (github:github.com/spiceai/cookbook/issues), acceleration (cayenne, 300s refresh), results cache enabled. duration_ms=4
-2026-09-12T12:04:49.065134Z  INFO runtime_table::accelerated::refresh_task: Loaded 4 rows (1.53 MiB) for dataset github_issues in 640ms.
-2026-09-12T12:04:50.436538Z  INFO runtime::init::dataset: Dataset github_pulls registered (github:github.com/spiceai/cookbook/pulls), acceleration (cayenne, 300s refresh), results cache enabled. duration_ms=0
-2026-09-12T12:04:50.660468Z  INFO runtime::init::dataset: Dataset github_commits registered (github:github.com/spiceai/cookbook/commits), acceleration (cayenne), results cache enabled. duration_ms=6
-2026-09-12T12:05:08.156863Z  INFO runtime_table::accelerated::refresh_task: Loaded 500 rows (1.51 MiB) for dataset github_commits in 17s 494ms.
-2026-09-12T12:05:09.750891Z  INFO runtime_table::accelerated::refresh_task: Loaded 69 rows (7.37 MiB) for dataset github_pulls in 19s 312ms.
-2026-09-12T12:05:09.757459Z  INFO runtime: All components are loaded. Spice runtime is ready!
+2026-10-15T06:19:34.157526Z  INFO runtime::auth: Enabled API key authentication
+2026-10-15T06:19:34.172768Z  INFO runtime::http::routes: Enabled API key authentication on HTTP routes
+2026-10-15T06:19:35.575897Z  INFO runtime::init::dataset: Dataset github_issues registered (github:github.com/spiceai/cookbook/issues), acceleration (cayenne, 300s refresh), results cache enabled. duration_ms=284
+2026-10-15T06:19:35.727830Z  INFO runtime::init::dataset: Dataset github_commits registered (github:github.com/spiceai/cookbook/commits), acceleration (cayenne), results cache enabled. duration_ms=353
+2026-10-15T06:19:35.758604Z  INFO runtime::init::dataset: Dataset github_pulls registered (github:github.com/spiceai/cookbook/pulls), acceleration (cayenne, 300s refresh), results cache enabled. duration_ms=1
+2026-10-15T06:19:36.728540Z  INFO runtime_table::accelerated::refresh_task: Loaded 5 rows (16.97 kiB) for dataset github_issues in 1s 151ms.
+2026-10-15T06:19:50.127410Z  INFO runtime_table::accelerated::refresh_task: Loaded 65 rows (314.38 kiB) for dataset github_pulls in 14s 367ms.
+2026-10-15T06:19:53.626654Z  INFO runtime_table::accelerated::refresh_task: Loaded 500 rows (547.86 kiB) for dataset github_commits in 17s 897ms.
+2026-10-15T06:19:53.693638Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
-The GitHub MCP server subprocess announces itself on stdout (`GitHub MCP Server running on stdio`); tool loading itself is logged at `DEBUG`, so no `Tool github registered` line appears at the default log level.
+Spice does not show the output of the GitHub MCP server subprocess, and tool loading is logged at `DEBUG`. At the default log level, no log line shows that the `github` tool is loaded. Use Step 4 to make sure that the tools are available.
 
 **Step 4.** Confirm the unified tool catalog is available (in a new terminal):
 
@@ -100,26 +98,44 @@ curl -s http://127.0.0.1:8090/v1/tools -H "X-API-KEY: foo" | jq '.[].name'
 ```
 
 ```
-"sql"
-"list_datasets"
-"table_schema"
 "search"
 "top_n_sample"
+"list_datasets"
 "random_sample"
-"sample_distinct_columns"
-"get_readiness"
-"load_memory"
-"store_memory"
+"github__create_or_update_file"
+"github__search_repositories"
+"github__create_repository"
+"github__get_file_contents"
+"github__push_files"
 "github__create_issue"
+"github__create_pull_request"
+"github__fork_repository"
+"github__create_branch"
+"github__list_commits"
 "github__list_issues"
+"github__update_issue"
+"github__add_issue_comment"
+"github__search_code"
+"github__search_issues"
+"github__search_users"
+"github__get_issue"
 "github__get_pull_request"
 "github__list_pull_requests"
-"github__search_code"
-"github__search_repositories"
-...
+"github__create_pull_request_review"
+"github__merge_pull_request"
+"github__get_pull_request_files"
+"github__get_pull_request_status"
+"github__update_pull_request_branch"
+"github__get_pull_request_comments"
+"github__get_pull_request_reviews"
+"sql"
+"get_current_datetime"
+"get_readiness"
+"sample_distinct_columns"
+"table_schema"
 ```
 
-Built-in tools (`sql`, `list_datasets`, ...) and proxied GitHub MCP tools (`github__*`) appear together in one catalog.
+Built-in tools (`sql`, `list_datasets`, ...) and proxied GitHub MCP tools (`github__*`) appear together in one catalog. The order of the tools can be different.
 
 ## Connect Claude Code
 

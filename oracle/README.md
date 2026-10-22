@@ -14,6 +14,21 @@ This recipe requires:
 - [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/)
 - [Spice CLI](https://docs.spiceai.org/getting-started) installed locally
 
+### macOS (Apple silicon) client setup
+
+On macOS (arm64), the Oracle client library comes from Oracle Instant Client:
+
+1. Download **Instant Client Basic** for macOS ARM64 (DMG) from the [Oracle Instant Client downloads for macOS (ARM64)](https://www.oracle.com/database/technologies/instant-client/macos-arm64-downloads.html) page. Open the DMG and run `./install_ic.sh` from the mounted volume. The script copies the client to `~/Downloads/instantclient_23_3`. You can move this folder to a different location, for example `~/lib/instantclient_23_3`.
+2. Start Spice in Step 3 with `DYLD_LIBRARY_PATH` set to the Instant Client folder:
+
+   ```bash
+   DYLD_LIBRARY_PATH=~/lib/instantclient_23_3 spice run
+   ```
+
+Do not use a symbolic link in `~/lib` or the `ORACLE_HOME` variable to find the library. With these, Spice cannot load the client and the datasets fail with `DPI-1047: Cannot locate a 64-bit Oracle Client library`.
+
+macOS removes `DYLD_*` variables when a command starts through a protected system program, such as `nohup` or `/usr/bin/env`. Set `DYLD_LIBRARY_PATH` in the same command as `spice run`, as shown above.
+
 ## Step 1. Clone the repository and navigate to the Oracle cookbook
 
 ```bash
@@ -47,6 +62,8 @@ Password: tiger
 ```bash
 spice run
 ```
+
+On macOS (arm64), use `DYLD_LIBRARY_PATH=~/lib/instantclient_23_3 spice run` instead (see [macOS (Apple silicon) client setup](#macos-apple-silicon-client-setup)).
 
 This will start the Spice runtime, which will connect to Oracle and load the TPC-H tables:
 
@@ -121,16 +138,18 @@ describe lineitem;
 | public       | L_TAX           | Decimal128(15, 2) | YES         |
 | public       | L_RETURNFLAG    | Utf8              | YES         |
 | public       | L_LINESTATUS    | Utf8              | YES         |
-| public       | L_SHIPDATE      | Date32            | YES         |
-| public       | L_COMMITDATE    | Date32            | YES         |
-| public       | L_RECEIPTDATE   | Date32            | YES         |
+| public       | L_SHIPDATE      | Timestamp(s)      | YES         |
+| public       | L_COMMITDATE    | Timestamp(s)      | YES         |
+| public       | L_RECEIPTDATE   | Timestamp(s)      | YES         |
 | public       | L_SHIPINSTRUCT  | Utf8              | YES         |
 | public       | L_SHIPMODE      | Utf8              | YES         |
 | public       | L_COMMENT       | Utf8              | YES         |
 +--------------+-----------------+-------------------+-------------+
 
-Time: 0.005356291 seconds. 16 rows.
+Time: 0.002647959 seconds. 16 rows.
 ```
+
+The Oracle `DATE` type also stores a time of day, so Spice shows the `L_SHIPDATE`, `L_COMMITDATE`, and `L_RECEIPTDATE` columns as `Timestamp(s)`.
 
 Calculate total sales by customer:
 
