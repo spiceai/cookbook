@@ -15,7 +15,7 @@ await QueryWithParams(client, 5);
 
 async Task Query(SpiceClient client)
 {
-    var result = await client.Query(
+    var result = await client.SqlAsync(
         "SELECT \"VendorID\", \"tpep_pickup_datetime\", \"fare_amount\" FROM taxi_trips LIMIT 10");
 
     await foreach (var batch in result)
@@ -27,7 +27,7 @@ async Task Query(SpiceClient client)
 async Task QueryWithParams(SpiceClient client, int limit)
 {
     // Use positional parameters ($1, $2, etc.) with QueryWithParams
-    var result = await client.QueryWithParams(
+    var result = await client.SqlWithParamsAsync(
         "SELECT \"VendorID\", \"tpep_pickup_datetime\", \"fare_amount\" FROM taxi_trips LIMIT $1",
         limit);
 
