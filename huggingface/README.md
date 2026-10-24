@@ -170,7 +170,7 @@ SELECT _location, count(*) AS reviews FROM imdb GROUP BY _location ORDER BY _loc
 Time: 0.002303666 seconds. 3 rows.
 ```
 
-The `from` of `imdb` names no revision, so the dataset follows the `main` branch. Each query first resolves `main` to a commit, then lists and reads only that commit's files, so a query never mixes two versions of a dataset, even if the dataset changes while the query runs. For a public dataset read without a token, each `_location` is an `hf://` path that DuckDB and `HfFileSystem` can read as is.
+The `from` of `imdb` names no revision, so the dataset follows the `main` branch. Each query first resolves `main` to a commit, then lists and reads only that commit's files, so a query never mixes two versions of a dataset, even if the dataset changes while the query runs. For a public dataset read without a token, each `_location` is an `hf://` path that DuckDB and `HfFileSystem` can read as is. If Spice finds a token, for example in `HF_TOKEN` or the file `hf auth login` saves, it reads with it, and each `_location` names a host of the dataset's own instead, such as `hf://datasets.<key>/stanfordnlp/imdb@<commit>/...`, so that no two datasets with different credentials share a client.
 
 ## Step 4. Join JSONL and TSV files
 
