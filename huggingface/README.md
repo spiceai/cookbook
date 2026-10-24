@@ -342,7 +342,7 @@ Private datasets, and gated datasets whose access conditions you must accept fir
          hf_token: ${secrets:HF_TOKEN}
    ```
 
-   Setting `hf_token` is optional. When a dataset doesn't set it, the connector loads the token from the `hf_token` secret, which the default `env` secret store reads from `HF_TOKEN` in `.env.local` or in the environment. A token in `.env.local` therefore applies to every Hugging Face dataset in the Spicepod. Authenticated requests also get higher Hub rate limits.
+   Setting `hf_token` is optional. When a dataset doesn't set it, the connector loads the token from the `hf_token` secret, which the default `env` secret store reads from `HF_TOKEN` in `.env.local` or in the environment. Without that secret, it uses `HF_TOKEN` or `HUGGING_FACE_HUB_TOKEN` from the environment, then the token that `hf auth login` saves in `~/.cache/huggingface/token`, the order the `hf` CLI uses. A token in `.env.local`, or one that `hf auth login` saved, therefore applies to every Hugging Face dataset in the Spicepod. Authenticated requests also get higher Hub rate limits.
 
 4. Stop `spice run` with `Ctrl+C` and start it again, so that it loads the token from `.env.local`.
 
@@ -350,10 +350,10 @@ Without access, a dataset fails to load, and `spice datasets` reports why. For e
 
 ```console
  NAME           FROM                                                                                      REPLICATION  ACCELERATION  STATUS  ERROR
- gated_metrics  hf://datasets/meta-llama/Llama-3.1-8B-evals@~parquet/Llama-3.1-8B-evals__metrics/latest/  false        false         Error   Insufficient permissions to access the dataset gated_metrics (hf). Hugging Face dataset 'meta-llama/Llama-3.1-8B-evals' is gated and no `hf_token` is set: accept its access conditions at https://huggingface.co/datasets/meta-llama/Llama-3.1-8B-evals with the account `hf_token` belongs to. See: https://github.com/spiceai/spiceai/blob/trunk/docs/features/huggingface-connector.md
+ gated_metrics  hf://datasets/meta-llama/Llama-3.1-8B-evals@~parquet/Llama-3.1-8B-evals__metrics/latest/  false        false         Error   Insufficient permissions to access the dataset gated_metrics (hf). Hugging Face dataset 'meta-llama/Llama-3.1-8B-evals' is gated and no token is set: accept its access conditions at https://huggingface.co/datasets/meta-llama/Llama-3.1-8B-evals, then set `hf_token`, set `HF_TOKEN`, or run `hf auth login`. See: https://github.com/spiceai/spiceai/blob/trunk/docs/features/huggingface-connector.md
 ```
 
-When `hf_token` is set but can't read the dataset, the message reads `... is gated: accept its access conditions at ...` instead.
+When a token is set but can't read the dataset, the message reads `... is gated: accept its access conditions at ... with the account the token from '~/.cache/huggingface/token' belongs to` instead. It names where the token came from: `hf_token`, `HF_TOKEN`, or the file `hf auth login` saved.
 
 ## Troubleshooting
 
@@ -362,8 +362,8 @@ When a dataset doesn't load, run `spice datasets` in another terminal: its `ERRO
 | Error                                                                                  | Fix                                                                                                                                                         |
 | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `'qrels' in dataset 'mteb/scifact' holds files of more than one format (.jsonl, .tsv)` | The folder in `from` holds more than one data format. Narrow `from` to a file or a glob, such as `hf://datasets/mteb/scifact/qrels/*.tsv`, or set `file_format` (for example `file_format: tsv`) under the dataset's `params`. |
-| `Insufficient permissions ... is gated and no hf_token is set`                         | Set a token, as in [Private and gated datasets](#private-and-gated-datasets).                                                                              |
-| `Insufficient permissions ... is gated: accept its access conditions`                  | Check that the token is valid, and accept the dataset's access conditions on the Hub with the account the token belongs to.                                  |
+| `Insufficient permissions ... is gated and no token is set`                            | Set a token, as in [Private and gated datasets](#private-and-gated-datasets).                                                                              |
+| `Insufficient permissions ... is gated: accept its access conditions`                  | Check that the token the message names is valid, and accept the dataset's access conditions on the Hub with the account that token belongs to.             |
 
 ## Clean up
 
