@@ -6,7 +6,21 @@ This recipe will walkthrough how to connect to a DuckDB database in Spice with s
 
 ## Requirements
 
-- [DuckDB CLI](https://duckdb.org/docs/installation/?version=stable&environment=cli&platform=macos&download_method=package_manager) installed.
+- [DuckDB CLI](https://duckdb.org/docs/installation/) **v1.4.x** installed. DuckDB CLI v2.0.0, which `brew install duckdb` installs at the time of writing, is not supported, so install the pinned version:
+
+  ```bash
+  curl https://install.duckdb.org | DUCKDB_VERSION=1.4.4 sh
+  ```
+
+  The installer prints the directory to add to your `PATH`. Run `duckdb --version` to confirm `v1.4.4` before Step 2.
+
+  Spice v2.3.3 embeds DuckDB 1.4.4, which reads database storage versions 64 to 67. A `tpch.db` created with a newer DuckDB CLI, such as v2.0.0, fails to load when Spice starts:
+
+  ```bash
+  2026-10-25T21:36:39.532895Z  WARN runtime::init::dataset: Error initializing dataset tpch_customer. Failed to initialize data connector: Cannot connect to the dataset tpch_customer (duckdb). DuckDB connection failed.
+  IO Error: Trying to read a database file with version number 999, but we can only read versions between 64 and 67.
+  ```
+
 - Spice CLI installed (see [Getting Started](https://docs.spiceai.org/getting-started)).
 
 ## Follow these steps
