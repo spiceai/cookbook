@@ -15,13 +15,13 @@ datasets:
       enabled: true
     columns:
       - name: content
-      #  embeddings:
-      #    - from: local_embedding_model
-      #      row_id: path
-      #      chunking:
-      #        enabled: true
-      #        target_chunk_size: 256
-      #        overlap_size: 64
+        # embeddings:
+        #   - from: local_embedding_model
+        #     row_id: path
+        #     chunking:
+        #       enabled: true
+        #       target_chunk_size: 256
+        #       overlap_size: 64
 
   # - from: github:github.com/spiceai/docs/pulls
   #   name: doc.pulls
