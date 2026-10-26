@@ -147,4 +147,4 @@ WARN runtime_acceleration::snapshot: Failed to bootstrap snapshot; continuing wi
 
 ## Summary
 
-You configured Cayenne accelerations to write and consume snapshots, validated fast restarts by deleting the local file, and experimented with snapshot behaviors. Apply the same pattern to additional datasets by pointing each one at the same `cayenne_file_path`, where each gets its own folder, and reusing the shared snapshot location. Spice keeps 28 days of snapshots and deletes older snapshot files itself, so an S3 lifecycle policy is optional; if you add one, expire snapshots after more than 28 days.
+You configured Cayenne accelerations to write and consume snapshots, validated fast restarts by deleting the local file, and experimented with snapshot behaviors. Apply the same pattern to additional datasets by pointing each one at the same `cayenne_file_path`, where each gets its own folder, and reusing the shared snapshot location. Remember to manage S3 lifecycle policies so old snapshots expire on the cadence your environment requires.
