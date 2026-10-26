@@ -2,6 +2,8 @@
 
 Works with `v1.0+`
 
+> **Deprecated:** The SQLite acceleration engine is deprecated in Spice `v2.4` and will be removed in `v2.5`. New Spicepods should use the default [Cayenne](https://spiceai.org/docs/components/data-accelerators/cayenne) engine, and existing SQLite accelerations must move to Cayenne before upgrading to `v2.5`. See the [migration guide](https://spiceai.org/docs/components/data-accelerators/cayenne/migration) and [Step 4](#step-4-move-to-cayenne).
+
 Follow this recipe to configure dataset acceleration using SQLite.
 
 _Tip: Open and refer to the [SQLite Data Accelerator](https://spiceai.org/docs/components/data-accelerators/sqlite) documentation while completing this recipe._
@@ -115,6 +117,12 @@ The following output is shown in the Spice runtime terminal confirming new confi
 2024-09-10T06:59:39.244473Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (399.38 MiB) for dataset taxi_trips in 16s 718ms.
 ```
 
+From `v2.4`, Spice also logs a deprecation warning for the `sqlite` engine:
+
+```bash
+2026-10-26T19:34:18.314894Z  WARN runtime::init::pods_watcher: Acceleration engines other than `cayenne` are deprecated and will be removed in v2.5, so these accelerations must move to `cayenne` before upgrading: `sqlite` (dataset 'taxi_trips'). Set `acceleration.engine: cayenne`, or remove `engine` to use the default, which is `cayenne`, then delete the old engine's acceleration files and snapshots. See: https://spiceai.org/docs/components/data-accelerators/cayenne/migration
+```
+
 Run query to display the longest taxi trips again:
 
 ```sql
@@ -144,3 +152,23 @@ Time: 0.193560667 seconds. 10 rows.
 ```
 
 Observe query execution time decreased from **2.1508365** to **0.193560667** seconds.
+
+## Step 4. Move to Cayenne
+
+Because the SQLite engine is deprecated, switch the dataset to Cayenne. In `spicepod.yaml`, change `engine: sqlite` to `engine: cayenne` (or remove the `engine` line to use the default, which is Cayenne) and save:
+
+```yaml
+    acceleration:
+      enabled: true
+      engine: cayenne
+      mode: file
+```
+
+Spice reloads the dataset with Cayenne, and the deprecation warning is no longer logged:
+
+```bash
+2026-10-26T19:35:14.441222Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-demo-datasets/taxi_trips/2024/), acceleration (cayenne:file), results cache enabled. duration_ms=316
+2026-10-26T19:35:21.224508Z  INFO runtime_table::accelerated::refresh_task: Loaded 2,964,624 rows (398.60 MiB) for dataset taxi_trips in 6s 781ms.
+```
+
+Run the query again; it returns the same 10 rows. The SQLite database file (`.spice/data/accelerated_sqlite.db` and its `-wal`/`-shm` files) is no longer used and can be deleted.

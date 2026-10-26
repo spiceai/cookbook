@@ -48,7 +48,7 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 - [DuckDB Data Accelerator](./duckdb/accelerator/README.md) - Accelerate data using DuckDB.
 - [Hashed Partitioning with DuckDB](./hashed_partitioning/README.md) - Prune data with hashed partitioning on categorical columns.
 - [PostgreSQL Data Accelerator](./postgres/accelerator/README.md) - Materialize data into an attached PostgreSQL instance.
-- [SQLite Data Accelerator](./sqlite/accelerator/README.md) - Accelerate data using SQLite.
+- [SQLite Data Accelerator](./sqlite/accelerator/README.md) - Accelerate data using SQLite (deprecated in v2.4; use Cayenne).
 - [Database Snapshots](./acceleration/snapshots/README.md) - Bootstrap accelerations from object storage to skip cold starts.
 - [Dual-Dataset Registration](./acceleration/dual-dataset-registration/README.md) - Serve queries instantly while large tables accelerate in the background.
 - [Apache Arrow Data Accelerator](./arrow/README.md) - Accelerate data using in-memory Arrow.
