@@ -10,7 +10,7 @@ DeepSeek-V4 is DeepSeek's 2026 generation of open-weight mixture-of-experts mode
 | ----------------------- | -------------------- | ------------- | ------------- | ------------------------------------------- |
 | DeepSeek-V4-Flash-0731  | 284B MoE, 13B active | July 2026     | 82.5 GB       | A 128 GB Mac (this recipe)                  |
 | DeepSeek-V4-Pro-0813    | 1.6T MoE, 49B active | August 2026   | 400 GB-class  | No Mac                                      |
-| DeepSeek-V4.1-Flash-1017 | 552B + 196B Engram  | October 2026  | 233 GB        | No MacBook Pro; see [the V4.1 recipe](../deepseek-v4.1/README.md) |
+| DeepSeek-V4.1-Flash-1017 | 552B + 196B Engram  | October 2026  | 233 GB        | No MacBook Pro; a recipe is pending runtime support ([spiceai/cookbook#739](https://github.com/spiceai/cookbook/pull/739)) |
 
 ## Prerequisites
 
