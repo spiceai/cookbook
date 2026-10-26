@@ -111,10 +111,10 @@ You are Alice, and you work as a software engineer.
 >     api-key:
 >       enabled: true
 >       keys:
->         - ${ secrets:SPICE_API_KEY }
+>         - ${ secrets:SPICE_API_KEY }:rw
 > ```
 >
-> and pass the key as an `x-api-key` header (shown below). Enabling `runtime.auth` applies to all endpoints, so the earlier `spice chat` step then also needs credentials (`spice chat --api-key <key>`). See the [api_key recipe](https://github.com/spiceai/cookbook/tree/trunk/api_key) for the full flow.
+> and restart Spice, then pass the key as an `x-api-key` header (shown below). The `:rw` suffix makes the key read-write, which `store_memory` requires. Restarting clears the memories stored earlier, since `llm_memory` is held in memory. Enabling `runtime.auth` applies to all endpoints, so the earlier `spice chat` step then also needs credentials (`spice chat --api-key <key>`). See the [api_key recipe](https://github.com/spiceai/cookbook/tree/trunk/api_key) for the full flow.
 
 **Step 1.** Store a memory directly
 
@@ -132,9 +132,6 @@ Output:
 
 ```json
 [
-  "Users name is Alice",
-  "Alice is a software engineer",
-  "Alice lives in Seattle",
-  "Alice thinks she deserves a promotion"
+  "Alice deserves a promotion"
 ]
 ```
