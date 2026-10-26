@@ -93,7 +93,7 @@ curl -s http://localhost:8090/v1/chat/completions \
   }'
 ```
 
-Set `reasoning_effort` explicitly: `none` for a direct answer, or `low`, `medium`, `high` or `max` for a thinking trace in `reasoning_content`. DeepSeek recommends temperature 1.0 and top-p 1.0, and a generous `max_tokens` for the longer levels. To set a default for every request, add `hf_reasoning_effort: <level>` to the model's `params`. The engine uses an 8,192-token context, and a conversation that outgrows it is cut off with an error that says so.
+Set `reasoning_effort` explicitly: `none` for a direct answer, or `low`, `medium`, `high` or `xhigh` for a thinking trace in `reasoning_content`. The field takes those OpenAI levels only; DeepSeek's own "max" is refused with HTTP 422 before it reaches the model. Which levels the V4.1 template honors could not be checked, since no Spice build loads the model yet (see Runtime support). DeepSeek recommends temperature 1.0 and top-p 1.0, and a generous `max_tokens` for the longer levels. To set a default for every request, add `hf_reasoning_effort: <level>` to the model's `params`. The engine uses an 8,192-token context, and a conversation that outgrows it is cut off with an error that says so.
 
 ## Abliterated variant
 
