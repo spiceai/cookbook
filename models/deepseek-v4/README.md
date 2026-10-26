@@ -62,15 +62,17 @@ spice run
 The first start downloads the three shards (90.9 GB); later starts load them from cache. Loading 91 GB of weights takes about a minute and a half:
 
 ```console
- INFO Spice.ai runtime starting...
-2026-10-26T17:02:41.921751Z  INFO spiced: Starting runtime v2.4.0-unstable-build.ec36a7cc5e+models.cuda
+2026-10-26T19:11:37.154592Z  INFO spiced: Starting runtime v2.4.0-unstable-build.ec36a7cc5e+models.cuda
 ...
-2026-10-26T17:02:42.150683Z  INFO runtime::init::model: Loading model [deepseek-v4-flash] from file...
-2026-10-26T17:04:06.882623Z  INFO runtime::init::model: Model [deepseek-v4-flash] deployed, ready for inferencing
-2026-10-26T17:04:06.985227Z  INFO runtime: All components are loaded. Spice runtime is ready!
+2026-10-26T19:11:37.176464Z  INFO runtime::init::model: Loading model [deepseek-v4-flash] from huggingface:huggingface.co/unsloth/DeepSeek-V4-Flash-0731-GGUF...
+2026-10-26T19:11:37.535025Z  INFO huggingface_hub::snapshot: Downloading 3 files (90.9 GB) for model 'deepseek-v4-flash' from Hugging Face repo 'unsloth/DeepSeek-V4-Flash-0731-GGUF' at commit fbbb5b9 (revision 'main').
+2026-10-26T19:12:07.537276Z  INFO huggingface_hub::snapshot: Downloading model 'deepseek-v4-flash': 3.8 of 90.9 GB (4%) at 128 MB/s, about 11 min left.
+...
+2026-10-26T19:24:31.559079Z  INFO huggingface_hub::snapshot: Downloaded model 'deepseek-v4-flash' from Hugging Face repo 'unsloth/DeepSeek-V4-Flash-0731-GGUF' in 12 min 54 s.
+2026-10-26T19:25:59.066738Z  INFO runtime::init::model: Model [deepseek-v4-flash] deployed, ready for inferencing
 ```
 
-These lines are from a run of this recipe's three shards on an NVIDIA DGX Spark (128 GB of unified memory, the same memory class as a 128 GB MacBook Pro) with the same llama.cpp engine built for CUDA; on a Mac the runtime reports `+models.metal` and the download lines of the `huggingface:` spicepod precede them. Wait for the `deployed, ready for inferencing` line before chatting: `/v1/models` lists the model while it is still downloading. With the model loaded, 9 GB of the 121 GB the machine reports remained free.
+These lines are from a run of this spicepod, as written, on an NVIDIA DGX Spark (128 GB of unified memory, the same memory class as a 128 GB MacBook Pro) with the same llama.cpp engine built for CUDA and a 130 MB/s connection; on a Mac the runtime reports `+models.metal`. Wait for the `deployed, ready for inferencing` line before chatting: `/v1/models` lists the model while it is still downloading. With the model loaded, 91 GB of the machine's 121 GB were in use.
 
 ## Step 3. Chat with the model
 
