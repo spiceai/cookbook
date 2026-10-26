@@ -26,6 +26,13 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 - [Azure OpenAI Models](./azure_openai/README.md) - Use Azure OpenAI for search and chat.
 - [Generative Visualizations](./generative-visualisations/README.md) - Generate SQL queries and visualizations from natural language.
 - [Running Llama3 Locally](./llama/README.md) - Run Llama models locally from HuggingFace.
+- [Running Qwen3.8 Locally](./models/qwen3.8/README.md) - Serve Qwen3.8-27B on a MacBook Pro with llama.cpp and Metal, plus an abliterated variant.
+- [Running Qwen3.6 Locally](./models/qwen3.6/README.md) - Serve Qwen3.6-35B-A3B on a MacBook Pro, plus an abliterated variant.
+- [Running Qwen3.5 Locally](./models/qwen3.5/README.md) - Serve Qwen3.5-9B on any Apple silicon Mac with 16 GB or more, plus an abliterated variant.
+- [Running GLM Locally](./models/glm/README.md) - Serve GLM-4.7-Flash on a MacBook Pro and GLM-5.3-Flash on a 128 GB Mac, plus abliterated variants.
+- [Running DeepSeek V4 Locally](./models/deepseek-v4/README.md) - Serve DeepSeek-V4-Flash on a 128 GB Mac, plus an abliterated variant.
+- [Running DeepSeek V4.1 Locally](./models/deepseek-v4.1/README.md) - DeepSeek-V4.1-Flash-1017 from a local GGUF: the hardware it needs and an abliterated variant.
+- [Running Kimi Locally](./models/kimi/README.md) - Serve Kimi-Linear-48B-A3B on a MacBook Pro, plus an abliterated variant.
 - [OpenAI Models](./models/openai/README.md) - Use OpenAI LLM and embedding models.
 - [OpenAI SDK](./openai_sdk/README.md) - Use the OpenAI SDK to connect to models hosted on Spice.
 - [LLM Memory](./llm-memory/README.md) - Persistent memory for language models.
