@@ -2,6 +2,8 @@
 
 Works with `v1.0+`
 
+> **Deprecated:** The SQLite acceleration engine is deprecated in Spice `v2.4` and will be removed in `v2.5`. New Spicepods should use the default [Cayenne](https://spiceai.org/docs/components/data-accelerators/cayenne) engine, and existing SQLite accelerations must move to Cayenne before upgrading to `v2.5`. See the [migration guide](https://spiceai.org/docs/components/data-accelerators/cayenne/migration).
+
 Follow this recipe to configure dataset acceleration using SQLite.
 
 _Tip: Open and refer to the [SQLite Data Accelerator](https://spiceai.org/docs/components/data-accelerators/sqlite) documentation while completing this recipe._
