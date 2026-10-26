@@ -16,6 +16,6 @@ datasets:
     name: local_time_series
     acceleration:
       enabled: true
-      engine: duckdb
+      engine: cayenne
       mode: file
       refresh_check_interval: 10s
