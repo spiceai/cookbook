@@ -1,6 +1,6 @@
 # Amazon Redshift
 
-Works with `v1.0+`
+Works with `v2.4+`
 
 This guide demonstrates how to use Spice to read and write TPC-H data with Amazon Redshift, a PostgreSQL-compatible columnar OLAP database.
 
@@ -18,9 +18,11 @@ aws cloudformation create-stack \
   --template-body file://cloudformation.yaml \
   --capabilities CAPABILITY_IAM \
   --parameters ParameterKey=MasterUsername,ParameterValue=admin \
-               ParameterKey=MasterUserPassword,ParameterValue=hGG3ellothere$$$$ \
+               ParameterKey=MasterUserPassword,ParameterValue=Hellothere123 \
                ParameterKey=DatabaseName,ParameterValue=dev
 ```
+
+> Choose your own master password: 8–64 characters with at least one uppercase letter, one lowercase letter, and one digit. Avoid `$`: in an unquoted shell argument, `$$` expands to the shell's process ID, so the cluster would get a different password from the one you put in `.env`.
 
 ## Step 2: Configure connection credentials
 
@@ -37,70 +39,109 @@ Update the `.env` file in **both** the `write/` and `read/` directories with the
 ```env
 PG_HOST=<your-cluster-endpoint>
 PG_USER=admin
-PG_PASS=hGG3ellothere$$$$
+PG_PASS=Hellothere123
 ```
 
 > The spicepods resolve these values via `${secrets:PG_HOST}`, `${secrets:PG_USER}`, and `${secrets:PG_PASS}`; the database (`dev`) and port (`5439`) are already set in `spicepod.yaml`. The committed `.env` files ship with placeholder values (`foo`/`bar`/`baz`) that must be replaced before running Spice.
 
 ## Step 3: Writing Data into Redshift
 
-> **Note:** The `write` spicepod accelerates data into Redshift using the PostgreSQL data accelerator (`engine: postgresql`). This accelerator is _not_ included in the released Spice binaries — tagged releases are built without the `postgres-accel` feature, so a stock-installed runtime rejects the dataset with `The accelerator engine postgres is not available. Valid engines are arrow, cayenne, duckdb, and sqlite.` Build and run Spice with the feature enabled, e.g. `cargo run --release --features release,models,postgres-accel -p spiced`. (The `read` spicepod in Step 4 uses the default accelerator and runs on the standard binary.)
+The `write` spicepod defines two datasets for each TPC-H table:
 
-To write data into Redshift, navigate to the `write` directory and start Spice using the following command:
+- `<table>_source` reads the table from the public `s3://spiceai-demo-datasets/tpch/` bucket and accelerates a 1,000-row sample of it locally with [Spice Cayenne](https://spiceai.org/docs/components/data-accelerators/cayenne) (`refresh_sql: select * from <table>_source limit 1000`).
+- `<table>` is the Redshift table, connected through the [PostgreSQL data connector](https://spiceai.org/docs/components/data-connectors/postgres) with `access: read_write`, so Spice can write to it with SQL `INSERT INTO`.
+
+> **Note:** Earlier versions of this recipe wrote into Redshift with the PostgreSQL data accelerator (`engine: postgres`). That accelerator is deprecated in Spice v2.4 and will be removed in v2.5 (see [Migrating to Spice Cayenne](https://spiceai.org/docs/components/data-accelerators/cayenne/migration)). Cayenne stores accelerations locally and does not write into Redshift, so this recipe now keeps the sample in Cayenne and copies it into Redshift with the PostgreSQL connector's [write support](https://spiceai.org/docs/components/data-connectors/postgres#write-support). Writable datasets (`access: read_write`) are in preview.
+
+The PostgreSQL connector writes into existing tables; it does not create them. Navigate to the `write` directory and create the TPC-H tables in Redshift with `psql`:
 
 ```bash
 cd write
+psql -h <your-cluster-endpoint> -p 5439 -U admin -d dev -f create_tables.sql
+```
+
+Then start Spice:
+
+```bash
 spice run
 ```
 
-You should see this output in your terminal window:
+You should see output like this in your terminal window:
 
 ```bash
-2025-08-01T01:15:06.019931Z  INFO spiced: Starting runtime v1.6.0-unstable-build.184ebb772
-2025-08-01T01:15:06.022725Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
-2025-08-01T01:15:06.022949Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
-2025-08-01T01:15:06.438166Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-08-01T01:15:06.441831Z  INFO runtime::init::dataset: Dataset region initializing...
-2025-08-01T01:15:06.441851Z  INFO runtime::init::dataset: Dataset orders initializing...
-2025-08-01T01:15:06.441912Z  INFO runtime::init::dataset: Dataset supplier initializing...
-2025-08-01T01:15:06.441970Z  INFO runtime::init::dataset: Dataset lineitem initializing...
-2025-08-01T01:15:06.441990Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2025-08-01T01:15:06.442066Z  INFO runtime::init::dataset: Dataset partsupp initializing...
-2025-08-01T01:15:06.442084Z  INFO runtime::init::dataset: Dataset customer initializing...
-2025-08-01T01:15:06.442089Z  INFO runtime::init::dataset: Dataset part initializing...
-2025-08-01T01:15:06.442117Z  INFO runtime::init::dataset: Dataset nation initializing...
-2025-08-01T01:15:07.411919Z  INFO runtime::init::dataset: Dataset region registered (s3://spiceai-demo-datasets/tpch/region/), acceleration (postgres), results cache enabled.
-2025-08-01T01:15:07.413277Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset region
-2025-08-01T01:15:07.702387Z  INFO runtime::init::dataset: Dataset supplier registered (s3://spiceai-demo-datasets/tpch/supplier/), acceleration (postgres), results cache enabled.
-2025-08-01T01:15:07.702858Z  INFO runtime::init::dataset: Dataset part registered (s3://spiceai-demo-datasets/tpch/part/), acceleration (postgres), results cache enabled.
-2025-08-01T01:15:07.702864Z  INFO runtime::init::dataset: Dataset orders registered (s3://spiceai-demo-datasets/tpch/orders/), acceleration (postgres), results cache enabled.
-2025-08-01T01:15:07.703431Z  INFO runtime::init::dataset: Dataset customer registered (s3://spiceai-demo-datasets/tpch/customer/), acceleration (postgres), results cache enabled.
-2025-08-01T01:15:07.703558Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset supplier
-2025-08-01T01:15:07.703580Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset orders
-2025-08-01T01:15:07.703617Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset part
-2025-08-01T01:15:07.703894Z  INFO runtime::init::dataset: Dataset nation registered (s3://spiceai-demo-datasets/tpch/nation/), acceleration (postgres), results cache enabled.
-2025-08-01T01:15:07.703941Z  INFO runtime::init::dataset: Dataset partsupp registered (s3://spiceai-demo-datasets/tpch/partsupp/), acceleration (postgres), results cache enabled.
-2025-08-01T01:15:07.704752Z  INFO runtime::init::dataset: Dataset lineitem registered (s3://spiceai-demo-datasets/tpch/lineitem/), acceleration (postgres), results cache enabled.
-2025-08-01T01:15:07.704832Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset nation
-2025-08-01T01:15:07.704859Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset partsupp
-2025-08-01T01:15:07.704871Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset customer
-2025-08-01T01:15:07.706200Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset lineitem
-2025-08-01T01:15:08.814196Z  INFO runtime_table::accelerated::refresh_task: Loaded 5 rows (1008.00 B) for dataset region in 1s 400ms.
-2025-08-01T01:15:09.264442Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (190.69 kiB) for dataset supplier in 1s 560ms.
-2025-08-01T01:15:09.608490Z  INFO runtime_table::accelerated::refresh_task: Loaded 25 rows (3.35 kiB) for dataset nation in 1s 903ms.
-2025-08-01T01:15:10.603145Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (277.68 kiB) for dataset customer in 2s 898ms.
-2025-08-01T01:15:12.128351Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (158.19 kiB) for dataset orders in 4s 424ms.
-2025-08-01T01:15:12.846856Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (190.84 kiB) for dataset lineitem in 5s 140ms.
-2025-08-01T01:15:13.375356Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (180.17 kiB) for dataset part in 5s 671ms.
-2025-08-01T01:15:14.029083Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (227.71 kiB) for dataset partsupp in 6s 324ms.
-2025-08-01T01:15:14.091465Z  INFO runtime: All components are loaded. Spice runtime is ready!
+2026-10-26T20:35:23.575727Z  INFO runtime::init::dataset: Dataset orders_source initializing...
+2026-10-26T20:35:23.575719Z  INFO runtime::init::dataset: Dataset part_source initializing...
+2026-10-26T20:35:23.575851Z  INFO runtime::init::dataset: Dataset partsupp initializing...
+2026-10-26T20:35:23.575966Z  INFO runtime::init::dataset: Dataset lineitem initializing...
+2026-10-26T20:35:23.576000Z  INFO runtime::init::dataset: Dataset supplier initializing...
+2026-10-26T20:35:23.576023Z  INFO runtime::init::dataset: Dataset supplier_source initializing...
+2026-10-26T20:35:23.575890Z  INFO runtime::init::dataset: Dataset nation initializing...
+2026-10-26T20:35:23.575927Z  INFO runtime::init::dataset: Dataset region initializing...
+2026-10-26T20:35:23.576114Z  INFO runtime::init::dataset: Dataset customer initializing...
+2026-10-26T20:35:23.575945Z  INFO runtime::init::dataset: Dataset nation_source initializing...
+2026-10-26T20:35:23.575858Z  INFO runtime::init::dataset: Dataset region_source initializing...
+2026-10-26T20:35:23.576188Z  INFO runtime::init::dataset: Dataset partsupp_source initializing...
+2026-10-26T20:35:23.575934Z  INFO runtime::init::dataset: Dataset orders initializing...
+2026-10-26T20:35:23.576231Z  INFO runtime::init::dataset: Dataset customer_source initializing...
+2026-10-26T20:35:23.575940Z  INFO runtime::init::dataset: Dataset part initializing...
+2026-10-26T20:35:23.575953Z  INFO runtime::init::dataset: Dataset lineitem_source initializing...
+2026-10-26T20:35:23.774880Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2026-10-26T20:35:23.775332Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2026-10-26T20:35:25.611292Z  INFO runtime::init::dataset: Dataset region_source registered (s3://spiceai-demo-datasets/tpch/region/), acceleration (cayenne), results cache enabled. duration_ms=1
+2026-10-26T20:35:25.627062Z  INFO runtime::init::dataset: Dataset nation_source registered (s3://spiceai-demo-datasets/tpch/nation/), acceleration (cayenne), results cache enabled. duration_ms=37
+2026-10-26T20:35:25.723737Z  INFO runtime::init::dataset: Dataset supplier_source registered (s3://spiceai-demo-datasets/tpch/supplier/), acceleration (cayenne), results cache enabled. duration_ms=1
+2026-10-26T20:35:25.780844Z  INFO runtime::init::dataset: Dataset partsupp_source registered (s3://spiceai-demo-datasets/tpch/partsupp/), acceleration (cayenne), results cache enabled. duration_ms=1
+2026-10-26T20:35:25.822167Z  INFO runtime::init::dataset: Dataset part_source registered (s3://spiceai-demo-datasets/tpch/part/), acceleration (cayenne), results cache enabled. duration_ms=1
+2026-10-26T20:35:25.823810Z  INFO runtime::init::dataset: Dataset orders_source registered (s3://spiceai-demo-datasets/tpch/orders/), acceleration (cayenne), results cache enabled. duration_ms=1
+2026-10-26T20:35:25.883286Z  INFO runtime::init::dataset: Dataset lineitem_source registered (s3://spiceai-demo-datasets/tpch/lineitem/), acceleration (cayenne), results cache enabled. duration_ms=1
+2026-10-26T20:35:25.900755Z  INFO runtime::init::dataset: Dataset customer_source registered (s3://spiceai-demo-datasets/tpch/customer/), acceleration (cayenne), results cache enabled. duration_ms=1
+2026-10-26T20:35:26.154340Z  INFO runtime::init::dataset: Dataset lineitem registered (postgres:public.lineitem), results cache enabled. duration_ms=638
+2026-10-26T20:35:26.160558Z  INFO runtime::init::dataset: Dataset part registered (postgres:public.part), results cache enabled. duration_ms=631
+2026-10-26T20:35:26.168165Z  INFO runtime::init::dataset: Dataset partsupp registered (postgres:public.partsupp), results cache enabled. duration_ms=635
+2026-10-26T20:35:26.210134Z  INFO runtime::init::dataset: Dataset customer registered (postgres:public.customer), results cache enabled. duration_ms=660
+2026-10-26T20:35:26.210549Z  INFO runtime::init::dataset: Dataset orders registered (postgres:public.orders), results cache enabled. duration_ms=665
+2026-10-26T20:35:26.215687Z  INFO runtime::init::dataset: Dataset nation registered (postgres:public.nation), results cache enabled. duration_ms=637
+2026-10-26T20:35:26.220651Z  INFO runtime::init::dataset: Dataset region registered (postgres:public.region), results cache enabled. duration_ms=630
+2026-10-26T20:35:26.244279Z  INFO runtime::init::dataset: Dataset supplier registered (postgres:public.supplier), results cache enabled. duration_ms=629
+2026-10-26T20:35:26.365571Z  INFO runtime_table::accelerated::refresh_task: Loaded 25 rows (2.59 kiB) for dataset nation_source in 737ms.
+2026-10-26T20:35:26.373254Z  INFO runtime_table::accelerated::refresh_task: Loaded 5 rows (480.00 B) for dataset region_source in 760ms.
+2026-10-26T20:35:26.845375Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (172.15 kiB) for dataset supplier_source in 1s 120ms.
+2026-10-26T20:35:27.817000Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (164.50 kiB) for dataset part_source in 1s 994ms.
+2026-10-26T20:35:28.146453Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (198.82 kiB) for dataset customer_source in 2s 244ms.
+2026-10-26T20:35:29.132961Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (133.15 kiB) for dataset orders_source in 3s 308ms.
+2026-10-26T20:35:36.516235Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (155.32 kiB) for dataset partsupp_source in 10s 734ms.
+2026-10-26T20:35:36.640820Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (173.81 kiB) for dataset lineitem_source in 10s 756ms.
+2026-10-26T20:35:36.659067Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
-Validate that the correct tables have been made in PostgreSQL using the `psql` command-line utility:
+The log also has two kinds of `WARN` lines, left out above, that you can ignore: `Access mode 'read_write' is enabled for dataset <table>. This feature is currently in preview.` for each Redshift dataset, and `Failed to query PostgreSQL comments; registering without comment metadata` for each Redshift table (the comment lookup fails on Redshift, so the datasets register without comment metadata).
+
+When the runtime is ready, copy the sampled rows into Redshift from another terminal in the `write` directory. `insert.sql` holds one `INSERT INTO <table> SELECT * FROM <table>_source;` statement per table:
+
+```bash
+spice sql < insert.sql
+```
+
+```bash
++--------+
+|  count |
+| uint64 |
++--------+
+| 1000   |
++--------+
+
+Time: 1.394963875 seconds. 1 rows.
+```
+
+Each `INSERT` prints the number of rows it wrote: `1000` for each table except `nation` (`25`) and `region` (`5`).
+
+> `INSERT INTO` appends. To run the copy again, empty the Redshift tables first, e.g. `psql -h <your-cluster-endpoint> -p 5439 -U admin -d dev -c 'TRUNCATE customer; TRUNCATE lineitem; TRUNCATE nation; TRUNCATE orders; TRUNCATE part; TRUNCATE partsupp; TRUNCATE region; TRUNCATE supplier;'`. Spice accepts only `INSERT INTO` for these datasets, not `INSERT OVERWRITE`.
+
+Validate that the tables in Redshift hold the rows using the `psql` command-line utility:
 
 ```sql
-$ psql -h host -p5439 -Uadmin dev
-dev=# \d
+$ psql -h <your-cluster-endpoint> -p5439 -Uadmin dev
+dev=# \dt
          List of relations
  schema |   name   | type  | owner
 --------+----------+-------+-------
@@ -115,42 +156,40 @@ dev=# \d
 (8 rows)
 ```
 
-To validate the schema of a table, use the `\d+` command. For example:
+To validate the schema of a table, query Redshift's `pg_table_def` view. (With `psql` 17, `\d <table>` fails against Redshift with `column c.relhastriggers does not exist`.) For example:
 
 ```sql
-dev=# \d+ "lineitem"
-                                           Table "public.lineitem"
-     Column      |          Type          | Collation | Nullable | Default | Storage  | Stats target | Description
------------------+------------------------+-----------+----------+---------+----------+--------------+-------------
- l_orderkey      | integer                |           |          |         | plain    |              |
- l_partkey       | integer                |           |          |         | plain    |              |
- l_suppkey       | integer                |           |          |         | plain    |              |
- l_linenumber    | integer                |           |          |         | plain    |              |
- l_quantity      | numeric(15,2)          |           |          |         | main     |              |
- l_extendedprice | numeric(15,2)          |           |          |         | main     |              |
- l_discount      | numeric(15,2)          |           |          |         | main     |              |
- l_tax           | numeric(15,2)          |           |          |         | main     |              |
- l_returnflag    | character varying(256) |           |          |         | extended |              |
- l_linestatus    | character varying(256) |           |          |         | extended |              |
- l_shipdate      | date                   |           |          |         | plain    |              |
- l_commitdate    | date                   |           |          |         | plain    |              |
- l_receiptdate   | date                   |           |          |         | plain    |              |
- l_shipinstruct  | character varying(256) |           |          |         | extended |              |
- l_shipmode      | character varying(256) |           |          |         | extended |              |
- l_comment       | character varying(256) |           |          |         | extended |              |
-Has OIDs: yes
+dev=# select "column", type from pg_table_def where tablename = 'lineitem';
+     column      |          type
+-----------------+------------------------
+ l_orderkey      | integer
+ l_partkey       | integer
+ l_suppkey       | integer
+ l_linenumber    | integer
+ l_quantity      | numeric(15,2)
+ l_extendedprice | numeric(15,2)
+ l_discount      | numeric(15,2)
+ l_tax           | numeric(15,2)
+ l_returnflag    | character varying(256)
+ l_linestatus    | character varying(256)
+ l_shipdate      | date
+ l_commitdate    | date
+ l_receiptdate   | date
+ l_shipinstruct  | character varying(256)
+ l_shipmode      | character varying(256)
+ l_comment       | character varying(256)
+(16 rows)
 ```
 
 Run the _Pricing Summary Report Query (Q1)_ to validate data. Q1 is defined in the
 [TPC Benchmark H Standard Specification](https://www.tpc.org/tpc_documents_current_versions/pdf/tpc-h_v2.17.1.pdf).
 
-> **Your numbers will differ.** Both spicepods sample the source with
-> `refresh_sql: select * from lineitem limit 1000`. That `LIMIT` has no `ORDER BY`, so
-> which 1,000 rows are loaded is arbitrary and changes from run to run — two successive
-> runs here loaded completely disjoint samples. The aggregates below are therefore one
-> run's result, not a fixed expected answer, and not the TPC-H specification's answer
-> (those are defined over the full SF1 dataset). Add an `ORDER BY` to `refresh_sql` if
-> you want a reproducible sample.
+> **Your numbers will differ.** The `write` spicepod samples the source with
+> `refresh_sql: select * from lineitem_source limit 1000`. That `LIMIT` has no `ORDER BY`, so
+> which 1,000 rows are loaded is arbitrary and can change from run to run. The aggregates
+> below are therefore one run's result, not a fixed expected answer, and not the TPC-H
+> specification's answer (those are defined over the full SF1 dataset). Add an `ORDER BY`
+> to `refresh_sql` if you want a reproducible sample.
 
 ```sql
 select
@@ -203,6 +242,8 @@ avg_disc       | 0.03
 count_order    | 10
 ```
 
+Stop Spice with `Ctrl+C` before starting the `read` spicepod.
+
 ## Step 4: Reading Data from Redshift
 
 To read data from Redshift, navigate to the `read` directory and start Spice:
@@ -215,45 +256,36 @@ spice run
 You should see this output in your terminal window:
 
 ```bash
-2025-08-01T01:15:40.066625Z  INFO spiced: Starting runtime v1.6.0-unstable-build.184ebb772
-2025-08-01T01:15:40.069247Z  INFO runtime::init::caching: Initialized sql results cache; max size: 128.00 MiB, item ttl: 1s, hashing algorithm: XXH3, encoding: none
-2025-08-01T01:15:40.069468Z  INFO runtime::init::caching: Initialized search results cache; max size: 128.00 MiB, item ttl: 1s, engine: Moka
-2025-08-01T01:15:40.306719Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
-2025-08-01T01:15:40.308188Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2025-08-01T01:15:40.308507Z  INFO runtime::init::dataset: Dataset orders initializing...
-2025-08-01T01:15:40.308511Z  INFO runtime::init::dataset: Dataset region initializing...
-2025-08-01T01:15:40.308587Z  INFO runtime::init::dataset: Dataset part initializing...
-2025-08-01T01:15:40.308563Z  INFO runtime::init::dataset: Dataset nation initializing...
-2025-08-01T01:15:40.308584Z  INFO runtime::init::dataset: Dataset customer initializing...
-2025-08-01T01:15:40.308603Z  INFO runtime::init::dataset: Dataset supplier initializing...
-2025-08-01T01:15:40.308684Z  INFO runtime::init::dataset: Dataset partsupp initializing...
-2025-08-01T01:15:40.308770Z  INFO runtime::init::dataset: Dataset lineitem initializing...
-2025-08-01T01:15:40.995606Z  INFO runtime::init::dataset: Dataset orders registered (postgres:public.orders), acceleration (cayenne), results cache enabled.
-2025-08-01T01:15:40.996460Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset orders
-2025-08-01T01:15:41.374001Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (146.19 kiB) for dataset orders in 377ms.
-2025-08-01T01:15:41.481632Z  INFO runtime::init::dataset: Dataset region registered (postgres:public.region), acceleration (cayenne), results cache enabled.
-2025-08-01T01:15:41.482800Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset region
-2025-08-01T01:15:41.563571Z  INFO runtime_table::accelerated::refresh_task: Loaded 5 rows (14.45 kiB) for dataset region in 80ms.
-2025-08-01T01:15:41.798712Z  INFO runtime::init::dataset: Dataset part registered (postgres:public.part), acceleration (cayenne), results cacheenabled.
-2025-08-01T01:15:41.799995Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset part
-2025-08-01T01:15:41.926069Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (161.36 kiB) for dataset part in 126ms.
-2025-08-01T01:15:42.142538Z  INFO runtime::init::dataset: Dataset nation registered (postgres:public.nation), acceleration (cayenne), results cache enabled.
-2025-08-01T01:15:42.143810Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset nation
-2025-08-01T01:15:42.219842Z  INFO runtime_table::accelerated::refresh_task: Loaded 25 rows (19.55 kiB) for dataset nation in 76ms.
-2025-08-01T01:15:42.480982Z  INFO runtime::init::dataset: Dataset customer registered (postgres:public.customer), acceleration (cayenne), results cache enabled.
-2025-08-01T01:15:42.482235Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset customer
-2025-08-01T01:15:42.826813Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (269.18 kiB) for dataset customer in 344ms.
-2025-08-01T01:15:42.886263Z  INFO runtime::init::dataset: Dataset supplier registered (postgres:public.supplier), acceleration (cayenne), results cache enabled.
-2025-08-01T01:15:42.887628Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset supplier
-2025-08-01T01:15:43.250965Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (185.00 kiB) for dataset supplier in 363ms.
-2025-08-01T01:15:43.386852Z  INFO runtime::init::dataset: Dataset partsupp registered (postgres:public.partsupp), acceleration (cayenne), results cache enabled.
-2025-08-01T01:15:43.388171Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset partsupp
-2025-08-01T01:15:43.830328Z  INFO runtime::init::dataset: Dataset lineitem registered (postgres:public.lineitem), acceleration (cayenne), results cache enabled.
-2025-08-01T01:15:43.831713Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset lineitem
-2025-08-01T01:15:43.898640Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (160.55 kiB) for dataset partsupp in 510ms.
-2025-08-01T01:15:44.157564Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (171.93 kiB) for dataset lineitem in 325ms.
-2025-08-01T01:15:44.239953Z  INFO runtime: All components are loaded. Spice runtime is ready!
+2026-10-26T20:37:07.924540Z  INFO runtime::init::dataset: Dataset customer initializing...
+2026-10-26T20:37:07.924560Z  INFO runtime::init::dataset: Dataset partsupp initializing...
+2026-10-26T20:37:07.924572Z  INFO runtime::init::dataset: Dataset nation initializing...
+2026-10-26T20:37:07.924551Z  INFO runtime::init::dataset: Dataset region initializing...
+2026-10-26T20:37:07.924556Z  INFO runtime::init::dataset: Dataset lineitem initializing...
+2026-10-26T20:37:07.924563Z  INFO runtime::init::dataset: Dataset supplier initializing...
+2026-10-26T20:37:07.924545Z  INFO runtime::init::dataset: Dataset orders initializing...
+2026-10-26T20:37:07.924532Z  INFO runtime::init::dataset: Dataset part initializing...
+2026-10-26T20:37:08.123802Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2026-10-26T20:37:08.124160Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2026-10-26T20:37:09.985445Z  INFO runtime::init::dataset: Dataset region registered (postgres:public.region), acceleration (cayenne), results cache enabled. duration_ms=96
+2026-10-26T20:37:09.986546Z  INFO runtime::init::dataset: Dataset orders registered (postgres:public.orders), acceleration (cayenne), results cache enabled. duration_ms=90
+2026-10-26T20:37:09.986667Z  INFO runtime::init::dataset: Dataset part registered (postgres:public.part), acceleration (cayenne), results cache enabled. duration_ms=59
+2026-10-26T20:37:09.987825Z  INFO runtime::init::dataset: Dataset nation registered (postgres:public.nation), acceleration (cayenne), results cache enabled. duration_ms=87
+2026-10-26T20:37:09.987880Z  INFO runtime::init::dataset: Dataset lineitem registered (postgres:public.lineitem), acceleration (cayenne), results cache enabled. duration_ms=85
+2026-10-26T20:37:09.989027Z  INFO runtime::init::dataset: Dataset supplier registered (postgres:public.supplier), acceleration (cayenne), results cache enabled. duration_ms=92
+2026-10-26T20:37:09.990408Z  INFO runtime::init::dataset: Dataset partsupp registered (postgres:public.partsupp), acceleration (cayenne), results cache enabled. duration_ms=108
+2026-10-26T20:37:10.014557Z  INFO runtime::init::dataset: Dataset customer registered (postgres:public.customer), acceleration (cayenne), results cache enabled. duration_ms=87
+2026-10-26T20:37:10.251586Z  INFO runtime_table::accelerated::refresh_task: Loaded 25 rows (2.38 kiB) for dataset nation in 262ms.
+2026-10-26T20:37:10.257129Z  INFO runtime_table::accelerated::refresh_task: Loaded 5 rows (432.00 B) for dataset region in 270ms.
+2026-10-26T20:37:10.392412Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (117.51 kiB) for dataset orders in 404ms.
+2026-10-26T20:37:10.403624Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (151.41 kiB) for dataset partsupp in 412ms.
+2026-10-26T20:37:10.422216Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (179.27 kiB) for dataset customer in 406ms.
+2026-10-26T20:37:10.423121Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (154.26 kiB) for dataset lineitem in 434ms.
+2026-10-26T20:37:10.458880Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (141.04 kiB) for dataset part in 471ms.
+2026-10-26T20:37:10.643631Z  INFO runtime_table::accelerated::refresh_task: Loaded 1,000 rows (156.51 kiB) for dataset supplier in 653ms.
+2026-10-26T20:37:10.725435Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
+
+The log also has a `Failed to query PostgreSQL comments; registering without comment metadata` `WARN` line for each table, left out above, which you can ignore.
 
 Validate that the correct tables have been made:
 
@@ -309,13 +341,9 @@ sql> describe lineitem;
 Run the _Pricing Summary Report Query (Q1)_ to validate data. Q1 is defined in the
 [TPC Benchmark H Standard Specification](https://www.tpc.org/tpc_documents_current_versions/pdf/tpc-h_v2.17.1.pdf).
 
-> **Your numbers will differ.** Both spicepods sample the source with
-> `refresh_sql: select * from lineitem limit 1000`. That `LIMIT` has no `ORDER BY`, so
-> which 1,000 rows are loaded is arbitrary and changes from run to run — two successive
-> runs here loaded completely disjoint samples. The aggregates below are therefore one
-> run's result, not a fixed expected answer, and not the TPC-H specification's answer
-> (those are defined over the full SF1 dataset). Add an `ORDER BY` to `refresh_sql` if
-> you want a reproducible sample.
+> The `read` spicepod loads every row that Step 3 wrote into Redshift, so this query returns
+> the same groups and sums as the `psql` run in Step 3. The averages show more decimal places
+> here: Redshift returns `avg()` of a `NUMERIC(15,2)` column with two decimal places.
 
 ```sql
 select
@@ -344,12 +372,13 @@ limit 2
 ```
 
 ```sql
-+--------------+--------------+---------+----------------+----------------+----------------+-----------+--------------+----------+-------------+
-| l_returnflag | l_linestatus | sum_qty | sum_base_price | sum_disc_price | sum_charge     | avg_qty   | avg_price    | avg_disc | count_order |
-+--------------+--------------+---------+----------------+----------------+----------------+-----------+--------------+----------+-------------+
-| A            | F            | 6667.00 | 9875068.58     | 9376179.8729   | 9772318.570430 | 24.784386 | 36710.292118 | 0.050334 | 269         |
-| N            | F            | 201.00  | 326575.17      | 305150.9852    | 320880.778704  | 25.125000 | 40821.896250 | 0.050000 | 8           |
-+--------------+--------------+---------+----------------+----------------+----------------+-----------+--------------+----------+-------------+
++--------------+--------------+---------------+----------------+----------------+----------------+---------------+---------------+---------------+-------------+
+| l_returnflag | l_linestatus |    sum_qty    | sum_base_price | sum_disc_price |   sum_charge   |    avg_qty    |   avg_price   |    avg_disc   | count_order |
+|    varchar   |    varchar   | decimal(25,2) |  decimal(25,2) |  decimal(38,4) |  decimal(38,6) | decimal(19,6) | decimal(19,6) | decimal(19,6) |    int64    |
++--------------+--------------+---------------+----------------+----------------+----------------+---------------+---------------+---------------+-------------+
+| A            | F            | 6536.00       | 9904741.27     | 9384409.9342   | 9772788.631818 | 25.333333     | 38390.470038  | 0.050736      | 258         |
+| N            | F            | 299.00        | 433668.79      | 418425.9970    | 433583.312504  | 29.900000     | 43366.879000  | 0.037000      | 10          |
++--------------+--------------+---------------+----------------+----------------+----------------+---------------+---------------+---------------+-------------+
 ```
 
 ## Step 5: Tearing Down Infrastructure

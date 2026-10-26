@@ -3,129 +3,161 @@ kind: Spicepod
 name: tpch-write
 datasets:
   - from: s3://spiceai-demo-datasets/tpch/customer/
-    name: customer
+    name: customer_source
     params:
       file_format: parquet
     acceleration:
       enabled: true
-      engine: postgresql
-      refresh_sql: select * from customer limit 1000
-      params:
-        pg_host: ${secrets:PG_HOST}
-        pg_port: 5439
-        pg_sslmode: prefer
-        pg_db: dev
-        pg_user: ${secrets:PG_USER}
-        pg_pass: ${secrets:PG_PASS}
+      engine: cayenne
+      refresh_sql: select * from customer_source limit 1000
+
+  - from: postgres:public.customer
+    name: customer
+    access: read_write
+    params:
+      pg_host: ${secrets:PG_HOST}
+      pg_port: 5439
+      pg_sslmode: prefer
+      pg_db: dev
+      pg_user: ${secrets:PG_USER}
+      pg_pass: ${secrets:PG_PASS}
 
   - from: s3://spiceai-demo-datasets/tpch/lineitem/
-    name: lineitem
+    name: lineitem_source
     params:
       file_format: parquet
     acceleration:
       enabled: true
-      engine: postgresql
-      refresh_sql: select * from lineitem limit 1000
-      params:
-        pg_host: ${secrets:PG_HOST}
-        pg_port: 5439
-        pg_sslmode: prefer
-        pg_db: dev
-        pg_user: ${secrets:PG_USER}
-        pg_pass: ${secrets:PG_PASS}
+      engine: cayenne
+      refresh_sql: select * from lineitem_source limit 1000
+
+  - from: postgres:public.lineitem
+    name: lineitem
+    access: read_write
+    params:
+      pg_host: ${secrets:PG_HOST}
+      pg_port: 5439
+      pg_sslmode: prefer
+      pg_db: dev
+      pg_user: ${secrets:PG_USER}
+      pg_pass: ${secrets:PG_PASS}
 
   - from: s3://spiceai-demo-datasets/tpch/nation/
-    name: nation
+    name: nation_source
     params:
       file_format: parquet
     acceleration:
       enabled: true
-      engine: postgresql
-      refresh_sql: select * from nation limit 1000
-      params:
-        pg_host: ${secrets:PG_HOST}
-        pg_port: 5439
-        pg_sslmode: prefer
-        pg_db: dev
-        pg_user: ${secrets:PG_USER}
-        pg_pass: ${secrets:PG_PASS}
+      engine: cayenne
+      refresh_sql: select * from nation_source limit 1000
+
+  - from: postgres:public.nation
+    name: nation
+    access: read_write
+    params:
+      pg_host: ${secrets:PG_HOST}
+      pg_port: 5439
+      pg_sslmode: prefer
+      pg_db: dev
+      pg_user: ${secrets:PG_USER}
+      pg_pass: ${secrets:PG_PASS}
 
   - from: s3://spiceai-demo-datasets/tpch/orders/
-    name: orders
+    name: orders_source
     params:
       file_format: parquet
     acceleration:
       enabled: true
-      engine: postgresql
-      refresh_sql: select * from orders limit 1000
-      params:
-        pg_host: ${secrets:PG_HOST}
-        pg_port: 5439
-        pg_sslmode: prefer
-        pg_db: dev
-        pg_user: ${secrets:PG_USER}
-        pg_pass: ${secrets:PG_PASS}
+      engine: cayenne
+      refresh_sql: select * from orders_source limit 1000
+
+  - from: postgres:public.orders
+    name: orders
+    access: read_write
+    params:
+      pg_host: ${secrets:PG_HOST}
+      pg_port: 5439
+      pg_sslmode: prefer
+      pg_db: dev
+      pg_user: ${secrets:PG_USER}
+      pg_pass: ${secrets:PG_PASS}
 
   - from: s3://spiceai-demo-datasets/tpch/part/
-    name: part
+    name: part_source
     params:
       file_format: parquet
     acceleration:
       enabled: true
-      engine: postgresql
-      refresh_sql: select * from part limit 1000
-      params:
-        pg_host: ${secrets:PG_HOST}
-        pg_port: 5439
-        pg_sslmode: prefer
-        pg_db: dev
-        pg_user: ${secrets:PG_USER}
-        pg_pass: ${secrets:PG_PASS}
+      engine: cayenne
+      refresh_sql: select * from part_source limit 1000
+
+  - from: postgres:public.part
+    name: part
+    access: read_write
+    params:
+      pg_host: ${secrets:PG_HOST}
+      pg_port: 5439
+      pg_sslmode: prefer
+      pg_db: dev
+      pg_user: ${secrets:PG_USER}
+      pg_pass: ${secrets:PG_PASS}
 
   - from: s3://spiceai-demo-datasets/tpch/partsupp/
-    name: partsupp
+    name: partsupp_source
     params:
       file_format: parquet
     acceleration:
       enabled: true
-      engine: postgresql
-      refresh_sql: select * from partsupp limit 1000
-      params:
-        pg_host: ${secrets:PG_HOST}
-        pg_port: 5439
-        pg_sslmode: prefer
-        pg_db: dev
-        pg_user: ${secrets:PG_USER}
-        pg_pass: ${secrets:PG_PASS}
+      engine: cayenne
+      refresh_sql: select * from partsupp_source limit 1000
+
+  - from: postgres:public.partsupp
+    name: partsupp
+    access: read_write
+    params:
+      pg_host: ${secrets:PG_HOST}
+      pg_port: 5439
+      pg_sslmode: prefer
+      pg_db: dev
+      pg_user: ${secrets:PG_USER}
+      pg_pass: ${secrets:PG_PASS}
 
   - from: s3://spiceai-demo-datasets/tpch/region/
-    name: region
+    name: region_source
     params:
       file_format: parquet
     acceleration:
       enabled: true
-      engine: postgresql
-      refresh_sql: select * from region limit 1000
-      params:
-        pg_host: ${secrets:PG_HOST}
-        pg_port: 5439
-        pg_sslmode: prefer
-        pg_db: dev
-        pg_user: ${secrets:PG_USER}
-        pg_pass: ${secrets:PG_PASS}
+      engine: cayenne
+      refresh_sql: select * from region_source limit 1000
+
+  - from: postgres:public.region
+    name: region
+    access: read_write
+    params:
+      pg_host: ${secrets:PG_HOST}
+      pg_port: 5439
+      pg_sslmode: prefer
+      pg_db: dev
+      pg_user: ${secrets:PG_USER}
+      pg_pass: ${secrets:PG_PASS}
 
   - from: s3://spiceai-demo-datasets/tpch/supplier/
-    name: supplier
+    name: supplier_source
     params:
       file_format: parquet
     acceleration:
       enabled: true
-      engine: postgresql
-      refresh_sql: select * from supplier limit 1000
-      params:
-        pg_host: ${secrets:PG_HOST}
-        pg_port: 5439
-        pg_sslmode: prefer
-        pg_db: dev
-        pg_user: ${secrets:PG_USER}
-        pg_pass: ${secrets:PG_PASS}
+      engine: cayenne
+      refresh_sql: select * from supplier_source limit 1000
+
+  - from: postgres:public.supplier
+    name: supplier
+    access: read_write
+    params:
+      pg_host: ${secrets:PG_HOST}
+      pg_port: 5439
+      pg_sslmode: prefer
+      pg_db: dev
+      pg_user: ${secrets:PG_USER}
+      pg_pass: ${secrets:PG_PASS}
