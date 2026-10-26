@@ -37,8 +37,8 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 - [DeepSeek Model](./deepseek/README.md) - Use DeepSeek model through Spice.
 - [Filesystem Hosted Model](./models/filesystem/README.md) - Use models hosted directly on filesystems.
 - [Decisions API](./decisions/README.md) - Ask typed questions about unstructured data with `/v1/decisions`, using TypeSafe Jev and OpenAI GPT-6 Luna.
-- [Language Model Evaluations](./evals/README.md) - Use Spice to evaluate language models.
-- [LLM as a Judge](./llm-judge/README.md) - Define LLM judge models to evaluate other models.
+- [Language Model Evaluations](./evals/README.md) - Use Spice to evaluate language models. Spice `v1.x` only: the evaluation subsystem was removed in `v2.0`.
+- [LLM as a Judge](./llm-judge/README.md) - Define LLM judge models to evaluate other models. Spice `v1.x` only: the evaluation subsystem was removed in `v2.0`.
 - [OpenAI Responses API](./openai-responses-api/README.md) - Use OpenAI's Responses API with Spice, including hosted tools such as web search.
 - [Model Context Protocol (MCP)](./mcp/README.md) - Connect to MCP servers and use MCP tools with Spice.
 
