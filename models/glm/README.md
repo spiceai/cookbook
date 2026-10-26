@@ -10,30 +10,30 @@ GLM-5.2 (June 2026) and GLM-5.3 are the 744B-class flagships: their smallest GGU
 
 | Model         | Parameters            | Released     | Fits a 36 GB MacBook Pro          | GGUF repository                                                                     |
 | ------------- | --------------------- | ------------ | --------------------------------- | ----------------------------------------------------------------------------------- |
-| GLM-4.7-Flash | 30B MoE, ~3.6B active | January 2026 | Yes, from 24 GB (this recipe)     | [unsloth/GLM-4.7-Flash-GGUF](https://huggingface.co/unsloth/GLM-4.7-Flash-GGUF)     |
+| GLM-4.7-Flash | 30B MoE, ~3.6B active | January 2026 | Yes, from 32 GB; 24 GB at 3-bit (this recipe) | [unsloth/GLM-4.7-Flash-GGUF](https://huggingface.co/unsloth/GLM-4.7-Flash-GGUF)     |
 | GLM-5.3-Flash | 320B MoE, 18B active  | August 2026  | No: 93 GB at 1-bit; a 128 GB Mac  | [unsloth/GLM-5.3-Flash-GGUF](https://huggingface.co/unsloth/GLM-5.3-Flash-GGUF)     |
 | GLM-5.3       | 744B MoE, 40B active  | August 2026  | No: 223 GB at 1-bit               | unsloth/GLM-5.3-GGUF                                                                |
 | GLM-5.2       | 753B MoE, 8 of 256 experts active | June 2026 | No: 217 GB at 1-bit          | [unsloth/GLM-5.2-GGUF](https://huggingface.co/unsloth/GLM-5.2-GGUF)                 |
 
 ## Prerequisites
 
-- An Apple silicon Mac with 24 GB or more unified memory for the default file (see [Memory](#memory)). Spice's llama.cpp engine runs the model on the GPU through Metal.
+- An Apple silicon Mac with 32 GB or more unified memory for the default file, or 24 GB with the 3-bit file (see [Memory](#memory)). Spice's llama.cpp engine runs the model on the GPU through Metal.
 - The [Spice CLI](https://spiceai.org/docs/installation). `spice version` must report a runtime with the `+models.metal` suffix and the llama.cpp GGUF engine. The engine merged to trunk on 2026-10-24, after `v2.4.0-rc.3`; run `spice upgrade` once a release that includes it ships, or use a trunk build in the meantime (see [Using a trunk build](#using-a-trunk-build)).
 - 18 GB of free disk for the model, which Spice downloads into the Hugging Face cache at `~/.cache/huggingface/hub`.
 - Network access to `huggingface.co`. No Hugging Face account is needed.
 
 ## Memory
 
-Spice loads the whole GGUF into GPU memory. macOS gives the GPU most of unified memory but not all of it: Metal reports the budget as `recommendedMaxWorkingSetSize` (107 GiB of 128 GiB on an M3 Max). Leave room for the KV cache (under 1 GB at the engine's default 8,192-token context) and for macOS itself.
+Spice loads the whole GGUF into GPU memory. macOS gives the GPU most of unified memory but not all of it: Metal reports the budget as `recommendedMaxWorkingSetSize`, which has been two-thirds of unified memory on Macs below 64 GB and three-quarters from 64 GB up (10.7 GiB on a 16 GB Mac, 16 GiB on 24 GB, 24 GiB on 36 GB, 48 GiB on 64 GB); macOS 27 on a 128 GB M3 Max reports more, 107 GiB (84%). The rows below are sized by the smaller figure and leave at least 2 GB under it for the KV cache (under 1 GB at the engine's default 8,192-token context) and the compute buffers. A file larger than the budget fails to load or pages, so when in doubt take the row below yours. A 16 GB Mac is under the minimum for this model: its 10.7 GiB budget leaves no room for even the 2-bit files (10.5 GB and up).
 
 | Unified memory | Model         | File                                                                  | Size     |
 | -------------- | ------------- | --------------------------------------------------------------------- | -------- |
-| 16 GB          | GLM-4.7-Flash | `GLM-4.7-Flash-UD-Q3_K_XL.gguf`                                       | 13.8 GB  |
-| 24 GB to 36 GB | GLM-4.7-Flash | `GLM-4.7-Flash-UD-Q4_K_XL.gguf` (the default in `spicepod.yaml`)      | 17.5 GB  |
-| 36 GB          | GLM-4.7-Flash | `GLM-4.7-Flash-UD-Q6_K_XL.gguf`                                       | 26.2 GB  |
-| 48 GB          | GLM-4.7-Flash | `GLM-4.7-Flash-Q8_0.gguf` (near-lossless)                             | 31.8 GB  |
-| 64 GB and up   | GLM-4.7-Flash | `BF16/GLM-4.7-Flash-BF16-00001-of-00002.gguf` and `-00002-of-00002.gguf` (full precision) | 59.9 GB |
-| 128 GB         | GLM-5.3-Flash | `UD-IQ2_XXS/GLM-5.3-Flash-UD-IQ2_XXS-00001-of-00004.gguf` … `-00004-of-00004.gguf` (see [GLM-5.3-Flash on a 128 GB MacBook Pro](#glm-53-flash-on-a-128-gb-macbook-pro)) | 101.8 GB |
+| 24 GB          | GLM-4.7-Flash | `GLM-4.7-Flash-UD-Q3_K_XL.gguf`                                       | 13.8 GB  |
+| 32 GB          | GLM-4.7-Flash | `GLM-4.7-Flash-UD-Q4_K_XL.gguf` (the default in `spicepod.yaml`)      | 17.5 GB  |
+| 36 GB          | GLM-4.7-Flash | `GLM-4.7-Flash-UD-Q5_K_XL.gguf` (or the default)                      | 21.7 GB  |
+| 48 GB to 64 GB | GLM-4.7-Flash | `GLM-4.7-Flash-Q8_0.gguf` (near-lossless; `UD-Q6_K_XL`, 26.2 GB, leaves more room) | 31.8 GB  |
+| 96 GB and up   | GLM-4.7-Flash | `BF16/GLM-4.7-Flash-BF16-00001-of-00002.gguf` and `-00002-of-00002.gguf` (full precision; over a 64 GB Mac's 48 GiB budget) | 59.9 GB |
+| 128 GB         | GLM-5.3-Flash | `UD-IQ2_XXS/GLM-5.3-Flash-UD-IQ2_XXS-00001-of-00004.gguf` … `-00004-of-00004.gguf` (needs the 107 GiB budget of macOS 27; see [GLM-5.3-Flash on a 128 GB MacBook Pro](#glm-53-flash-on-a-128-gb-macbook-pro)) | 101.8 GB |
 
 The GLM-4.7-Flash files are in [unsloth/GLM-4.7-Flash-GGUF](https://huggingface.co/unsloth/GLM-4.7-Flash-GGUF); the `UD-` files are Unsloth's dynamic quantizations, which keep the layers that matter most at higher precision. To switch, change `files[0].path`, listing every shard of a split file.
 
@@ -109,7 +109,7 @@ GLM-4.7-Flash is a reasoning model: it thinks before it answers and returns the 
 
 ## GLM-5.3-Flash on a 128 GB MacBook Pro
 
-GLM-5.3-Flash is Z.ai's 320B multimodal mixture of experts with 18B active parameters and a 1M-token context, in the `glm5-next` GGUF architecture. Its 2-bit build is 101.8 GB in four shards and fits the 107 GiB GPU budget of a 128 GB Mac with room for the KV cache. The GGUF carries GLM's own multi-token-prediction (NextN) layer, and Spice drafts with it automatically: on an NVIDIA DGX Spark, drafting lifted decode speed from 17.5 to 27.1 tokens per second ([spiceai/spiceai#7864](https://github.com/spiceai/spiceai/pull/7864)).
+GLM-5.3-Flash is Z.ai's 320B multimodal mixture of experts with 18B active parameters and a 1M-token context, in the `glm5-next` GGUF architecture. Its 2-bit build is 101.8 GB in four shards and fits the 107 GiB GPU budget that macOS 27 reports on a 128 GB M3 Max, with room for the KV cache; an older macOS that budgets 96 GiB (103 GB) needs the `UD-IQ1_M` or `UD-IQ1_S` build listed below. The GGUF carries GLM's own multi-token-prediction (NextN) layer, and Spice drafts with it automatically: on an NVIDIA DGX Spark, drafting lifted decode speed from 17.5 to 27.1 tokens per second ([spiceai/spiceai#7864](https://github.com/spiceai/spiceai/pull/7864)).
 
 Replace the `models` entry with:
 

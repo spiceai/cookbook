@@ -23,7 +23,7 @@ The API serves the model as `glm-4.7-flash-abliterated` at `http://localhost:809
 
 ## Memory
 
-The mradermacher repository holds `i1-IQ3_XXS` (11.6 GB, 16 GB Macs), `i1-Q4_K_M` (18.1 GB, the default, 24 GB and up), `i1-Q5_K_M` (21.3 GB) and `i1-Q6_K` (24.6 GB, 36 GB and up), and the companion [non-imatrix repository](https://huggingface.co/mradermacher/Huihui-GLM-4.7-Flash-abliterated-GGUF) adds `Q8_0` (31.8 GB, 48 GB and up).
+The mradermacher repository holds `i1-IQ3_M` (13.2 GB, 24 GB Macs), `i1-Q4_K_M` (18.1 GB, the default, 32 GB and up), `i1-Q5_K_M` (21.3 GB, 36 GB and up) and `i1-Q6_K` (24.6 GB, 48 GB and up), and the companion [non-imatrix repository](https://huggingface.co/mradermacher/Huihui-GLM-4.7-Flash-abliterated-GGUF) adds `Q8_0` (31.8 GB, 48 GB and up). These follow the GPU budget described in the base recipe's [Memory](../README.md#memory) section; a 16 GB Mac's 10.7 GiB budget leaves no room for any of them.
 
 ## Abliterated GLM-5.3-Flash on a 128 GB MacBook Pro
 

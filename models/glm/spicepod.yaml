@@ -4,8 +4,8 @@ name: glm
 
 models:
   # GLM-4.7-Flash (30B mixture of experts, about 3.6B active), Unsloth Dynamic 4-bit GGUF
-  # (17.5 GB). Fits a 24 GB or larger MacBook Pro. README.md lists the files for other memory
-  # sizes, up to GLM-5.3-Flash (320B, 18B active, 102 GB at 2-bit) on a 128 GB MacBook Pro.
+  # (17.5 GB). Fits a 32 GB or larger MacBook Pro (24 GB with the 3-bit file). README.md lists the
+  # files for other memory sizes, up to GLM-5.3-Flash (320B, 18B active, 102 GB at 2-bit) on a 128 GB MacBook Pro.
   - from: huggingface:huggingface.co/unsloth/GLM-4.7-Flash-GGUF
     name: glm-4.7-flash
     files:

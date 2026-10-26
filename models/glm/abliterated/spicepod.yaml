@@ -4,7 +4,7 @@ name: glm-abliterated
 
 models:
   # huihui-ai/Huihui-GLM-4.7-Flash-abliterated, importance-matrix Q4_K_M GGUF by mradermacher
-  # (18.1 GB). Fits a 24 GB or larger MacBook Pro. README.md lists the abliterated GLM-5.3-Flash
+  # (18.1 GB). Fits a 32 GB or larger MacBook Pro. README.md lists the abliterated GLM-5.3-Flash
   # builds for a 128 GB MacBook Pro. Abliterated models have had refusal behavior removed; see
   # README.md before use.
   - from: huggingface:huggingface.co/mradermacher/Huihui-GLM-4.7-Flash-abliterated-i1-GGUF
