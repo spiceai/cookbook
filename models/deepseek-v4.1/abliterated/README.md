@@ -8,7 +8,7 @@ Abliteration orthogonalizes the "refusal direction" out of a model's weights, so
 
 ## Prerequisites
 
-The repository is gated. Open it on Hugging Face, accept its terms, create a [read token](https://huggingface.co/settings/tokens), and put the token in `.env`:
+The repository is gated: orcarouter asks you to accept the model's license on Hugging Face before it serves the files. Sign in to Hugging Face, open [the model page](https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF), accept the license, create a [read token](https://huggingface.co/settings/tokens), and put the token in `.env`. Without this, the download fails with HTTP 401 or 403.
 
 ```bash
 cd models/deepseek-v4.1/abliterated
