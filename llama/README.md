@@ -11,7 +11,7 @@ Use the Llama family of models locally from HuggingFace using Spice.
 - [Spice CLI](https://docs.spiceai.org/getting-started) installed.
 - The following environment variables set or configured in `.env`:
   - `SPICE_HUGGINGFACE_API_KEY`
-  - Granted access to the [Llama-3.2-3B-Instruct model](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct) on HuggingFace.
+  - Access to the [Llama-3.2-3B-Instruct model](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct) on Hugging Face. Llama models are gated: sign in to Hugging Face, open the model page, and accept Meta's Llama license. Meta grants access shortly afterwards; until then the download fails with HTTP 401 or 403. The token in `SPICE_HUGGINGFACE_API_KEY` must belong to the account that accepted the license.
 
 For more information, see the [Spice HuggingFace documentation](https://docs.spiceai.org/components/models/huggingface).
 
