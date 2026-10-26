@@ -22,7 +22,7 @@ aws cloudformation create-stack \
                ParameterKey=DatabaseName,ParameterValue=dev
 ```
 
-> Choose your own master password: 8–64 characters with at least one uppercase letter, one lowercase letter, and one digit. Avoid `$`: in an unquoted shell argument, `$$` expands to the shell's process ID, so the cluster would get a different password from the one you put in `.env`.
+> Avoid `$` in the password: the shell expands `$$` to its process ID.
 
 ## Step 2: Configure connection credentials
 
@@ -46,27 +46,19 @@ PG_PASS=Hellothere123
 
 ## Step 3: Writing Data into Redshift
 
-The `write` spicepod defines two datasets for each TPC-H table:
+The `write` spicepod samples 1,000 rows of each TPC-H table from S3 into [Spice Cayenne](https://spiceai.org/docs/components/data-accelerators/cayenne) (`<table>_source`) and writes them into Redshift through the [PostgreSQL data connector](https://spiceai.org/docs/components/data-connectors/postgres#write-support) (`<table>`, `access: read_write`).
 
-- `<table>_source` reads the table from the public `s3://spiceai-demo-datasets/tpch/` bucket and accelerates a 1,000-row sample of it locally with [Spice Cayenne](https://spiceai.org/docs/components/data-accelerators/cayenne) (`refresh_sql: select * from <table>_source limit 1000`).
-- `<table>` is the Redshift table, connected through the [PostgreSQL data connector](https://spiceai.org/docs/components/data-connectors/postgres) with `access: read_write`, so Spice can write to it with SQL `INSERT INTO`.
+> **Note:** Writing through the PostgreSQL data connector is in preview. The connector writes into existing tables, so the tables are created with `psql` first.
 
-> **Note:** Earlier versions of this recipe wrote into Redshift with the PostgreSQL data accelerator (`engine: postgres`). That accelerator is deprecated in Spice v2.4 and will be removed in v2.5 (see [Migrating to Spice Cayenne](https://spiceai.org/docs/components/data-accelerators/cayenne/migration)). Cayenne stores accelerations locally and does not write into Redshift, so this recipe now keeps the sample in Cayenne and copies it into Redshift with the PostgreSQL connector's [write support](https://spiceai.org/docs/components/data-connectors/postgres#write-support). Writable datasets (`access: read_write`) are in preview.
-
-The PostgreSQL connector writes into existing tables; it does not create them. Navigate to the `write` directory and create the TPC-H tables in Redshift with `psql`:
+To write data into Redshift, navigate to the `write` directory, create the tables, and start Spice using the following commands:
 
 ```bash
 cd write
 psql -h <your-cluster-endpoint> -p 5439 -U admin -d dev -f create_tables.sql
-```
-
-Then start Spice:
-
-```bash
 spice run
 ```
 
-You should see output like this in your terminal window:
+You should see this output in your terminal window:
 
 ```bash
 2026-10-26T20:35:23.575727Z  INFO runtime::init::dataset: Dataset orders_source initializing...
@@ -114,9 +106,9 @@ You should see output like this in your terminal window:
 2026-10-26T20:35:36.659067Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
-The log also has two kinds of `WARN` lines, left out above, that you can ignore: `Access mode 'read_write' is enabled for dataset <table>. This feature is currently in preview.` for each Redshift dataset, and `Failed to query PostgreSQL comments; registering without comment metadata` for each Redshift table (the comment lookup fails on Redshift, so the datasets register without comment metadata).
+The `read_write` preview and `Failed to query PostgreSQL comments` warnings for each Redshift table can be ignored.
 
-When the runtime is ready, copy the sampled rows into Redshift from another terminal in the `write` directory. `insert.sql` holds one `INSERT INTO <table> SELECT * FROM <table>_source;` statement per table:
+Once Spice is ready, write the samples into Redshift from another terminal in the `write` directory:
 
 ```bash
 spice sql < insert.sql
@@ -133,14 +125,14 @@ spice sql < insert.sql
 Time: 1.394963875 seconds. 1 rows.
 ```
 
-Each `INSERT` prints the number of rows it wrote: `1000` for each table except `nation` (`25`) and `region` (`5`).
+Each `INSERT` returns the number of rows written: 1,000 per table, 25 for `nation`, and 5 for `region`.
 
-> `INSERT INTO` appends. To run the copy again, empty the Redshift tables first, e.g. `psql -h <your-cluster-endpoint> -p 5439 -U admin -d dev -c 'TRUNCATE customer; TRUNCATE lineitem; TRUNCATE nation; TRUNCATE orders; TRUNCATE part; TRUNCATE partsupp; TRUNCATE region; TRUNCATE supplier;'`. Spice accepts only `INSERT INTO` for these datasets, not `INSERT OVERWRITE`.
+> `INSERT INTO` appends rows. Truncate the Redshift tables before running it again.
 
-Validate that the tables in Redshift hold the rows using the `psql` command-line utility:
+Validate that the correct tables have been made in PostgreSQL using the `psql` command-line utility:
 
 ```sql
-$ psql -h <your-cluster-endpoint> -p5439 -Uadmin dev
+$ psql -h host -p5439 -Uadmin dev
 dev=# \dt
          List of relations
  schema |   name   | type  | owner
@@ -156,7 +148,7 @@ dev=# \dt
 (8 rows)
 ```
 
-To validate the schema of a table, query Redshift's `pg_table_def` view. (With `psql` 17, `\d <table>` fails against Redshift with `column c.relhastriggers does not exist`.) For example:
+To validate the schema of a table, query `pg_table_def` (`\d+` fails against Redshift with `psql` 17). For example:
 
 ```sql
 dev=# select "column", type from pg_table_def where tablename = 'lineitem';
@@ -186,10 +178,11 @@ Run the _Pricing Summary Report Query (Q1)_ to validate data. Q1 is defined in t
 
 > **Your numbers will differ.** The `write` spicepod samples the source with
 > `refresh_sql: select * from lineitem_source limit 1000`. That `LIMIT` has no `ORDER BY`, so
-> which 1,000 rows are loaded is arbitrary and can change from run to run. The aggregates
-> below are therefore one run's result, not a fixed expected answer, and not the TPC-H
-> specification's answer (those are defined over the full SF1 dataset). Add an `ORDER BY`
-> to `refresh_sql` if you want a reproducible sample.
+> which 1,000 rows are loaded is arbitrary and changes from run to run — two successive
+> runs here loaded completely disjoint samples. The aggregates below are therefore one
+> run's result, not a fixed expected answer, and not the TPC-H specification's answer
+> (those are defined over the full SF1 dataset). Add an `ORDER BY` to `refresh_sql` if
+> you want a reproducible sample.
 
 ```sql
 select
@@ -285,7 +278,7 @@ You should see this output in your terminal window:
 2026-10-26T20:37:10.725435Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
-The log also has a `Failed to query PostgreSQL comments; registering without comment metadata` `WARN` line for each table, left out above, which you can ignore.
+The `Failed to query PostgreSQL comments` warning for each table can be ignored.
 
 Validate that the correct tables have been made:
 
@@ -341,9 +334,8 @@ sql> describe lineitem;
 Run the _Pricing Summary Report Query (Q1)_ to validate data. Q1 is defined in the
 [TPC Benchmark H Standard Specification](https://www.tpc.org/tpc_documents_current_versions/pdf/tpc-h_v2.17.1.pdf).
 
-> The `read` spicepod loads every row that Step 3 wrote into Redshift, so this query returns
-> the same groups and sums as the `psql` run in Step 3. The averages show more decimal places
-> here: Redshift returns `avg()` of a `NUMERIC(15,2)` column with two decimal places.
+> The `read` spicepod reads the rows written in Step 3, so the results match Step 3. Redshift rounds `avg()` of a
+> `NUMERIC(15,2)` column to two decimal places.
 
 ```sql
 select
