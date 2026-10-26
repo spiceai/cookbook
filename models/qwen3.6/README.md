@@ -74,7 +74,7 @@ cd models/qwen3.6
 spice run
 ```
 
-The first start downloads the model (22.4 GB) and the dataset. Later starts load both from cache in a few seconds.
+The first start downloads the model (22.4 GB) into the Hugging Face cache and reads the dataset (399 MB) from S3. Later starts load the model from the cache; the dataset is read from S3 again on every start, since the acceleration is in memory (about a second on a fast connection).
 
 ```console
  INFO Spice.ai runtime starting...
