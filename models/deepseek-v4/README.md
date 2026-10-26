@@ -59,7 +59,18 @@ cd models/deepseek-v4
 spice run
 ```
 
-The first start downloads the three shards (90.9 GB); later starts load them from cache. Wait for `Model [deepseek-v4-flash] deployed, ready for inferencing` and `All components are loaded. Spice runtime is ready!` before chatting. The model is listed by `/v1/models` while it is still downloading.
+The first start downloads the three shards (90.9 GB); later starts load them from cache. Loading 91 GB of weights takes about a minute and a half:
+
+```console
+ INFO Spice.ai runtime starting...
+2026-10-26T17:02:41.921751Z  INFO spiced: Starting runtime v2.4.0-unstable-build.ec36a7cc5e+models.cuda
+...
+2026-10-26T17:02:42.150683Z  INFO runtime::init::model: Loading model [deepseek-v4-flash] from file...
+2026-10-26T17:04:06.882623Z  INFO runtime::init::model: Model [deepseek-v4-flash] deployed, ready for inferencing
+2026-10-26T17:04:06.985227Z  INFO runtime: All components are loaded. Spice runtime is ready!
+```
+
+These lines are from a run of this recipe's three shards on an NVIDIA DGX Spark (128 GB of unified memory, the same memory class as a 128 GB MacBook Pro) with the same llama.cpp engine built for CUDA; on a Mac the runtime reports `+models.metal` and the download lines of the `huggingface:` spicepod precede them. Wait for the `deployed, ready for inferencing` line before chatting: `/v1/models` lists the model while it is still downloading. With the model loaded, 9 GB of the 121 GB the machine reports remained free.
 
 ## Step 3. Chat with the model
 
@@ -72,6 +83,7 @@ spice chat
 ```console
 Using model: deepseek-v4-flash
 chat> Explain, in three sentences, why a mixture-of-experts model decodes faster than a dense model of the same size.
+A mixture-of-experts (MoE) model decodes faster than a dense model of the same size because it only activates a small subset of its total parameters for each token, rather than computing through all of them. This sparsity reduces the per-token floating-point operations (FLOPs) and memory bandwidth required, leading to lower latency during generation. Meanwhile, the model retains the capacity of a much larger network by routing inputs to specialized experts, achieving comparable quality with significantly less computational cost.
 ```
 
 ## Step 4. Use the OpenAI-compatible API
@@ -87,7 +99,7 @@ curl -s http://localhost:8090/v1/chat/completions \
   }'
 ```
 
-DeepSeek-V4-Flash thinks before it answers and returns the trace in `reasoning_content`, separate from `content`. The `reasoning_effort` field sets the level per request: `low`, `high` or `max` as the model defines them, or `none` to ask the chat template for a direct answer. A level the template does not take is refused with HTTP 400 and a message that names the levels it takes. To set a default for every request, add `hf_reasoning_effort: <level>` to the model's `params`. DeepSeek recommends temperature 1.0 and top-p 1.0 (0.95 for agentic use). The engine uses an 8,192-token context, and a conversation that outgrows it is cut off with an error that says so.
+With Unsloth's chat template, DeepSeek-V4-Flash answers directly unless a request asks it to think: "Reply with only the integer 1729." came back in 2 tokens with nothing set and with `reasoning_effort: none`, in 88 tokens with a 318-character trace at `low`, and in 13 tokens at `high`; the trace arrives in `reasoning_content`, separate from `content`. A request for `max` was refused, as the template does not name that level; a refusal is HTTP 400 with a message that lists the levels the model takes. To set a default for every request, add `hf_reasoning_effort: <level>` to the model's `params`. DeepSeek recommends temperature 1.0 and top-p 1.0 (0.95 for agentic use). On the DGX Spark the model decoded about 21 tokens per second; a 128 GB MacBook Pro has comparable memory bandwidth. The engine uses an 8,192-token context, and a conversation that outgrows it is cut off with an error that says so.
 
 ## Abliterated variant
 
