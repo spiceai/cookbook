@@ -55,7 +55,7 @@ You should see the dataset bootstrap from a consistent snapshot and then transit
 
 ```
 2026-07-23T01:40:37.317523Z  INFO runtime::init::dataset: Dataset orders initializing...
-2026-07-23T01:40:37.392667Z  INFO runtime::init::dataset: Dataset orders registered (mysql:spice_demo.orders), acceleration (duckdb:file, changes), results cache enabled. duration_ms=5
+2026-07-23T01:40:37.392667Z  INFO runtime::init::dataset: Dataset orders registered (mysql:spice_demo.orders), acceleration (cayenne:file, changes), results cache enabled. duration_ms=5
 2026-07-23T01:40:37.396202Z  INFO data_components::mysql_replication::shared: MySQL replication: GTID auto-positioning active. dataset=orders source_table=spice_demo.orders
 2026-07-23T01:40:37.397269Z  INFO data_components::mysql_replication::shared: dataset joined shared mysql binlog group dataset=orders connection=localhost:3308 snapshot=true rejoining=false members=1
 2026-07-23T01:40:37.397719Z  INFO data_components::mysql_replication::bootstrap: mysql replication: starting initial snapshot dataset=orders
