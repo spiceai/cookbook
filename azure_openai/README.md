@@ -4,7 +4,7 @@ Works with `v1.0+`
 
 This recipe demonstrates how to use Azure OpenAI models for vector-based search and chat functionalities with structured (taxi trips) and unstructured GitHub data.
 
-To reduce GitHub API requests and Azure embedding usage, the sample accelerates at most **10 closed issues** and **16 Markdown files** from `docs/dev/`. The `refresh_sql` limits in `spicepod.yaml` bound the embedded rows, and the file connector's `include` pattern restricts downloads to developer documentation. Increase these limits or broaden the pattern only when your API quotas allow it.
+To reduce GitHub API requests and Azure embedding usage, the sample accelerates at most **10 closed issues** and **16 Markdown files** from `docs/dev/`. The `refresh_sql` limits in `spicepod.yaml` bound the embedded rows, and the file connector's `include` pattern restricts downloads to developer documentation. The issues query also filters by date, because `LIMIT` alone doesn't reduce how many issues are embedded. Increase these limits or broaden the pattern only when your API quotas allow it.
 
 ## Prerequisites
 
