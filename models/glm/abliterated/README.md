@@ -19,7 +19,7 @@ Wait for `Model [glm-4.7-flash-abliterated] deployed, ready for inferencing`, th
 spice chat
 ```
 
-The API serves the model as `glm-4.7-flash-abliterated` at `http://localhost:8090/v1/chat/completions`, with the same reasoning behavior as the base model.
+The API serves the model as `glm-4.7-flash-abliterated` at `http://localhost:8090/v1/chat/completions`, with the same reasoning behavior as the base model. On an M3 Max with the trunk Metal build it loaded after a 4 min 44 s download, thought by default ("Reply with only the integer 1729." took 120 tokens with a 420-character trace, the same at `low`), answered in 2 tokens with `reasoning_effort: none`, and decoded at 77 tokens per second.
 
 ## Memory
 
