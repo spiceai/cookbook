@@ -2,6 +2,8 @@
 
 Works with `v2.0+`
 
+> **Deprecated:** The `arrow` acceleration engine is deprecated and will be removed in Spice v2.5. Spice logs a warning for any dataset that uses it. Use the `cayenne` engine for new datasets, and see the [migration guide](https://spiceai.org/docs/components/data-accelerators/cayenne/migration) to move existing ones.
+
 Create a connector instance using sample data and accelerate it using In-Memory Arrow Data Accelerator.
 
 ## Requirements

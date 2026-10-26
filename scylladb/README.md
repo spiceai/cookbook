@@ -165,7 +165,7 @@ datasets:
       scylladb_keyspace: demo
     acceleration:
       enabled: true
-      engine: duckdb
+      engine: cayenne
       refresh_check_interval: 1h
 ```
 
