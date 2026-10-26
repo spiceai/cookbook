@@ -39,8 +39,6 @@ S3_SNAPSHOT_SECRET=<your-secret-key>
 S3_SNAPSHOT_REGION=<your-region>
 ```
 
-Temporary credentials, such as AWS SSO credentials, also need a session token: add `S3_SNAPSHOT_SESSION_TOKEN=<your-session-token>` to `.env` and `s3_session_token: ${ env:S3_SNAPSHOT_SESSION_TOKEN }` to the `runtime.state.params` in Step 3.
-
 If you prefer AWS profiles or environment variables set globally, skip the `.env` file and adjust the pod configuration accordingly.
 
 ## Step 3. Enable snapshots in the Spicepod
