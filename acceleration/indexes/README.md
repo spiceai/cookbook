@@ -2,7 +2,7 @@
 
 Works with `v2.3.2+`
 
-Indexes can be created on accelerated datasets (for supported engines) to improve query performance. This recipe accelerates the same data twice with [Spice Cayenne](https://spiceai.org/docs/components/data-accelerators/cayenne), once with an index on `trace_id` and once without, and compares a point lookup on each.
+Indexes can be created on accelerated datasets (for supported engines) to improve query performance. This recipe will demonstrate how to create an index and compare the performance on the same accelerated dataset without an index.
 
 Clone the Spice cookbook repository and navigate to the `indexes` directory:
 
@@ -13,7 +13,7 @@ cd cookbook/acceleration/indexes
 
 **Step 1.** Download the large test dataset locally
 
-Indexes only make a difference on large datasets. This dataset is a 1.5 GB download with 7.6 million rows, about 5.6 GiB once loaded into memory.
+Indexes only make a difference on large datasets. This dataset is 1.5GB bytes, decompressed into 5+GB in-memory.
 
 ```bash
 curl -O https://public-data.spiceai.org/large_eth_traces.parquet
@@ -21,7 +21,7 @@ curl -O https://public-data.spiceai.org/large_eth_traces.parquet
 
 **Step 2.** Start Spice
 
-Spice will start and load the dataset into Spice Cayenne twice (`engine: cayenne`, `mode: file`), writing about 1.4 GB per dataset under `.spice/data`. For `traces`, it also builds a secondary index on `trace_id`. **This may take a few minutes.**
+Spice will start and load the dataset into Cayenne. **This may take several minutes.**
 
 ```bash
 spice run
@@ -62,7 +62,7 @@ SELECT * FROM traces WHERE trace_id = 'call_0x22ba49176f15ec5524434d87c47fc9dbff
 
 > Time: 0.004053708 seconds. 1 rows.
 
-The indexed lookup is several times faster. Exact times depend on your machine.
+Much faster!
 
 **Step 5.** See what each query reads
 
