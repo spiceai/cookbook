@@ -19,7 +19,7 @@ Wait for `Model [kimi-linear-abliterated] deployed, ready for inferencing`, then
 spice chat
 ```
 
-The API serves the model as `kimi-linear-abliterated` at `http://localhost:8090/v1/chat/completions`.
+The API serves the model as `kimi-linear-abliterated` at `http://localhost:8090/v1/chat/completions`. On an M3 Max with the trunk Metal build it loaded after a 7-minute download (21.5 GB), answered "Reply with only the integer 1729." in 2 tokens with and without `reasoning_effort` (no thinking mode, like the base model), answered the three-sentence mixture-of-experts question from the base recipe, and decoded at 87 tokens per second.
 
 ## Memory
 
