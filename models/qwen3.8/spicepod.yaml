@@ -1,0 +1,26 @@
+version: v2
+kind: Spicepod
+name: qwen3.8
+
+datasets:
+  - from: s3://spiceai-demo-datasets/taxi_trips/2024/
+    name: taxi_trips
+    description: NYC yellow taxi trips, 2024
+    params:
+      file_format: parquet
+      s3_auth: public
+    acceleration:
+      enabled: true
+
+models:
+  # Qwen3.8-27B, Unsloth Dynamic 4-bit GGUF (17.6 GB). Fits a 32 GB+ Mac; see the memory table in
+  # README.md for 16-24 GB Macs, and for Qwen3.8-Flash-Next on a 128 GB Mac.
+  - from: huggingface:huggingface.co/unsloth/Qwen3.8-27B-GGUF
+    name: qwen3.8
+    files:
+      - path: Qwen3.8-27B-UD-Q4_K_XL.gguf
+      # Optional: the model's 1.4 GB multi-token-prediction draft head. Spice drafts with any
+      # `mtp-` file listed here. It did not change decode speed measurably on an M3 Max (README.md).
+      # - path: MTP/mtp-Qwen3.8-27B-Q4_0.gguf
+    params:
+      tools: auto
