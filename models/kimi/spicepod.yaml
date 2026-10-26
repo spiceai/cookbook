@@ -6,7 +6,7 @@ models:
   # Kimi-Linear-48B-A3B-Instruct (48B total, 3B active), bartowski's imatrix IQ3_M GGUF (22.7 GB).
   # Fits a 36 GB MacBook Pro; see the memory table in README.md for the 4-bit file on 48 GB+
   # Macs and the 2-bit file on 24 GB Macs. Kimi K2.6 and K3 (1T and 2.8T parameters) do not fit
-  # any Mac; see README.md.
+  # a MacBook Pro; see README.md.
   - from: huggingface:huggingface.co/bartowski/moonshotai_Kimi-Linear-48B-A3B-Instruct-GGUF
     name: kimi-linear
     files:
