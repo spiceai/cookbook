@@ -22,9 +22,22 @@ cd cookbook/smb
 
 ---
 
-## Step 2. Set Up an SMB Server (Optional)
+## Step 2. Add Sample Data
 
-If you don't have an existing SMB server, you can start one locally using Docker with Samba:
+Create a `data` directory and download a sample Parquet file (the TPC-H `nation` table, 25 rows) into it:
+
+```bash
+mkdir -p data
+curl -o data/nation.parquet https://spiceai-demo-datasets.s3.amazonaws.com/tpch/nation/nation.parquet
+```
+
+You can add other Parquet files to the `data` directory too. The spicepod reads the share with `file_format: parquet`, so other formats need a matching `file_format`.
+
+---
+
+## Step 3. Set Up an SMB Server (Optional)
+
+If you don't have an existing SMB server, you can start one locally using Docker with Samba, sharing the `data` directory:
 
 ```bash
 docker run -d --name samba \
@@ -38,18 +51,6 @@ docker run -d --name samba \
 ```
 
 This creates a share named `data` accessible with username `testuser` and password `testpass`.
-
----
-
-## Step 3. Add Sample Data
-
-Create a `data` directory with sample Parquet files:
-
-```bash
-mkdir -p data
-```
-
-You can copy any Parquet or CSV files into the `data` directory, or use the Spice CLI to generate sample data.
 
 ---
 
@@ -265,7 +266,7 @@ datasets:
       smb_pass: ${secrets:smb_pass}
     acceleration:
       enabled: true
-      engine: duckdb
+      engine: cayenne
       refresh_check_interval: 1h
 ```
 
