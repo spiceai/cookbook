@@ -1,0 +1,12 @@
+version: v2
+kind: Spicepod
+name: kimi-abliterated
+
+models:
+  # huihui-ai/Huihui-Kimi-Linear-48B-A3B-Instruct-abliterated, imatrix IQ3_M GGUF by
+  # mradermacher (21.5 GB). Same memory needs as the base recipe. Abliterated models have had
+  # refusal behavior removed; see README.md before use.
+  - from: huggingface:huggingface.co/mradermacher/Huihui-Kimi-Linear-48B-A3B-Instruct-abliterated-i1-GGUF
+    name: kimi-linear-abliterated
+    files:
+      - path: Huihui-Kimi-Linear-48B-A3B-Instruct-abliterated.i1-IQ3_M.gguf
