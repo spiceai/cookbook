@@ -6,7 +6,7 @@ Z.ai publishes its GLM models as open weights under the MIT license. The current
 
 This recipe serves **GLM-4.7-Flash** on an Apple silicon Mac with Spice's built-in llama.cpp engine and Metal, and shows how to run **GLM-5.3-Flash** on a 128 GB MacBook Pro by swapping the model block. Abliterated variants of both are in [`abliterated/`](./abliterated/).
 
-GLM-5.2 (June 2026) and GLM-5.3 are the 744B-class flagships: their smallest GGUFs are 217 GB and 223 GB, for a 256 GB or larger Mac Studio rather than a MacBook Pro. Their `glm-dsa` GGUF architecture is one Spice serves, so the same spicepod shape works there, with the shards of [unsloth/GLM-5.2-GGUF](https://huggingface.co/unsloth/GLM-5.2-GGUF) or [unsloth/GLM-5.3-GGUF](https://huggingface.co/unsloth/GLM-5.3-GGUF) listed in `files`.
+GLM-5.2 (June 2026) and GLM-5.3 are the 744B-class flagships: their smallest GGUFs are 217 GB and 223 GB, for a 512 GB Mac Studio rather than a MacBook Pro (a 256 GB Mac's GPU budget is about 192 GiB under the rule in [Memory](#memory), below these files before the KV cache). Their `glm-dsa` GGUF architecture is one Spice serves, so the same spicepod shape works there, with the shards of [unsloth/GLM-5.2-GGUF](https://huggingface.co/unsloth/GLM-5.2-GGUF) or [unsloth/GLM-5.3-GGUF](https://huggingface.co/unsloth/GLM-5.3-GGUF) listed in `files`.
 
 | Model         | Parameters            | Released     | Fits a 36 GB MacBook Pro          | GGUF repository                                                                     |
 | ------------- | --------------------- | ------------ | --------------------------------- | ----------------------------------------------------------------------------------- |

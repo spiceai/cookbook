@@ -61,7 +61,7 @@ models:
 
 ## Abliterated GLM-5.2
 
-[huihui-ai/Huihui-GLM-5.2-abliterated-GGUF](https://huggingface.co/huihui-ai/Huihui-GLM-5.2-abliterated-GGUF) is the abliterated GLM-5.2 (753B). Its smallest build, `UD-IQ1_S_MXFP4`, is 216 GB in six shards and its `UD-IQ1_M` 231 GB, so like the base model it is for a 256 GB or larger Mac Studio, not a MacBook Pro. The spicepod shape is the same: list the shards in `files`.
+[huihui-ai/Huihui-GLM-5.2-abliterated-GGUF](https://huggingface.co/huihui-ai/Huihui-GLM-5.2-abliterated-GGUF) is the abliterated GLM-5.2 (753B). Its smallest build, `UD-IQ1_S_MXFP4`, is 216 GB in six shards and its `UD-IQ1_M` 231 GB, so like the base model it is for a 512 GB Mac Studio, not a MacBook Pro (a 256 GB Mac's GPU budget of about 192 GiB is below these files). The spicepod shape is the same: list the shards in `files`.
 
 ## Clean up
 
