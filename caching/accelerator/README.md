@@ -180,7 +180,7 @@ to the source, which is what the warning is there to say.
 ### Testing Error Handling
 
 1. Press `s` on the time server to enable error mode (500 responses)
-2. Wait past the 10s TTL, then query the cache - with `caching_stale_if_error: enabled`, cached data is still returned even though the server is returning errors. The query waits for the failed origin fetch first (about 9 seconds in testing), and the runtime logs `Origin fetch for dataset 'time' failed, so the expired cached response is being served instead`
+2. Wait more than 20 seconds since the last successful fetch (the 10s TTL plus the 10s stale-while-revalidate window), then query the same cached key - with `caching_stale_if_error: enabled`, cached data is still returned even though the server is returning errors. The query waits for the failed origin fetch first (about 9 seconds in testing), and the runtime logs `Origin fetch for dataset 'time' failed, so the expired cached response is being served instead`
 3. Press `s` again to disable error mode
 
 ### Testing Multiple Cache Keys
