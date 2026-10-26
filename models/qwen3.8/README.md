@@ -180,7 +180,7 @@ models:
 | `Unknown GGUF architecture 'qwen35'`                                            | A `v2.3.x` or `v2.4.0-rc` runtime, which serves GGUFs with mistral.rs. Same fix.                                   |
 | `Model 'qwen3.8' takes reasoning_effort ... and ignores 'high'` (HTTP 400)      | Qwen3.8's template names `xhigh`, `medium`, `low` and `none`. Use one of those.                                    |
 | The model never finishes loading, or macOS becomes unresponsive                | The file does not fit the GPU's share of memory. Choose a smaller file from the [Memory](#memory) table.           |
-| `spice chat "<question>"` prints nothing for a question that needs the dataset tools | [spiceai/spiceai#15579](https://github.com/spiceai/spiceai/issues/15579): the one-shot form stalls on tool calls. Use the interactive REPL (`spice chat`, then type the question), pipe the question on standard input (`echo "<question>" | spice chat`), or call the API. |
+| `spice chat "<question>"` prints nothing for a question that needs the dataset tools | [spiceai/spiceai#15579](https://github.com/spiceai/spiceai/issues/15579): the one-shot form stalls on tool calls. Use the interactive REPL (`spice chat`, then type the question), pipe the question on standard input (`echo "<question>" \| spice chat`), or call the API. |
 | `the prompt is N tokens, and the model's context holds 8192`                   | The conversation outgrew the context. Start a new chat.                                                            |
 
 ## Using a trunk build

@@ -164,7 +164,7 @@ On an M3 Max, Qwen3.6-35B-A3B at 4-bit decoded about 69 tokens per second and re
 | `Unknown GGUF architecture 'qwen35moe'`                                            | A `v2.3.x` or `v2.4.0-rc` runtime, which serves GGUFs with mistral.rs. Same fix.                                   |
 | The model never finishes loading, or macOS becomes unresponsive                   | The file does not fit the GPU's share of memory. Choose a smaller file from the [Memory](#memory) table.           |
 | `the prompt is N tokens, and the model's context holds 8192`                      | The conversation outgrew the context. Start a new chat.                                                            |
-| `spice chat "<question>"` prints nothing for a question that needs the dataset tools | [spiceai/spiceai#15579](https://github.com/spiceai/spiceai/issues/15579): the one-shot form stalls on tool calls. Use the interactive REPL (`spice chat`, then type the question), pipe the question on standard input (`echo "<question>" | spice chat`), or call the API. |
+| `spice chat "<question>"` prints nothing for a question that needs the dataset tools | [spiceai/spiceai#15579](https://github.com/spiceai/spiceai/issues/15579): the one-shot form stalls on tool calls. Use the interactive REPL (`spice chat`, then type the question), pipe the question on standard input (`echo "<question>" \| spice chat`), or call the API. |
 | Slow first start                                                                  | The 22.4 GB download runs at the network's speed; the log reports progress every 30 seconds.                       |
 
 ## Using a trunk build
