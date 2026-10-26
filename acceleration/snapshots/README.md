@@ -1,6 +1,6 @@
 # Accelerated Snapshots
 
-Works with `v1.8+`
+Works with `v2.4+`
 
 This recipe walks through configuring database snapshots for file-mode accelerations so datasets avoid cold starts and recover quickly after restarts.
 
@@ -27,7 +27,7 @@ Spice supports the standard AWS credential flows:
 
 - `AWS_PROFILE` pointing to an AWS CLI profile (SSO or static keys).
 - Standard `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` environment variables.
-- Per-pod credentials set through `snapshots.params`.
+- Per-pod credentials set through `runtime.state.params`.
 
 For this recipe we load credentials from a `.env` file placed beside the pod definition.
 
@@ -43,22 +43,21 @@ If you prefer AWS profiles or environment variables set globally, skip the `.env
 
 ## Step 3. Enable snapshots in the Spicepod
 
-Open the `spicepod.yaml` that `spice init` created and replace its contents with the configuration below, updating the `snapshots.location` prefix to your bucket:
+Open the `spicepod.yaml` that `spice init` created and replace its contents with the configuration below, updating the `runtime.state.location` prefix to your bucket:
 
 ```yaml
 version: v1
 kind: Spicepod
 name: quickstart
 
-snapshots:
-  enabled: true
-  location: s3://my-snapshots-prod/quickstart/
-  bootstrap_on_failure_behavior: fallback # retry | fallback | warn (default)
-  params:
-    s3_auth: key
-    s3_key: ${ env:S3_SNAPSHOT_KEY }
-    s3_secret: ${ env:S3_SNAPSHOT_SECRET }
-    s3_region: ${ env:S3_SNAPSHOT_REGION }
+runtime:
+  state:
+    location: s3://my-snapshots-prod/quickstart/
+    params:
+      s3_auth: key
+      s3_key: ${ env:S3_SNAPSHOT_KEY }
+      s3_secret: ${ env:S3_SNAPSHOT_SECRET }
+      s3_region: ${ env:S3_SNAPSHOT_REGION }
 
 datasets:
   - from: s3://spiceai-public-datasets/taxi_trips/
@@ -69,18 +68,22 @@ datasets:
       s3_auth: public
     acceleration:
       enabled: true
-      engine: duckdb
+      engine: cayenne
       mode: file
       snapshots: enabled # enabled | bootstrap_only | create_only | disabled
+      snapshots_bootstrap_on_failure_behavior: fallback # retry | fallback | warn (default)
       params:
-        duckdb_file: taxi_trips.db # Stored on local disk and bootstrapped from snapshots
+        cayenne_file_path: cayenne_data # Stored on local disk and bootstrapped from snapshots
 ```
 
 Key settings to note:
 
-- The top-level `snapshots` block defines the shared storage location and failure behavior.
+- The `runtime.state` block defines the shared storage location. Snapshots are written to its `snapshots/` folder.
 - The dataset opts into snapshots by setting `acceleration.snapshots` to `enabled`.
-- Each accelerated dataset must write to its own DuckDB file (`taxi_trips.db`).
+- The dataset sets its failure behavior with `acceleration.snapshots_bootstrap_on_failure_behavior`.
+- Each accelerated dataset writes to its own Cayenne folder (`cayenne_data/taxi_trips/`), next to the shared Cayenne catalog (`cayenne_data/metadata/`).
+
+The top-level `snapshots` section used by earlier versions of this recipe is deprecated in v2.4. See [Migrate from the top-level `snapshots` section](https://spiceai.org/docs/features/data-acceleration/snapshots#migrate-from-the-top-level-snapshots-section).
 
 ## Step 4. Launch Spice and create the first snapshot
 
@@ -93,27 +96,27 @@ spice run
 On first boot the acceleration file does not exist locally, so Spice loads from S3 and refreshes the dataset. After the initial refresh completes you should see a log similar to:
 
 ```bash
-2026-10-15T03:46:02.267902Z  INFO runtime_acceleration::snapshot: Snapshot created dataset=taxi_trips snapshot=quickstart/month=2026-10/day=2026-10-15/dataset=taxi_trips/taxi_trips_20261015T034559Z_01a13daab32b7981b1124869c9186f0d.duckdb size_bytes=1060864 duration_ms=2672.1 sha=947fc7cb8fd89dbad5fa30a880ef621bb2669c03531d746a6e1a0a9e185695f2
+2026-10-26T20:53:39.415062Z  INFO runtime_acceleration::snapshot: Snapshot created dataset=taxi_trips snapshot=quickstart/snapshots/month=2026-10/day=2026-10-26/dataset=taxi_trips/taxi_trips_20261026T205338Z_01a179fd7e6e7b03ae698e0cc2bfe78f.cayenne size_bytes=72192 duration_ms=872.4 sha=3e1c62451a408815ba098db06711fb51b6d68310003309df2745969da4fbb315
 ```
 
-Each snapshot object is named `<dataset>_<UTC timestamp>_<UUIDv7>.<engine extension>`, so DuckDB snapshots end in `.duckdb`.
+Each snapshot object is named `<dataset>_<UTC timestamp>_<UUIDv7>.<engine extension>`, so Cayenne snapshots end in `.cayenne`.
 
 Verify the snapshot appeared in your bucket using the AWS CLI or console.
 
 ## Step 5. Test snapshot bootstrap
 
-Simulate a cold start by stopping the runtime and removing the local DuckDB file:
+Simulate a cold start by stopping the runtime and removing the local Cayenne data:
 
 ```bash
 Ctrl+C  # stop spice run
-rm taxi_trips.db
+rm -rf cayenne_data
 spice run
 ```
 
 This time the startup logs show the snapshot bootstrap:
 
 ```bash
-2026-10-15T03:46:40.400313Z  INFO runtime_acceleration::snapshot: Snapshot restored to taxi_trips.db dataset=taxi_trips snapshot=s3://my-snapshots-prod/quickstart/month=2026-10/day=2026-10-15/dataset=taxi_trips/taxi_trips_20261015T034559Z_01a13daab32b7981b1124869c9186f0d.duckdb size_bytes=1060864 sha=947fc7cb8fd89dbad5fa30a880ef621bb2669c03531d746a6e1a0a9e185695f2
+2026-10-26T20:53:44.481627Z  INFO runtime_acceleration::snapshot: Snapshot restored to cayenne_data/metadata dataset=taxi_trips snapshot=s3://my-snapshots-prod/quickstart/snapshots/month=2026-10/day=2026-10-26/dataset=taxi_trips/taxi_trips_20261026T205338Z_01a179fd7e6e7b03ae698e0cc2bfe78f.cayenne size_bytes=72192 sha=3e1c62451a408815ba098db06711fb51b6d68310003309df2745969da4fbb315
 ```
 
 Spice skips the full refresh and immediately serves queries, dramatically reducing warm-up time.
@@ -124,24 +127,24 @@ Snapshots can be fine-tuned per dataset:
 
 - `bootstrap_only`: download snapshots on startup but never write new ones (useful for read-only staging environments).
 - `create_only`: generate snapshots after refreshes without bootstrapping from them.
-- `disabled`: opt out for specific datasets even when the pod-wide snapshots block is present.
+- `disabled`: opt out for specific datasets even when the pod sets `runtime.state`.
 
-Spice downloads a snapshot only when the local acceleration file does not exist. Try switching `acceleration.snapshots` to `bootstrap_only`, stopping Spice, removing `taxi_trips.db`, and restarting to observe that Spice restores the existing snapshot but skips writing a new version after refreshes.
+Spice downloads a snapshot only when the local acceleration file does not exist. Try switching `acceleration.snapshots` to `bootstrap_only`, stopping Spice, removing `cayenne_data`, and restarting to observe that Spice restores the existing snapshot but skips writing a new version after refreshes.
 
 ## Step 7. Handle bootstrap failures
 
-The top-level `bootstrap_on_failure_behavior` controls what happens if the newest snapshot fails to load:
+The dataset's `acceleration.snapshots_bootstrap_on_failure_behavior` controls what happens if the newest snapshot fails to load:
 
 - `retry`: keep trying the newest file until it succeeds (best when snapshots should never fail).
 - `fallback`: automatically attempt older snapshot files.
 - `warn`: log a warning and continue with an empty acceleration (default).
 
-Set the value to `warn`, stop Spice, remove the snapshot file from S3 and the local `taxi_trips.db`, and restart to see how Spice warns and performs a regular refresh when no snapshot is available:
+Set the value to `warn`, stop Spice, remove the snapshot file from S3 and the local `cayenne_data`, and restart to see how Spice warns and performs a regular refresh when no snapshot is available:
 
 ```bash
-WARN runtime_acceleration::snapshot: Failed to bootstrap snapshot; continuing without a downloaded snapshot. dataset=taxi_trips location=quickstart error=Failed to download snapshot ...
+WARN runtime_acceleration::snapshot: Failed to bootstrap snapshot; continuing without a downloaded snapshot. dataset=taxi_trips location=quickstart/snapshots error=Snapshot 1 of dataset 'taxi_trips' has no file at ...
 ```
 
 ## Summary
 
-You configured DuckDB accelerations to write and consume snapshots, validated fast restarts by deleting the local file, and experimented with snapshot behaviors. Apply the same pattern to additional datasets by pointing each one at its own acceleration file and reusing the shared snapshot location. Remember to manage S3 lifecycle policies so old snapshots expire on the cadence your environment requires.
+You configured Cayenne accelerations to write and consume snapshots, validated fast restarts by deleting the local file, and experimented with snapshot behaviors. Apply the same pattern to additional datasets by pointing each one at the same `cayenne_file_path`, where each gets its own folder, and reusing the shared snapshot location. Remember to manage S3 lifecycle policies so old snapshots expire on the cadence your environment requires.
