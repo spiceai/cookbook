@@ -191,7 +191,7 @@ On an M3 Max, Qwen3.5-9B at 4-bit decodes about 43 tokens per second with a 1,60
 
 ## Using a trunk build
 
-Until a release includes the llama.cpp GGUF engine, download the latest trunk build of the runtime and point the CLI at it. The CLI's `spice run`, `spice chat` and `spice sql` work unchanged.
+Until a release includes the llama.cpp GGUF engine, download the latest trunk build of the runtime and point the CLI at it. The CLI's `spice run`, `spice chat` and `spice sql` work unchanged. The download needs the [GitHub CLI](https://cli.github.com) signed in to a GitHub account (`brew install gh`, then `gh auth login`), because Actions artifacts are only served to authenticated users.
 
 ```bash
 RUN_ID=$(gh run list -R spiceai/spiceai --workflow build_and_release --branch trunk --status success --limit 1 --json databaseId -q '.[0].databaseId')
