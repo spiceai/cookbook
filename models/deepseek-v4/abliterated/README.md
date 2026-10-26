@@ -25,7 +25,7 @@ The API serves the model as `deepseek-v4-flash-abliterated` at `http://localhost
 
 The repository holds two text builds: `DeepSeek-V4-Flash-Q2-0731.gguf` (86.7 GB, the default) and `DeepSeek-V4-Flash-Q2_K-0731.gguf` (97.6 GB), both for a 128 GB Mac, and a 4-bit `MXFP4` build (156 GB) for 192 GB and larger machines. Its `dspark-*.gguf` files are DeepSeek's DSpark speculative-decoding head for other engines; Spice reads only draft heads named `mtp-*.gguf`, so leave them out.
 
-[orcarouter/DeepSeek-V4-Flash-Vision-Uncensored-GGUF](https://huggingface.co/orcarouter/DeepSeek-V4-Flash-Vision-Uncensored-GGUF) is a measured and documented abliteration of a different checkpoint, DeepSeek-V4-Flash-Vision-Exp (August 2026), packaged without quantization as a 156 GB MXFP4 set; it is a build for a 192 GB or larger Mac and a gated repository.
+[orcarouter/DeepSeek-V4-Flash-Vision-Uncensored-GGUF](https://huggingface.co/orcarouter/DeepSeek-V4-Flash-Vision-Uncensored-GGUF) is a measured and documented abliteration of a different checkpoint, DeepSeek-V4-Flash-Vision-Exp (August 2026), packaged without quantization as a 156 GB MXFP4 set; it is a build for a 192 GB or larger Mac, and a gated repository: accept the model's license on its Hugging Face page while signed in, and pass a read token as `hf_token: ${ secrets:HF_TOKEN }`.
 
 ## Clean up
 
