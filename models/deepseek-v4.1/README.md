@@ -14,6 +14,13 @@ Spice serves single-node GGUF models with llama.cpp. The llama.cpp release that 
 Architecture 'deepseek41' in DeepSeek-V4.1-Flash-1017-UD-IQ1_M-00001-of-00005.gguf is not supported by this Spice release. Upgrade Spice, or use a GGUF of a supported architecture: https://spiceai.org/docs/components/models#gguf-architectures
 ```
 
+That is the message the engine gave on 2026-10-26 (build `ec36a7cc`, the llama.cpp engine at `b11803`) when handed a DeepSeek-V4.1-Flash-1017 GGUF on an NVIDIA DGX Spark, before allocating any memory:
+
+```console
+2026-10-26T16:50:00.211547Z  INFO runtime::init::model: Loading model [deepseek-v4.1-flash] from file...
+2026-10-26T16:50:00.624562Z  WARN runtime::init::model: Failed to load LLM: deepseek-v4.1-flash. Failed to initialize LLM model: Architecture 'deepseek41' in DeepSeek-V4.1-Flash-1017-Q2_K-00001-of-00010.gguf is not supported by this Spice release. Upgrade Spice, or use a GGUF of a supported architecture: https://spiceai.org/docs/components/models#gguf-architectures
+```
+
 Spice's mistral.rs engine has a `deepseek41` graph, but uses it only for GGUF models with `distributed_backend: ring` (Spice Enterprise, tensor-parallel across several machines such as a ring of NVIDIA DGX Sparks).
 
 ## Memory
