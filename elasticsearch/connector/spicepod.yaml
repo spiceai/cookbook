@@ -18,7 +18,7 @@ datasets:
       elasticsearch_user: elastic
       elasticsearch_pass: spiceai
 
-  # all_types_accelerated — same index, materialized locally in DuckDB
+  # all_types_accelerated — same index, materialized locally in Cayenne
   - from: elasticsearch:all_types
     name: all_types_accelerated
     params:
@@ -27,6 +27,6 @@ datasets:
       elasticsearch_pass: spiceai
     acceleration:
       enabled: true
-      engine: duckdb
+      engine: cayenne
       refresh_mode: full
       refresh_check_interval: 30s

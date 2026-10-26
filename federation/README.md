@@ -244,5 +244,5 @@ make clean
 **Next Steps**
 
 - Add another data source to `spicepod.yaml` — for example a [MySQL](https://docs.spiceai.org/components/data-connectors/mysql) table or a [DuckDB](https://docs.spiceai.org/components/data-connectors/duckdb) database — and join it with `taxi_trips` and `taxi_zones` in the same query. See [Data Connectors](https://docs.spiceai.org/components/data-connectors) for the full list.
-- Choose a different engine for the accelerated datasets, such as `engine: duckdb` or `engine: sqlite`. See [Data Accelerators](https://docs.spiceai.org/components/data-accelerators).
+- Tune the accelerated datasets, for example `refresh_check_interval` or `retention_period`. See [Data Accelerators](https://docs.spiceai.org/components/data-accelerators).
 - Learn how Spice pushes queries down to each source in [Query Federation](https://docs.spiceai.org/features/query-federation).

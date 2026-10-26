@@ -14,7 +14,7 @@ datasets:
       pg_sslmode: disable
     acceleration:
       enabled: true
-      engine: duckdb
+      engine: cayenne
       refresh_mode: append
       refresh_check_interval: 5s
       retention_period: 30s

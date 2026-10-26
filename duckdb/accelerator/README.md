@@ -2,6 +2,8 @@
 
 Works with `v2.0+`
 
+> **Deprecated:** The `duckdb` acceleration engine is deprecated and will be removed in Spice v2.5. Spice logs a warning for any dataset that uses it. Use the `cayenne` engine for new datasets, and see the [migration guide](https://spiceai.org/docs/components/data-accelerators/cayenne/migration) to move existing ones.
+
 This recipe will walkthrough how to accelerate a local copy of the taxi trips dataset stored in S3 using DuckDB as the data accelerator engine.
 
 [![Watch the Spice.ai local Llama demo](https://img.youtube.com/vi/e1PtA3Hr8x8/hqdefault.jpg)](https://www.youtube.com/embed/e1PtA3Hr8x8)
