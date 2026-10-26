@@ -19,7 +19,7 @@ Wait for `Model [deepseek-v4-flash-abliterated] deployed, ready for inferencing`
 spice chat
 ```
 
-The API serves the model as `deepseek-v4-flash-abliterated` at `http://localhost:8090/v1/chat/completions`, with the same reasoning behavior as the base model.
+The API serves the model as `deepseek-v4-flash-abliterated` at `http://localhost:8090/v1/chat/completions`, with the same reasoning behavior as the base model. Run on the same DGX Spark and engine build as the base recipe's Step 2 (the file named by path after a checksum), it loaded in 72 seconds with 87 GB resident, answered "Reply with only the integer 1729." in 2 tokens by default and with `reasoning_effort: none`, gave a 22-token answer with a short trace at `low`, `medium` and `high`, and decoded at about 19 tokens per second.
 
 ## Memory
 
