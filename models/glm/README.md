@@ -130,6 +130,13 @@ models:
 - GLM-5.3-Flash always reasons; its chat template takes `reasoning_effort` `low` or `high`, and reasons at its maximum when nothing is set. `hf_reasoning_effort: low` makes short reasoning the default, which suits a laptop. A request for `none` or `medium` is refused with HTTP 400 and a message that names the levels the model takes.
 - Vision input and GLM's tool-call format are not used by this recipe.
 
+This section was run on an NVIDIA DGX Spark (128 GB of unified memory, the same memory class as a 128 GB MacBook Pro) with the same llama.cpp engine built for CUDA, the four shards checked against the Hub's sha256 and named by `file:` path. The model loaded in 88 to 97 seconds across three starts with 102 GB resident; `reasoning_effort` `none` and `medium` were refused with the messages in [Troubleshooting](#troubleshooting); "Reply with only the integer 1729." took 13 tokens with a 37-character trace at the `low` default and at `high`; and decode ran at 22 tokens per second over 300 tokens (two runs: 22.3 and 21.9), with 0.4 s to the first token. Its answer to the recipe's question:
+
+```console
+chat> Explain, in three sentences, why a mixture-of-experts model decodes faster than a dense model of the same size.
+A mixture-of-experts model routes each token through only a small subset of its experts, so although its total parameter count matches a dense model, far fewer parameters are actually active per token. Because decoding cost scales with the number of active parameters (each token requires a matrix multiplication through them), the MoE performs much less computation per generated token. This means the same memory-bound operations touch fewer weights, so each decoding step is faster even though the overall model is the same size.
+```
+
 ## Abliterated variant
 
 [`abliterated/`](./abliterated/) is the same recipe with [huihui-ai/Huihui-GLM-4.7-Flash-abliterated](https://huggingface.co/huihui-ai/Huihui-GLM-4.7-Flash-abliterated), a version of GLM-4.7-Flash with its refusal behavior removed by abliteration, in the importance-matrix GGUF quantization by mradermacher. Its README also names the abliterated GLM-5.3-Flash builds for a 128 GB Mac. Read it before using either: an abliterated model has none of the base model's safety training.
