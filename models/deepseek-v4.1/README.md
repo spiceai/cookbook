@@ -8,7 +8,7 @@ Works with `v2.4+` builds that include the [llama.cpp GGUF engine](https://githu
 
 ## Runtime support
 
-Spice serves single-node GGUF models with llama.cpp. The llama.cpp release that Spice pins, `b11803`, does not include the `deepseek41` architecture: upstream support is [ggml-org/llama.cpp#30817](https://github.com/ggml-org/llama.cpp/pull/30817), open at the time of writing. Until a Spice release picks up a llama.cpp with it, the load fails with:
+Spice serves single-node GGUF models with llama.cpp. The llama.cpp release that Spice pins, `b11803`, does not include the `deepseek41` architecture. Upstream llama.cpp added it in [ggml-org/llama.cpp#31086](https://github.com/ggml-org/llama.cpp/pull/31086), merged on October 25, 2026, after `b11803` (it replaced [ggml-org/llama.cpp#30817](https://github.com/ggml-org/llama.cpp/pull/30817), now closed). So upstream support exists; what is still missing is a Spice release that moves its llama.cpp pin past that change. Until then, the load fails with:
 
 ```text
 Architecture 'deepseek41' in DeepSeek-V4.1-Flash-1017-UD-IQ1_M-00001-of-00005.gguf is not supported by this Spice release. Upgrade Spice, or use a GGUF of a supported architecture: https://spiceai.org/docs/components/models#gguf-architectures
@@ -97,7 +97,7 @@ Set `reasoning_effort` explicitly: `none` for a direct answer, or `low`, `medium
 
 ## Abliterated variant
 
-[`abliterated/`](./abliterated/) is the same recipe with [orcarouter/DeepSeek-V4.1-Flash-1017-abliterated](https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF), a version of DeepSeek-V4.1-Flash-1017 with its refusal behavior removed by abliteration, documented with before-and-after measurements. Read its README before using it: an abliterated model has none of the base model's safety training, the repository is gated behind a Hugging Face token, and the builds need the same hardware as this recipe.
+[`abliterated/`](./abliterated/) is the same recipe with [orcarouter/DeepSeek-V4.1-Flash-1017-abliterated](https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF), a version of DeepSeek-V4.1-Flash-1017 with its refusal behavior removed by abliteration, documented with before-and-after measurements. Read its README before using it: an abliterated model has none of the base model's safety training, the repository is gated behind a Hugging Face token, and its default build needs a 512 GB Mac Studio.
 
 ## Troubleshooting
 

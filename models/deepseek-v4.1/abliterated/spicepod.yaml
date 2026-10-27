@@ -4,8 +4,8 @@ name: deepseek-v4.1-abliterated
 
 models:
   # orcarouter/DeepSeek-V4.1-Flash-1017-abliterated, Mix-256G build (346.5 GB in 7 shards; the
-  # second shard is the 110.6 GB Engram table). For a 512 GB Mac Studio, or 256 GB with the
-  # Engram table paged from SSD. The repository is gated: accept its terms on Hugging Face and
+  # second shard is the 110.6 GB Engram table). For a 512 GB Mac Studio: its 236 GB of weights
+  # exceed the about 192 GiB GPU budget of a 256 GB Mac. The repository is gated: accept its terms on Hugging Face and
   # set HF_TOKEN in .env. Abliterated models have had refusal behavior removed; see README.md.
   - from: huggingface:huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF
     name: deepseek-v4.1-flash-abliterated
