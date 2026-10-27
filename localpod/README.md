@@ -23,7 +23,7 @@ datasets:
     name: local_time_series
     acceleration:
       enabled: true
-      engine: duckdb
+      engine: cayenne
       mode: file
       refresh_check_interval: 10s
 ```
@@ -57,7 +57,7 @@ $ spice run
 2026-09-24T15:46:28.656620Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset time_series
 2026-09-24T15:46:28.657844Z  INFO runtime_table::accelerated::refresh_task: Loaded 1 rows (384.00 B) for dataset time_series in 1ms.
 2026-09-24T15:46:28.664894Z  INFO runtime::datafusion: Localpod dataset local_time_series synchronizing refreshes with parent table time_series
-2026-09-24T15:46:28.665318Z  INFO runtime::init::dataset: Dataset local_time_series registered (localpod:time_series), acceleration (duckdb:file, 10s refresh), results cache enabled. duration_ms=8
+2026-09-24T15:46:28.665318Z  INFO runtime::init::dataset: Dataset local_time_series registered (localpod:time_series), acceleration (cayenne:file, 10s refresh), results cache enabled. duration_ms=8
 2026-09-24T15:46:28.666606Z  INFO runtime_table::accelerated::refresh_task: Loading data for dataset local_time_series
 2026-09-24T15:46:28.671346Z  INFO runtime_table::accelerated::refresh_task: Loaded 1 rows (384.00 B) for dataset local_time_series in 4ms.
 2026-09-24T15:46:28.767918Z  INFO runtime: All components are loaded. Spice runtime is ready!
@@ -147,4 +147,4 @@ sql> SELECT 'time_series' dataset, COUNT(*) rows, COUNT(timestamp) timestamp_val
 +-------------------+-------+------------------+-------------+----------+----------+
 ```
 
-The `local_time_series` dataset is accelerated locally using [DuckDB](https://docs.spiceai.org/components/data-accelerators/duckdb) in file mode.
+The `local_time_series` dataset is accelerated locally using [Cayenne](https://spiceai.org/docs/components/data-accelerators/cayenne) in file mode.

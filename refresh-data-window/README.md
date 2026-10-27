@@ -4,7 +4,7 @@ Works with `v2.0+`
 
 `refresh_data_window` is a duration parameter that filters data refresh source queries for time-series to recent data (duration into past from now).
 
-Requires `time_column` and `time_format` (optional) to also be configured. Only supported for `full` refresh mode datasets.
+Requires `time_column` and `time_format` (optional) to also be configured. Supported for `full` and `append` refresh mode datasets.
 
 ## Pre-requisites
 

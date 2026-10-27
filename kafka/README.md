@@ -52,7 +52,7 @@ datasets:
       kafka_security_protocol: PLAINTEXT
     acceleration:
       enabled: true
-      engine: duckdb
+      engine: cayenne
       mode: file
       refresh_mode: append
 ```
@@ -66,13 +66,13 @@ spice run
 Observe that Spice registers the Kafka-backed `orders` dataset and loads the TPC-H dimension tables from S3:
 
 ```bash
-2026-10-09T00:30:55.796671Z  INFO spiced: Starting runtime v2.4.0-rc.1+models (allocator: jemalloc)
+2026-10-09T00:30:55.796671Z  INFO spiced: Starting runtime v2.4.0+models
 2026-10-09T00:30:56.001804Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2026-10-09T00:30:56.002078Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2026-10-09T00:30:56.729700Z  INFO runtime::init::dataset: Dataset nation registered (s3://spiceai-demo-datasets/tpch/nation/), acceleration (duckdb:file), results cache enabled.
-2026-10-09T00:30:56.960993Z  INFO runtime::init::dataset: Dataset orders registered (kafka:orders_events), acceleration (duckdb:file, append), results cache enabled.
-2026-10-09T00:30:56.988297Z  INFO runtime::init::dataset: Dataset supplier registered (s3://spiceai-demo-datasets/tpch/supplier/), acceleration (duckdb:file), results cache enabled.
-2026-10-09T00:30:56.994440Z  INFO runtime::init::dataset: Dataset customer registered (s3://spiceai-demo-datasets/tpch/customer/), acceleration (duckdb:file), results cache enabled.
+2026-10-09T00:30:56.729700Z  INFO runtime::init::dataset: Dataset nation registered (s3://spiceai-demo-datasets/tpch/nation/), acceleration (cayenne:file), results cache enabled.
+2026-10-09T00:30:56.960993Z  INFO runtime::init::dataset: Dataset orders registered (kafka:orders_events), acceleration (cayenne:file, append), results cache enabled.
+2026-10-09T00:30:56.988297Z  INFO runtime::init::dataset: Dataset supplier registered (s3://spiceai-demo-datasets/tpch/supplier/), acceleration (cayenne:file), results cache enabled.
+2026-10-09T00:30:56.994440Z  INFO runtime::init::dataset: Dataset customer registered (s3://spiceai-demo-datasets/tpch/customer/), acceleration (cayenne:file), results cache enabled.
 2026-10-09T00:30:57.449639Z  INFO runtime_table::accelerated::refresh_task: Loaded 25 rows (2.59 kiB) for dataset nation in 718ms.
 2026-10-09T00:30:58.107733Z  INFO runtime_table::accelerated::refresh_task: Loaded 10,000 rows (1.68 MiB) for dataset supplier in 1s 118ms.
 2026-10-09T00:30:59.275105Z  INFO runtime_table::accelerated::refresh_task: Loaded 150,000 rows (29.12 MiB) for dataset customer in 2s 279ms.

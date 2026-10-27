@@ -8,16 +8,16 @@ use std::sync::Arc;
 async fn main() {
     let client = ClientBuilder::new().build().await.unwrap();
 
-    println!("=== Using query ===");
-    query(&client).await;
+    println!("=== Using sql ===");
+    sql(&client).await;
 
-    println!("\n=== Using query_with_params ===");
-    query_with_params(&client, 5).await;
+    println!("\n=== Using sql_with_params ===");
+    sql_with_params(&client, 5).await;
 }
 
-async fn query(client: &spiceai::Client) {
+async fn sql(client: &spiceai::Client) {
     let mut flight_data_stream = client
-        .query("SELECT \"VendorID\", \"tpep_pickup_datetime\", \"fare_amount\" FROM taxi_trips LIMIT 10")
+        .sql("SELECT \"VendorID\", \"tpep_pickup_datetime\", \"fare_amount\" FROM taxi_trips LIMIT 10")
         .await
         .expect("Error executing query");
 
@@ -33,7 +33,7 @@ async fn query(client: &spiceai::Client) {
     }
 }
 
-async fn query_with_params(client: &spiceai::Client, limit: i64) {
+async fn sql_with_params(client: &spiceai::Client, limit: i64) {
     // Build a RecordBatch with the parameter
     // The column name must match the placeholder name ($1, $2, etc.)
     let schema = Arc::new(Schema::new(vec![Field::new("$1", DataType::Int64, false)]));
@@ -41,7 +41,7 @@ async fn query_with_params(client: &spiceai::Client, limit: i64) {
     let params = RecordBatch::try_new(schema, vec![limit_array]).expect("Failed to create params");
 
     let mut flight_data_stream = client
-        .query_with_params(
+        .sql_with_params(
             "SELECT \"VendorID\", \"tpep_pickup_datetime\", \"fare_amount\" FROM taxi_trips LIMIT $1",
             Some(params),
         )

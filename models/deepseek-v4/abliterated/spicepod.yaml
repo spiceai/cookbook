@@ -1,0 +1,12 @@
+version: v2
+kind: Spicepod
+name: deepseek-v4-abliterated
+
+models:
+  # huihui-ai/Huihui-DeepSeek-V4-Flash-0731-abliterated, 2-bit GGUF (86.7 GB, one file).
+  # Same memory needs as the base recipe. Abliterated models have had refusal behavior
+  # removed; see README.md before use.
+  - from: huggingface:huggingface.co/huihui-ai/Huihui-DeepSeek-V4-Flash-0731-abliterated-GGUF
+    name: deepseek-v4-flash-abliterated
+    files:
+      - path: DeepSeek-V4-Flash-Q2-0731.gguf

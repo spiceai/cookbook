@@ -1,0 +1,15 @@
+version: v2
+kind: Spicepod
+name: deepseek-v4
+
+models:
+  # DeepSeek-V4-Flash-0731 (284B total, 13B active), Unsloth Dynamic 2-bit GGUF (UD-IQ2_M,
+  # 90.9 GB in 3 shards). The smallest DeepSeek-V4 build is 83 GB, so this recipe needs a 128 GB
+  # Mac; no DeepSeek-V4 build fits a 36 GB MacBook Pro (README.md). Do not list the repository's
+  # dspark-*.gguf draft files: Spice reads only mtp-*.gguf draft heads.
+  - from: huggingface:huggingface.co/unsloth/DeepSeek-V4-Flash-0731-GGUF
+    name: deepseek-v4-flash
+    files:
+      - path: UD-IQ2_M/DeepSeek-V4-Flash-0731-UD-IQ2_M-00001-of-00003.gguf
+      - path: UD-IQ2_M/DeepSeek-V4-Flash-0731-UD-IQ2_M-00002-of-00003.gguf
+      - path: UD-IQ2_M/DeepSeek-V4-Flash-0731-UD-IQ2_M-00003-of-00003.gguf

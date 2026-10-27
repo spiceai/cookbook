@@ -1,8 +1,8 @@
 # Async Queries
 
-Works with `v2.0+`
+Works with `v2.4+`
 
-> **Note:** Async queries require Spice v2.0 or later.
+> **Note:** Async queries require Spice v2.0 or later. This recipe's `spicepod.yaml` uses `runtime.state.location`, added in `v2.4`. On `v2.0`–`v2.3`, set `runtime.scheduler.state_location: file:///tmp/spiceai-async-queries/scheduler-state` instead; `v2.4` still accepts that setting but logs a deprecation warning.
 
 This recipe demonstrates how to use the async queries API to submit long-running SQL queries and retrieve results asynchronously. It shows how to:
 
@@ -29,7 +29,7 @@ git clone https://github.com/spiceai/cookbook.git
 cd cookbook/async-queries
 ```
 
-This recipe stores scheduler/job state at the absolute local path `/tmp/spiceai-async-queries/scheduler-state`. To reset local async query state between runs, remove the directory:
+This recipe sets `runtime.state.location` to the absolute local path `/tmp/spiceai-async-queries/`, and the scheduler keeps its job state in the `cluster/` folder under it. To reset local async query state between runs, remove the directory:
 
 ```bash
 rm -rf /tmp/spiceai-async-queries
@@ -47,7 +47,7 @@ spice cluster tls add executor1
 
 ### Step 3: Start the Spice Scheduler
 
-Start the scheduler with cluster mode and the absolute `scheduler.state_location` configured in the `spicepod.yaml`:
+Start the scheduler with cluster mode and the absolute `runtime.state.location` configured in the `spicepod.yaml`:
 
 ```bash
 ~/.spice/bin/spiced --role scheduler \
@@ -356,7 +356,7 @@ curl -s http://127.0.0.1:8090/v1/queries \
 
 ## How It Works
 
-1. **Submit**: A `POST /v1/queries` request creates a job in the scheduler's object store (configured via `scheduler.state_location`) and spawns a background task.
+1. **Submit**: A `POST /v1/queries` request creates a job in the scheduler's object store (the `cluster/` folder of `runtime.state.location`) and spawns a background task.
 2. **Execute**: The background task submits the query to the Ballista distributed scheduler, which distributes execution across connected executors.
 3. **Stream**: As result batches arrive from the executors, they are written to the object store in chunks of 10,000 rows.
 4. **Complete**: The job is marked as `SUCCEEDED` with result metadata (schema, row count, chunk count).

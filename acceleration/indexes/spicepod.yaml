@@ -6,7 +6,7 @@ datasets:
     name: traces
     acceleration:
       enabled: true
-      engine: duckdb
+      engine: cayenne
       mode: file
       indexes:
         trace_id: enabled
@@ -14,5 +14,5 @@ datasets:
     name: traces_no_index
     acceleration:
       enabled: true
-      engine: duckdb
+      engine: cayenne
       mode: file

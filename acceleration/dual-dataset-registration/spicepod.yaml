@@ -19,5 +19,5 @@ datasets:
     ready_state: on_registration
     acceleration:
       enabled: true
-      engine: duckdb
+      engine: cayenne
       mode: file

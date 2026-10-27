@@ -181,11 +181,12 @@ show tables;
 | table_catalog | table_schema |  table_name  | table_type |
 |    varchar    |    varchar   |    varchar   |   varchar  |
 +---------------+--------------+--------------+------------+
-| spice         | runtime      | task_history | BASE TABLE |
 | spice         | public       | sample_data  | BASE TABLE |
+| spice         | runtime      | metrics      | BASE TABLE |
+| spice         | runtime      | task_history | BASE TABLE |
 +---------------+--------------+--------------+------------+
 
-Time: 0.004413208 seconds. 2 rows.
+Time: 0.002009833 seconds. 3 rows.
 ```
 
 You can now now query `sample_data` in the runtime.
