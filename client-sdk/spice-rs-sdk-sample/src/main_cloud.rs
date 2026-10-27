@@ -2,7 +2,7 @@ use spiceai::{ClientBuilder, StreamExt};
 
 #[tokio::main]
 async fn main() {
-    let mut client = ClientBuilder::new()
+    let client = ClientBuilder::new()
         .api_key("API_KEY")
         .flight_url("https://flight.spiceai.io")
         .build()
@@ -10,7 +10,7 @@ async fn main() {
         .unwrap();
 
     let mut flight_data_stream = client
-        .query("show tables;")
+        .sql("show tables;")
         .await
         .expect("Error executing query");
 
