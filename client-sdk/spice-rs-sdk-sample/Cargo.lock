@@ -1997,7 +1997,8 @@ dependencies = [
 [[package]]
 name = "spiceai"
 version = "5.0.0"
-source = "git+https://github.com/spiceai/spice-rs?rev=3a41537399dda7261d89a92e095d3fbfdd546f94#3a41537399dda7261d89a92e095d3fbfdd546f94"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "723e6d824fadd79f0fac2336a1cfa91ed02447a0cf037b196c07155c3be25687"
 dependencies = [
  "arrow",
  "arrow-flight",
