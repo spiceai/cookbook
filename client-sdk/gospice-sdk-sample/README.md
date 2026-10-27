@@ -11,7 +11,7 @@ Use the [gospice SDK](https://github.com/spiceai/gospice) to query Spice from Go
 
 ## Prerequisites
 
-- [Go](https://go.dev/) 1.25+
+- [Go](https://go.dev/) 1.26+
 - [Spice CLI](https://docs.spiceai.org/getting-started) for local mode
 
 ## Local Quick Start

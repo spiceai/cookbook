@@ -7,7 +7,7 @@
 # ]
 #
 # [tool.uv.sources]
-# spicepy = { git = "https://github.com/spiceai/spicepy", rev = "v4.0.0" }
+# spicepy = { git = "https://github.com/spiceai/spicepy", rev = "v4.0.1" }
 # ///
 import os
 
