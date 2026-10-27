@@ -16,7 +16,7 @@ datasets:
       allowed_request_paths: /**/**
     acceleration:
       enabled: true
-      engine: duckdb
+      engine: cayenne
       refresh_mode: caching
       #refresh_check_interval: 10s
       params:

@@ -7,7 +7,7 @@ datasets:
     name: products
     acceleration:
       enabled: true
-      engine: arrow
+      engine: cayenne
 
 views:
   - name: products_with_color

@@ -3,8 +3,8 @@ kind: Spicepod
 name: async-queries
 
 runtime:
-  scheduler:
-    state_location: file:///tmp/spiceai-async-queries/scheduler-state
+  state:
+    location: file:///tmp/spiceai-async-queries/
 
 datasets:
   - from: s3://spiceai-public-datasets/hive_partitioned_data/

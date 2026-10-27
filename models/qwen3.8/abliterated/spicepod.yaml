@@ -1,0 +1,25 @@
+version: v2
+kind: Spicepod
+name: qwen3.8-abliterated
+
+datasets:
+  - from: s3://spiceai-demo-datasets/taxi_trips/2024/
+    name: taxi_trips
+    description: NYC yellow taxi trips, 2024
+    params:
+      file_format: parquet
+      s3_auth: public
+    acceleration:
+      enabled: true
+
+models:
+  # orcarouter/Qwen3.8-27B-Uncensored, Q4_K_M GGUF (16.8 GB), with the MTP head embedded.
+  # The repository is gated: accept its terms on Hugging Face and set HF_TOKEN in .env.
+  # Abliterated models have had refusal behavior removed; see README.md before use.
+  - from: huggingface:huggingface.co/orcarouter/Qwen3.8-27B-Uncensored-GGUF
+    name: qwen3.8-abliterated
+    files:
+      - path: Qwen3.8-27B-Uncensored-Q4_K_M.gguf
+    params:
+      hf_token: ${ secrets:HF_TOKEN }
+      tools: auto

@@ -1,6 +1,6 @@
 version: v1
 kind: Spicepod
-name: duckdb-acceleration-qs
+name: search
 datasets:
   - from: file://bluesky_posts.parquet
     name: bluesky_posts
@@ -9,7 +9,7 @@ datasets:
       file_format: parquet
     acceleration:
       enabled: true
-      engine: duckdb
+      engine: cayenne
       mode: file
       refresh_mode: append
       params:

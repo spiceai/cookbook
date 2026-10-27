@@ -16,6 +16,6 @@ datasets:
       kafka_enable_ssl_certificate_verification: true
     acceleration:
       enabled: true
-      engine: sqlite
+      engine: cayenne
       mode: file
       refresh_mode: changes

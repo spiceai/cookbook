@@ -1,0 +1,24 @@
+version: v2
+kind: Spicepod
+name: qwen3.5
+
+datasets:
+  - from: s3://spiceai-demo-datasets/taxi_trips/2024/
+    name: taxi_trips
+    description: NYC yellow taxi trips, 2024
+    params:
+      file_format: parquet
+      s3_auth: public
+    acceleration:
+      enabled: true
+
+models:
+  # Qwen3.5-9B, Unsloth Dynamic 4-bit GGUF (6.0 GB). Runs on any Apple silicon Mac with 16 GB
+  # or more. Swap the file for another quant from the table in README.md to trade size for
+  # fidelity, or for Qwen3.5-35B-A3B / Qwen3.5-27B on a 32 GB+ Mac.
+  - from: huggingface:huggingface.co/unsloth/Qwen3.5-9B-GGUF
+    name: qwen3.5
+    files:
+      - path: Qwen3.5-9B-UD-Q4_K_XL.gguf
+    params:
+      tools: auto

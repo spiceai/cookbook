@@ -1,0 +1,14 @@
+version: v2
+kind: Spicepod
+name: qwen3.6-abliterated
+
+models:
+  # huihui-ai/Huihui-Qwen3.6-35B-A3B-abliterated, Q4_K GGUF (21.7 GB). The GGUF carries the
+  # model's own multi-token-prediction (NextN) layer, so Spice drafts with it automatically.
+  # Abliterated models have had refusal behavior removed; see README.md before use.
+  # This GGUF carries Qwen's stock chat template, which Spice's `tools: auto` cannot render yet
+  # (README.md, "Why no dataset tools"), so this variant serves the model without tools.
+  - from: huggingface:huggingface.co/huihui-ai/Huihui-Qwen3.6-35B-A3B-abliterated-MTP-GGUF
+    name: qwen3.6-abliterated
+    files:
+      - path: Huihui-Qwen3.6-35B-A3B-abliterated-ggml-model-Q4_K.gguf

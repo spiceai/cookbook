@@ -26,6 +26,13 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 - [Azure OpenAI Models](./azure_openai/README.md) - Use Azure OpenAI for search and chat.
 - [Generative Visualizations](./generative-visualisations/README.md) - Generate SQL queries and visualizations from natural language.
 - [Running Llama3 Locally](./llama/README.md) - Run Llama models locally from HuggingFace.
+- [Running Qwen3.8 Locally](./models/qwen3.8/README.md) - Serve Qwen3.8-27B on a MacBook Pro with llama.cpp and Metal, plus an abliterated variant.
+- [Running Qwen3.6 Locally](./models/qwen3.6/README.md) - Serve Qwen3.6-35B-A3B on a MacBook Pro, plus an abliterated variant.
+- [Running Qwen3.5 Locally](./models/qwen3.5/README.md) - Serve Qwen3.5-9B on any Apple silicon Mac with 16 GB or more, plus an abliterated variant.
+- [Running GLM Locally](./models/glm/README.md) - Serve GLM-4.7-Flash on a MacBook Pro and GLM-5.3-Flash on a 128 GB Mac, plus abliterated variants.
+- [Running DeepSeek V4 Locally](./models/deepseek-v4/README.md) - Serve DeepSeek-V4-Flash on a 128 GB Mac, plus an abliterated variant.
+- [Running DeepSeek V4.1 Locally](./models/deepseek-v4.1/README.md) - DeepSeek-V4.1-Flash-1017 from a local GGUF: the hardware it needs and an abliterated variant.
+- [Running Kimi Locally](./models/kimi/README.md) - Serve Kimi-Linear-48B-A3B on a MacBook Pro, plus an abliterated variant.
 - [OpenAI Models](./models/openai/README.md) - Use OpenAI LLM and embedding models.
 - [OpenAI SDK](./openai_sdk/README.md) - Use the OpenAI SDK to connect to models hosted on Spice.
 - [LLM Memory](./llm-memory/README.md) - Persistent memory for language models.
@@ -37,8 +44,8 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 - [DeepSeek Model](./deepseek/README.md) - Use DeepSeek model through Spice.
 - [Filesystem Hosted Model](./models/filesystem/README.md) - Use models hosted directly on filesystems.
 - [Decisions API](./decisions/README.md) - Ask typed questions about unstructured data with `/v1/decisions`, using TypeSafe Jev and OpenAI GPT-6 Luna.
-- [Language Model Evaluations](./evals/README.md) - Use Spice to evaluate language models.
-- [LLM as a Judge](./llm-judge/README.md) - Define LLM judge models to evaluate other models.
+- [Language Model Evaluations](./evals/README.md) - Use Spice to evaluate language models. Spice `v1.x` only: the evaluation subsystem was removed in `v2.0`.
+- [LLM as a Judge](./llm-judge/README.md) - Define LLM judge models to evaluate other models. Spice `v1.x` only: the evaluation subsystem was removed in `v2.0`.
 - [OpenAI Responses API](./openai-responses-api/README.md) - Use OpenAI's Responses API with Spice, including hosted tools such as web search.
 - [Model Context Protocol (MCP)](./mcp/README.md) - Connect to MCP servers and use MCP tools with Spice.
 
@@ -48,7 +55,7 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 - [DuckDB Data Accelerator](./duckdb/accelerator/README.md) - Accelerate data using DuckDB.
 - [Hashed Partitioning with DuckDB](./hashed_partitioning/README.md) - Prune data with hashed partitioning on categorical columns.
 - [PostgreSQL Data Accelerator](./postgres/accelerator/README.md) - Materialize data into an attached PostgreSQL instance.
-- [SQLite Data Accelerator](./sqlite/accelerator/README.md) - Accelerate data using SQLite.
+- [SQLite Data Accelerator](./sqlite/accelerator/README.md) - Accelerate data using SQLite (deprecated; use Cayenne).
 - [Database Snapshots](./acceleration/snapshots/README.md) - Bootstrap accelerations from object storage to skip cold starts.
 - [Dual-Dataset Registration](./acceleration/dual-dataset-registration/README.md) - Serve queries instantly while large tables accelerate in the background.
 - [Apache Arrow Data Accelerator](./arrow/README.md) - Accelerate data using in-memory Arrow.
