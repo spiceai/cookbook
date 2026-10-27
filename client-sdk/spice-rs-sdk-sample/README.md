@@ -44,7 +44,7 @@ cargo run
 Sample output:
 
 ```text
-=== Using query ===
+=== Using sql ===
 VendorID: 2, tpep_pickup_datetime: 2024-01-06 14:41:17, fare_amount: 8.60
 VendorID: 2, tpep_pickup_datetime: 2024-01-06 14:56:46, fare_amount: 7.20
 VendorID: 2, tpep_pickup_datetime: 2024-01-06 14:28:42, fare_amount: 14.20
@@ -56,7 +56,7 @@ VendorID: 1, tpep_pickup_datetime: 2024-01-06 14:38:04, fare_amount: 12.10
 VendorID: 2, tpep_pickup_datetime: 2024-01-06 14:14:22, fare_amount: 7.20
 VendorID: 2, tpep_pickup_datetime: 2024-01-06 14:38:31, fare_amount: 7.90
 
-=== Using query_with_params ===
+=== Using sql_with_params ===
 VendorID: 2, tpep_pickup_datetime: 2024-01-26 06:56:06, fare_amount: 19.10
 VendorID: 2, tpep_pickup_datetime: 2024-01-26 06:48:07, fare_amount: 70.00
 VendorID: 1, tpep_pickup_datetime: 2024-01-26 06:29:55, fare_amount: 20.50
