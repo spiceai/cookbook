@@ -53,7 +53,7 @@ datasets:
       github_token: ${secrets:GITHUB_TOKEN}
     acceleration:
       enabled: true
-      refresh_sql: SELECT * FROM spiceai.issues WHERE state = 'CLOSED' LIMIT 10
+      refresh_sql: SELECT * FROM spiceai.issues WHERE state = 'CLOSED' AND created_at > '2024-05-25T00:00:00Z' AND closed_at < '2024-06-08T00:00:00Z' LIMIT 10
     columns:
       - name: body
         embeddings:

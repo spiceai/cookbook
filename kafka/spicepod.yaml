@@ -10,7 +10,7 @@ datasets:
       kafka_security_protocol: PLAINTEXT
     acceleration:
       enabled: true
-      engine: duckdb
+      engine: cayenne
       mode: file
       refresh_mode: append
 
@@ -20,7 +20,7 @@ datasets:
       file_format: parquet
     acceleration: &acceleration_defaults
       enabled: true
-      engine: duckdb
+      engine: cayenne
       mode: file
 
   - from: s3://spiceai-demo-datasets/tpch/nation/

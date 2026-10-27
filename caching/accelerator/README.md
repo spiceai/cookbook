@@ -93,7 +93,7 @@ datasets:
       allowed_request_paths: /**/**
     acceleration:
       enabled: true
-      engine: duckdb
+      engine: cayenne
       refresh_mode: caching
       params:
         caching_ttl: 10s
@@ -108,7 +108,7 @@ datasets:
 | Parameter                            | Value     | Description                                                    |
 | ------------------------------------ | --------- | -------------------------------------------------------------- |
 | `refresh_mode`                       | `caching` | Enables the caching accelerator with SWR support               |
-| `engine`                             | `duckdb`  | Uses DuckDB for cache storage                                  |
+| `engine`                             | `cayenne` | Uses Cayenne for cache storage                                 |
 | `caching_ttl`                        | `10s`     | Cache entries are considered fresh for 10 seconds              |
 | `caching_stale_while_revalidate_ttl` | `10s`     | Serve stale data for 10 seconds while refreshing in background |
 | `caching_stale_if_error`             | `enabled` | Return cached data if the upstream server returns an error     |
@@ -132,36 +132,29 @@ by their oldest page and removes all of an entry's rows together. Without a budg
 WARN runtime_table::accelerated::caching_eviction: Dataset 'time' sets `caching_stale_if_error: enabled` with no `caching_max_size` or `caching_max_items`, so no cached entry is ever evicted and the acceleration will grow without bound — expired entries are deliberately kept as fallback for a failing origin. Set a budget to bound it. For details, visit: https://spiceai.org/docs/components/data-accelerators/data-refresh#refresh-modes
 ```
 
-A time-based bound is a separate mechanism, and the runtime warns separately when
-none is running. To add one, either set `caching_stale_if_error: disabled` — which
-evicts at `caching_ttl` + `caching_stale_while_revalidate_ttl`, giving up the
-stale-if-error fallback this recipe demonstrates — or declare a retention policy with
-all four of `retention_check_enabled: true`, `retention_period`,
-`retention_check_interval`, and the dataset's `time_column`. A policy missing any one
-of those starts nothing.
+Without a budget the runtime also warns that no retention policy is running, since
+nothing evicts by age either. A time-based bound is a separate mechanism: either set
+`caching_stale_if_error: disabled` — which evicts at `caching_ttl` +
+`caching_stale_while_revalidate_ttl`, giving up the stale-if-error fallback this recipe
+demonstrates — or declare a retention policy with all four of
+`retention_check_enabled: true`, `retention_period`, `retention_check_interval`, and the
+dataset's `time_column`. A policy missing any one of those starts nothing.
 
-### Two Warnings This Recipe's Config Still Prints
+### The Warning This Recipe's Config Still Prints
 
-The spicepod above sets both budgets, so the `caching_eviction` warning above is gone.
-Two others remain on every `spice run`, and neither means the configuration is wrong:
+The spicepod above sets both budgets, so neither of the warnings above is printed.
+One other remains on every `spice run`, and it does not mean the configuration is wrong:
 
 ```console
-WARN runtime::datafusion: Dataset 'time' sets `caching_stale_if_error: enabled` and has no retention policy running, so no cached entry is ever evicted and the accelerator grows with every distinct request it serves. ...
 WARN runtime_table::accelerated: Dataset time: `on_zero_results` is ignored when `refresh_mode: caching` is set. Caching mode always queries the source on a cache miss. Remove `on_zero_results` from the dataset configuration to silence this warning. ...
 ```
 
-The first is the *time-based* bound described above: `caching_max_size` and
-`caching_max_items` bound how much is stored, not how old it gets, so the runtime still
-reports that nothing evicts by age. Adding a retention policy — or
-`caching_stale_if_error: disabled` — silences it, at the cost of the stale-if-error
-fallback this recipe demonstrates.
-
-The second fires for **every** `refresh_mode: caching` dataset, whether or not
+It fires for **every** `refresh_mode: caching` dataset, whether or not
 `on_zero_results` is set; this spicepod never sets it, so there is nothing to remove.
 Caching mode treats a zero-row accelerator result as a cache miss and always falls back
 to the source, which is what the warning is there to say.
 
-> **Note:** This recipe's DuckDB accelerator is in-memory (no `mode: file`), so the
+> **Note:** This recipe's Cayenne accelerator is in-memory (no `mode: file`), so the
 > cache starts empty on every `spice run`. Add `mode: file` under `acceleration` to
 > persist it across restarts.
 
@@ -187,7 +180,7 @@ to the source, which is what the warning is there to say.
 ### Testing Error Handling
 
 1. Press `s` on the time server to enable error mode (500 responses)
-2. Query the cache - with `caching_stale_if_error: enabled`, cached data is still returned even though the server is returning errors
+2. Wait more than 20 seconds since the last successful fetch (the 10s TTL plus the 10s stale-while-revalidate window), then query the same cached key - with `caching_stale_if_error: enabled`, cached data is still returned even though the server is returning errors. The query waits for the failed origin fetch first (about 9 seconds in testing), and the runtime logs `Origin fetch for dataset 'time' failed, so the expired cached response is being served instead`
 3. Press `s` again to disable error mode
 
 ### Testing Multiple Cache Keys

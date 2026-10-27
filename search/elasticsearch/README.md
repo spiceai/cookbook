@@ -390,7 +390,7 @@ datasets:
       file_format: parquet
     acceleration:
       enabled: true
-      engine: arrow
+      engine: cayenne
 
     vectors: *elasticsearch_vectors
 

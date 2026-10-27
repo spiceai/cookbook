@@ -146,32 +146,32 @@ Observe the query execution time. First run:
 | l_returnflag | l_linestatus |    sum_qty    |  sum_base_price |   sum_disc_price  |      sum_charge     |    avg_qty    |   avg_price   |    avg_disc   | count_order |
 |    varchar   |    varchar   | decimal(25,2) |  decimal(25,2)  |   decimal(38,4)   |    decimal(38,6)    | decimal(19,6) | decimal(19,6) | decimal(19,6) |    int64    |
 +--------------+--------------+---------------+-----------------+-------------------+---------------------+---------------+---------------+---------------+-------------+
-| A            | F            | 37734107.00   | 56586554400.73  | 53758257134.8700  | 55909065222.827692  | 25.522006     | 38273.129735  | 0.049985      | 1478493     |
-| N            | F            | 991417.00     | 1487504710.38   | 1413082168.0541   | 1469649223.194375   | 25.516472     | 38284.467761  | 0.050093      | 38854       |
-| N            | O            | 73416597.00   | 110112303006.41 | 104608220776.3836 | 108796375788.183317 | 25.502438     | 38249.282778  | 0.049996      | 2878807     |
-| R            | F            | 37719753.00   | 56568041380.90  | 53741292684.6040  | 55889619119.831932  | 25.505794     | 38250.854626  | 0.050009      | 1478870     |
+| A            | F            | 37734107.00   | 56586554400.73  | 53758257134.8700  | 55909065222.827692  | 25.522005     | 38273.129734  | 0.049985      | 1478493     |
+| N            | F            | 991417.00     | 1487504710.38   | 1413082168.0541   | 1469649223.194375   | 25.516471     | 38284.467760  | 0.050093      | 38854       |
+| N            | O            | 73416597.00   | 110112303006.41 | 104608220776.3836 | 108796375788.183317 | 25.502437     | 38249.282778  | 0.049996      | 2878807     |
+| R            | F            | 37719753.00   | 56568041380.90  | 53741292684.6040  | 55889619119.831932  | 25.505793     | 38250.854626  | 0.050009      | 1478870     |
 +--------------+--------------+---------------+-----------------+-------------------+---------------------+---------------+---------------+---------------+-------------+
 
-Time: 0.055311500 seconds. 4 rows.
+Time: 0.157281792 seconds. 4 rows.
 ```
 
-Execute the same query again and observe a significant reduction in query execution time, from **0.055311500** to **0.001090834** seconds, due to the result being retrieved from the in-memory cache. The cached item will expire 5 minutes after the initial query execution. Cached run:
+Execute the same query again and observe a significant reduction in query execution time, from **0.157281792** to **0.000634666** seconds, due to the result being retrieved from the in-memory cache. The cached item will expire 5 minutes after the initial query execution. Cached run:
 
 ```console
 +--------------+--------------+---------------+-----------------+-------------------+---------------------+---------------+---------------+---------------+-------------+
 | l_returnflag | l_linestatus |    sum_qty    |  sum_base_price |   sum_disc_price  |      sum_charge     |    avg_qty    |   avg_price   |    avg_disc   | count_order |
 |    varchar   |    varchar   | decimal(25,2) |  decimal(25,2)  |   decimal(38,4)   |    decimal(38,6)    | decimal(19,6) | decimal(19,6) | decimal(19,6) |    int64    |
 +--------------+--------------+---------------+-----------------+-------------------+---------------------+---------------+---------------+---------------+-------------+
-| A            | F            | 37734107.00   | 56586554400.73  | 53758257134.8700  | 55909065222.827692  | 25.522006     | 38273.129735  | 0.049985      | 1478493     |
-| N            | F            | 991417.00     | 1487504710.38   | 1413082168.0541   | 1469649223.194375   | 25.516472     | 38284.467761  | 0.050093      | 38854       |
-| N            | O            | 73416597.00   | 110112303006.41 | 104608220776.3836 | 108796375788.183317 | 25.502438     | 38249.282778  | 0.049996      | 2878807     |
-| R            | F            | 37719753.00   | 56568041380.90  | 53741292684.6040  | 55889619119.831932  | 25.505794     | 38250.854626  | 0.050009      | 1478870     |
+| A            | F            | 37734107.00   | 56586554400.73  | 53758257134.8700  | 55909065222.827692  | 25.522005     | 38273.129734  | 0.049985      | 1478493     |
+| N            | F            | 991417.00     | 1487504710.38   | 1413082168.0541   | 1469649223.194375   | 25.516471     | 38284.467760  | 0.050093      | 38854       |
+| N            | O            | 73416597.00   | 110112303006.41 | 104608220776.3836 | 108796375788.183317 | 25.502437     | 38249.282778  | 0.049996      | 2878807     |
+| R            | F            | 37719753.00   | 56568041380.90  | 53741292684.6040  | 55889619119.831932  | 25.505793     | 38250.854626  | 0.050009      | 1478870     |
 +--------------+--------------+---------------+-----------------+-------------------+---------------------+---------------+---------------+---------------+-------------+
 
-Time: 0.001090834 seconds. 4 rows (cached).
+Time: 0.000634666 seconds. 4 rows (cached).
 ```
 
-> **Note:** Because `spiceai/tpch` accelerates its datasets locally with DuckDB, the first (uncached) run already completes in tens of milliseconds. The cached run is still an order of magnitude faster, as the result is returned without planning or executing the query.
+> **Note:** Because `spiceai/tpch` accelerates its datasets locally with DuckDB, the first (uncached) run already completes in well under a second. The cached run is still an order of magnitude faster, as the result is returned without planning or executing the query.
 
 The cached result will expire 5 minutes after the initial query execution.
 

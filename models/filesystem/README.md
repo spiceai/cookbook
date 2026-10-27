@@ -7,6 +7,7 @@ This recipe demonstrates how to use models hosted on filesystems.
 ## Prerequisites
 
 - Ensure you have the Spice CLI installed. Follow the [Getting Started](https://docs.spiceai.org/getting-started) guide if you haven't done so yet.
+- `wget`, used to download the model (`brew install wget` on macOS).
 
 Clone this cookbook repo locally:
 
