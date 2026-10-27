@@ -6,7 +6,11 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-arrow = "55.1.0"
+arrow = "59.3"
 chrono = "0.4"
-spiceai = "3.0.0"
+spiceai = "5.0.0"
 tokio = "1.45.1"
+
+# Pre-release testing only: resolve spiceai 5.0.0 from the release commit on trunk until it is on crates.io.
+[patch.crates-io]
+spiceai = { git = "https://github.com/spiceai/spice-rs", rev = "3a41537399dda7261d89a92e095d3fbfdd546f94" }
