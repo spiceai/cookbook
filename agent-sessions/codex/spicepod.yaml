@@ -1,0 +1,804 @@
+version: v2
+kind: Spicepod
+name: codex_sessions
+
+# Paths are relative to your home directory, so start Spice from there:
+#   cd ~ && spice run <path to this spicepod.yaml>
+
+datasets:
+  # Codex rollout transcripts: sessions/YYYY/MM/DD/rollout-<time>-<thread id>.jsonl.
+  # JSON schema inference can't be used: fields change type between line types
+  # (e.g. `payload.output` is a string or an array). Read as single-column CSV,
+  # then parse JSON keys from that column (e.g. `column_1->>'type'`).
+  - from: file:.codex/sessions/
+    name: rollouts
+    metadata:
+      # File path. The thread id is only in the file name and the first line.
+      _location: enabled
+    params:
+      file_format: csv
+      file_extension: .jsonl
+      csv_has_header: false
+      # Use control-character delimiter/quote that never occur in the transcripts
+      csv_delimiter: "\x1f"
+      csv_quote: "\x1e"
+      # Single Utf8 column, so nothing to infer.
+      schema_infer_max_records: 1
+    acceleration:
+      enabled: true
+      params:
+        file_watcher: enabled
+
+  # Every prompt typed into Codex, across all sessions (append-only).
+  - from: file:.codex/history.jsonl
+    name: history_lines
+    params:
+      file_format: csv
+      file_extension: .jsonl
+      csv_has_header: false
+      csv_delimiter: "\x1f"
+      csv_quote: "\x1e"
+      schema_infer_max_records: 1
+
+  # Thread renames (append-only; the last line per id wins).
+  - from: file:.codex/session_index.jsonl
+    name: session_index_lines
+    params:
+      file_format: csv
+      file_extension: .jsonl
+      csv_has_header: false
+      csv_delimiter: "\x1f"
+      csv_quote: "\x1e"
+      schema_infer_max_records: 1
+
+  # Command prefixes approved with "always allow", one prefix_rule(...) per line.
+  - from: file:.codex/rules/default.rules
+    name: rules_lines
+    params:
+      file_format: csv
+      file_extension: .rules
+      csv_has_header: false
+      csv_delimiter: "\x1f"
+      csv_quote: "\x1e"
+      schema_infer_max_records: 1
+
+  # Codex's SQLite state (WAL mode), read live through DuckDB's sqlite_scan
+  # (Spice has no SQLite data connector). Safe while Codex runs (WAL
+  # readers don't block the writer), but opening creates the -wal/-shm files
+  # next to the database. DuckDB downloads its sqlite extension on first use.
+  # One row per thread (session, subagent or guardian review), with the title,
+  # model and token total that Codex shows in its thread list.
+  - from: duckdb:sqlite_scan('.codex/state_5.sqlite', 'threads')
+    name: threads_state
+
+  # Codex memories, one per source thread. Query through the `memories` view.
+  - from: duckdb:sqlite_scan('.codex/memories_1.sqlite', 'stage1_outputs')
+    name: memory_outputs
+    acceleration:
+      enabled: true
+      refresh_check_interval: 60s
+    columns:
+      - name: raw_memory
+        full_text_search:
+          enabled: true
+          row_id:
+            - thread_id
+
+views:
+  # Fields shared by every line, plus thread-level fields from the file's own
+  # session_meta line (joined per file). All other rollout views read from this one.
+  # session_id is the root session; thread_id is the file (a subagent or
+  # guardian review has its own thread_id but its parent's session_id).
+  # A forked subagent's file starts with a copy of its parent's history
+  # (re-timestamped to the fork time): is_fork_copy marks those lines.
+  - name: lines
+    sql: |
+      SELECT
+        r.column_1->>'type'                                                      AS type,
+        r.column_1->'payload'->>'type'                                           AS item_type,
+        m.session_id, m.thread_id, m.parent_thread_id, m.agent_path, m.thread_source, m.thread_kind,
+        coalesce(m.thread_source <> 'user', false)                               AS is_subagent,
+        r._location                                                              AS file,
+        r.column_1->'payload'->>'id'                                             AS item_id,
+        coalesce(r.column_1->'payload'->>'turn_id',
+                 r.column_1->'payload'->'internal_chat_message_metadata_passthrough'->>'turn_id') AS turn_id,
+        to_timestamp(r.column_1->>'timestamp')                                   AS ts,
+        m.cwd, m.git_branch, m.cli_version, m.history_mode,
+        coalesce(m.forked_from_id IS NOT NULL
+                 AND to_timestamp(r.column_1->>'timestamp') < coalesce(m.own_start, to_timestamp('2200-01-01T00:00:00Z')),
+                 false)                                                          AS is_fork_copy,
+        r.column_1                                                               AS line
+      FROM rollouts r
+      JOIN (
+        SELECT file,
+          max(thread_id)                                                         AS thread_id,
+          max(line->'payload'->>'session_id')       FILTER (WHERE own_meta)      AS session_id,
+          max(line->'payload'->>'parent_thread_id') FILTER (WHERE own_meta)      AS parent_thread_id,
+          max(line->'payload'->>'forked_from_id')   FILTER (WHERE own_meta)      AS forked_from_id,
+          max(line->'payload'->>'thread_source')    FILTER (WHERE own_meta)      AS thread_source,
+          max(line->'payload'->>'agent_path')       FILTER (WHERE own_meta)      AS agent_path,
+          -- cli, vscode or exec for a session you started; thread_spawn for a
+          -- subagent; guardian for an approval reviewer.
+          max(coalesce(json_get_str(line, 'payload', 'source', 'subagent', 'other'),
+                       json_object_keys(line, 'payload', 'source', 'subagent')[1],
+                       json_get_str(line, 'payload', 'source'))) FILTER (WHERE own_meta) AS thread_kind,
+          max(line->'payload'->>'cwd')              FILTER (WHERE own_meta)      AS cwd,
+          max(line->'payload'->'git'->>'branch')    FILTER (WHERE own_meta)      AS git_branch,
+          max(line->'payload'->>'cli_version')      FILTER (WHERE own_meta)      AS cli_version,
+          max(line->'payload'->>'history_mode')     FILTER (WHERE own_meta)      AS history_mode,
+          -- Start of a fork's own work: its first turn. Turn ids are UUIDv7, so
+          -- turns copied from the parent sort before the thread id.
+          min(to_timestamp(line->>'timestamp')) FILTER (
+            WHERE line->'payload'->>'type' = 'task_started'
+              AND line->'payload'->>'turn_id' >= thread_id)                      AS own_start
+        FROM (
+          SELECT _location AS file, column_1 AS line,
+            regexp_match(_location, '([0-9a-f]{8}-[0-9a-f-]{27})\.jsonl$')[1]    AS thread_id,
+            column_1->>'type' = 'session_meta'
+              AND strpos(_location, column_1->'payload'->>'id') > 0              AS own_meta
+          FROM rollouts
+        )
+        GROUP BY file
+      ) m ON m.file = r._location
+
+  # ---- user and developer messages ------------------------------------------
+
+  # Prompts you typed. Codex also sends AGENTS.md, <environment_context> and
+  # other tagged blocks as user messages, and guardian reviews send the
+  # transcript under review; those are in user_injected instead.
+  - name: user_prompts
+    sql: |
+      SELECT coalesce(item_id, concat(thread_id, '@', line->>'timestamp'))        AS message_id,
+        session_id, thread_id, agent_path, turn_id, cwd, git_branch, ts, is_subagent, is_fork_copy,
+        line->'payload'->'content'->0->>'text'                                   AS text
+      FROM lines
+      WHERE type = 'response_item' AND item_type = 'message'
+        AND line->'payload'->>'role' = 'user'
+        AND NOT regexp_like(coalesce(line->'payload'->'content'->0->>'text', ''),
+                            '^(<[a-z_]+>|# AGENTS\.md|The following is the Codex agent history|\n\[\d+\] )')
+
+  # User-role messages Codex wrote (instructions, environment context,
+  # abort markers, guardian review input) and developer (system) messages.
+  # tag is the leading <tag>, if any.
+  - name: user_injected
+    sql: |
+      SELECT coalesce(item_id, concat(thread_id, '@', line->>'timestamp'))        AS message_id,
+        session_id, thread_id, turn_id, ts, is_fork_copy,
+        line->'payload'->>'role'                                                 AS role,
+        regexp_match(line->'payload'->'content'->0->>'text', '^<([a-z_]+)>')[1]  AS tag,
+        line->'payload'->'content'->0->>'text'                                   AS text
+      FROM lines
+      WHERE type = 'response_item' AND item_type = 'message'
+        AND (line->'payload'->>'role' = 'developer'
+             OR (line->'payload'->>'role' = 'user'
+                 AND regexp_like(coalesce(line->'payload'->'content'->0->>'text', ''),
+                                 '^(<[a-z_]+>|# AGENTS\.md|The following is the Codex agent history|\n\[\d+\] )')))
+
+  # ---- assistant output ------------------------------------------------------
+
+  # One row per content block. phase is 'commentary' (progress notes between
+  # tool calls) or 'final_answer'.
+  - name: assistant_text
+    sql: |
+      SELECT message_id, block_index, session_id, thread_id, agent_path, turn_id, cwd, git_branch, ts,
+        is_subagent, is_fork_copy, phase,
+        line->'payload'->'content'->block_index->>'text'                         AS text
+      FROM (
+        SELECT *,
+          coalesce(item_id, concat(thread_id, '@', line->>'timestamp'))          AS message_id,
+          line->'payload'->>'phase'                                              AS phase,
+          unnest(range(0, json_length(line->'payload'->'content')))              AS block_index
+        FROM lines
+        WHERE type = 'response_item' AND item_type = 'message'
+          AND line->'payload'->>'role' = 'assistant'
+      )
+
+  # Reasoning is stored encrypted (readable only by the API on later turns);
+  # summary is NULL unless reasoning summaries were enabled.
+  - name: reasoning
+    sql: |
+      SELECT item_id, session_id, thread_id, turn_id, ts, is_fork_copy,
+        nullif(line->'payload'->'summary'->0->>'text', '')                       AS summary,
+        length(line->'payload'->>'encrypted_content')                            AS encrypted_length
+      FROM lines
+      WHERE type = 'response_item' AND item_type = 'reasoning'
+
+  # Tool calls. Codex runs most work through `exec`: a JavaScript cell that
+  # calls tools.exec_command / tools.apply_patch / ..., so input is that
+  # script. Other tools are function calls with JSON arguments; tool is
+  # prefixed with its namespace (e.g. collaboration.spawn_agent).
+  - name: tool_calls
+    sql: |
+      SELECT item_id, session_id, thread_id, agent_path, turn_id, cwd, git_branch, ts, is_fork_copy, history_mode,
+        line->'payload'->>'call_id'                                              AS call_id,
+        concat_ws('.', line->'payload'->>'namespace', line->'payload'->>'name')  AS tool,
+        coalesce(line->'payload'->>'input', line->'payload'->>'arguments')       AS input
+      FROM lines
+      WHERE type = 'response_item' AND item_type IN ('custom_tool_call', 'function_call')
+
+  # Tool outputs. An exec output starts "Script completed|failed|running ...".
+  # The output is a string or an array of text blocks; blocks are joined.
+  - name: tool_outputs
+    sql: |
+      SELECT session_id, thread_id, call_id,
+        max(turn_id) AS turn_id, max(ts) AS ts, bool_or(is_fork_copy) AS is_fork_copy,
+        string_agg(text, '' ORDER BY block_index) AS output
+      FROM (
+        SELECT session_id, thread_id, turn_id, ts, is_fork_copy,
+          line->'payload'->>'call_id'                                            AS call_id,
+          block_index,
+          CASE WHEN line->'payload'->'output'->0 IS NULL
+               THEN line->'payload'->>'output'
+               ELSE line->'payload'->'output'->block_index->>'text' END          AS text
+        FROM (
+          SELECT *, unnest(range(0, CAST(coalesce(json_length(line->'payload'->'output'), 1) AS BIGINT))) AS block_index
+          FROM lines
+          WHERE type = 'response_item' AND item_type IN ('custom_tool_call_output', 'function_call_output')
+        )
+      )
+      GROUP BY session_id, thread_id, call_id
+
+  # ---- events ----------------------------------------------------------------
+
+  # Per-turn settings: model, reasoning effort, cwd, approval and sandbox.
+  - name: turn_contexts
+    sql: |
+      SELECT session_id, thread_id, turn_id, ts, is_fork_copy,
+        line->'payload'->>'model'                                                AS model,
+        line->'payload'->>'effort'                                               AS effort,
+        line->'payload'->>'cwd'                                                  AS cwd,
+        line->'payload'->>'approval_policy'                                      AS approval_policy,
+        line->'payload'->'sandbox_policy'->>'type'                               AS sandbox,
+        line->'payload'->'collaboration_mode'->>'mode'                           AS collaboration_mode,
+        line->'payload'->>'personality'                                          AS personality
+      FROM lines
+      WHERE type = 'turn_context'
+
+  # Token usage, one row per model response. The *_tokens columns are that
+  # response; thread_total_tokens is the running total for the thread.
+  - name: token_usage
+    sql: |
+      SELECT session_id, thread_id, ts, is_fork_copy,
+        (line->'payload'->'info'->'last_token_usage'->>'input_tokens')::bigint            AS input_tokens,
+        (line->'payload'->'info'->'last_token_usage'->>'cached_input_tokens')::bigint     AS cached_input_tokens,
+        (line->'payload'->'info'->'last_token_usage'->>'output_tokens')::bigint           AS output_tokens,
+        (line->'payload'->'info'->'last_token_usage'->>'reasoning_output_tokens')::bigint AS reasoning_output_tokens,
+        (line->'payload'->'info'->'last_token_usage'->>'total_tokens')::bigint            AS total_tokens,
+        (line->'payload'->'info'->'total_token_usage'->>'total_tokens')::bigint           AS thread_total_tokens,
+        (line->'payload'->'info'->>'model_context_window')::bigint                        AS model_context_window
+      FROM lines
+      WHERE type = 'event_msg' AND item_type = 'token_count'
+        AND line->'payload'->'info'->>'last_token_usage' IS NOT NULL
+
+  # Plan usage limits as reported with each response (NULL for API-key use).
+  # window_minutes 300 is the 5-hour limit, 10080 the weekly one (older Codex
+  # reports the weekly limit as primary).
+  - name: rate_limits
+    sql: |
+      SELECT session_id, thread_id, ts, window, plan_type, used_percent, window_minutes, resets_at
+      FROM (
+        SELECT session_id, thread_id, ts, 'primary' AS window,
+          line->'payload'->'rate_limits'->>'plan_type'                           AS plan_type,
+          (line->'payload'->'rate_limits'->'primary'->>'used_percent')::double   AS used_percent,
+          (line->'payload'->'rate_limits'->'primary'->>'window_minutes')::bigint AS window_minutes,
+          to_timestamp_seconds((line->'payload'->'rate_limits'->'primary'->>'resets_at')::bigint) AS resets_at
+        FROM lines
+        WHERE type = 'event_msg' AND item_type = 'token_count' AND NOT is_fork_copy
+        UNION ALL
+        SELECT session_id, thread_id, ts, 'secondary',
+          line->'payload'->'rate_limits'->>'plan_type',
+          (line->'payload'->'rate_limits'->'secondary'->>'used_percent')::double,
+          (line->'payload'->'rate_limits'->'secondary'->>'window_minutes')::bigint,
+          to_timestamp_seconds((line->'payload'->'rate_limits'->'secondary'->>'resets_at')::bigint)
+        FROM lines
+        WHERE type = 'event_msg' AND item_type = 'token_count' AND NOT is_fork_copy
+      )
+      WHERE used_percent IS NOT NULL
+
+  # Turn lifecycle: started, complete (with the error, if any) or aborted.
+  # Interrupting Codex (Esc) aborts the turn with reason 'interrupted'.
+  - name: turn_events
+    sql: |
+      SELECT session_id, thread_id, turn_id, ts, is_fork_copy,
+        CASE item_type WHEN 'task_started' THEN 'started' WHEN 'task_complete' THEN 'complete'
+                       ELSE 'aborted' END                                        AS event,
+        line->'payload'->>'reason'                                               AS reason,
+        (line->'payload'->>'duration_ms')::bigint                                AS duration_ms,
+        (line->'payload'->>'time_to_first_token_ms')::bigint                     AS time_to_first_token_ms,
+        line->'payload'->'error'->>'message'                                     AS error,
+        line->'payload'->>'last_agent_message'                                   AS last_agent_message
+      FROM lines
+      WHERE type = 'event_msg' AND item_type IN ('task_started', 'task_complete', 'turn_aborted')
+
+  # Context compactions (the conversation was summarized to free context).
+  - name: compactions
+    sql: |
+      SELECT session_id, thread_id, ts, is_fork_copy,
+        json_length(line->'payload'->'replacement_history')                      AS kept_items
+      FROM lines
+      WHERE type = 'compacted'
+
+  # Web searches and page opens. action is search, open_page or find_in_page.
+  # Older Codex logs web_search_end events; newer logs Extension items.
+  - name: web_searches
+    sql: |
+      SELECT session_id, thread_id, turn_id, ts, is_fork_copy,
+        line->'payload'->>'query'                                                AS query,
+        line->'payload'->'action'->>'type'                                       AS action,
+        line->'payload'->'action'->>'url'                                        AS url
+      FROM lines
+      WHERE type = 'event_msg' AND item_type = 'web_search_end'
+      UNION ALL
+      SELECT session_id, thread_id, turn_id, ts, is_fork_copy,
+        line->'payload'->'item'->>'query',
+        -- openPage -> open_page, as in the older events.
+        lower(regexp_replace(line->'payload'->'item'->'action'->>'type', '([a-z])([A-Z])', '${1}_${2}', 'g')),
+        line->'payload'->'item'->'action'->>'url'
+      FROM lines
+      WHERE type = 'event_msg' AND item_type = 'item_completed'
+        AND line->'payload'->'item'->>'type' = 'Extension'
+        AND line->'payload'->'item'->>'kind' = 'web.search'
+
+  # ---- derived ---------------------------------------------------------------
+
+  # A tool call with its output. Output columns are NULL when the call never
+  # got one (session ended or crashed mid-call). is_error: the exec script
+  # failed (a failing shell command alone doesn't fail the script; see
+  # commands.exit_code). aborted: you interrupted Codex during the call.
+  # Paired with UNION ALL + GROUP BY, not a JOIN: on a join, a query that
+  # filters a right-side column with ->> above it fails planning
+  # ("ambiguous ... __datafusion_extracted_N").
+  - name: tool_runs
+    sql: |
+      SELECT *,
+        (arrow_cast(output_ts, 'Int64') - arrow_cast(ts, 'Int64')) / 1000000     AS duration_ms,
+        coalesce(output LIKE 'Script failed%', false)                            AS is_error,
+        coalesce(output LIKE 'aborted by user%', false)                          AS aborted
+      FROM (
+        SELECT
+          max(item_id)     FILTER (WHERE kind = 'call')                          AS item_id,
+          session_id, thread_id,
+          max(agent_path)  FILTER (WHERE kind = 'call')                          AS agent_path,
+          max(turn_id)     FILTER (WHERE kind = 'call')                          AS turn_id,
+          max(cwd)         FILTER (WHERE kind = 'call')                          AS cwd,
+          max(git_branch)  FILTER (WHERE kind = 'call')                          AS git_branch,
+          max(ts)          FILTER (WHERE kind = 'call')                          AS ts,
+          bool_or(is_fork_copy) FILTER (WHERE kind = 'call')                     AS is_fork_copy,
+          max(history_mode)                                                      AS history_mode,
+          call_id,
+          max(tool)                                                              AS tool,
+          max(input)                                                             AS input,
+          max(ts)          FILTER (WHERE kind = 'output')                        AS output_ts,
+          max(output)                                                            AS output
+        FROM (
+          SELECT 'call' AS kind, item_id, session_id, thread_id, agent_path, turn_id, cwd, git_branch, ts,
+            is_fork_copy, history_mode, call_id, tool, input, CAST(NULL AS VARCHAR) AS output
+          FROM tool_calls
+          UNION ALL
+          SELECT 'output', CAST(NULL AS VARCHAR), session_id, thread_id, CAST(NULL AS VARCHAR), turn_id,
+            CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), ts, is_fork_copy, CAST(NULL AS VARCHAR), call_id,
+            CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), output
+          FROM tool_outputs
+        )
+        GROUP BY session_id, thread_id, call_id
+        HAVING bool_or(kind = 'call')
+      )
+
+  # Shell commands with exit code and output.
+  # Newer Codex (history_mode 'paginated') records each command as a
+  # CommandExecution item. Older Codex ('legacy') doesn't, so commands are
+  # parsed from the tools.exec_command({cmd: "..."}) calls in each exec script:
+  # command is NULL when cmd isn't a string literal, and exit_code/duration_ms
+  # are known only for a single-command script whose output printed them.
+  # Command items often record a duration of 0 ms.
+  - name: commands
+    sql: |
+      SELECT session_id, thread_id, agent_path, turn_id, git_branch, ts, is_fork_copy,
+        'command_item'                                                           AS source,
+        line->'payload'->'item'->>'id'                                           AS command_id,
+        CASE WHEN json_length(line->'payload'->'item'->'command') = 3
+             THEN line->'payload'->'item'->'command'->>2
+             ELSE line->'payload'->'item'->>'command' END                        AS command,
+        regexp_replace(line->'payload'->'item'->>'cwd', '^file://', '')          AS cwd,
+        (line->'payload'->'item'->>'exit_code')::bigint                          AS exit_code,
+        (line->'payload'->'item'->'duration'->>'secs')::bigint * 1000
+          + (line->'payload'->'item'->'duration'->>'nanos')::bigint / 1000000    AS duration_ms,
+        line->'payload'->'item'->>'stdout'                                       AS stdout,
+        line->'payload'->'item'->>'stderr'                                       AS stderr,
+        line->'payload'->'item'->>'aggregated_output'                            AS output
+      FROM lines
+      WHERE type = 'event_msg' AND item_type = 'item_completed'
+        AND line->'payload'->'item'->>'type' = 'CommandExecution'
+      UNION ALL
+      SELECT session_id, thread_id, agent_path, turn_id, git_branch, ts, is_fork_copy,
+        'exec_script', concat(call_id, '#', part_index - 1),
+        replace(replace(replace(replace(replace(
+          regexp_match(part, '"?\bcmd"?\s*:\s*"((?:[^"\\]|\\.)*)"')[1],
+          '\\', chr(1)), '\"', '"'), '\n', chr(10)), '\t', chr(9)), chr(1), '\'),
+        coalesce(regexp_match(part, '"?\bworkdir"?\s*:\s*"((?:[^"\\]|\\.)*)"')[1], cwd),
+        CASE WHEN parts = 2 THEN CAST(regexp_match(output, '"exit_code":(-?\d+)')[1] AS bigint) END,
+        CASE WHEN parts = 2 THEN duration_ms END,
+        CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), output
+      FROM (
+        SELECT *,
+          string_to_array(input, 'tools.exec_command(')[part_index]              AS part
+        FROM (
+          SELECT *,
+            array_length(string_to_array(input, 'tools.exec_command('))          AS parts,
+            unnest(range(2, CAST(array_length(string_to_array(input, 'tools.exec_command(')) + 1 AS BIGINT))) AS part_index
+          FROM tool_runs
+          WHERE tool = 'exec' AND history_mode = 'legacy'
+        )
+      )
+
+  # Files changed through apply_patch, and (newer Codex only) files read by
+  # shell commands that Codex recognised as reads (cat, sed -n, ...).
+  # change_type is add, update or delete; move_path is set for a rename.
+  # Patch paths are absolute; read paths are as typed, relative to cwd.
+  - name: files_touched
+    sql: |
+      SELECT session_id, thread_id, agent_path, turn_id, git_branch, ts, is_fork_copy,
+        'apply_patch'                                                            AS tool,
+        'write'                                                                  AS access,
+        json_get_str(json_get_json(changes, file_path), 'type')                  AS change_type,
+        file_path,
+        json_get_str(json_get_json(changes, file_path), 'move_path')             AS move_path,
+        CAST(NULL AS VARCHAR)                                                    AS cwd,
+        success
+      FROM (
+        SELECT *, unnest(json_object_keys(changes)) AS file_path
+        FROM (
+          SELECT session_id, thread_id, agent_path, turn_id, git_branch, ts, is_fork_copy,
+            coalesce(line->'payload'->>'changes', line->'payload'->'item'->>'changes') AS changes,
+            coalesce((line->'payload'->>'success')::boolean,
+                     line->'payload'->'item'->>'status' = 'completed')            AS success
+          FROM lines
+          WHERE type = 'event_msg'
+            AND (item_type = 'patch_apply_end'
+                 OR (item_type = 'item_completed' AND line->'payload'->'item'->>'type' = 'FileChange'))
+        )
+      )
+      UNION ALL
+      SELECT session_id, thread_id, agent_path, turn_id, git_branch, ts, is_fork_copy,
+        'shell', 'read', CAST(NULL AS VARCHAR),
+        json_get_str(json_get_json(parsed, idx), 'path'), CAST(NULL AS VARCHAR), cwd, exit_code = 0
+      FROM (
+        SELECT session_id, thread_id, agent_path, turn_id, git_branch, ts, is_fork_copy,
+          line->'payload'->'item'->>'parsed_cmd'                                 AS parsed,
+          regexp_replace(line->'payload'->'item'->>'cwd', '^file://', '')        AS cwd,
+          (line->'payload'->'item'->>'exit_code')::bigint                        AS exit_code,
+          unnest(range(0, CAST(coalesce(json_length(line->'payload'->'item'->'parsed_cmd'), 0) AS BIGINT))) AS idx
+        FROM lines
+        WHERE type = 'event_msg' AND item_type = 'item_completed'
+          AND line->'payload'->'item'->>'type' = 'CommandExecution'
+      )
+      WHERE json_get_str(json_get_json(parsed, idx), 'type') = 'read'
+
+  # Times you interrupted Codex (Esc), with the tool call it was on and what
+  # you said next. Both come from the neighbouring rows in the same thread, so
+  # either is NULL when that row is not a tool call (in the same turn) or a
+  # prompt. tool_aborted is false when that call had already finished.
+  # The window partitions by a `transcript` key, not by thread_id, to stay
+  # clear of a planner bug: filtering on a computed column that is also the
+  # partition key can fail ("does not satisfy order requirements").
+  - name: interruptions
+    sql: |
+      SELECT session_id, thread_id, agent_path, turn_id, ts, duration_ms,
+        CASE WHEN prev_kind = 'call' AND prev_turn = turn_id THEN prev_tool END  AS stopped_tool,
+        CASE WHEN prev_kind = 'call' AND prev_turn = turn_id THEN prev_input END AS stopped_tool_input,
+        CASE WHEN prev_kind = 'call' AND prev_turn = turn_id THEN prev_aborted END AS tool_aborted,
+        CASE WHEN next_kind = 'prompt' THEN next_text END                        AS next_prompt,
+        CASE WHEN next_kind = 'prompt' THEN next_ts END                          AS next_prompt_ts
+      FROM (
+        SELECT *,
+          lag(kind)       OVER (PARTITION BY transcript ORDER BY ts, kind)       AS prev_kind,
+          lag(turn_id)    OVER (PARTITION BY transcript ORDER BY ts, kind)       AS prev_turn,
+          lag(tool)       OVER (PARTITION BY transcript ORDER BY ts, kind)       AS prev_tool,
+          lag(input)      OVER (PARTITION BY transcript ORDER BY ts, kind)       AS prev_input,
+          lag(aborted)    OVER (PARTITION BY transcript ORDER BY ts, kind)       AS prev_aborted,
+          lead(kind)      OVER (PARTITION BY transcript ORDER BY ts, kind)       AS next_kind,
+          lead(text)      OVER (PARTITION BY transcript ORDER BY ts, kind)       AS next_text,
+          lead(ts)        OVER (PARTITION BY transcript ORDER BY ts, kind)       AS next_ts
+        FROM (SELECT *, concat(session_id, '/', thread_id) AS transcript FROM (
+          SELECT session_id, thread_id, CAST(NULL AS VARCHAR) AS agent_path, turn_id, ts,
+            'aborted' AS kind, duration_ms, CAST(NULL AS VARCHAR) AS text,
+            CAST(NULL AS VARCHAR) AS tool, CAST(NULL AS VARCHAR) AS input, CAST(NULL AS BOOLEAN) AS aborted
+          FROM turn_events
+          WHERE event = 'aborted' AND NOT is_fork_copy
+          UNION ALL
+          SELECT session_id, thread_id, agent_path, turn_id, ts, 'prompt', CAST(NULL AS BIGINT), text,
+            CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS BOOLEAN)
+          FROM user_prompts WHERE NOT is_fork_copy
+          UNION ALL
+          SELECT session_id, thread_id, agent_path, turn_id, ts, 'call', CAST(NULL AS BIGINT),
+            CAST(NULL AS VARCHAR), tool, input, aborted
+          FROM tool_runs WHERE NOT is_fork_copy
+        ))
+      )
+      WHERE kind = 'aborted'
+
+  # One row per turn: what you asked, Codex's reply, the tools it used, and
+  # how the turn ended. Turns are native in Codex (turn-scoped lines carry a
+  # turn_id), so no window is needed. A turn can hold several prompts
+  # (messages sent while Codex was working). Turns started by a parent agent
+  # or a guardian request have no prompt. Lines copied into forked subagents
+  # are left out.
+  # tokens is only recorded by newer Codex (history_mode 'paginated').
+  - name: turns
+    sql: |
+      SELECT session_id, thread_id, turn_id,
+        max(agent_path)                                                          AS agent_path,
+        max(git_branch)                                                          AS git_branch,
+        max(cwd)    FILTER (WHERE kind = 'context')                              AS cwd,
+        max(model)  FILTER (WHERE kind = 'context')                              AS model,
+        max(effort) FILTER (WHERE kind = 'context')                              AS effort,
+        min(ts)                                                                  AS started,
+        max(ts)                                                                  AS ended,
+        string_agg(text, chr(10) ORDER BY ts) FILTER (WHERE kind = 'prompt')     AS prompt,
+        string_agg(text, chr(10) ORDER BY ts) FILTER (WHERE kind = 'text')       AS response,
+        count(*) FILTER (WHERE kind = 'call')                                    AS tool_calls,
+        array_agg(DISTINCT tool) FILTER (WHERE kind = 'call')                    AS tools,
+        coalesce(bool_or(kind = 'aborted'), false)                               AS interrupted,
+        max(text)   FILTER (WHERE kind = 'error')                                AS error,
+        max(n)      FILTER (WHERE kind IN ('complete', 'aborted', 'error'))      AS duration_ms,
+        max(n)      FILTER (WHERE kind = 'usage')                                AS tokens
+      FROM (
+        SELECT session_id, thread_id, agent_path, git_branch, turn_id, ts, 'prompt' AS kind, text,
+          CAST(NULL AS VARCHAR) AS tool, CAST(NULL AS BIGINT) AS n,
+          CAST(NULL AS VARCHAR) AS cwd, CAST(NULL AS VARCHAR) AS model, CAST(NULL AS VARCHAR) AS effort
+        FROM user_prompts WHERE NOT is_fork_copy
+        UNION ALL
+        SELECT session_id, thread_id, agent_path, git_branch, turn_id, ts, 'text', text,
+          CAST(NULL AS VARCHAR), CAST(NULL AS BIGINT), CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR)
+        FROM assistant_text WHERE NOT is_fork_copy
+        UNION ALL
+        SELECT session_id, thread_id, agent_path, git_branch, turn_id, ts, 'call', CAST(NULL AS VARCHAR),
+          tool, CAST(NULL AS BIGINT), CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR)
+        FROM tool_calls WHERE NOT is_fork_copy
+        UNION ALL
+        SELECT session_id, thread_id, CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), turn_id, ts,
+          CASE WHEN error IS NOT NULL THEN 'error' ELSE event END, error,
+          CAST(NULL AS VARCHAR), duration_ms, CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR)
+        FROM turn_events WHERE NOT is_fork_copy
+        UNION ALL
+        SELECT session_id, thread_id, CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), turn_id, ts, 'context',
+          CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS BIGINT), cwd, model, effort
+        FROM turn_contexts WHERE NOT is_fork_copy
+        UNION ALL
+        SELECT session_id, thread_id, CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), turn_id, ts, 'usage',
+          CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR),
+          (line->'payload'->'turn_token_usage'->>'total_tokens')::bigint,
+          CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR)
+        FROM lines WHERE type = 'token_usage_record' AND NOT is_fork_copy
+      )
+      WHERE turn_id IS NOT NULL
+      GROUP BY session_id, thread_id, turn_id
+
+  # Guardian (auto-review) decisions on commands that needed approval. Each
+  # review runs as a turn in a guardian thread under the session it reviews.
+  - name: guardian_reviews
+    sql: |
+      SELECT session_id, thread_id, turn_id, ts, duration_ms,
+        last_agent_message->>'outcome'                                           AS outcome,
+        last_agent_message->>'risk_level'                                        AS risk_level,
+        last_agent_message->>'user_authorization'                                AS user_authorization,
+        last_agent_message->>'rationale'                                         AS rationale,
+        error
+      FROM (
+        SELECT session_id, thread_id, turn_id, ts,
+          (line->'payload'->>'duration_ms')::bigint                              AS duration_ms,
+          line->'payload'->>'last_agent_message'                                 AS last_agent_message,
+          line->'payload'->'error'->>'message'                                   AS error
+        FROM lines
+        WHERE thread_kind = 'guardian' AND type = 'event_msg' AND item_type = 'task_complete'
+      )
+
+  # ---- other sources -----------------------------------------------------------
+
+  # Every prompt typed, from history.jsonl. Kept even when a rollout is deleted.
+  - name: prompt_history
+    sql: |
+      SELECT column_1->>'session_id'                                             AS session_id,
+        to_timestamp_seconds((column_1->>'ts')::bigint)                          AS ts,
+        column_1->>'text'                                                        AS text
+      FROM history_lines
+
+  # Thread names set by Codex or by /rename; the last entry per thread wins.
+  - name: thread_names
+    sql: |
+      SELECT thread_id, last_value(name ORDER BY updated_at) AS name, max(updated_at) AS updated_at
+      FROM (
+        SELECT column_1->>'id'                                                   AS thread_id,
+          column_1->>'thread_name'                                               AS name,
+          to_timestamp(column_1->>'updated_at')                                  AS updated_at
+        FROM session_index_lines
+      )
+      GROUP BY thread_id
+
+  # Approved command prefixes. pattern is a JSON array of argv prefixes.
+  - name: exec_rules
+    sql: |
+      SELECT regexp_match(column_1, '^([a-z_]+)\(')[1]                           AS rule_type,
+        regexp_match(column_1, 'pattern=(\[.*\]),\s*decision=')[1]               AS pattern,
+        regexp_match(column_1, 'decision="([a-z_]+)"')[1]                        AS decision,
+        column_1                                                                 AS rule
+      FROM rules_lines
+
+  # Codex memories, one per source thread.
+  - name: memories
+    sql: |
+      SELECT thread_id, rollout_slug, rollout_summary, raw_memory,
+        to_timestamp_seconds(generated_at)                                       AS generated_at,
+        to_timestamp_seconds(source_updated_at)                                  AS source_updated_at,
+        usage_count,
+        to_timestamp_seconds(last_usage)                                         AS last_usage
+      FROM memory_outputs
+
+  # ---- rollups -----------------------------------------------------------------
+
+  # One row per thread: the rollout's session_meta joined (UNION ALL + GROUP BY)
+  # with Codex's thread table and thread names. kind is as in `lines`.
+  - name: threads
+    sql: |
+      SELECT thread_id,
+        max(session_id)                                                          AS session_id,
+        max(parent_thread_id)                                                    AS parent_thread_id,
+        max(forked_from_id)                                                      AS forked_from_id,
+        max(thread_source)                                                       AS thread_source,
+        max(kind)                                                                AS kind,
+        max(agent_path)                                                          AS agent_path,
+        max(agent_nickname)                                                      AS agent_nickname,
+        coalesce(max(index_name), max(name))                                     AS name,
+        max(first_user_message)                                                  AS first_user_message,
+        max(cwd)                                                                 AS cwd,
+        max(git_branch)                                                          AS git_branch,
+        max(git_commit)                                                          AS git_commit,
+        max(git_origin_url)                                                      AS git_origin_url,
+        max(model)                                                               AS model,
+        max(effort)                                                              AS effort,
+        max(model_provider)                                                      AS model_provider,
+        max(cli_version)                                                         AS cli_version,
+        max(originator)                                                          AS originator,
+        max(history_mode)                                                        AS history_mode,
+        max(tokens_used)                                                         AS tokens_used,
+        bool_or(archived)                                                        AS archived,
+        to_timestamp_millis(min(created_ms))                                     AS created,
+        to_timestamp_millis(max(updated_ms))                                     AS updated,
+        max(rollout_path)                                                        AS rollout_path
+      FROM (
+        SELECT thread_id, session_id, parent_thread_id,
+          line->'payload'->>'forked_from_id'                                     AS forked_from_id,
+          thread_source,
+          thread_kind                                                            AS kind,
+          agent_path,
+          line->'payload'->>'agent_nickname'                                     AS agent_nickname,
+          CAST(NULL AS VARCHAR) AS name, CAST(NULL AS VARCHAR) AS index_name,
+          CAST(NULL AS VARCHAR) AS first_user_message,
+          cwd, git_branch,
+          line->'payload'->'git'->>'commit_hash'                                 AS git_commit,
+          line->'payload'->'git'->>'repository_url'                              AS git_origin_url,
+          CAST(NULL AS VARCHAR) AS model, CAST(NULL AS VARCHAR) AS effort,
+          line->'payload'->>'model_provider'                                     AS model_provider,
+          cli_version,
+          line->'payload'->>'originator'                                         AS originator,
+          history_mode,
+          CAST(NULL AS BIGINT) AS tokens_used, CAST(NULL AS BOOLEAN) AS archived,
+          arrow_cast(to_timestamp(line->'payload'->>'timestamp'), 'Int64') / 1000000 AS created_ms,
+          CAST(NULL AS BIGINT) AS updated_ms,
+          file                                                                   AS rollout_path
+        FROM lines
+        WHERE type = 'session_meta' AND item_id = thread_id
+        UNION ALL
+        SELECT id, CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), thread_source,
+          CAST(NULL AS VARCHAR), agent_path, agent_nickname, name, CAST(NULL AS VARCHAR), first_user_message,
+          cwd, git_branch, git_sha, git_origin_url, model, reasoning_effort, model_provider, cli_version,
+          originator, history_mode, tokens_used, archived <> 0,
+          -- Raw columns only: functions here are pushed down to DuckDB, which
+          -- lacks DataFusion's to_timestamp_millis.
+          created_at_ms, updated_at_ms, rollout_path
+        FROM threads_state
+        UNION ALL
+        SELECT thread_id, CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR),
+          CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR),
+          -- Aliased: an unaliased `name` here, under another branch's `name`
+          -- column, fails planning ("... name which would be ambiguous").
+          name AS index_name,
+          CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR),
+          CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR),
+          CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS BIGINT),
+          CAST(NULL AS BOOLEAN), CAST(NULL AS BIGINT), arrow_cast(updated_at, 'Int64') / 1000000,
+          CAST(NULL AS VARCHAR)
+        FROM thread_names
+      )
+      GROUP BY thread_id
+
+  # One row per session you started, with its subagent and guardian threads
+  # rolled in. cwd is the starting directory; last_cwd is the final one.
+  # tokens_used is Codex's own count, summed over the session's threads.
+  - name: sessions
+    sql: |
+      SELECT session_id,
+        max(name)          FILTER (WHERE kind = 'thread' AND is_root)            AS name,
+        first_value(text ORDER BY ts) FILTER (WHERE kind = 'prompt')             AS first_prompt,
+        max(cwd)           FILTER (WHERE kind = 'thread' AND is_root)            AS cwd,
+        last_value(cwd ORDER BY ts) FILTER (WHERE kind = 'context')              AS last_cwd,
+        max(git_branch)    FILTER (WHERE kind = 'thread' AND is_root)            AS git_branch,
+        last_value(model ORDER BY ts) FILTER (WHERE kind = 'context')            AS model,
+        last_value(effort ORDER BY ts) FILTER (WHERE kind = 'context')           AS effort,
+        max(source)        FILTER (WHERE kind = 'thread' AND is_root)            AS source,
+        min(ts)            FILTER (WHERE kind IN ('prompt', 'turn', 'thread'))   AS started,
+        max(ts)            FILTER (WHERE kind IN ('prompt', 'turn'))             AS last_active,
+        count(*)           FILTER (WHERE kind = 'turn' AND is_root AND text = 'started') AS turns,
+        count(*)           FILTER (WHERE kind = 'thread' AND source = 'thread_spawn') AS subagents,
+        count(*)           FILTER (WHERE kind = 'thread' AND source = 'guardian') AS guardian_threads,
+        sum(n)             FILTER (WHERE kind = 'thread')                        AS tokens_used,
+        count(*)           FILTER (WHERE kind = 'error')                         AS tool_errors,
+        count(*)           FILTER (WHERE kind = 'failed_command')                AS failed_commands,
+        count(*)           FILTER (WHERE kind = 'turn' AND text = 'aborted')     AS interruptions,
+        -- True when the session's last turn event is an abort (you stopped it).
+        coalesce(last_value(text ORDER BY ts) FILTER (WHERE kind = 'turn' AND is_root) = 'aborted',
+                 false)                                                          AS ended_interrupted,
+        bool_or(archived)  FILTER (WHERE kind = 'thread' AND is_root)            AS archived
+      FROM (
+        SELECT session_id, thread_id = session_id AS is_root, 'thread' AS kind, created AS ts,
+          name, CAST(NULL AS VARCHAR) AS text, cwd, git_branch, CAST(NULL AS VARCHAR) AS model,
+          CAST(NULL AS VARCHAR) AS effort, kind AS source, tokens_used AS n, archived
+        FROM threads
+        WHERE session_id IS NOT NULL
+        UNION ALL
+        SELECT session_id, true, 'prompt', ts, CAST(NULL AS VARCHAR), text, CAST(NULL AS VARCHAR),
+          CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR),
+          CAST(NULL AS BIGINT), CAST(NULL AS BOOLEAN)
+        FROM user_prompts
+        WHERE thread_id = session_id AND NOT is_fork_copy
+        UNION ALL
+        SELECT session_id, thread_id = session_id, 'context', ts, CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR),
+          cwd, CAST(NULL AS VARCHAR), model, effort, CAST(NULL AS VARCHAR), CAST(NULL AS BIGINT), CAST(NULL AS BOOLEAN)
+        FROM turn_contexts
+        WHERE thread_id = session_id AND NOT is_fork_copy
+        UNION ALL
+        SELECT session_id, thread_id = session_id, 'turn', ts, CAST(NULL AS VARCHAR), event,
+          CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR),
+          CAST(NULL AS VARCHAR), CAST(NULL AS BIGINT), CAST(NULL AS BOOLEAN)
+        FROM turn_events
+        WHERE NOT is_fork_copy
+        UNION ALL
+        SELECT session_id, thread_id = session_id, 'error', ts, CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR),
+          CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR),
+          CAST(NULL AS VARCHAR), CAST(NULL AS BIGINT), CAST(NULL AS BOOLEAN)
+        FROM tool_runs
+        WHERE is_error AND NOT is_fork_copy
+        UNION ALL
+        SELECT session_id, thread_id = session_id, 'failed_command', ts, CAST(NULL AS VARCHAR),
+          CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR),
+          CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS BIGINT), CAST(NULL AS BOOLEAN)
+        FROM commands
+        WHERE exit_code <> 0 AND NOT is_fork_copy
+      )
+      GROUP BY session_id
+
+  # Search target: prompts + replies, full-text indexed. Lines copied into
+  # forked subagents are left out, so each message appears once.
+  - name: messages
+    sql: |
+      SELECT message_id, block_index, session_id, thread_id, agent_path, turn_id, cwd, git_branch, ts,
+        is_subagent, role, phase, text
+      FROM (
+        SELECT message_id, 0 AS block_index, session_id, thread_id, agent_path, turn_id, cwd, git_branch, ts,
+          is_subagent, 'user' AS role, CAST(NULL AS VARCHAR) AS phase, text
+        FROM user_prompts WHERE NOT is_fork_copy
+        UNION ALL
+        SELECT message_id, block_index, session_id, thread_id, agent_path, turn_id, cwd, git_branch, ts,
+          is_subagent, 'assistant', phase, text
+        FROM assistant_text WHERE NOT is_fork_copy
+      )
+    acceleration:
+      enabled: true
+      refresh_check_interval: 30s
+    columns:
+      - name: text
+        full_text_search:
+          enabled: true
+          row_id:
+            - message_id
+            - block_index

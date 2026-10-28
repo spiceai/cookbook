@@ -1,0 +1,587 @@
+version: v2
+kind: Spicepod
+name: claude_sessions
+
+# Paths are relative to your home directory, so start Spice from there:
+#   cd ~ && spice run <path to this spicepod.yaml>
+
+datasets:
+  # JSON schema inference can't be used: `message.content` is both string or array.
+  # Read as single-column CSV, then parse the `type` (and other JSON keys) from single
+  # column (e.g. `column_1->>'type'`).
+  - from: file:.claude/projects/
+    name: transcripts
+    metadata:
+      # File path. Some line types (file-history-snapshot, fork-context-ref) have
+      # no sessionId, so the session is taken from the file name instead.
+      _location: enabled
+    params:
+      file_format: csv
+      file_extension: .jsonl
+      csv_has_header: false
+      # Use control-character delimiter/quote that never occur in the transcripts
+      csv_delimiter: "\x1f"
+      csv_quote: "\x1e"
+      # Single Utf8 column, so nothing to infer. Larger values hit an
+      # "unterminated string" error in CSV inference on lines with escaped quotes.
+      schema_infer_max_records: 1
+    acceleration:
+      enabled: true
+      params:
+        file_watcher: enabled
+
+  # Auto-memory files, <project>/memory/*.md. Only memory directories hold .md
+  # files under projects/. Query through the `memories` view.
+  # Polled, not watched: a watcher on projects/ fires on every transcript write.
+  - from: file:.claude/projects/
+    name: memory_files
+    params:
+      file_format: md
+      file_extension: .md
+    acceleration:
+      enabled: true
+      refresh_check_interval: 60s
+    columns:
+      - name: content
+        full_text_search:
+          enabled: true
+          row_id:
+            - location
+
+views:
+  # Fields shared by every line type. All other views read from this one.
+  # Files are <project>/<session>.jsonl or <project>/<session>/subagents/agent-<id>.jsonl.
+  - name: lines
+    sql: |
+      SELECT
+        column_1->>'type'                                                        AS type,
+        regexp_match(_location, '/([0-9a-f-]{36})(\.jsonl$|/subagents/)')[1]     AS session_id,
+        regexp_match(_location, '/subagents/agent-([0-9a-z]+)\.jsonl$')[1]       AS agent_id,
+        _location                                                                AS file,
+        column_1->>'uuid'                                                        AS uuid,
+        column_1->>'parentUuid'                                                  AS parent_uuid,
+        to_timestamp(column_1->>'timestamp')                                     AS ts,
+        column_1->>'cwd'                                                         AS project,
+        column_1->>'gitBranch'                                                   AS git_branch,
+        column_1->>'version'                                                     AS cc_version,
+        coalesce((column_1->>'isSidechain')::boolean, false)                     AS is_subagent,
+        column_1 ? 'sessionKind'                                                 AS is_fork_copy,
+        column_1                                                                 AS line
+      FROM transcripts
+
+  # ---- user lines ----------------------------------------------------------
+
+  # Prompts you typed. content is a string, or (with images/pastes) an array
+  # starting with a text block. ->> renders arrays as JSON text, hence ->0 IS NULL.
+  - name: user_prompts
+    sql: |
+      SELECT uuid, session_id, agent_id, project, git_branch, ts, is_subagent, is_fork_copy,
+        CASE WHEN line->'message'->'content'->0 IS NULL
+             THEN line->'message'->>'content'
+             ELSE line->'message'->'content'->0->>'text' END                     AS text
+      FROM lines
+      WHERE type = 'user'
+        AND (line->'message'->'content'->0 IS NULL
+             OR line->'message'->'content'->0->>'type' = 'text')
+        AND line->'message'->>'content' IS NOT NULL
+        AND coalesce((line->>'isMeta')::boolean, false) = false
+        -- Background-task notifications, slash-command output and interrupt
+        -- markers, not typed text.
+        AND NOT regexp_like(coalesce(line->'message'->'content'->0->>'text', line->'message'->>'content'),
+                            '^(<(task-notification|local-command-[a-z]+|command-message)>|\[Request interrupted)')
+
+  # User lines Claude Code wrote, not you: isMeta lines, background-task
+  # notifications, slash-command output and interrupt markers. The complement
+  # of user_prompts.
+  - name: user_injected
+    sql: |
+      SELECT uuid, session_id, agent_id, project, git_branch, ts, is_fork_copy,
+        coalesce((line->>'isMeta')::boolean, false)                              AS is_meta,
+        regexp_match(coalesce(line->'message'->'content'->0->>'text', line->'message'->>'content'),
+                     '^<([a-z-]+)>')[1]                                          AS tag,
+        coalesce(line->'message'->'content'->0->>'text', line->'message'->>'content') AS text
+      FROM lines
+      WHERE type = 'user'
+        AND (line->'message'->'content'->0 IS NULL
+             OR line->'message'->'content'->0->>'type' = 'text')
+        AND (coalesce((line->>'isMeta')::boolean, false)
+             OR regexp_like(coalesce(line->'message'->'content'->0->>'text', line->'message'->>'content'),
+                            '^(<(task-notification|local-command-[a-z]+|command-message)>|\[Request interrupted)'))
+
+  # A tool_result block, sometimes followed by a text block (note).
+  - name: tool_results
+    sql: |
+      SELECT uuid, session_id, agent_id, ts, is_fork_copy,
+        line->'message'->'content'->0->>'tool_use_id'                            AS tool_use_id,
+        coalesce((line->'message'->'content'->0->>'is_error')::boolean, false)   AS is_error,
+        line->'message'->'content'->0->>'content'                                AS output,
+        line->'message'->'content'->1->>'text'                                   AS note,
+        line->>'toolUseResult'                                                   AS tool_use_result
+      FROM lines
+      WHERE type = 'user'
+        AND line->'message'->'content'->0->>'type' = 'tool_result'
+
+  # ---- assistant lines -------------------------------------------------------
+
+  # One row per content block. Almost every assistant line holds one block, but
+  # some hold several (e.g. thinking + text + tool_use), so (uuid, block_index)
+  # is the key.
+  - name: assistant_blocks
+    sql: |
+      SELECT uuid, session_id, agent_id, project, git_branch, ts, is_subagent, is_fork_copy,
+        line->'message'->>'model'                                                AS model,
+        block_index,
+        line->'message'->'content'->block_index->>'type'                         AS block_type,
+        line->'message'->'content'->block_index->>'text'                         AS text,
+        line->'message'->'content'->block_index->>'thinking'                     AS thinking,
+        line->'message'->'content'->block_index->>'signature'                    AS signature,
+        line->'message'->'content'->block_index->>'id'                           AS tool_use_id,
+        line->'message'->'content'->block_index->>'name'                         AS tool,
+        line->'message'->'content'->block_index->>'input'                        AS input,
+        line->'message'->'content'->>block_index                                 AS block
+      FROM (
+        SELECT *, unnest(range(0, json_length(line->'message'->'content'))) AS block_index
+        FROM lines
+        WHERE type = 'assistant'
+      )
+
+  - name: assistant_text
+    sql: |
+      SELECT uuid, block_index, session_id, agent_id, project, git_branch, ts, is_subagent, is_fork_copy, model, text
+      FROM assistant_blocks
+      WHERE block_type = 'text'
+
+  # thinking is usually empty: only the encrypted signature is stored, which the
+  # API can read on later turns but which can't be decoded locally.
+  - name: assistant_thinking
+    sql: |
+      SELECT uuid, block_index, session_id, agent_id, ts, is_fork_copy, model, thinking,
+        length(signature)                                                        AS signature_length
+      FROM assistant_blocks
+      WHERE block_type = 'thinking'
+
+  - name: tool_calls
+    sql: |
+      SELECT uuid, block_index, session_id, agent_id, project, git_branch, ts, is_fork_copy, tool_use_id, tool, input
+      FROM assistant_blocks
+      WHERE block_type = 'tool_use'
+
+  # Token usage, one row per assistant line.
+  - name: assistant_usage
+    sql: |
+      SELECT uuid, session_id, agent_id, ts, is_fork_copy,
+        line->>'requestId'                                                       AS request_id,
+        line->'message'->>'model'                                                AS model,
+        line->>'effort'                                                          AS effort,
+        (line->'message'->'usage'->>'input_tokens')::bigint                      AS input_tokens,
+        (line->'message'->'usage'->>'output_tokens')::bigint                     AS output_tokens,
+        (line->'message'->'usage'->>'cache_read_input_tokens')::bigint           AS cache_read_input_tokens,
+        (line->'message'->'usage'->>'cache_creation_input_tokens')::bigint       AS cache_creation_input_tokens
+      FROM lines
+      WHERE type = 'assistant'
+
+  # ---- derived ---------------------------------------------------------------
+
+  # A tool call with its result. Result columns are NULL when the call never
+  # got a result (session ended or crashed mid-call).
+  # Paired with UNION ALL + GROUP BY, not a JOIN: on a join, a query such as
+  # `SELECT input->>'command' FROM tool_runs WHERE is_error ORDER BY ts LIMIT 1`
+  # fails planning ("ambiguous ... __datafusion_extracted_N").
+  - name: tool_runs
+    sql: |
+      SELECT *,
+        (arrow_cast(result_ts, 'Int64') - arrow_cast(ts, 'Int64')) / 1000000     AS duration_ms
+      FROM (
+        SELECT
+          max(uuid)        FILTER (WHERE kind = 'call')                          AS uuid,
+          max(block_index) FILTER (WHERE kind = 'call')                          AS block_index,
+          session_id, agent_id,
+          max(project)     FILTER (WHERE kind = 'call')                          AS project,
+          max(git_branch)  FILTER (WHERE kind = 'call')                          AS git_branch,
+          max(ts)          FILTER (WHERE kind = 'call')                          AS ts,
+          bool_or(is_fork_copy) FILTER (WHERE kind = 'call')                     AS is_fork_copy,
+          tool_use_id,
+          max(tool)                                                              AS tool,
+          max(input)                                                             AS input,
+          max(ts)          FILTER (WHERE kind = 'result')                        AS result_ts,
+          bool_or(is_error)                                                      AS is_error,
+          max(output)                                                            AS output,
+          max(note)                                                              AS note,
+          max(tool_use_result)                                                   AS tool_use_result
+        FROM (
+          SELECT 'call' AS kind, uuid, block_index, session_id, agent_id, project, git_branch, ts, is_fork_copy,
+            tool_use_id, tool, input,
+            CAST(NULL AS BOOLEAN) AS is_error, CAST(NULL AS VARCHAR) AS output,
+            CAST(NULL AS VARCHAR) AS note, CAST(NULL AS VARCHAR) AS tool_use_result
+          FROM tool_calls
+          UNION ALL
+          SELECT 'result', uuid, CAST(NULL AS BIGINT), session_id, agent_id, CAST(NULL AS VARCHAR),
+            CAST(NULL AS VARCHAR), ts, is_fork_copy, tool_use_id, CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR),
+            is_error, output, note, tool_use_result
+          FROM tool_results
+        )
+        GROUP BY session_id, agent_id, tool_use_id
+        HAVING bool_or(kind = 'call')
+      )
+
+  # Bash calls. Failed commands start their output with "Exit code N"; a denied
+  # or rejected command is an error with no exit code.
+  - name: commands
+    sql: |
+      SELECT uuid, session_id, agent_id, project, git_branch, ts, is_fork_copy, tool_use_id,
+        input->>'command'                                                        AS command,
+        input->>'description'                                                    AS description,
+        coalesce((input->>'run_in_background')::boolean, false)                  AS background,
+        duration_ms, is_error,
+        CASE WHEN NOT is_error THEN 0
+             ELSE CAST(regexp_match(output, '^Exit code (\d+)')[1] AS bigint) END AS exit_code,
+        coalesce((tool_use_result->>'interrupted')::boolean, false)              AS interrupted,
+        tool_use_result->>'stdout'                                               AS stdout,
+        tool_use_result->>'stderr'                                               AS stderr,
+        output
+      FROM tool_runs
+      WHERE tool = 'Bash'
+
+  # Files read or written through the file tools (not through Bash).
+  - name: files_touched
+    sql: |
+      SELECT uuid, session_id, agent_id, project, git_branch, ts, is_fork_copy, tool,
+        CASE WHEN tool = 'Read' THEN 'read' ELSE 'write' END                     AS access,
+        coalesce(input->>'file_path', input->>'notebook_path')                   AS file_path,
+        is_error
+      FROM tool_runs
+      WHERE tool IN ('Read', 'Edit', 'MultiEdit', 'Write', 'NotebookEdit')
+
+  # Times you stopped Claude (Esc, or rejecting a tool call), with the tool
+  # call it stopped and what you said next. Both come from the neighbouring
+  # rows in the same transcript, so either is NULL when that row is not a tool
+  # call or a prompt.
+  # Windows here and in `turns` partition by a `transcript` key, not by
+  # session_id: `WHERE session_id = '...'` on a window partitioned by a
+  # computed column fails planning ("does not satisfy order requirements").
+  - name: interruptions
+    sql: |
+      SELECT uuid, session_id, agent_id, project, git_branch, ts, is_fork_copy,
+        text = '[Request interrupted by user for tool use]'                      AS during_tool_use,
+        CASE WHEN prev_kind = 'call' THEN prev_tool END                          AS stopped_tool,
+        CASE WHEN prev_kind = 'call' THEN prev_input END                         AS stopped_tool_input,
+        CASE WHEN next_kind = 'prompt' THEN next_text END                        AS next_prompt,
+        CASE WHEN next_kind = 'prompt' THEN next_ts END                          AS next_prompt_ts
+      FROM (
+        SELECT *,
+          lag(kind)   OVER (PARTITION BY transcript ORDER BY ts, block_index) AS prev_kind,
+          lag(tool)   OVER (PARTITION BY transcript ORDER BY ts, block_index) AS prev_tool,
+          lag(input)  OVER (PARTITION BY transcript ORDER BY ts, block_index) AS prev_input,
+          lead(kind)  OVER (PARTITION BY transcript ORDER BY ts, block_index) AS next_kind,
+          lead(text)  OVER (PARTITION BY transcript ORDER BY ts, block_index) AS next_text,
+          lead(ts)    OVER (PARTITION BY transcript ORDER BY ts, block_index) AS next_ts
+        FROM (SELECT *, concat(session_id, '/', coalesce(agent_id, '')) AS transcript FROM (
+          SELECT uuid, 0 AS block_index, session_id, agent_id, project, git_branch, ts, is_fork_copy,
+            'interrupt' AS kind, text, CAST(NULL AS VARCHAR) AS tool, CAST(NULL AS VARCHAR) AS input
+          FROM user_injected
+          WHERE text LIKE '[Request interrupted%'
+          UNION ALL
+          SELECT uuid, 0, session_id, agent_id, project, git_branch, ts, is_fork_copy,
+            'prompt', text, CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR)
+          FROM user_prompts
+          UNION ALL
+          SELECT uuid, block_index, session_id, agent_id, project, git_branch, ts, is_fork_copy,
+            'call', CAST(NULL AS VARCHAR), tool, input
+          FROM tool_calls
+        ))
+      )
+      WHERE kind = 'interrupt'
+
+  # One row per prompt: what you asked, Claude's reply text, and the tools it
+  # used before the next prompt. Lines copied into forked sessions are left
+  # out, so each turn appears once, in its original session.
+  - name: turns
+    sql: |
+      SELECT session_id, agent_id, turn,
+        max(uuid) FILTER (WHERE kind = 'prompt')                                 AS prompt_uuid,
+        first_value(project ORDER BY ts)                                         AS project,
+        first_value(git_branch ORDER BY ts)                                      AS git_branch,
+        min(ts)                                                                  AS started,
+        max(ts)                                                                  AS ended,
+        max(text) FILTER (WHERE kind = 'prompt')                                 AS prompt,
+        string_agg(text, chr(10) ORDER BY ts, block_index) FILTER (WHERE kind = 'text') AS response,
+        count(*) FILTER (WHERE kind = 'call')                                    AS tool_calls,
+        array_agg(DISTINCT tool) FILTER (WHERE kind = 'call')                    AS tools,
+        coalesce(bool_or(kind = 'interrupt'), false)                             AS interrupted
+      FROM (
+        SELECT *,
+          sum(CASE WHEN kind = 'prompt' THEN 1 ELSE 0 END)
+            OVER (PARTITION BY transcript ORDER BY ts, block_index ROWS UNBOUNDED PRECEDING) AS turn
+        FROM (SELECT *, concat(session_id, '/', coalesce(agent_id, '')) AS transcript FROM (
+          SELECT uuid, 0 AS block_index, session_id, agent_id, project, git_branch, ts,
+            'prompt' AS kind, text, CAST(NULL AS VARCHAR) AS tool
+          FROM user_prompts WHERE NOT is_fork_copy
+          UNION ALL
+          SELECT uuid, block_index, session_id, agent_id, project, git_branch, ts,
+            'text', text, CAST(NULL AS VARCHAR)
+          FROM assistant_text WHERE NOT is_fork_copy
+          UNION ALL
+          SELECT uuid, block_index, session_id, agent_id, project, git_branch, ts,
+            'call', CAST(NULL AS VARCHAR), tool
+          FROM tool_calls WHERE NOT is_fork_copy
+          UNION ALL
+          SELECT uuid, 0, session_id, agent_id, CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), ts,
+            'interrupt', CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR)
+          FROM user_injected WHERE NOT is_fork_copy AND text LIKE '[Request interrupted%'
+        ))
+      )
+      GROUP BY session_id, agent_id, turn
+
+  # Auto-memory files with their frontmatter parsed. MEMORY.md (the index) has
+  # no frontmatter, so its name/description/type are NULL.
+  - name: memories
+    sql: |
+      SELECT
+        regexp_match(location, '/projects/([^/]+)/memory/')[1]                   AS project_dir,
+        regexp_match(location, '/memory/([^/]+)\.md$')[1]                        AS file,
+        regexp_match(content, '(?m)^name:\s*(.+?)\s*$')[1]                       AS name,
+        btrim(regexp_match(content, '(?m)^description:\s*(.+?)\s*$')[1], '"')    AS description,
+        regexp_match(content, '(?m)^\s*type:\s*(\S+)')[1]                        AS type,
+        ltrim(regexp_replace(content, '^---\n(?s:.*?)\n---\n', ''), chr(10))     AS body,
+        location
+      FROM memory_files
+
+  # ---- other line types ------------------------------------------------------
+
+  # subtype: turn_duration, stop_hook_summary, away_summary, scheduled_task_fire, ...
+  - name: system_events
+    sql: |
+      SELECT uuid, session_id, agent_id, ts,
+        line->>'subtype'                                                         AS subtype,
+        line->>'level'                                                           AS level,
+        line->>'content'                                                         AS content,
+        (line->>'durationMs')::bigint                                            AS duration_ms,
+        (line->>'messageCount')::bigint                                          AS message_count,
+        line->>'stopReason'                                                      AS stop_reason,
+        (line->>'hookCount')::bigint                                             AS hook_count,
+        line->>'hookInfos'                                                       AS hook_infos
+      FROM lines
+      WHERE type = 'system'
+
+  # Context injected into the conversation (reminders, tool listings, date, ...).
+  - name: attachments
+    sql: |
+      SELECT uuid, session_id, agent_id, ts,
+        line->'attachment'->>'type'                                              AS attachment_type,
+        coalesce(line->'attachment'->>'text', line->'attachment'->>'prompt',
+                 line->'rendered'->0->>'content')                                AS text,
+        line->>'attachment'                                                      AS attachment
+      FROM lines
+      WHERE type = 'attachment'
+
+  - name: queue_operations
+    sql: |
+      SELECT session_id, agent_id, ts,
+        line->>'operation'                                                       AS operation,
+        line->>'content'                                                         AS content,
+        line->>'reason'                                                          AS reason
+      FROM lines
+      WHERE type = 'queue-operation'
+
+  - name: last_prompts
+    sql: |
+      SELECT session_id, agent_id,
+        line->>'lastPrompt'                                                      AS last_prompt,
+        line->>'leafUuid'                                                        AS leaf_uuid
+      FROM lines
+      WHERE type = 'last-prompt'
+
+  - name: permission_modes
+    sql: |
+      SELECT session_id, agent_id, line->>'permissionMode' AS permission_mode
+      FROM lines
+      WHERE type = 'permission-mode'
+
+  - name: modes
+    sql: |
+      SELECT session_id, agent_id, line->>'mode' AS mode
+      FROM lines
+      WHERE type = 'mode'
+
+  - name: atis_latches
+    sql: |
+      SELECT session_id, agent_id, line->>'atis' AS atis
+      FROM lines
+      WHERE type = 'atis-latch'
+
+  - name: ai_titles
+    sql: |
+      SELECT session_id, line->>'aiTitle' AS title
+      FROM lines
+      WHERE type = 'ai-title'
+
+  - name: custom_titles
+    sql: |
+      SELECT session_id, line->>'customTitle' AS title
+      FROM lines
+      WHERE type = 'custom-title'
+
+  - name: agent_names
+    sql: |
+      SELECT session_id, line->>'agentName' AS agent_name
+      FROM lines
+      WHERE type = 'agent-name'
+
+  - name: pr_links
+    sql: |
+      SELECT session_id, ts,
+        line->>'prUrl'                                                           AS pr_url,
+        line->>'prRepository'                                                    AS pr_repository,
+        (line->>'prNumber')::bigint                                              AS pr_number
+      FROM lines
+      WHERE type = 'pr-link'
+
+  # Running session totals; the last row per session is the final cost.
+  - name: cost_states
+    sql: |
+      SELECT session_id,
+        to_timestamp_millis((line->>'startTime')::bigint)                        AS started,
+        (line->>'totalCostUSD')::double                                          AS total_cost_usd,
+        (line->>'totalDuration')::bigint                                         AS total_duration_ms,
+        (line->>'totalAPIDuration')::bigint                                      AS total_api_duration_ms,
+        (line->>'totalToolDuration')::bigint                                     AS total_tool_duration_ms,
+        (line->>'totalLinesAdded')::bigint                                       AS lines_added,
+        (line->>'totalLinesRemoved')::bigint                                     AS lines_removed,
+        line->>'modelUsage'                                                      AS model_usage
+      FROM lines
+      WHERE type = 'cost-state'
+
+  - name: file_history_snapshots
+    sql: |
+      SELECT session_id, agent_id,
+        line->>'messageId'                                                       AS message_id,
+        to_timestamp(line->'snapshot'->>'timestamp')                             AS ts,
+        coalesce((line->>'isSnapshotUpdate')::boolean, false)                    AS is_update,
+        line->'snapshot'->>'trackedFileBackups'                                  AS tracked_file_backups
+      FROM lines
+      WHERE type = 'file-history-snapshot'
+
+  - name: file_history_deltas
+    sql: |
+      SELECT session_id, agent_id, ts,
+        line->>'messageId'                                                       AS message_id,
+        line->>'snapshotMessageId'                                               AS snapshot_message_id,
+        line->>'trackingPath'                                                    AS tracking_path,
+        (line->'backup'->>'version')::bigint                                     AS backup_version,
+        line->'backup'->>'backupFileName'                                        AS backup_file_name
+      FROM lines
+      WHERE type = 'file-history-delta'
+
+  - name: relocations
+    sql: |
+      SELECT session_id, line->>'relocatedCwd' AS relocated_cwd
+      FROM lines
+      WHERE type = 'relocated'
+
+  - name: worktree_states
+    sql: |
+      SELECT session_id,
+        line->'worktreeSession'->>'worktreeName'                                 AS worktree_name,
+        line->'worktreeSession'->>'worktreePath'                                 AS worktree_path,
+        line->'worktreeSession'->>'worktreeBranch'                               AS worktree_branch,
+        line->'worktreeSession'->>'originalCwd'                                  AS original_cwd
+      FROM lines
+      WHERE type = 'worktree-state'
+
+  # Subagent transcripts that start from a copy of the parent's context.
+  - name: fork_context_refs
+    sql: |
+      SELECT session_id, agent_id,
+        line->>'parentSessionId'                                                 AS parent_session_id,
+        line->>'parentLastUuid'                                                  AS parent_last_uuid,
+        (line->>'contextLength')::bigint                                         AS context_length
+      FROM lines
+      WHERE type = 'fork-context-ref'
+
+  - name: continued_in
+    sql: |
+      SELECT session_id, ts, line->>'continuedInSessionId' AS continued_in_session_id
+      FROM lines
+      WHERE type = 'continued-in'
+
+  - name: frame_links
+    sql: |
+      SELECT session_id, ts,
+        line->>'title'                                                           AS title,
+        line->>'frameUrl'                                                        AS frame_url,
+        line->>'path'                                                            AS path
+      FROM lines
+      WHERE type = 'frame-link'
+
+  # ---- rollups ---------------------------------------------------------------
+
+  # One row per session: titles, first prompt, where it ran, time span, cost,
+  # errors and linked PRs. project is the starting directory; last_cwd is the
+  # final one (e.g. a worktree the session moved into).
+  - name: sessions
+    sql: |
+      SELECT s.*, p.first_prompt, c.total_cost_usd, coalesce(e.tool_errors, 0) AS tool_errors
+      FROM (
+        SELECT
+          session_id,
+          last_value(line->>'customTitle') FILTER (WHERE type = 'custom-title') AS custom_title,
+          last_value(line->>'aiTitle')     FILTER (WHERE type = 'ai-title')     AS ai_title,
+          first_value(project ORDER BY ts) FILTER (WHERE project IS NOT NULL)    AS project,
+          last_value(project ORDER BY ts)  FILTER (WHERE project IS NOT NULL)    AS last_cwd,
+          last_value(git_branch ORDER BY ts) FILTER (WHERE git_branch IS NOT NULL) AS git_branch,
+          min(ts)                                                                AS started,
+          max(ts)                                                                AS last_active,
+          count(DISTINCT agent_id)                                               AS subagents,
+          array_agg(DISTINCT line->>'prUrl') FILTER (WHERE type = 'pr-link')     AS prs,
+          -- True when the last message in the main transcript is an interrupt marker.
+          coalesce(last_value(coalesce(line->'message'->'content'->0->>'text', line->'message'->>'content') ORDER BY ts)
+                     FILTER (WHERE type IN ('user', 'assistant') AND agent_id IS NULL)
+                   LIKE '[Request interrupted%', false)                         AS ended_interrupted
+        FROM lines
+        GROUP BY 1
+      ) s
+      LEFT JOIN (
+        -- The session's own first prompt; for a fork with none, the first copied
+        -- one. Slash commands (e.g. /model before the real ask) come last.
+        SELECT session_id,
+          first_value(text ORDER BY is_fork_copy, text LIKE '<command-name>%', ts) AS first_prompt
+        FROM user_prompts
+        WHERE agent_id IS NULL
+        GROUP BY 1
+      ) p ON p.session_id = s.session_id
+      -- Running total that never decreases, so the max is the final cost.
+      LEFT JOIN (
+        SELECT session_id, max(total_cost_usd) AS total_cost_usd FROM cost_states GROUP BY 1
+      ) c ON c.session_id = s.session_id
+      LEFT JOIN (
+        SELECT session_id, count(*) AS tool_errors
+        FROM tool_results
+        WHERE is_error AND NOT is_fork_copy
+        GROUP BY 1
+      ) e ON e.session_id = s.session_id
+
+  # Search target: prompts + replies, full-text indexed. Forked/background
+  # sessions copy their parent's lines (same uuid, new sessionId), so keep one
+  # row per (uuid, block_index), preferring the original.
+  - name: messages
+    sql: |
+      SELECT uuid, block_index, session_id, agent_id, project, git_branch, ts, is_subagent, role, text
+      FROM (
+        SELECT *, row_number() OVER (PARTITION BY uuid, block_index ORDER BY is_fork_copy, session_id) AS copy_rank
+        FROM (
+          SELECT uuid, 0 AS block_index, session_id, agent_id, project, git_branch, ts, is_subagent, is_fork_copy, 'user' AS role, text FROM user_prompts
+          UNION ALL
+          SELECT uuid, block_index, session_id, agent_id, project, git_branch, ts, is_subagent, is_fork_copy, 'assistant' AS role, text FROM assistant_text
+        )
+      )
+      WHERE copy_rank = 1
+    acceleration:
+      enabled: true
+      refresh_check_interval: 30s
+    columns:
+      - name: text
+        full_text_search:
+          enabled: true
+          row_id:
+            - uuid
+            - block_index
