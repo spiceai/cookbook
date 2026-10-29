@@ -170,7 +170,7 @@ SELECT _location, count(*) AS reviews FROM imdb GROUP BY _location ORDER BY _loc
 Time: 0.002303666 seconds. 3 rows.
 ```
 
-The `from` of `imdb` names no revision, so the dataset follows the `main` branch. Each query first resolves `main` to a commit, then lists and reads only that commit's files, so a query never mixes two versions of a dataset, even if the dataset changes while the query runs. For a public dataset read without a token, each `_location` is an `hf://` path that DuckDB and `HfFileSystem` can read as is.
+The `from` of `imdb` names no revision, so the dataset follows the `main` branch. Each query first resolves `main` to a commit, then lists and reads only that commit's files, so a query never mixes two versions of a dataset, even if the dataset changes while the query runs. For a public dataset read without a token, each `_location` is an `hf://` path that DuckDB and `HfFileSystem` can read as is. If Spice finds a token, for example in `HF_TOKEN`, it reads with it, and each `_location` names a host of the dataset's own instead, such as `hf://datasets.<key>/stanfordnlp/imdb@<commit>/...`, so that no two datasets with different credentials share a client.
 
 ## Step 4. Join JSONL and TSV files
 
@@ -344,9 +344,11 @@ Private datasets, and gated datasets whose access conditions you must accept fir
 
    Setting `hf_token` is optional. When a dataset doesn't set it, the connector loads the token from the `hf_token` secret, which the default `env` secret store reads from `HF_TOKEN` in `.env.local` or in the environment. A token in `.env.local` therefore applies to every Hugging Face dataset in the Spicepod. Authenticated requests also get higher Hub rate limits.
 
+   Releases after v2.4.0 (with [spiceai/spiceai#15442](https://github.com/spiceai/spiceai/pull/15442)) also use the token order of the `hf` CLI: without the `hf_token` secret, the connector uses `HF_TOKEN` or `HUGGING_FACE_HUB_TOKEN` from the environment, then the token that `hf auth login` saves in `~/.cache/huggingface/token`. v2.4 reads neither `HUGGING_FACE_HUB_TOKEN` nor that file.
+
 4. Stop `spice run` with `Ctrl+C` and start it again, so that it loads the token from `.env.local`.
 
-Without access, a dataset fails to load, and `spice datasets` reports why. For example, this is the gated [meta-llama/Llama-3.1-8B-evals](https://huggingface.co/datasets/meta-llama/Llama-3.1-8B-evals) dataset, read without a token:
+Without access, a dataset fails to load, and `spice datasets` reports why. For example, this is the gated [meta-llama/Llama-3.1-8B-evals](https://huggingface.co/datasets/meta-llama/Llama-3.1-8B-evals) dataset, read without a token on v2.4:
 
 ```console
  NAME           FROM                                                                                      REPLICATION  ACCELERATION  STATUS  ERROR
@@ -355,6 +357,8 @@ Without access, a dataset fails to load, and `spice datasets` reports why. For e
 
 When `hf_token` is set but can't read the dataset, the message reads `... is gated: accept its access conditions at ...` instead.
 
+Releases after v2.4.0 print ``... is gated and no token is set: accept its access conditions at ..., then set `hf_token`, set `HF_TOKEN`, or run `hf auth login`.`` when no token is found. When a token can't read the dataset, they print `... is gated: accept its access conditions at ... with the account the token from '~/.cache/huggingface/token' belongs to`, which names where the token came from: `hf_token`, `HF_TOKEN`, or the file `hf auth login` saved.
+
 ## Troubleshooting
 
 When a dataset doesn't load, run `spice datasets` in another terminal: its `ERROR` column holds the reason, even when the runtime log doesn't show it.
@@ -362,8 +366,8 @@ When a dataset doesn't load, run `spice datasets` in another terminal: its `ERRO
 | Error                                                                                  | Fix                                                                                                                                                         |
 | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `'qrels' in dataset 'mteb/scifact' holds files of more than one format (.jsonl, .tsv)` | The folder in `from` holds more than one data format. Narrow `from` to a file or a glob, such as `hf://datasets/mteb/scifact/qrels/*.tsv`, or set `file_format` (for example `file_format: tsv`) under the dataset's `params`. |
-| `Insufficient permissions ... is gated and no hf_token is set`                         | Set a token, as in [Private and gated datasets](#private-and-gated-datasets).                                                                              |
-| `Insufficient permissions ... is gated: accept its access conditions`                  | Check that the token is valid, and accept the dataset's access conditions on the Hub with the account the token belongs to.                                  |
+| `Insufficient permissions ... is gated and no hf_token is set` (v2.4) or `... is gated and no token is set` | Set a token, as in [Private and gated datasets](#private-and-gated-datasets).                                                                              |
+| `Insufficient permissions ... is gated: accept its access conditions`                  | Check that the token the message names is valid, and accept the dataset's access conditions on the Hub with the account that token belongs to.             |
 
 ## Clean up
 
