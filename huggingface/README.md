@@ -344,7 +344,7 @@ Private datasets, and gated datasets whose access conditions you must accept fir
 
    Setting `hf_token` is optional. When a dataset doesn't set it, the connector loads the token from the `hf_token` secret, which the default `env` secret store reads from `HF_TOKEN` in `.env.local` or in the environment. A token in `.env.local` therefore applies to every Hugging Face dataset in the Spicepod. Authenticated requests also get higher Hub rate limits.
 
-   Releases after v2.4.0 (with [spiceai/spiceai#15442](https://github.com/spiceai/spiceai/pull/15442)) also use the token order of the `hf` CLI: without the `hf_token` secret, the connector uses `HF_TOKEN` or `HUGGING_FACE_HUB_TOKEN` from the environment, then the token that `hf auth login` saves in `~/.cache/huggingface/token`. v2.4 reads neither `HUGGING_FACE_HUB_TOKEN` nor that file.
+   Spice builds that include [spiceai/spiceai#15442](https://github.com/spiceai/spiceai/pull/15442), which is on `trunk` but not in v2.4.0 or v2.4.1, also use the token order of the `hf` CLI: without the `hf_token` secret, the connector uses `HF_TOKEN` or `HUGGING_FACE_HUB_TOKEN` from the environment, then the token that `hf auth login` saves in `~/.cache/huggingface/token`. v2.4 releases read neither `HUGGING_FACE_HUB_TOKEN` nor that file.
 
 4. Stop `spice run` with `Ctrl+C` and start it again, so that it loads the token from `.env.local`.
 
@@ -357,7 +357,7 @@ Without access, a dataset fails to load, and `spice datasets` reports why. For e
 
 When `hf_token` is set but can't read the dataset, the message reads `... is gated: accept its access conditions at ...` instead.
 
-Releases after v2.4.0 print ``... is gated and no token is set: accept its access conditions at ..., then set `hf_token`, set `HF_TOKEN`, or run `hf auth login`.`` when no token is found. When a token can't read the dataset, they print `... is gated: accept its access conditions at ... with the account the token from '~/.cache/huggingface/token' belongs to`, which names where the token came from: `hf_token`, `HF_TOKEN`, or the file `hf auth login` saved.
+Builds that include spiceai/spiceai#15442 print ``... is gated and no token is set: accept its access conditions at ..., then set `hf_token`, set `HF_TOKEN`, or run `hf auth login`.`` when no token is found. When a token can't read the dataset, they print `... is gated: accept its access conditions at ... with the account the token from '~/.cache/huggingface/token' belongs to`, which names where the token came from: `hf_token`, `HF_TOKEN`, or the file `hf auth login` saved.
 
 ## Troubleshooting
 
