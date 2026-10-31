@@ -1,6 +1,6 @@
 # Running Qwen3.5 Locally
 
-Works with `v2.4+` builds that include the [llama.cpp GGUF engine](https://github.com/spiceai/spiceai/pull/7864), merged to trunk on 2026-10-24. The engine is not in `v2.4.0`, so `v2.4.0` and earlier releases refuse this model's `qwen35` GGUF architecture; see [Prerequisites](#prerequisites).
+Works with `v2.4+` builds that include the [llama.cpp GGUF engine](https://github.com/spiceai/spiceai/pull/7864), merged to trunk on 2026-10-24. No release includes the engine yet, so `v2.4.1` and earlier releases refuse this model's `qwen35` GGUF architecture; see [Prerequisites](#prerequisites).
 
 [Qwen3.5](https://huggingface.co/collections/Qwen/qwen35) is Alibaba's February 2026 family of hybrid-thinking, multimodal open-weight models under the Apache 2.0 license. This recipe serves **Qwen3.5-9B** on an Apple silicon Mac with Spice's built-in llama.cpp engine and Metal, grounds it in a public dataset through Spice's SQL tools, and shows how to turn its reasoning on and off per request. An [abliterated variant](#abliterated-variant) of the same model is in [`abliterated/`](./abliterated/).
 
@@ -19,7 +19,7 @@ The 0.8B, 2B and 4B models also fit, with the same spicepod shape and Unsloth re
 ## Prerequisites
 
 - An Apple silicon Mac with 16 GB or more unified memory. Spice's llama.cpp engine runs the model on the GPU through Metal.
-- The [Spice CLI](https://spiceai.org/docs/installation). `spice version` must report a runtime with the `+models.metal` suffix and the llama.cpp GGUF engine. Spice installs the Metal build on Apple silicon by default. The engine merged to trunk on 2026-10-24 and is not in `v2.4.0`; run `spice upgrade` once a later release that includes it ships, or use a trunk build in the meantime (see [Using a trunk build](#using-a-trunk-build)).
+- The [Spice CLI](https://spiceai.org/docs/installation). `spice version` must report a runtime with the `+models.metal` suffix and the llama.cpp GGUF engine. Spice installs the Metal build on Apple silicon by default. The engine merged to trunk on 2026-10-24 and is not in `v2.4.1` or any earlier release; run `spice upgrade` once a later release that includes it ships, or use a trunk build in the meantime (see [Using a trunk build](#using-a-trunk-build)).
 - 7 GB of free disk for the model, which Spice downloads into the Hugging Face cache at `~/.cache/huggingface/hub`.
 - Network access to `huggingface.co` and to the public S3 bucket `spiceai-demo-datasets`. No Hugging Face account is needed.
 
@@ -183,7 +183,7 @@ On an M3 Max, Qwen3.5-9B at 4-bit decodes about 43 tokens per second with a 1,60
 | Symptom                                                                                              | Cause and fix                                                                                                                                                            |
 | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `Architecture 'qwen35' in <file> is not supported by this Spice release`                             | The runtime predates the llama.cpp GGUF engine. Upgrade Spice, or run a trunk build (see below).                                                                         |
-| `Unknown GGUF architecture 'qwen35'`                                                                  | A `v2.4.0` or earlier runtime, which serves GGUFs with mistral.rs. The runtime then never reports ready ([spiceai/spiceai#15744](https://github.com/spiceai/spiceai/issues/15744)). Same fix. |
+| `Unknown GGUF architecture 'qwen35'`                                                                  | A `v2.4.1` or earlier runtime, which serves GGUFs with mistral.rs. The runtime then never reports ready ([spiceai/spiceai#15744](https://github.com/spiceai/spiceai/issues/15744)). Same fix. |
 | The model never finishes loading, or macOS becomes unresponsive                                      | The file does not fit the GPU's share of memory. Choose a smaller file from the [Memory](#memory) table.                                                                 |
 | `the prompt is N tokens, and the model's context holds 8192`                                         | The conversation outgrew the context. Start a new chat.                                                                                                                  |
 | `spice chat "<question>"` prints nothing for a question that needs the dataset tools | [spiceai/spiceai#15579](https://github.com/spiceai/spiceai/issues/15579): the one-shot form stalls on tool calls. Use the interactive REPL (`spice chat`, then type the question), pipe the question on standard input (`echo "<question>" \| spice chat`), or call the API. |
