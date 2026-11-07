@@ -7,7 +7,7 @@ Use the [Spice Java SDK](https://github.com/spiceai/spice-java) to query Spice f
 ## What This Sample Includes
 
 - `App.java`: Query a local Spice runtime.
-- `Cloud.java`: Query Spice.ai Cloud with inline replacement values.
+- `Cloud.java`: Query Spice.ai Cloud, reading the API key from the `SPICE_API_KEY` environment variable.
 
 ## Prerequisites
 
@@ -70,7 +70,7 @@ Set your API key for the commands in this README:
 export SPICE_API_KEY="your_api_key"
 ```
 
-The cloud snippet keeps an inline API key placeholder by design. Replace the API key placeholder in `src/main/java/ai/spice/example/Cloud.java` with `${SPICE_API_KEY}`, then run:
+`src/main/java/ai/spice/example/Cloud.java` reads that variable with `System.getenv("SPICE_API_KEY")`, so run it as is:
 
 ```bash
 mvn exec:exec -Dexec.mainClass="ai.spice.example.Cloud"
