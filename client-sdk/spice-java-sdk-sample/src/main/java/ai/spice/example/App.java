@@ -32,7 +32,7 @@ import ai.spice.SpiceClient;
 public class App {
     public static void main(String[] args) {
         try (SpiceClient client = SpiceClient.builder().build();
-                ArrowReader reader = client.queryWithParams(
+                ArrowReader reader = client.sqlWithParams(
                         "SELECT VendorID, tpep_pickup_datetime, fare_amount FROM taxi_trips LIMIT ?",
                         Param.int32(10))) {
 

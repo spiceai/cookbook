@@ -3,8 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
 
-	"github.com/spiceai/gospice/v8"
+	"github.com/spiceai/gospice/v9"
 )
 
 func main() {
@@ -12,7 +13,7 @@ func main() {
 	defer spice.Close()
 
 	err := spice.Init(
-		gospice.WithApiKey("API_KEY"),
+		gospice.WithApiKey(os.Getenv("SPICE_API_KEY")),
 		gospice.WithHttpAddress("https://data.spiceai.io"),
 		gospice.WithFlightAddress("flight.spiceai.io:443"),
 	)

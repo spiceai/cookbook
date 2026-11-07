@@ -1,5 +1,5 @@
 # /// script
-# requires-python = ">=3.9"
+# requires-python = ">=3.11"
 # dependencies = [
 #     "spicepy",
 #     "adbc-driver-flightsql",
@@ -7,7 +7,7 @@
 # ]
 #
 # [tool.uv.sources]
-# spicepy = { git = "https://github.com/spiceai/spicepy", rev = "v3.1.0" }
+# spicepy = { git = "https://github.com/spiceai/spicepy", rev = "v4.0.1" }
 # ///
 from spicepy import Client
 
@@ -21,7 +21,7 @@ def main():
     query_with_sql_params(client, 5)
 
 def query_with_sql(client: Client):
-    data = client.query(
+    data = client.sql(
         'SELECT "VendorID", "tpep_pickup_datetime", "fare_amount" FROM taxi_trips LIMIT 10'
     )
 
@@ -36,7 +36,7 @@ def query_with_sql(client: Client):
 
 
 def query_with_sql_params(client: Client, limit: int):
-    data = client.query_with_params(
+    data = client.sql_with_params(
         'SELECT "VendorID", "tpep_pickup_datetime", "fare_amount" FROM taxi_trips LIMIT $1',
         params=[limit],
     )
