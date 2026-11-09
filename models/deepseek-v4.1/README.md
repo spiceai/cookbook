@@ -1,6 +1,6 @@
 # Running DeepSeek V4.1 Locally
 
-Works with `v2.4+` builds that include the [llama.cpp GGUF engine](https://github.com/spiceai/spiceai/pull/7864) once that engine's llama.cpp supports the `deepseek41` GGUF architecture; see [Runtime support](#runtime-support).
+No Spice release can run this recipe yet: Spice v2.4.1, the latest release, cannot load the `deepseek41` GGUF architecture that DeepSeek-V4.1 uses. The steps below are ready for the first release that can; [Runtime support](#runtime-support) describes what is missing.
 
 [DeepSeek-V4.1-Flash](https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash) (September 2026) and its [1017 update](https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017) (October 17, 2026) are DeepSeek's newest open-weight models, under the MIT license: a 552B-parameter mixture-of-experts backbone with a 196B-parameter Engram memory table, a 1M-token context, and a `reasoning_effort` that takes `low`, `medium`, `high`, `max` or an integer from 1 to 100. The 1017 update raised coding and agentic scores (Terminal-Bench 4.0 from 31.2 to 42.3) and shortened its outputs.
 
@@ -97,14 +97,14 @@ Set `reasoning_effort` explicitly: `none` for a direct answer, or `low`, `medium
 
 ## Abliterated variant
 
-[`abliterated/`](./abliterated/) is the same recipe with [orcarouter/DeepSeek-V4.1-Flash-1017-abliterated](https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF), a version of DeepSeek-V4.1-Flash-1017 with its refusal behavior removed by abliteration, documented with before-and-after measurements. Read its README before using it: an abliterated model has none of the base model's safety training, the repository is gated behind a Hugging Face token, and its default build needs a 512 GB Mac Studio.
+[`abliterated/`](./abliterated/) is the same recipe with [orcarouter/DeepSeek-V4.1-Flash-1017-abliterated](https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF), a version of DeepSeek-V4.1-Flash-1017 that abliteration makes refuse far fewer requests, documented with before-and-after measurements. Read its README before using it: an abliterated model rarely declines a harmful request, so it needs your own moderation, the repository is gated behind a Hugging Face token, and its default build needs a 512 GB Mac Studio.
 
 ## Troubleshooting
 
 | Symptom                                                                          | Cause and fix                                                                                                                      |
 | -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
 | `Architecture 'deepseek41' in <file> is not supported by this Spice release`     | The runtime's llama.cpp predates `deepseek41` support; see [Runtime support](#runtime-support).                                    |
-| `Unknown GGUF architecture 'deepseek41'`                                          | A `v2.3.x` or `v2.4.0-rc` runtime. Same fix.                                                                                       |
+| `Unknown GGUF architecture 'deepseek41'`                                          | Spice v2.4.1 or earlier: no release can load this model yet. See [Runtime support](#runtime-support).                             |
 | Adding `tools: auto` makes every request fail with `cannot convert value into pairs` | This model's chat template iterates tool-call arguments, and the `list_datasets` call Spice primes the conversation with has empty arguments ([spiceai/spiceai#15578](https://github.com/spiceai/spiceai/issues/15578)). Leave tools off until it is fixed. |
 | The model never finishes loading, or macOS becomes unresponsive                  | The weights do not fit the GPU's share of memory. This model needs a 256 GB or larger Mac; see [Memory](#memory).                  |
 | A `dspark-*.gguf` file listed in `files` fails the load                            | It is not a shard of the model. Remove it.                                                                                         |
