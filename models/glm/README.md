@@ -1,6 +1,6 @@
 # Running GLM Locally
 
-Works with `v2.4+` builds that include the [llama.cpp GGUF engine](https://github.com/spiceai/spiceai/pull/7864), merged to trunk on 2026-10-24. `v2.4.0-rc.3` and earlier releases refuse the `glm4moe` and `glm5-next` GGUF architectures; see [Prerequisites](#prerequisites).
+No Spice release includes the llama.cpp GGUF engine this recipe needs yet: `v2.4.1` and earlier releases refuse the `deepseek2` GGUF architecture of GLM-4.7-Flash and the `glm5-next` architecture of GLM-5.3-Flash. Until a release includes the engine, follow the build steps under [Prerequisites](#prerequisites).
 
 Z.ai publishes its GLM models as open weights under the MIT license. The current flagships are [GLM-5.3](https://huggingface.co/zai-org/GLM-5.3) (744B parameters, 40B active) and [GLM-5.3-Flash](https://huggingface.co/zai-org/GLM-5.3-Flash) (320B, 18B active), both released in August 2026. Neither fits a standard MacBook Pro: the smallest GLM-5.3-Flash build is 93 GB, a 128 GB Mac at the least. The GLM that runs on a 36 GB MacBook Pro is [GLM-4.7-Flash](https://huggingface.co/zai-org/GLM-4.7-Flash), Z.ai's January 2026 30B mixture-of-experts reasoning model with about 3.6B active parameters and a 200K context.
 
@@ -18,7 +18,7 @@ GLM-5.2 (June 2026) and GLM-5.3 are the 744B-class flagships: their smallest GGU
 ## Prerequisites
 
 - An Apple silicon Mac with 32 GB or more unified memory for the default file, or 24 GB with the 3-bit file (see [Memory](#memory)). Spice's llama.cpp engine runs the model on the GPU through Metal.
-- The [Spice CLI](https://spiceai.org/docs/installation). `spice version` must report a runtime with the `+models.metal` suffix and the llama.cpp GGUF engine. The engine merged to trunk on 2026-10-24, after `v2.4.0-rc.3`; run `spice upgrade` once a release that includes it ships, or use a trunk build in the meantime (see [Using a trunk build](#using-a-trunk-build)).
+- The [Spice CLI](https://spiceai.org/docs/installation). `spice version` must report a runtime with the `+models.metal` suffix and the llama.cpp GGUF engine. No release includes the engine yet, and `v2.4.1` and earlier releases refuse this model. Run `spice upgrade` once a release that includes it ships; until then, use a trunk build (see [Using a trunk build](#using-a-trunk-build)).
 - 18 GB of free disk for the model, which Spice downloads into the Hugging Face cache at `~/.cache/huggingface/hub`.
 - Network access to `huggingface.co`. No Hugging Face account is needed.
 
@@ -145,8 +145,8 @@ A mixture-of-experts model routes each token through only a small subset of its 
 
 | Symptom                                                                                  | Cause and fix                                                                                                      |
 | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `Architecture 'glm4moe' in <file> is not supported by this Spice release` (or `glm5-next`) | The runtime predates the llama.cpp GGUF engine. Upgrade Spice, or run a trunk build (see below).                 |
-| `Unknown GGUF architecture 'glm4moe'`                                                     | A `v2.3.x` or `v2.4.0-rc` runtime, which serves GGUFs with mistral.rs. Same fix.                                   |
+| `Architecture 'deepseek2' in <file> is not supported by this Spice release` (or `glm5-next`) | The runtime predates the llama.cpp GGUF engine. Upgrade Spice, or run a trunk build (see below).                 |
+| `Unknown GGUF architecture 'deepseek2'` (or `glm5-next`)                                   | A `v2.4.1` or earlier runtime, which has no llama.cpp GGUF engine. The runtime then never reports ready ([spiceai/spiceai#15744](https://github.com/spiceai/spiceai/issues/15744)). Run a trunk build (see below).                                   |
 | `Model 'glm-5.3-flash' always reasons, so reasoning_effort: none can't turn reasoning off` | GLM-5.3-Flash's template has no off switch. Use `low` for the least reasoning.                                     |
 | Adding `tools: auto` makes every request fail with `cannot convert value into pairs` | This model's chat template iterates tool-call arguments, and the `list_datasets` call Spice primes the conversation with has empty arguments ([spiceai/spiceai#15578](https://github.com/spiceai/spiceai/issues/15578)). Leave tools off until it is fixed. |
 | The model never finishes loading, or macOS becomes unresponsive                          | The file does not fit the GPU's share of memory. Choose a smaller file from the [Memory](#memory) table.           |

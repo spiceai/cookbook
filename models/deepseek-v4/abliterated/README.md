@@ -1,6 +1,6 @@
 # Running DeepSeek V4 Locally: Abliterated Variant
 
-Works with `v2.4+` builds that include the [llama.cpp GGUF engine](https://github.com/spiceai/spiceai/pull/7864); see the [base recipe](../README.md#prerequisites).
+No Spice release includes the llama.cpp GGUF engine this recipe needs yet; until one does, follow the build steps in the [base recipe](../README.md#prerequisites).
 
 This directory is the [DeepSeek V4 recipe](../README.md) with the model swapped for [huihui-ai/Huihui-DeepSeek-V4-Flash-0731-abliterated-GGUF](https://huggingface.co/huihui-ai/Huihui-DeepSeek-V4-Flash-0731-abliterated-GGUF), huihui-ai's 2-bit GGUF (`DeepSeek-V4-Flash-Q2-0731.gguf`, 86.7 GB, one file) of DeepSeek-V4-Flash-0731 with its refusal behavior removed by abliteration. It needs the same 128 GB Mac as the base recipe. Everything else is unchanged.
 

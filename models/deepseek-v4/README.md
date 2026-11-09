@@ -1,6 +1,6 @@
 # Running DeepSeek V4 Locally
 
-Works with `v2.4+` builds that include the [llama.cpp GGUF engine](https://github.com/spiceai/spiceai/pull/7864), merged to trunk on 2026-10-24. `v2.4.0-rc.3` and earlier releases refuse this model's `deepseek4` GGUF architecture; see [Prerequisites](#prerequisites).
+No Spice release includes the llama.cpp GGUF engine this recipe needs yet: `v2.4.1` and earlier releases refuse this model's `deepseek4` GGUF architecture. Until a release includes the engine, follow the build steps under [Prerequisites](#prerequisites).
 
 DeepSeek-V4 is DeepSeek's 2026 generation of open-weight mixture-of-experts models under the MIT license: DeepSeek-V4-Pro (1.6T parameters, 49B active) and DeepSeek-V4-Flash (284B, 13B active), previewed in April 2026, with [DeepSeek-V4-Flash-0731](https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-0731) as the official Flash release on July 31. Both are 1M-context reasoning models with `low`, `high` and `max` reasoning levels.
 
@@ -10,12 +10,12 @@ DeepSeek-V4 is DeepSeek's 2026 generation of open-weight mixture-of-experts mode
 | ----------------------- | -------------------- | ------------- | ------------- | ------------------------------------------- |
 | DeepSeek-V4-Flash-0731  | 284B MoE, 13B active | July 2026     | 82.5 GB       | A 128 GB Mac (this recipe)                  |
 | DeepSeek-V4-Pro-0813    | 1.6T MoE, 49B active | August 2026   | 400 GB-class  | No Mac                                      |
-| DeepSeek-V4.1-Flash-1017 | 552B + 196B Engram  | October 2026  | 233 GB        | No MacBook Pro; a recipe is pending runtime support ([spiceai/cookbook#739](https://github.com/spiceai/cookbook/pull/739)) |
+| DeepSeek-V4.1-Flash-1017 | 552B + 196B Engram  | October 2026  | 233 GB        | No MacBook Pro; no recipe yet |
 
 ## Prerequisites
 
 - An Apple silicon Mac with 128 GB unified memory. Spice's llama.cpp engine runs the model on the GPU through Metal, and Metal reports 107 GiB of a 128 GiB Mac as available to the GPU (`recommendedMaxWorkingSetSize`), which holds the default 90.9 GB file with room for the KV cache.
-- The [Spice CLI](https://spiceai.org/docs/installation). `spice version` must report a runtime with the `+models.metal` suffix and the llama.cpp GGUF engine. The engine merged to trunk on 2026-10-24, after `v2.4.0-rc.3`; run `spice upgrade` once a release that includes it ships, or use a trunk build in the meantime (see [Using a trunk build](#using-a-trunk-build)).
+- The [Spice CLI](https://spiceai.org/docs/installation). `spice version` must report a runtime with the `+models.metal` suffix and the llama.cpp GGUF engine. No release includes the engine yet, and `v2.4.1` and earlier releases refuse this model. Run `spice upgrade` once a release that includes it ships; until then, use a trunk build (see [Using a trunk build](#using-a-trunk-build)).
 - 95 GB of free disk for the model, which Spice downloads into the Hugging Face cache at `~/.cache/huggingface/hub`. The download takes about two hours at 12 MB/s.
 - Network access to `huggingface.co`. No Hugging Face account is needed.
 
@@ -112,7 +112,7 @@ With Unsloth's chat template, DeepSeek-V4-Flash answers directly unless a reques
 | Symptom                                                                       | Cause and fix                                                                                                                 |
 | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | `Architecture 'deepseek4' in <file> is not supported by this Spice release`   | The runtime predates the llama.cpp GGUF engine. Upgrade Spice, or run a trunk build (see below).                              |
-| `GGUF architecture deepseek4 (DeepSeek-V4) is recognized but not implemented` | A `v2.3.x` or `v2.4.0-rc` runtime, which serves GGUFs with mistral.rs. Same fix.                                              |
+| `GGUF architecture deepseek4 (DeepSeek-V4) is recognized but not implemented` | A `v2.4.1` or earlier runtime, which has no llama.cpp GGUF engine. The runtime then never reports ready ([spiceai/spiceai#15744](https://github.com/spiceai/spiceai/issues/15744)). Run a trunk build (see below).                                              |
 | Adding `tools: auto` makes every request fail with `cannot convert value into pairs` | This model's chat template iterates tool-call arguments, and the `list_datasets` call Spice primes the conversation with has empty arguments ([spiceai/spiceai#15578](https://github.com/spiceai/spiceai/issues/15578)). Leave tools off until it is fixed. |
 | The model never finishes loading, or macOS becomes unresponsive               | The build does not fit the GPU's share of memory. Choose a smaller build from the [Memory](#memory) table, or close other apps. |
 | A `dspark-*.gguf` file listed in `files` fails the load                         | It is not a shard of the model. Remove it.                                                                                     |

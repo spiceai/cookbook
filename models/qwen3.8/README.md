@@ -1,6 +1,6 @@
 # Running Qwen3.8 Locally
 
-Works with `v2.4+` builds that include the [llama.cpp GGUF engine](https://github.com/spiceai/spiceai/pull/7864), merged to trunk on 2026-10-24. `v2.4.0-rc.3` and earlier releases refuse this model's `qwen35` GGUF architecture; see [Prerequisites](#prerequisites).
+No Spice release includes the llama.cpp GGUF engine this recipe needs yet: `v2.4.1` and earlier releases refuse this model's `qwen35` GGUF architecture. Until a release includes the engine, follow the build steps under [Prerequisites](#prerequisites).
 
 [Qwen3.8](https://huggingface.co/collections/Qwen/qwen38) is Alibaba's August 2026 generation of open-weight models. This recipe serves **Qwen3.8-27B**, the dense 27B model released under the Apache 2.0 license, on an Apple silicon Mac with Spice's built-in llama.cpp engine and Metal, grounds the model in a public dataset through Spice's SQL tools, and shows the four reasoning levels the model offers. The model's multi-token-prediction (MTP) draft head is one line away in the spicepod. An [abliterated variant](#abliterated-variant) is in [`abliterated/`](./abliterated/).
 
@@ -13,7 +13,7 @@ Works with `v2.4+` builds that include the [llama.cpp GGUF engine](https://githu
 ## Prerequisites
 
 - An Apple silicon Mac with 32 GB or more unified memory for the default file, or 16 GB to 24 GB with a smaller file (see [Memory](#memory)). Spice's llama.cpp engine runs the model on the GPU through Metal.
-- The [Spice CLI](https://spiceai.org/docs/installation). `spice version` must report a runtime with the `+models.metal` suffix and the llama.cpp GGUF engine. The engine merged to trunk on 2026-10-24, after `v2.4.0-rc.3`; run `spice upgrade` once a release that includes it ships, or use a trunk build in the meantime (see [Using a trunk build](#using-a-trunk-build)).
+- The [Spice CLI](https://spiceai.org/docs/installation). `spice version` must report a runtime with the `+models.metal` suffix and the llama.cpp GGUF engine. No release includes the engine yet, and `v2.4.1` and earlier releases refuse this model. Run `spice upgrade` once a release that includes it ships; until then, use a trunk build (see [Using a trunk build](#using-a-trunk-build)).
 - 18 GB of free disk for the model (20 GB with the optional draft head), which Spice downloads into the Hugging Face cache at `~/.cache/huggingface/hub`.
 - Network access to `huggingface.co` and to the public S3 bucket `spiceai-demo-datasets`. No Hugging Face account is needed.
 
@@ -177,7 +177,7 @@ models:
 | Symptom                                                                        | Cause and fix                                                                                                      |
 | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
 | `Architecture 'qwen35' in <file> is not supported by this Spice release`       | The runtime predates the llama.cpp GGUF engine. Upgrade Spice, or run a trunk build (see below).                   |
-| `Unknown GGUF architecture 'qwen35'`                                            | A `v2.3.x` or `v2.4.0-rc` runtime, which serves GGUFs with mistral.rs. Same fix.                                   |
+| `Unknown GGUF architecture 'qwen35'`                                            | A `v2.4.1` or earlier runtime, which has no llama.cpp GGUF engine. The runtime then never reports ready ([spiceai/spiceai#15744](https://github.com/spiceai/spiceai/issues/15744)). Run a trunk build (see below).                                   |
 | `Model 'qwen3.8' takes reasoning_effort ... and ignores 'high'` (HTTP 400)      | Qwen3.8's template names `xhigh`, `medium`, `low` and `none`. Use one of those.                                    |
 | The model never finishes loading, or macOS becomes unresponsive                | The file does not fit the GPU's share of memory. Choose a smaller file from the [Memory](#memory) table.           |
 | `spice chat "<question>"` prints nothing for a question that needs the dataset tools | [spiceai/spiceai#15579](https://github.com/spiceai/spiceai/issues/15579): the one-shot form stalls on tool calls. Use the interactive REPL (`spice chat`, then type the question), pipe the question on standard input (`echo "<question>" \| spice chat`), or call the API. |
