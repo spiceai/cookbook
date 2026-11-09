@@ -51,23 +51,34 @@ datasets:
 views:
   # Fields shared by every line type. All other views read from this one.
   # Files are <project>/<session>.jsonl or <project>/<session>/subagents/agent-<id>.jsonl.
+  # A background session (sessionKind on every line) starts with a copy of its
+  # parent's lines, which keep their uuid. is_fork_copy marks those copies; the
+  # background session's own new lines have a uuid no other session has.
   - name: lines
     sql: |
       SELECT
-        column_1->>'type'                                                        AS type,
-        regexp_match(_location, '/([0-9a-f-]{36})(\.jsonl$|/subagents/)')[1]     AS session_id,
-        regexp_match(_location, '/subagents/agent-([0-9a-z]+)\.jsonl$')[1]       AS agent_id,
-        _location                                                                AS file,
-        column_1->>'uuid'                                                        AS uuid,
-        column_1->>'parentUuid'                                                  AS parent_uuid,
-        to_timestamp(column_1->>'timestamp')                                     AS ts,
-        column_1->>'cwd'                                                         AS project,
-        column_1->>'gitBranch'                                                   AS git_branch,
-        column_1->>'version'                                                     AS cc_version,
-        coalesce((column_1->>'isSidechain')::boolean, false)                     AS is_subagent,
-        column_1 ? 'sessionKind'                                                 AS is_fork_copy,
-        column_1                                                                 AS line
-      FROM transcripts
+        t.column_1->>'type'                                                      AS type,
+        regexp_match(t._location, '/([0-9a-f-]{36})(\.jsonl$|/subagents/)')[1]   AS session_id,
+        regexp_match(t._location, '/subagents/agent-([0-9a-z]+)\.jsonl$')[1]     AS agent_id,
+        t._location                                                              AS file,
+        t.column_1->>'uuid'                                                      AS uuid,
+        t.column_1->>'parentUuid'                                                AS parent_uuid,
+        to_timestamp(t.column_1->>'timestamp')                                   AS ts,
+        t.column_1->>'cwd'                                                       AS project,
+        t.column_1->>'gitBranch'                                                 AS git_branch,
+        t.column_1->>'version'                                                   AS cc_version,
+        coalesce((t.column_1->>'isSidechain')::boolean, false)                   AS is_subagent,
+        t.column_1 ? 'sessionKind' AND d.shared_uuid IS NOT NULL                 AS is_fork_copy,
+        t.column_1                                                               AS line
+      FROM transcripts t
+      LEFT JOIN (
+        -- uuids that occur in more than one session.
+        SELECT column_1->>'uuid'                                                 AS shared_uuid
+        FROM transcripts
+        WHERE column_1->>'uuid' IS NOT NULL
+        GROUP BY 1
+        HAVING count(DISTINCT regexp_match(_location, '/([0-9a-f-]{36})(\.jsonl$|/subagents/)')[1]) > 1
+      ) d ON d.shared_uuid = t.column_1->>'uuid'
 
   # ---- user lines ----------------------------------------------------------
 
@@ -184,6 +195,9 @@ views:
 
   # A tool call with its result. Result columns are NULL when the call never
   # got a result (session ended or crashed mid-call).
+  # For a background call (Bash run_in_background, background Agent), the
+  # result only tells that the task started. task_status and task_exit_code
+  # come from the later <task-notification>; they are NULL until it arrives.
   # Paired with UNION ALL + GROUP BY, not a JOIN: on a join, a query such as
   # `SELECT input->>'command' FROM tool_runs WHERE is_error ORDER BY ts LIMIT 1`
   # fails planning ("ambiguous ... __datafusion_extracted_N").
@@ -207,25 +221,43 @@ views:
           bool_or(is_error)                                                      AS is_error,
           max(output)                                                            AS output,
           max(note)                                                              AS note,
-          max(tool_use_result)                                                   AS tool_use_result
+          max(tool_use_result)                                                   AS tool_use_result,
+          max(task_status)                                                       AS task_status,
+          max(task_exit_code)                                                    AS task_exit_code
         FROM (
           SELECT 'call' AS kind, uuid, block_index, session_id, agent_id, project, git_branch, ts, is_fork_copy,
             tool_use_id, tool, input,
             CAST(NULL AS BOOLEAN) AS is_error, CAST(NULL AS VARCHAR) AS output,
-            CAST(NULL AS VARCHAR) AS note, CAST(NULL AS VARCHAR) AS tool_use_result
+            CAST(NULL AS VARCHAR) AS note, CAST(NULL AS VARCHAR) AS tool_use_result,
+            CAST(NULL AS VARCHAR) AS task_status, CAST(NULL AS BIGINT) AS task_exit_code
           FROM tool_calls
           UNION ALL
           SELECT 'result', uuid, CAST(NULL AS BIGINT), session_id, agent_id, CAST(NULL AS VARCHAR),
             CAST(NULL AS VARCHAR), ts, is_fork_copy, tool_use_id, CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR),
-            is_error, output, note, tool_use_result
+            is_error, output, note, tool_use_result, CAST(NULL AS VARCHAR), CAST(NULL AS BIGINT)
           FROM tool_results
+          UNION ALL
+          -- status: completed, failed, killed or stopped. The summary ends with
+          -- "(exit code N)" or "failed with exit code N" for a shell command.
+          SELECT 'notification', uuid, CAST(NULL AS BIGINT), session_id, agent_id, CAST(NULL AS VARCHAR),
+            CAST(NULL AS VARCHAR), ts, is_fork_copy,
+            regexp_match(text, '<tool-use-id>([^<]+)</tool-use-id>')[1],
+            CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS BOOLEAN), CAST(NULL AS VARCHAR),
+            CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR),
+            regexp_match(text, '<status>([a-z]+)</status>')[1],
+            CAST(regexp_match(text, '<summary>[^<]*exit code (-?\d+)\)?</summary>')[1] AS bigint)
+          FROM user_injected
+          WHERE tag = 'task-notification'
         )
         GROUP BY session_id, agent_id, tool_use_id
         HAVING bool_or(kind = 'call')
       )
 
   # Bash calls. Failed commands start their output with "Exit code N"; a denied
-  # or rejected command is an error with no exit code.
+  # or rejected command is an error with no exit code. A background command
+  # takes its exit code from its completion notification, so exit_code is NULL
+  # while it runs, or when it was killed or stopped. duration_ms of a background
+  # command is the time to start it.
   - name: commands
     sql: |
       SELECT uuid, session_id, agent_id, project, git_branch, ts, is_fork_copy, tool_use_id,
@@ -233,8 +265,10 @@ views:
         input->>'description'                                                    AS description,
         coalesce((input->>'run_in_background')::boolean, false)                  AS background,
         duration_ms, is_error,
-        CASE WHEN NOT is_error THEN 0
-             ELSE CAST(regexp_match(output, '^Exit code (\d+)')[1] AS bigint) END AS exit_code,
+        CASE WHEN is_error THEN CAST(regexp_match(output, '^Exit code (\d+)')[1] AS bigint)
+             WHEN coalesce((input->>'run_in_background')::boolean, false) THEN task_exit_code
+             ELSE 0 END                                                          AS exit_code,
+        task_status,
         coalesce((tool_use_result->>'interrupted')::boolean, false)              AS interrupted,
         tool_use_result->>'stdout'                                               AS stdout,
         tool_use_result->>'stderr'                                               AS stderr,
@@ -333,18 +367,24 @@ views:
       GROUP BY session_id, agent_id, turn
 
   # Auto-memory files with their frontmatter parsed. MEMORY.md (the index) has
-  # no frontmatter, so its name/description/type are NULL.
+  # no frontmatter, so its name/description/type are NULL. Fields are read only
+  # from the leading ----delimited block, not from the body.
   - name: memories
     sql: |
-      SELECT
-        regexp_match(location, '/projects/([^/]+)/memory/')[1]                   AS project_dir,
-        regexp_match(location, '/memory/([^/]+)\.md$')[1]                        AS file,
-        regexp_match(content, '(?m)^name:\s*(.+?)\s*$')[1]                       AS name,
-        btrim(regexp_match(content, '(?m)^description:\s*(.+?)\s*$')[1], '"')    AS description,
-        regexp_match(content, '(?m)^\s*type:\s*(\S+)')[1]                        AS type,
-        ltrim(regexp_replace(content, '^---\n(?s:.*?)\n---\n', ''), chr(10))     AS body,
-        location
-      FROM memory_files
+      SELECT project_dir, file,
+        regexp_match(frontmatter, '(?m)^name:\s*(.+?)\s*$')[1]                   AS name,
+        btrim(regexp_match(frontmatter, '(?m)^description:\s*(.+?)\s*$')[1], '"') AS description,
+        regexp_match(frontmatter, '(?m)^\s*type:\s*(\S+)')[1]                    AS type,
+        body, location
+      FROM (
+        SELECT
+          regexp_match(location, '/projects/([^/]+)/memory/')[1]                 AS project_dir,
+          regexp_match(location, '/memory/([^/]+)\.md$')[1]                      AS file,
+          regexp_match(content, '^---\n((?s:.*?))\n---\n')[1]                    AS frontmatter,
+          ltrim(regexp_replace(content, '^---\n(?s:.*?)\n---\n', ''), chr(10))   AS body,
+          location
+        FROM memory_files
+      )
 
   # ---- other line types ------------------------------------------------------
 
@@ -526,11 +566,18 @@ views:
           session_id,
           last_value(line->>'customTitle') FILTER (WHERE type = 'custom-title') AS custom_title,
           last_value(line->>'aiTitle')     FILTER (WHERE type = 'ai-title')     AS ai_title,
-          first_value(project ORDER BY ts) FILTER (WHERE project IS NOT NULL)    AS project,
-          last_value(project ORDER BY ts)  FILTER (WHERE project IS NOT NULL)    AS last_cwd,
-          last_value(git_branch ORDER BY ts) FILTER (WHERE git_branch IS NOT NULL) AS git_branch,
-          min(ts)                                                                AS started,
-          max(ts)                                                                AS last_active,
+          -- Directory, branch and time span come from the session's own main
+          -- transcript: not from lines copied from a parent, and not from
+          -- subagents, which can work in another directory. A session with no
+          -- own lines falls back to its copied ones.
+          coalesce(first_value(project ORDER BY ts) FILTER (WHERE project IS NOT NULL AND agent_id IS NULL AND NOT is_fork_copy),
+                   first_value(project ORDER BY ts) FILTER (WHERE project IS NOT NULL))    AS project,
+          coalesce(last_value(project ORDER BY ts) FILTER (WHERE project IS NOT NULL AND agent_id IS NULL AND NOT is_fork_copy),
+                   last_value(project ORDER BY ts) FILTER (WHERE project IS NOT NULL))     AS last_cwd,
+          coalesce(last_value(git_branch ORDER BY ts) FILTER (WHERE git_branch IS NOT NULL AND agent_id IS NULL AND NOT is_fork_copy),
+                   last_value(git_branch ORDER BY ts) FILTER (WHERE git_branch IS NOT NULL)) AS git_branch,
+          coalesce(min(ts) FILTER (WHERE NOT is_fork_copy), min(ts))             AS started,
+          coalesce(max(ts) FILTER (WHERE NOT is_fork_copy), max(ts))             AS last_active,
           count(DISTINCT agent_id)                                               AS subagents,
           array_agg(DISTINCT line->>'prUrl') FILTER (WHERE type = 'pr-link')     AS prs,
           -- True when the last message in the main transcript is an interrupt marker.
