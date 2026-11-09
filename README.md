@@ -19,6 +19,7 @@ Welcome to the Spice.ai OSS Cookbook—a comprehensive collection of recipes for
 ### Sample Applications
 
 - [Command Query Responsibility Segregation (CQRS)](./cqrs/README.md) - Sample application implementing the CQRS pattern with Spice.
+- [Coding Agent Sessions](./agent-sessions/README.md) - Query and search your local Claude Code and Codex session history with SQL.
 
 ### Models & AI - Connect data to hosted or local AI models
 
