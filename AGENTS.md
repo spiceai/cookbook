@@ -75,3 +75,18 @@ The `data/` directory contains CSV files (e.g., `taxi_zone_lookup.csv`, `custome
 - Use `.env.example` to document required secrets; actual `.env` files are gitignored
 - The `spicepod.yaml` format is `version: v1`, `kind: Spicepod`
 - Prefer public datasets (e.g., `s3://spiceai-public-datasets/`) for recipes that don't require external credentials
+- Write for new users, as described in [Writing for New Users](#writing-for-new-users)
+
+## Writing for New Users
+
+The cookbook is where new users, many of them junior engineers, first learn Spice. Write every README, spicepod comment, script, and `.env.example` for a reader who has not read the Spice source or its pull requests.
+
+- Name the release a reader needs, such as `Works with v2.4+`. Do not reference pull requests, commits, merge dates, or `trunk` in recipe text unless a step cannot be followed without one. A reader can install a release, not a pull request.
+- Describe what the latest release does, and leave out behavior that exists only on `trunk` until a release ships it. When a recipe cannot work without an unreleased feature, say that no release includes it yet, give the steps to get a build that does, and change the note to the release version once one ships.
+- For a known bug the reader will hit, describe the symptom and the workaround in plain words, and link the open issue as the place to follow the fix. When a release fixes the bug, name that release or remove the note.
+- Put the evidence for a change (the pull request that changed a behavior, a link to source code, the release notes) in the pull request description, where reviewers read it, not in the recipe.
+- Leave references that are data as they are: GitHub URLs in a recipe that queries GitHub, a pinned model or dataset revision, and log lines in captured output.
+- Define a term a newcomer would not know where it first appears, or link the docs page that explains it. Keep internal names, such as crate names, code paths, and the library behind a feature, out of the text unless the reader acts on them.
+- Title a pull request by what a reader of the recipe saw, for example `Fix huggingface recipe: v2.4.1 ignores HUGGING_FACE_HUB_TOKEN`, not by the pull request that caused it.
+
+For example, write "No Spice release includes the llama.cpp GGUF engine yet; until one does, follow the build steps under Prerequisites" instead of "Works with builds that include spiceai/spiceai#7864, merged to trunk on 2026-10-24."

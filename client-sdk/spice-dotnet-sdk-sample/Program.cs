@@ -5,6 +5,12 @@ using Apache.Arrow;
 using System.Globalization;
 
 // Top-level statements
+if (args.Length > 0 && args[0] == "cloud")
+{
+    await Cloud.Run();
+    return;
+}
+
 var client = new SpiceClientBuilder().Build();
 
 Console.WriteLine("=== Using Query ===");
