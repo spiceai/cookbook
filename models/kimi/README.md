@@ -1,6 +1,6 @@
 # Running Kimi Locally
 
-Works with `v2.4+` builds that include the [llama.cpp GGUF engine](https://github.com/spiceai/spiceai/pull/7864), merged to trunk on 2026-10-24. `v2.4.0-rc.3` and earlier releases refuse this model's `kimi-linear` GGUF architecture; see [Prerequisites](#prerequisites).
+No Spice release includes the llama.cpp GGUF engine this recipe needs yet: `v2.4.2` and earlier releases refuse this model's `kimi-linear` GGUF architecture. Until a release includes the engine, follow the build steps under [Prerequisites](#prerequisites).
 
 Moonshot AI's Kimi models are open weights, but the flagship ones are trillion-parameter mixtures of experts: Kimi K2.6 (1T parameters) is 340 GB at 2-bit, and Kimi K3 (2.8T parameters, June 2026) is 466 GB even in Unsloth's 1-bit `UD-Q1_0` build, so neither fits a MacBook Pro (a 512 GB Mac Studio could hold K2.6 at 2-bit, which this recipe does not test); they are served from multi-GPU servers, or tensor-parallel across several machines with Spice Enterprise's `distributed_backend: ring`. The Kimi model that runs on a laptop is **Kimi-Linear-48B-A3B-Instruct**, Moonshot's 48B mixture-of-experts model with 3B active parameters, built on Kimi Delta Attention, a hybrid linear-attention design that keeps the KV cache small at long context. This recipe serves it on an Apple silicon Mac with Spice's built-in llama.cpp engine and Metal. An [abliterated variant](#abliterated-variant) is in [`abliterated/`](./abliterated/).
 
@@ -16,7 +16,7 @@ Moonshot publishes Kimi-Linear under the MIT license. The GGUF quantizations are
 ## Prerequisites
 
 - An Apple silicon Mac with 36 GB or more unified memory for the default file, or 24 GB with the 2-bit file (see [Memory](#memory)). Spice's llama.cpp engine runs the model on the GPU through Metal.
-- The [Spice CLI](https://spiceai.org/docs/installation). `spice version` must report a runtime with the `+models.metal` suffix and the llama.cpp GGUF engine. The engine merged to trunk on 2026-10-24, after `v2.4.0-rc.3`; run `spice upgrade` once a release that includes it ships, or use a trunk build in the meantime (see [Using a trunk build](#using-a-trunk-build)).
+- The [Spice CLI](https://spiceai.org/docs/installation). `spice version` must report a runtime with the `+models.metal` suffix and the llama.cpp GGUF engine. No release includes the engine yet, and `v2.4.2` and earlier releases refuse this model. Run `spice upgrade` once a release that includes it ships; until then, use a trunk build (see [Using a trunk build](#using-a-trunk-build)).
 - 23 GB of free disk for the model, which Spice downloads into the Hugging Face cache at `~/.cache/huggingface/hub`.
 - Network access to `huggingface.co`. No Hugging Face account is needed.
 
@@ -115,7 +115,7 @@ Kimi-Linear is an instruct model without a thinking mode: it answered "Reply wit
 | Symptom                                                                           | Cause and fix                                                                                                      |
 | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | `Architecture 'kimi-linear' in <file> is not supported by this Spice release`     | The runtime predates the llama.cpp GGUF engine. Upgrade Spice, or run a trunk build (see below).                   |
-| `Unknown GGUF architecture 'kimi-linear'`                                          | A `v2.3.x` or `v2.4.0-rc` runtime, which serves GGUFs with mistral.rs. Same fix.                                   |
+| `Unknown GGUF architecture 'kimi-linear'`                                          | A `v2.4.2` or earlier runtime, which has no llama.cpp GGUF engine. The runtime then never reports ready ([spiceai/spiceai#15744](https://github.com/spiceai/spiceai/issues/15744)). Run a trunk build (see below).                                   |
 | The model never finishes loading, or macOS becomes unresponsive                   | The file does not fit the GPU's share of memory. Choose a smaller file from the [Memory](#memory) table.           |
 | `the prompt is N tokens, and the model's context holds 8192`                      | The conversation outgrew the context. Start a new chat.                                                            |
 

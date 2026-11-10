@@ -1,6 +1,6 @@
 # Running Qwen3.8 Locally: Abliterated Variant
 
-Works with `v2.4+` builds that include the [llama.cpp GGUF engine](https://github.com/spiceai/spiceai/pull/7864); see the [base recipe](../README.md#prerequisites).
+No Spice release includes the llama.cpp GGUF engine this recipe needs yet; until one does, follow the build steps in the [base recipe](../README.md#prerequisites).
 
 This directory is the [Qwen3.8 recipe](../README.md) with the model swapped for [orcarouter/Qwen3.8-27B-Uncensored-GGUF](https://huggingface.co/orcarouter/Qwen3.8-27B-Uncensored-GGUF), orcarouter's Q4_K_M quantization (16.8 GB) of Qwen3.8-27B with its refusal behavior removed by abliteration. The file embeds the model's multi-token-prediction head, so Spice drafts with it without a separate `mtp-` file. Everything else, the dataset, the tools and the API, is unchanged.
 
