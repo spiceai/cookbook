@@ -7,10 +7,11 @@ Query your local [Claude Code](https://docs.claude.com/en/docs/claude-code/overv
 | Spicepod                                       | Reads        | Main views                                                                                |
 | ---------------------------------------------- | ------------ | ----------------------------------------------------------------------------------------- |
 | [`claude-code/spicepod.yaml`](./claude-code/spicepod.yaml) | `~/.claude/` | `sessions`, `turns`, `tool_runs`, `commands`, `files_touched`, `interruptions`, `messages`, `memories` |
-| [`claude-code/snapshot-reader.yaml`](./claude-code/snapshot-reader.yaml) | S3 snapshots of `claude-code/spicepod.yaml` ([Enterprise](#optional-read-your-sessions-from-s3)) | Same as `claude-code/spicepod.yaml` |
+| [`claude-code/snapshot-reader.yaml`](./claude-code/snapshot-reader.yaml) | S3 snapshots of `claude-code/spicepod.yaml` ([Enterprise](#optional-read-your-claude-code-sessions-from-s3)) | Same as `claude-code/spicepod.yaml` |
 | [`codex/spicepod.yaml`](./codex/spicepod.yaml)             | `~/.codex/`  | `sessions`, `threads`, `turns`, `tool_runs`, `commands`, `files_touched`, `token_usage`, `rate_limits`, `messages`, `thread_state`, `memories` |
+| [`codex/snapshot-reader.yaml`](./codex/snapshot-reader.yaml) | S3 snapshots of `codex/spicepod.yaml` ([Enterprise](#optional-read-your-codex-sessions-from-s3)) | Same as `codex/spicepod.yaml` |
 
-Each view has a comment in its Spicepod that tells what its rows are. The Claude Code views are in the [`claude-code-views`](./claude-code/spicepods/claude-code-views/spicepod.yaml) Spicepod. Both Claude Code Spicepods load it as a dependency, so they serve the same views.
+Each view has a comment in its Spicepod that tells what its rows are. The Claude Code views are in the [`claude-code-views`](./claude-code/spicepods/claude-code-views/spicepod.yaml) Spicepod, and the Codex views are in the [`codex-views`](./codex/spicepods/codex-views/spicepod.yaml) Spicepod. The two Spicepods of each agent load its views Spicepod as a dependency, so they serve the same views.
 
 A background or forked session starts with a copy of its parent's history. The views mark these copied rows with `is_fork_copy`. To count each tool call or command one time, add `NOT is_fork_copy`, as the queries below do.
 
@@ -32,7 +33,7 @@ The Codex Spicepod also reads the files below. Codex creates each file only when
 | `~/.codex/state_5.sqlite`      | `thread_state`     | Codex starts. If you set `sqlite_home` or `CODEX_SQLITE_HOME`, the file is in that directory. |
 | `~/.codex/memories_1.sqlite`   | `memories`         | You use Codex memories.                             |
 
-If a file is missing, Spice logs a warning for its dataset, does not create the views that need it, and does not report ready. The log does not show `Spice runtime is ready!`, and `/v1/ready` returns `503`. All other views work. To remove the warnings, delete the dataset of the missing file from `codex/spicepod.yaml`.
+If a file is missing, Spice logs a warning for its dataset, does not create the views that need it, and does not report ready. The log does not show `Spice runtime is ready!`, and `/v1/ready` returns `503`. All other views work. To remove the warnings and make Spice report ready, delete the dataset of the missing file from `codex/spicepod.yaml`, and delete the views that need it from [`codex/spicepods/codex-views/spicepod.yaml`](./codex/spicepods/codex-views/spicepod.yaml).
 
 ## Run Spice from your home directory
 
@@ -97,7 +98,7 @@ SELECT name, type, description FROM memories WHERE name IS NOT NULL LIMIT 5;
 
 Stop the Spice runtime with `Ctrl+C`. Spice keeps the data in memory, so there is nothing to clean up.
 
-### Optional: Save your sessions to S3
+### Optional: Save your Claude Code sessions to S3
 
 > **Note:** Acceleration snapshots require [Spice Enterprise](https://spice.ai) or a Spice OSS build compiled with the `snapshots` feature flag. A standard OSS build logs `Acceleration Snapshots are included in the Enterprise distribution of Spice.ai` and does not write snapshots.
 
@@ -164,9 +165,9 @@ If the local Cayenne files are missing (for example, on a new computer), Spice d
 
 Each snapshot is a full copy of the data, not only the changes since the last snapshot. Spice keeps snapshots for 28 days, and always keeps the newest snapshot. Use a different `location` for each computer, because only one Spice runtime at a time can write snapshots to a location. If you change the `acceleration` section after Spice writes a snapshot, also change the `location`: Spice cannot load a snapshot that has a different primary key.
 
-### Optional: Read your sessions from S3
+### Optional: Read your Claude Code sessions from S3
 
-[`claude-code/snapshot-reader.yaml`](./claude-code/snapshot-reader.yaml) serves the same views from the snapshots that the previous section writes. Use it on a different computer, or after you delete `~/.claude/`. It reads only S3, and it never writes to S3. It requires the same Spice build as the publisher (see the note in the previous section).
+[`claude-code/snapshot-reader.yaml`](./claude-code/snapshot-reader.yaml) serves the same views from the snapshots that the [previous section](#optional-save-your-claude-code-sessions-to-s3) writes. Use it on a different computer, or after you delete `~/.claude/`. It reads only S3, and it never writes to S3. It requires the same Spice build as the publisher (see the note in the previous section).
 
 ```text
 publisher (claude-code/spicepod.yaml)            reader (claude-code/snapshot-reader.yaml)
@@ -245,3 +246,102 @@ SELECT role, ts, substr(text, 1, 80) AS text FROM text_search(messages, 'flaky t
 ### Step 3: Stop Spice
 
 Stop the Spice runtime with `Ctrl+C`. Spice keeps the data in memory, so there is nothing to clean up.
+
+### Optional: Save your Codex sessions to S3
+
+> **Note:** Acceleration snapshots require [Spice Enterprise](https://spice.ai) or a Spice OSS build compiled with the `snapshots` feature flag. A standard OSS build logs `Acceleration Snapshots are included in the Enterprise distribution of Spice.ai` and does not write snapshots.
+
+To keep your Codex sessions after you delete or move their rollout files, and to keep a copy in S3, use [acceleration snapshots](https://spiceai.org/docs/features/data-acceleration/snapshots). Spice then stores each dataset in [Cayenne](https://spiceai.org/docs/components/data-accelerators/cayenne) files on your computer, and uploads a copy of each file to S3.
+
+```text
+~/.codex/sessions/*.jsonl ──append──> rollouts            (Cayenne) ──every 10m──> s3://<bucket>/codex-sessions/snapshots/
+~/.codex/history.jsonl    ──────────> history_lines       (Cayenne) ──every 10m──┤
+~/.codex/session_index.jsonl ───────> session_index_lines (Cayenne) ──every 10m──┤
+~/.codex/rules/default.rules ───────> rules_lines         (Cayenne) ──every 10m──┤
+~/.codex/state_5.sqlite   ──────────> threads_state       (Cayenne) ──every 10m──┤
+~/.codex/memories_1.sqlite ─────────> memory_outputs      (Cayenne) ──every 10m──┘
+                                             │
+                                         all views
+```
+
+1. Add a `runtime` section to `codex/spicepod.yaml`, below `name: codex_sessions`. Replace `<bucket>` and `<region>` with your values. If you also save your Claude Code sessions, use a different `location`:
+
+   ```yaml
+   runtime:
+     state:
+       location: s3://<bucket>/codex-sessions/
+       params:
+         s3_region: <region>
+   ```
+
+2. Replace the `acceleration` section of the `rollouts` dataset with:
+
+   ```yaml
+       acceleration:
+         enabled: true
+         engine: cayenne
+         mode: file
+         refresh_mode: append
+         primary_key: "(_location, column_1)"
+         snapshots: enabled
+         snapshots_trigger: time_interval
+         snapshots_trigger_threshold: 10m
+         params:
+           file_watcher: enabled
+           cayenne_file_path: .spice/codex-sessions/
+   ```
+
+   `refresh_mode: append` adds new lines and does not remove the lines of files that you delete or move out of `~/.codex/sessions/`. With the default refresh mode (`full`), the next change to a rollout removes the rows of those files. The primary key (file and line) prevents duplicate rows when Spice reads a file again.
+
+3. Give each of the other datasets (`history_lines`, `session_index_lines`, `rules_lines`, `threads_state` and `memory_outputs`) this `acceleration` section. The first three datasets do not have an `acceleration` section: add it below `params`. For `threads_state` and `memory_outputs`, replace the `acceleration` section:
+
+   ```yaml
+       acceleration:
+         enabled: true
+         engine: cayenne
+         mode: file
+         refresh_check_interval: 60s
+         snapshots: enabled
+         snapshots_trigger: time_interval
+         snapshots_trigger_threshold: 10m
+         params:
+           cayenne_file_path: .spice/codex-sessions/
+   ```
+
+   These datasets keep the default refresh mode (`full`), so the data shows the current state of each file. All datasets use the same `cayenne_file_path`. Spice puts each dataset in its own folder below it.
+
+4. Start Spice as in [Step 1](#step-1-start-spice-1). Spice gets AWS credentials from the default AWS credential chain, for example `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+
+Spice writes snapshots only after it reports ready. If an [optional Codex file](#optional-codex-files) is missing, Spice does not report ready and does not write snapshots of any dataset. Thus, before you start Spice, delete the dataset and the views of each missing file, as that section tells.
+
+When Spice is ready, the log shows `Snapshot created` one time for each dataset. After that, Spice uploads a new snapshot of a dataset every 10 minutes, but only if its data changed.
+
+If the local Cayenne files are missing (for example, on a new computer), Spice downloads the newest snapshots when it starts, and the log shows `Snapshot restored`. Spice then adds the lines from `~/.codex/sessions/`.
+
+Each snapshot is a full copy of the data, not only the changes since the last snapshot. Spice keeps snapshots for 28 days, and always keeps the newest snapshot. Use a different `location` for each computer, because only one Spice runtime at a time can write snapshots to a location. If you change an `acceleration` section after Spice writes a snapshot, also change the `location`: Spice cannot load a snapshot that has a different primary key.
+
+### Optional: Read your Codex sessions from S3
+
+[`codex/snapshot-reader.yaml`](./codex/snapshot-reader.yaml) serves the same views from the snapshots that the [previous section](#optional-save-your-codex-sessions-to-s3) writes. Use it on a different computer, or after you delete `~/.codex/`. It reads only S3, and it never writes to S3. It requires the same Spice build as the publisher (see the note in the previous section).
+
+```text
+publisher (codex/spicepod.yaml)           reader (codex/snapshot-reader.yaml)
+~/.codex ──> 6 datasets ──snapshot──> s3://<bucket>/codex-sessions/snapshots/ ──> 6 datasets
+                 │                                                                  │
+            codex-views                                                        codex-views
+```
+
+1. In `codex/snapshot-reader.yaml`, replace `<bucket>` and `<region>` with the values of the publisher's `runtime.state` section. The reader reads the `snapshots/` folder below the publisher's `location`. If you removed a dataset from `codex/spicepod.yaml`, remove it from the reader too. A reader dataset that has no snapshot does not load, and Spice does not report ready.
+
+2. Start Spice. If the publisher runs on the same computer, stop it first. The reader uses the same ports, and its own directory for its local copy:
+
+   ```shell
+   POD="$PWD/agent-sessions/codex/snapshot-reader.yaml"
+   mkdir -p ~/codex-sessions-reader && cd ~/codex-sessions-reader && spice run "$POD"
+   ```
+
+   Spice downloads the newest snapshot of each dataset, and the log shows `Snapshot restored` one time for each dataset. Every minute (`refresh_check_interval`), Spice looks for newer snapshots and loads them.
+
+3. Query the views as in [Step 2](#step-2-query-your-sessions-1).
+
+The snapshots contain only the datasets. The reader computes the views itself, and builds its own full-text index for `messages`. The reader does not have the full-text index on memory content (`memory_outputs.raw_memory`), because a snapshot reader cannot have a full-text index on its datasets.
