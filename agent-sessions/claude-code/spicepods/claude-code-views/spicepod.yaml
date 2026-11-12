@@ -2,9 +2,10 @@ version: v2
 kind: Spicepod
 name: claude-code-views
 
-# Views over the `transcripts` dataset (one row per line of a Claude Code
-# transcript, column `column_1`, with the `_location` file path). The Spicepod
-# that uses this dependency defines `transcripts`:
+# Views over two datasets, which the Spicepod that uses this dependency defines:
+#   transcripts    one row per line of a Claude Code transcript (`column_1`, `_location`)
+#   memory_files   one row per auto-memory .md file (`content`, `location`)
+# The Spicepods that use it:
 #   ../../spicepod.yaml          reads ~/.claude/projects/
 #   ../../snapshot-reader.yaml   reads an acceleration snapshot in S3
 
@@ -572,3 +573,23 @@ views:
           row_id:
             - uuid
             - block_index
+
+  # Auto-memory files with their frontmatter parsed. MEMORY.md (the index) has
+  # no frontmatter, so its name/description/type are NULL. Fields are read only
+  # from the leading ----delimited block, not from the body.
+  - name: memories
+    sql: |
+      SELECT project_dir, file,
+        regexp_match(frontmatter, '(?m)^name:\s*(.+?)\s*$')[1]                   AS name,
+        btrim(regexp_match(frontmatter, '(?m)^description:\s*(.+?)\s*$')[1], '"') AS description,
+        regexp_match(frontmatter, '(?m)^\s*type:\s*(\S+)')[1]                    AS type,
+        body, location
+      FROM (
+        SELECT
+          regexp_match(location, '/projects/([^/]+)/memory/')[1]                 AS project_dir,
+          regexp_match(location, '/memory/([^/]+)\.md$')[1]                      AS file,
+          regexp_match(content, '^---\n((?s:.*?))\n---\n')[1]                    AS frontmatter,
+          ltrim(regexp_replace(content, '^---\n(?s:.*?)\n---\n', ''), chr(10))   AS body,
+          location
+        FROM memory_files
+      )

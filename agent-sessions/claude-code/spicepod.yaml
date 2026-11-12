@@ -8,8 +8,8 @@ dependencies:
 # Paths are relative to your home directory, so start Spice from there:
 #   cd ~ && spice run <path to this spicepod.yaml>
 #
-# The views over `transcripts` are in the claude-code-views dependency
-# (spicepods/claude-code-views/), which snapshot-reader.yaml also uses.
+# The views are in the claude-code-views dependency (spicepods/claude-code-views/),
+# which snapshot-reader.yaml also uses.
 
 datasets:
   # JSON schema inference can't be used: `message.content` is both string or array.
@@ -53,24 +53,3 @@ datasets:
           enabled: true
           row_id:
             - location
-
-views:
-  # Auto-memory files with their frontmatter parsed. MEMORY.md (the index) has
-  # no frontmatter, so its name/description/type are NULL. Fields are read only
-  # from the leading ----delimited block, not from the body.
-  - name: memories
-    sql: |
-      SELECT project_dir, file,
-        regexp_match(frontmatter, '(?m)^name:\s*(.+?)\s*$')[1]                   AS name,
-        btrim(regexp_match(frontmatter, '(?m)^description:\s*(.+?)\s*$')[1], '"') AS description,
-        regexp_match(frontmatter, '(?m)^\s*type:\s*(\S+)')[1]                    AS type,
-        body, location
-      FROM (
-        SELECT
-          regexp_match(location, '/projects/([^/]+)/memory/')[1]                 AS project_dir,
-          regexp_match(location, '/memory/([^/]+)\.md$')[1]                      AS file,
-          regexp_match(content, '^---\n((?s:.*?))\n---\n')[1]                    AS frontmatter,
-          ltrim(regexp_replace(content, '^---\n(?s:.*?)\n---\n', ''), chr(10))   AS body,
-          location
-        FROM memory_files
-      )

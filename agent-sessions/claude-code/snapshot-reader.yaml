@@ -21,3 +21,12 @@ datasets:
       s3_region: <region>
     acceleration:
       refresh_check_interval: 1m
+
+  # Auto-memory files, for the `memories` view.
+  - from: s3://<bucket>/agent-sessions/snapshots/
+    name: memory_files
+    params:
+      file_format: snapshot
+      s3_region: <region>
+    acceleration:
+      refresh_check_interval: 1m

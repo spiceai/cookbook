@@ -7,10 +7,10 @@ Query your local [Claude Code](https://docs.claude.com/en/docs/claude-code/overv
 | Spicepod                                       | Reads        | Main views                                                                                |
 | ---------------------------------------------- | ------------ | ----------------------------------------------------------------------------------------- |
 | [`claude-code/spicepod.yaml`](./claude-code/spicepod.yaml) | `~/.claude/` | `sessions`, `turns`, `tool_runs`, `commands`, `files_touched`, `interruptions`, `messages`, `memories` |
-| [`claude-code/snapshot-reader.yaml`](./claude-code/snapshot-reader.yaml) | S3 snapshots of `claude-code/spicepod.yaml` ([Enterprise](#optional-read-your-sessions-from-s3)) | Same as `claude-code/spicepod.yaml`, except `memories` |
+| [`claude-code/snapshot-reader.yaml`](./claude-code/snapshot-reader.yaml) | S3 snapshots of `claude-code/spicepod.yaml` ([Enterprise](#optional-read-your-sessions-from-s3)) | Same as `claude-code/spicepod.yaml` |
 | [`codex/spicepod.yaml`](./codex/spicepod.yaml)             | `~/.codex/`  | `sessions`, `threads`, `turns`, `tool_runs`, `commands`, `files_touched`, `token_usage`, `rate_limits`, `messages`, `thread_state`, `memories` |
 
-Each view has a comment in its Spicepod that tells what its rows are. The Claude Code views over `transcripts` are in the [`claude-code-views`](./claude-code/spicepods/claude-code-views/spicepod.yaml) Spicepod. Both Claude Code Spicepods load it as a dependency, so they serve the same views.
+Each view has a comment in its Spicepod that tells what its rows are. The Claude Code views are in the [`claude-code-views`](./claude-code/spicepods/claude-code-views/spicepod.yaml) Spicepod. Both Claude Code Spicepods load it as a dependency, so they serve the same views.
 
 A background or forked session starts with a copy of its parent's history. The views mark these copied rows with `is_fork_copy`. To count each tool call or command one time, add `NOT is_fork_copy`, as the queries below do.
 
@@ -101,12 +101,13 @@ Stop the Spice runtime with `Ctrl+C`. Spice keeps the data in memory, so there i
 
 > **Note:** Acceleration snapshots require [Spice Enterprise](https://spice.ai) or a Spice OSS build compiled with the `snapshots` feature flag. A standard OSS build logs `Acceleration Snapshots are included in the Enterprise distribution of Spice.ai` and does not write snapshots.
 
-Claude Code deletes old transcripts (by default, after 30 days). To keep your sessions after Claude Code deletes them, and to keep a copy in S3, use [acceleration snapshots](https://spiceai.org/docs/features/data-acceleration/snapshots). Spice then stores the `transcripts` dataset in a [Cayenne](https://spiceai.org/docs/components/data-accelerators/cayenne) file on your computer, and uploads a copy of the file to S3.
+Claude Code deletes old transcripts (by default, after 30 days). To keep your sessions after Claude Code deletes them, and to keep a copy in S3, use [acceleration snapshots](https://spiceai.org/docs/features/data-acceleration/snapshots). Spice then stores the `transcripts` and `memory_files` datasets in [Cayenne](https://spiceai.org/docs/components/data-accelerators/cayenne) files on your computer, and uploads a copy of each file to S3.
 
 ```text
-~/.claude/projects/*.jsonl ──append──> transcripts (Cayenne file) ──every 10m──> s3://<bucket>/agent-sessions/snapshots/
-                                           │            ▲
-                                       all views        └── on start, if the local file is missing
+~/.claude/projects/*.jsonl  ──append──> transcripts  (Cayenne) ──every 10m──> s3://<bucket>/agent-sessions/snapshots/
+~/.claude/projects/*/memory ──────────> memory_files (Cayenne) ──every 10m──┘
+                                              │                    ▲
+                                          all views                └── on start, if the local files are missing
 ```
 
 1. Add a `runtime` section to `claude-code/spicepod.yaml`, below `name: claude_sessions`. Replace `<bucket>` and `<region>` with your values:
@@ -133,16 +134,33 @@ Claude Code deletes old transcripts (by default, after 30 days). To keep your se
          snapshots_trigger_threshold: 10m
          params:
            file_watcher: enabled
-           cayenne_file_path: .spice/agent-sessions/transcripts/
+           cayenne_file_path: .spice/agent-sessions/
    ```
 
    `refresh_mode: append` adds new lines and does not remove the lines of deleted files. With the default refresh mode (`full`), the next change to a transcript removes the rows of all deleted files. The primary key (file and line) prevents duplicate rows when Spice reads a file again. It also keeps one copy of a line that occurs two times in the same file. Claude Code writes some metadata lines (for example `ai-title` and `mode`) two times.
 
-3. Start Spice as in [Step 1](#step-1-start-spice). Spice gets AWS credentials from the default AWS credential chain, for example `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+3. Replace the `acceleration` section of the `memory_files` dataset with:
 
-When the data loads, the log shows `Snapshot created dataset=transcripts`. After that, Spice uploads a new snapshot every 10 minutes, but only if the data changed.
+   ```yaml
+       acceleration:
+         enabled: true
+         engine: cayenne
+         mode: file
+         refresh_check_interval: 60s
+         snapshots: enabled
+         snapshots_trigger: time_interval
+         snapshots_trigger_threshold: 10m
+         params:
+           cayenne_file_path: .spice/agent-sessions/
+   ```
 
-If the local Cayenne file is missing (for example, on a new computer), Spice downloads the newest snapshot when it starts, and the log shows `Snapshot restored`. Spice then adds the lines from `~/.claude/projects/`.
+   Memory files keep the default refresh mode (`full`), so the data shows edits and deletes that you make to your memories. Both datasets use the same `cayenne_file_path`. Spice puts each dataset in its own folder below it.
+
+4. Start Spice as in [Step 1](#step-1-start-spice). Spice gets AWS credentials from the default AWS credential chain, for example `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+
+When the data loads, the log shows `Snapshot created dataset=transcripts` and `Snapshot created dataset=memory_files`. After that, Spice uploads a new snapshot every 10 minutes, but only if the data changed.
+
+If the local Cayenne files are missing (for example, on a new computer), Spice downloads the newest snapshots when it starts, and the log shows `Snapshot restored`. Spice then adds the lines from `~/.claude/projects/`.
 
 Each snapshot is a full copy of the data, not only the changes since the last snapshot. Spice keeps snapshots for 28 days, and always keeps the newest snapshot. Use a different `location` for each computer, because only one Spice runtime at a time can write snapshots to a location. If you change the `acceleration` section after Spice writes a snapshot, also change the `location`: Spice cannot load a snapshot that has a different primary key.
 
@@ -152,7 +170,8 @@ Each snapshot is a full copy of the data, not only the changes since the last sn
 
 ```text
 publisher (claude-code/spicepod.yaml)            reader (claude-code/snapshot-reader.yaml)
-~/.claude/projects ──> transcripts ──snapshot──> s3://<bucket>/agent-sessions/snapshots/ ──> transcripts
+~/.claude/projects ──> transcripts  ──snapshot──> s3://<bucket>/agent-sessions/snapshots/ ──> transcripts
+                       memory_files                                                          memory_files
                            │                                                                    │
                     claude-code-views                                                    claude-code-views
 ```
@@ -166,11 +185,11 @@ publisher (claude-code/spicepod.yaml)            reader (claude-code/snapshot-re
    mkdir -p ~/claude-sessions-reader && cd ~/claude-sessions-reader && spice run "$POD"
    ```
 
-   Spice downloads the newest snapshot, and the log shows `Snapshot restored`. Every minute (`refresh_check_interval`), Spice looks for a newer snapshot and loads it.
+   Spice downloads the newest snapshot of each dataset, and the log shows `Snapshot restored` two times. Every minute (`refresh_check_interval`), Spice looks for a newer snapshot and loads it.
 
-3. Query the views as in [Step 2](#step-2-query-your-sessions). The `memories` view is not available, because the snapshots contain only the transcripts.
+3. Query the views as in [Step 2](#step-2-query-your-sessions).
 
-The snapshot contains only the `transcripts` dataset. The reader computes the views itself, and builds its own full-text index for `messages`.
+The snapshots contain only the `transcripts` and `memory_files` datasets. The reader computes the views itself, and builds its own full-text index for `messages`. The reader does not have the full-text index on memory content (`memory_files.content`), because a snapshot reader cannot have a full-text index on its datasets.
 
 ## Codex
 
