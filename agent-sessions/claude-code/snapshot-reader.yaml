@@ -1,0 +1,23 @@
+version: v2
+kind: Spicepod
+name: claude_sessions_snapshot_reader
+
+# Serves the same views as spicepod.yaml, but reads `transcripts` from the
+# acceleration snapshots that spicepod.yaml publishes to S3, not from
+# ~/.claude/. Read-only: it never writes to S3. See the README for how to
+# publish the snapshots.
+#   spice run <path to this file>
+
+dependencies:
+  - claude-code-views
+
+datasets:
+  # The prefix that holds the publisher's snapshots/metadata.json. The name
+  # must match the publisher's dataset name.
+  - from: s3://<bucket>/agent-sessions/snapshots/
+    name: transcripts
+    params:
+      file_format: snapshot
+      s3_region: <region>
+    acceleration:
+      refresh_check_interval: 1m
