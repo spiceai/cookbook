@@ -1,6 +1,6 @@
 # Running Kimi Locally: Abliterated Variant
 
-Works with `v2.4+` builds that include the [llama.cpp GGUF engine](https://github.com/spiceai/spiceai/pull/7864); see the [base recipe](../README.md#prerequisites).
+No Spice release includes the llama.cpp GGUF engine this recipe needs yet; until one does, follow the build steps in the [base recipe](../README.md#prerequisites).
 
 This directory is the [Kimi recipe](../README.md) with the model swapped for [huihui-ai/Huihui-Kimi-Linear-48B-A3B-Instruct-abliterated](https://huggingface.co/huihui-ai/Huihui-Kimi-Linear-48B-A3B-Instruct-abliterated), a version of Kimi-Linear-48B-A3B-Instruct with its refusal behavior removed by abliteration, in the importance-matrix `i1-IQ3_M` GGUF (21.5 GB) published by [mradermacher](https://huggingface.co/mradermacher/Huihui-Kimi-Linear-48B-A3B-Instruct-abliterated-i1-GGUF). Everything else is unchanged.
 

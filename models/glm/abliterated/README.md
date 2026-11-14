@@ -1,6 +1,6 @@
 # Running GLM Locally: Abliterated Variant
 
-Works with `v2.4+` builds that include the [llama.cpp GGUF engine](https://github.com/spiceai/spiceai/pull/7864); see the [base recipe](../README.md#prerequisites).
+No Spice release includes the llama.cpp GGUF engine this recipe needs yet; until one does, follow the build steps in the [base recipe](../README.md#prerequisites).
 
 This directory is the [GLM recipe](../README.md) with the model swapped for [huihui-ai/Huihui-GLM-4.7-Flash-abliterated](https://huggingface.co/huihui-ai/Huihui-GLM-4.7-Flash-abliterated), a version of GLM-4.7-Flash with its refusal behavior removed by abliteration, in the importance-matrix `i1-Q4_K_M` GGUF (18.1 GB) published by [mradermacher](https://huggingface.co/mradermacher/Huihui-GLM-4.7-Flash-abliterated-i1-GGUF). Everything else is unchanged.
 

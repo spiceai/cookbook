@@ -1,6 +1,6 @@
 # Running Qwen3.5 Locally: Abliterated Variant
 
-Works with `v2.4+` builds that include the [llama.cpp GGUF engine](https://github.com/spiceai/spiceai/pull/7864); see the [base recipe](../README.md#prerequisites).
+No Spice release includes the llama.cpp GGUF engine this recipe needs yet; until one does, follow the build steps in the [base recipe](../README.md#prerequisites).
 
 This directory is the [Qwen3.5 recipe](../README.md) with the model swapped for [huihui-ai/Huihui-Qwen3.5-9B-abliterated](https://huggingface.co/huihui-ai/Huihui-Qwen3.5-9B-abliterated), a version of Qwen3.5-9B with its refusal behavior removed by abliteration, in the Q4_K_M GGUF quantization published by [mradermacher](https://huggingface.co/mradermacher/Huihui-Qwen3.5-9B-abliterated-GGUF) (5.6 GB). It serves the model and its API; it does not load the dataset or enable tools, for the reason in [Why no dataset tools](#why-no-dataset-tools).
 
