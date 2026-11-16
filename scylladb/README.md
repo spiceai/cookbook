@@ -34,8 +34,11 @@ If you don't have an existing ScyllaDB cluster, you can start one locally using 
 docker run --name scylladb -d \
   -p 9042:9042 \
   scylladb/scylla:latest \
-  --smp 1 --memory 750M
+  --smp 1 --memory 750M \
+  --broadcast-rpc-address 127.0.0.1
 ```
+
+`--broadcast-rpc-address 127.0.0.1` makes ScyllaDB advertise an address that Spice, running on your machine, can reach. After the first connection, the ScyllaDB driver reconnects to the address the node advertises. Without the flag, that address is the container's internal IP, which is not reachable from macOS, and Spice fails to load the dataset with `No route to host (os error 65)`.
 
 Wait for ScyllaDB to be ready (about 30 seconds):
 
