@@ -219,7 +219,7 @@ from rrf(
 
 Stop Spice, and go to `spicepod.yml` and uncomment the `models` block. Update the `.env` file with your OpenAI key. Then start Spice again.
 
-> **Note:** The full-text index is held in memory and is not rebuilt from the existing acceleration when Spice restarts ([spiceai/spiceai#14618](https://github.com/spiceai/spiceai/issues/14618)). After a restart, `text_search` returns no results for posts loaded before the restart, while `vector_search` keeps working. Until that is fixed, remove the acceleration before restarting so Spice reloads and re-indexes all posts:
+> **Note:** Spice `v2.4.2` and later rebuild the full-text index from the existing acceleration when Spice restarts, so `text_search` keeps returning posts loaded before the restart. In `v2.4.1` and earlier, the index is not rebuilt: after a restart, `text_search` returns no results for those posts, while `vector_search` keeps working. On those releases, remove the acceleration before restarting so Spice reloads and re-indexes all posts:
 >
 > ```bash
 > rm -rf .spice
