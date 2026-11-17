@@ -2,6 +2,8 @@
 
 Works with `v1.0+`. As of Spice `v2.0`, the PostgreSQL Data Accelerator is an [Enterprise feature](https://spiceai.org/docs/components/data-accelerators/postgres) and requires an enterprise build of `spiced`. Community builds will log `The accelerator engine postgres is not available` and refuse to load the dataset.
 
+> **Deprecated:** The `postgres` acceleration engine is deprecated and will be removed in Spice v2.5. Spice logs a warning for any dataset that uses it. Use the `cayenne` engine for new datasets, and see the [migration guide](https://spiceai.org/docs/components/data-accelerators/cayenne/migration) to move existing ones.
+
 Follow these steps to get started with PostgreSQL as a Data Accelerator.
 
 This recipe will use a demo instance of Postgres. Follow the recipe to create Postgres instance and get started with Postgres as a Data Accelerator. With Postgres as a Data Accelerator, data sourced by Data Connectors can be **locally materialized and accelerated** into an attached Postgres instance. Unlike other Data Accelerators which are local to Spice, this enables other applications to query the accelerated data via a native integration with Postgres, which Spice keeps up-to-date automatically.
