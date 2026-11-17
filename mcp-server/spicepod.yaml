@@ -3,6 +3,10 @@ kind: Spicepod
 name: mcp-server
 
 runtime:
+  # Origins allowed to call /v1/mcp from a browser.
+  cors:
+    allowed_origins:
+      - http://localhost:3000
   task_history:
     captured_output: truncated
   auth:

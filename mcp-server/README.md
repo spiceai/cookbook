@@ -91,6 +91,8 @@ Spice loads GitHub data into local accelerations and launches the GitHub MCP ser
 
 Spice does not show the output of the GitHub MCP server subprocess, and tool loading is logged at `DEBUG`. At the default log level, no log line shows that the `github` tool is loaded. Use Step 4 to make sure that the tools are available.
 
+> **Allowed origins:** `spicepod.yaml` sets [`runtime.cors.allowed_origins`](https://spiceai.org/docs/reference/spicepod/runtime#runtimecorsallowed_origins) to `http://localhost:3000`. Spice checks the browser `Origin` header on `/v1/mcp` against this list. A browser-based MCP client on another origin receives `403 Forbidden` until you add its origin, with its port, to the list. Clients that send no `Origin` header, such as Claude Code, Claude Desktop, and Cursor, are not affected. Without an explicit list, Spice logs `allowed origin without a port matches any port` warnings at startup.
+
 **Step 4.** Confirm the unified tool catalog is available (in a new terminal):
 
 ```bash
