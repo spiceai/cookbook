@@ -1,0 +1,18 @@
+version: v2
+kind: Spicepod
+name: deepseek-v4.1
+
+models:
+  # DeepSeek-V4.1-Flash-1017 (552B backbone + 196B Engram table), Unsloth Dynamic 1-bit GGUF
+  # (UD-IQ1_M, 250.4 GB in 5 shards; the last shard is the 110.6 GB Engram table). No MacBook
+  # Pro holds it: 140 GB of weights must sit in GPU memory, so this spicepod is for a 256 GB or
+  # larger Mac Studio. README.md covers the hardware and the runtime support status of the
+  # `deepseek41` GGUF architecture.
+  - from: huggingface:huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF
+    name: deepseek-v4.1-flash
+    files:
+      - path: UD-IQ1_M/DeepSeek-V4.1-Flash-1017-UD-IQ1_M-00001-of-00005.gguf
+      - path: UD-IQ1_M/DeepSeek-V4.1-Flash-1017-UD-IQ1_M-00002-of-00005.gguf
+      - path: UD-IQ1_M/DeepSeek-V4.1-Flash-1017-UD-IQ1_M-00003-of-00005.gguf
+      - path: UD-IQ1_M/DeepSeek-V4.1-Flash-1017-UD-IQ1_M-00004-of-00005.gguf
+      - path: UD-IQ1_M/DeepSeek-V4.1-Flash-1017-UD-IQ1_M-00005-of-00005.gguf
