@@ -1,0 +1,70 @@
+version: v2
+kind: Spicepod
+name: codex_sessions_snapshot_reader
+
+# Serves the same views as spicepod.yaml, but reads the datasets from the
+# acceleration snapshots that spicepod.yaml publishes to S3, not from
+# ~/.codex/. Read-only: it never writes to S3. See the README for how to
+# publish the snapshots.
+#   spice run <path to this file>
+
+dependencies:
+  - codex-views
+
+# Each dataset reads the prefix that holds the publisher's
+# snapshots/metadata.json. The names must match the publisher's dataset names.
+# If you removed a dataset from spicepod.yaml, remove it here too.
+datasets:
+  # Codex rollout transcripts.
+  - from: s3://<bucket>/codex-sessions/snapshots/
+    name: rollouts
+    params:
+      file_format: snapshot
+      s3_region: <region>
+    acceleration:
+      refresh_check_interval: 1m
+
+  # history.jsonl, for `prompt_history`.
+  - from: s3://<bucket>/codex-sessions/snapshots/
+    name: history_lines
+    params:
+      file_format: snapshot
+      s3_region: <region>
+    acceleration:
+      refresh_check_interval: 1m
+
+  # session_index.jsonl, for `thread_names`.
+  - from: s3://<bucket>/codex-sessions/snapshots/
+    name: session_index_lines
+    params:
+      file_format: snapshot
+      s3_region: <region>
+    acceleration:
+      refresh_check_interval: 1m
+
+  # rules/default.rules, for `exec_rules`.
+  - from: s3://<bucket>/codex-sessions/snapshots/
+    name: rules_lines
+    params:
+      file_format: snapshot
+      s3_region: <region>
+    acceleration:
+      refresh_check_interval: 1m
+
+  # The threads table of state_5.sqlite, for `thread_state`.
+  - from: s3://<bucket>/codex-sessions/snapshots/
+    name: threads_state
+    params:
+      file_format: snapshot
+      s3_region: <region>
+    acceleration:
+      refresh_check_interval: 1m
+
+  # Codex memories, for `memories`.
+  - from: s3://<bucket>/codex-sessions/snapshots/
+    name: memory_outputs
+    params:
+      file_format: snapshot
+      s3_region: <region>
+    acceleration:
+      refresh_check_interval: 1m
