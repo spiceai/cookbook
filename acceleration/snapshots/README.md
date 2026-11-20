@@ -60,7 +60,7 @@ runtime:
       s3_region: ${ env:S3_SNAPSHOT_REGION }
 
 datasets:
-  - from: s3://spiceai-public-datasets/taxi_trips/
+  - from: s3://spice-datasets-gjezag77s0hu/taxi_trips/
     name: taxi_trips
     description: NYC TLC trips sample
     params:
