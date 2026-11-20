@@ -55,7 +55,7 @@ checking each recipe directory for:
 Recipes that use only these data sources are locally runnable:
 
 - `file:` or `file://` (local files)
-- `s3://spiceai-public-datasets/` or `s3://spiceai-demo-datasets/` (public S3)
+- `s3://spice-datasets-gjezag77s0hu/` or `s3://spiceai-demo-datasets/` (public S3)
 - `duckdb:` with a local `.db` file
 - `localpod:` (references another local dataset)
 - `https://` public APIs (e.g., TVMaze)

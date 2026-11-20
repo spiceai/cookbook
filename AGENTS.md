@@ -74,7 +74,7 @@ The `data/` directory contains CSV files (e.g., `taxi_zone_lookup.csv`, `custome
 - READMEs should include exact CLI commands and expected output — they serve as both documentation and test scripts
 - Use `.env.example` to document required secrets; actual `.env` files are gitignored
 - The `spicepod.yaml` format is `version: v1`, `kind: Spicepod`
-- Prefer public datasets (e.g., `s3://spiceai-public-datasets/`) for recipes that don't require external credentials
+- Prefer public datasets (e.g., `s3://spice-datasets-gjezag77s0hu/`) for recipes that don't require external credentials
 - Write for new users, as described in [Writing for New Users](#writing-for-new-users)
 
 ## Writing for New Users

@@ -68,7 +68,7 @@ The scheduler starts and registers the `data` dataset:
 2026-03-02T12:00:01.000000Z  INFO runtime::init::dataset: Dataset data initializing...
 2026-03-02T12:00:01.000000Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2026-03-02T12:00:01.000000Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2026-03-02T12:00:03.000000Z  INFO runtime::init::dataset: Dataset data registered (s3://spiceai-public-datasets/hive_partitioned_data/), results cache enabled.
+2026-03-02T12:00:03.000000Z  INFO runtime::init::dataset: Dataset data registered (s3://spice-datasets-gjezag77s0hu/hive_partitioned_data/), results cache enabled.
 2026-03-02T12:00:03.000000Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
