@@ -1,0 +1,3 @@
+# The Actions lockfile pins every action our workflows run; changes need owner review.
+
+/.github/workflows/actions.lock @spiceai/spice-core-maintainers
