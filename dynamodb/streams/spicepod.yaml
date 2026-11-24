@@ -13,8 +13,6 @@ datasets:
       dynamodb_replication_ready_lag: 1h
     acceleration:
       enabled: true
-      engine: duckdb
+      engine: cayenne
       mode: file
       refresh_mode: changes
-      on_conflict:
-        id: upsert

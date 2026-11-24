@@ -64,7 +64,7 @@ runtime:
     state_location: file:///tmp/spice-cluster
 
 datasets:
-  - from: s3://spiceai-public-datasets/hive_partitioned_data/
+  - from: s3://spice-datasets-gjezag77s0hu/hive_partitioned_data/
     name: data
     params:
       file_format: parquet
@@ -90,7 +90,7 @@ The Spice scheduler will now start:
 2026-08-02T12:08:34.504088Z  INFO runtime::cluster::servers: Spice Runtime internal cluster server listening on 127.0.0.1:50052
 2026-08-02T12:08:34.504479Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
 2026-08-02T12:08:34.504962Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-2026-08-02T12:08:39.554871Z  INFO runtime::init::dataset: Dataset data registered (s3://spiceai-public-datasets/hive_partitioned_data/), results cache enabled. duration_ms=0
+2026-08-02T12:08:39.554871Z  INFO runtime::init::dataset: Dataset data registered (s3://spice-datasets-gjezag77s0hu/hive_partitioned_data/), results cache enabled. duration_ms=0
 2026-08-02T12:08:39.658898Z  INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 

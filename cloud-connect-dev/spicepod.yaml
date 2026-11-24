@@ -3,7 +3,7 @@ kind: Spicepod
 name: cloud-connect-dev
 
 datasets:
-  - from: s3://spiceai-public-datasets/hive_partitioned_data/
+  - from: s3://spice-datasets-gjezag77s0hu/hive_partitioned_data/
     name: data
     params:
       file_format: parquet

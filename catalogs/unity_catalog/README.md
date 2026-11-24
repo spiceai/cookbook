@@ -116,7 +116,7 @@ LIMIT 10;
 
 ```sql
 -- Revenue by product category
-SELECT p.category, SUM(oi.quantity * oi.unit_price * (1 - oi.discount)) AS revenue
+SELECT p.category, ROUND(SUM(oi.quantity * oi.unit_price * (1 - oi.discount)), 2) AS revenue
 FROM uc.samples.order_items oi
 JOIN uc.samples.products p ON oi.product_id = p.product_id
 GROUP BY p.category
@@ -124,16 +124,16 @@ ORDER BY revenue DESC;
 ```
 
 ```console
-+-----------------+--------------------+
-|     category    |       revenue      |
-|     varchar     |       float64      |
-+-----------------+--------------------+
-| Office Supplies | 1160538.9765       |
-| Software        | 1149024.566        |
-| Electronics     | 1094495.8760000002 |
-| Furniture       | 1089822.738        |
-| Peripherals     | 1053972.9875       |
-+-----------------+--------------------+
++-----------------+------------+
+|     category    |   revenue  |
+|     varchar     |   float64  |
++-----------------+------------+
+| Office Supplies | 1160538.98 |
+| Software        | 1149024.57 |
+| Electronics     | 1094495.88 |
+| Furniture       | 1089822.74 |
+| Peripherals     | 1053972.99 |
++-----------------+------------+
 ```
 
 ## Step 4. Clean up

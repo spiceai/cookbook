@@ -66,8 +66,7 @@ spice run
 You should see the dataset initialize and begin streaming:
 
 ```bash
-INFO runtime::init::dataset: Dataset orders_stream registered (dynamodb:orders), acceleration (duckdb:file, changes), results cache enabled.
-INFO connector_dynamodb::connector: No existing checkpoint found for DynamoDB Streams table, starting initialization. Table will be marked as Ready once lag threshold is reached dataset=orders_stream ready_lag=1h
+INFO runtime::init::dataset: Dataset orders_stream registered (dynamodb:orders), acceleration (cayenne:file, changes), results cache enabled.
 INFO runtime: All components are loaded. Spice runtime is ready!
 ```
 
@@ -84,11 +83,11 @@ SELECT * FROM orders_stream;
 You should see the new record:
 
 ```console
-+-----------+----------+--------+---------+
-| id        | customer | amount | status  |
-+-----------+----------+--------+---------+
-| order-001 | Alice    | 99.99  | pending |
-+-----------+----------+--------+---------+
++--------+----------+-----------+---------+
+| amount | customer | id        | status  |
++--------+----------+-----------+---------+
+| 99.99  | Alice    | order-001 | pending |
++--------+----------+-----------+---------+
 ```
 
 ---
@@ -112,12 +111,12 @@ SELECT * FROM orders_stream;
 The new record should now appear:
 
 ```console
-+-----------+----------+---------+---------+
-| id        | customer | amount  | status  |
-+-----------+----------+---------+---------+
-| order-001 | Alice    | 99.99   | pending |
-| order-002 | Bob      | 149.99  | pending |
-+-----------+----------+---------+---------+
++--------+----------+-----------+---------+
+| amount | customer | id        | status  |
++--------+----------+-----------+---------+
+| 99.99  | Alice    | order-001 | pending |
+| 149.99 | Bob      | order-002 | pending |
++--------+----------+-----------+---------+
 ```
 
 ---
