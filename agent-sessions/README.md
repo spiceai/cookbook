@@ -179,7 +179,7 @@ publisher (claude-code/spicepod.yaml)            reader (claude-code/snapshot-re
 
 1. In `claude-code/snapshot-reader.yaml`, replace `<bucket>` and `<region>` with the values of the publisher's `runtime.state` section. The reader reads the `snapshots/` folder below the publisher's `location`.
 
-2. Start Spice. If the publisher runs on the same computer, stop it first. The reader uses the same ports, and its own directory for its local copy:
+2. Start Spice from the root of this cookbook, because the command uses `$PWD` to find the reader Spicepod. If the publisher runs on the same computer, stop it first. The reader uses the same ports, and its own directory for its local copy:
 
    ```shell
    POD="$PWD/agent-sessions/claude-code/snapshot-reader.yaml"
@@ -331,9 +331,9 @@ publisher (codex/spicepod.yaml)           reader (codex/snapshot-reader.yaml)
             codex-views                                                        codex-views
 ```
 
-1. In `codex/snapshot-reader.yaml`, replace `<bucket>` and `<region>` with the values of the publisher's `runtime.state` section. The reader reads the `snapshots/` folder below the publisher's `location`. If you removed a dataset from `codex/spicepod.yaml`, remove it from the reader too. A reader dataset that has no snapshot does not load, and Spice does not report ready.
+1. In `codex/snapshot-reader.yaml`, replace `<bucket>` and `<region>` with the values of the publisher's `runtime.state` section. The reader reads the `snapshots/` folder below the publisher's `location`. If you removed a dataset from `codex/spicepod.yaml`, remove it from the reader too. Also delete the views that need it from `codex/spicepods/codex-views/spicepod.yaml` on the reader's computer, as [Optional Codex files](#optional-codex-files) tells. A reader dataset that has no snapshot does not load, and Spice does not report ready.
 
-2. Start Spice. If the publisher runs on the same computer, stop it first. The reader uses the same ports, and its own directory for its local copy:
+2. Start Spice from the root of this cookbook, because the command uses `$PWD` to find the reader Spicepod. If the publisher runs on the same computer, stop it first. The reader uses the same ports, and its own directory for its local copy:
 
    ```shell
    POD="$PWD/agent-sessions/codex/snapshot-reader.yaml"
