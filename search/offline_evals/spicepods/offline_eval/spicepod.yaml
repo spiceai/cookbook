@@ -1,0 +1,128 @@
+version: v1
+kind: Spicepod
+name: offline_eval
+
+# An offline evaluation of a search pipeline on MTEB SciFact. Import it as a
+# dependency. The root spicepod, or another dependency, must give:
+#
+#   - a dataset `corpus` (the documents);
+#   - a table function `search_pipeline(query)` that returns `_id` and `_score`
+#     for the top 10 rows of `corpus`, best first (`llm_rerank` or
+#     `jev_rerank` gives one);
+#   - `runtime.functions.enabled: true`, because the runtime ignores the
+#     `runtime` section of a dependency.
+
+datasets:
+  # The benchmark: test queries, and the documents a person judged relevant to each query.
+  - from: https://huggingface.co/api/datasets/mteb/scifact/parquet/queries/queries/0.parquet
+    name: test_queries
+    params:
+      file_format: parquet
+    acceleration:
+      enabled: true
+
+  - from: https://huggingface.co/api/datasets/mteb/scifact/parquet/default/test/0.parquet
+    name: relevance_data
+    params:
+      file_format: parquet
+    acceleration:
+      enabled: true
+
+views:
+  # The queries to evaluate: a fixed sample of 20 judged queries. Each query costs
+  # one or more model calls, so a sample keeps an eval fast and cheap. The LIMIT
+  # is applied here, before `search_results` calls `search_pipeline`.
+  - name: eval_queries
+    dependsOn: [test_queries, relevance_data]
+    sql: |
+      SELECT CAST(_id AS VARCHAR) AS query_id, text
+      FROM test_queries
+      WHERE CAST(_id AS VARCHAR) IN (SELECT CAST("query-id" AS VARCHAR) FROM relevance_data)
+      ORDER BY query_id
+      LIMIT 10
+
+  # One run of `search_pipeline` for each judged query, stored in a local Cayenne file.
+  # A restart does not run it again; `spice refresh search_results` does.
+  - name: search_results
+    dependsOn: [corpus, eval_queries]
+    acceleration:
+      enabled: true
+      engine: cayenne
+      mode: file
+      refresh_check_interval: 1h
+    sql: |
+      SELECT q.query_id,
+             CAST(r._id AS VARCHAR) AS corpus_id,
+             r._score AS score,
+             CAST(ROW_NUMBER() OVER (
+               PARTITION BY q.query_id ORDER BY r._score DESC, r._id
+             ) AS BIGINT) AS rank
+      FROM eval_queries q
+      CROSS JOIN LATERAL search_pipeline(q.text) r
+
+  # Retrieval metrics: linear-gain nDCG, recall, MRR and precision.
+  - name: relevance_judgments
+    dependsOn: [relevance_data, eval_queries]
+    sql: |
+      SELECT CAST("query-id" AS VARCHAR) AS query_id,
+             CAST("corpus-id" AS VARCHAR) AS corpus_id,
+             CAST(score AS DOUBLE) AS grade
+      FROM relevance_data
+      WHERE CAST("query-id" AS VARCHAR) IN (SELECT query_id FROM eval_queries)
+
+  # One row for each judged query and each cutoff k = 1..10.
+  - name: query_metrics
+    dependsOn: [search_results, relevance_judgments]
+    sql: |
+      WITH cutoffs AS (
+        SELECT unnest(range(1, 11)) AS k
+      ),
+      graded_results AS (
+        SELECT r.query_id, r.rank, COALESCE(j.grade, 0.0) AS grade
+        FROM search_results r
+        LEFT JOIN relevance_judgments j
+          ON j.query_id = r.query_id AND j.corpus_id = r.corpus_id
+      ),
+      ideal_ranking AS (
+        SELECT query_id, grade,
+               ROW_NUMBER() OVER (PARTITION BY query_id ORDER BY grade DESC) AS rank
+        FROM relevance_judgments
+      ),
+      ideal AS (
+        SELECT c.k, i.query_id,
+               SUM(CASE WHEN i.rank <= c.k THEN i.grade / log2(i.rank + 1) ELSE 0.0 END) AS idcg,
+               SUM(CASE WHEN i.grade > 0 THEN 1 ELSE 0 END) AS relevant
+        FROM cutoffs c CROSS JOIN ideal_ranking i
+        GROUP BY c.k, i.query_id
+      ),
+      actual AS (
+        SELECT c.k, g.query_id,
+               SUM(g.grade / log2(g.rank + 1)) AS dcg,
+               SUM(CASE WHEN g.grade > 0 THEN 1 ELSE 0 END) AS hits,
+               MIN(CASE WHEN g.grade > 0 THEN g.rank END) AS first_hit_rank
+        FROM cutoffs c
+        JOIN graded_results g ON g.rank <= c.k
+        GROUP BY c.k, g.query_id
+      )
+      SELECT i.query_id,
+             i.k,
+             CASE WHEN i.idcg = 0 THEN 0.0 ELSE COALESCE(a.dcg, 0.0) / i.idcg END AS ndcg,
+             CASE WHEN i.relevant = 0 THEN 0.0
+                  ELSE CAST(COALESCE(a.hits, 0) AS DOUBLE) / i.relevant END AS recall,
+             COALESCE(1.0 / a.first_hit_rank, 0.0) AS mrr,
+             CAST(COALESCE(a.hits, 0) AS DOUBLE) / i.k AS precision
+      FROM ideal i
+      LEFT JOIN actual a ON a.query_id = i.query_id AND a.k = i.k
+
+  # Mean metrics over all judged queries, for each cutoff.
+  - name: retrieval_metrics
+    dependsOn: [query_metrics]
+    sql: |
+      SELECT k,
+             AVG(ndcg) AS ndcg,
+             AVG(recall) AS recall,
+             AVG(mrr) AS mrr,
+             AVG(precision) AS precision,
+             COUNT(*) AS queries
+      FROM query_metrics
+      GROUP BY k

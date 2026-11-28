@@ -1,0 +1,30 @@
+version: v1
+kind: Spicepod
+name: llm_rerank
+
+models:
+  # A low-cost OpenAI model. As a reranker, it ranks all candidates in one prompt (listwise).
+  - from: openai:gpt-6-luna
+    name: luna
+    params:
+      openai_api_key: ${secrets:OPENAI_API_KEY}
+
+functions:
+  - name: search_pipeline
+    from: sql
+    kind: table
+    volatility: stable
+    signature:
+      args: [{ name: query, type: utf8 }]
+      returns:
+        - { name: _id, type: largeutf8 }
+        - { name: title, type: largeutf8 }
+        - { name: _score, type: float64 }
+    body: |
+      SELECT _id, title, CAST(rerank_score AS DOUBLE) AS _score
+      FROM rerank(
+        text_search(corpus, query, text, limit => 20),
+        document => 'text',
+        model => 'luna',
+        limit => 10
+      )
