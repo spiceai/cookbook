@@ -1,0 +1,34 @@
+version: v1
+kind: Spicepod
+name: jev_rerank
+
+
+# The search to evaluate: the top 10 corpus rows for one query, best first.
+# Full-text search finds 20 candidates, and the model reranks them.
+functions:
+  - name: search_pipeline
+    from: sql
+    kind: table
+    volatility: stable
+    signature:
+      args: [{ name: query, type: utf8 }]
+      returns:
+        - { name: _id, type: largeutf8 }
+        - { name: title, type: largeutf8 }
+        - { name: _score, type: float64 }
+    body: |
+      SELECT _id, title, CAST(rerank_score AS DOUBLE) AS _score
+      FROM rerank(
+        text_search(corpus, query, text, limit => 20),
+        document => 'text',
+        model => 'jev',
+        limit => 10
+      )
+
+models:
+  # A TypeSafe decision model. As a reranker, it scores each candidate (pointwise)
+  # with a calibrated probability of relevance.
+  - from: typesafe:jev
+    name: jev
+    params:
+      typesafe_api_key: ${secrets:TYPESAFE_API_KEY}

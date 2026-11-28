@@ -1,0 +1,33 @@
+version: v1
+kind: Spicepod
+name: offline_evals
+
+runtime:
+  task_history:
+    enabled: true
+    captured_output: truncated
+    captured_context: full
+    retention_period: 8h
+
+  functions:
+    enabled: true
+
+dependencies:
+  - jev_rerank
+  - offline_eval
+
+datasets:
+  - from: https://huggingface.co/api/datasets/mteb/scifact/parquet/corpus/corpus/0.parquet
+    name: corpus
+    params:
+      file_format: parquet
+    acceleration:
+      enabled: true
+      engine: cayenne
+      mode: file
+    columns:
+      - name: text
+        full_text_search:
+          enabled: true
+          row_id:
+            - _id
